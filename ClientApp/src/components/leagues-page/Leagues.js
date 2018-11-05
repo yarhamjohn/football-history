@@ -58,7 +58,7 @@ export class Leagues extends Component {
 
     return (
       <div>
-        <h1>League Table: {this.state.leagueTable.competition} ({this.state.leagueTable.season})</h1>
+        <h1>{this.state.leagueTable.competition} ({this.state.leagueTable.season})</h1>
         {body}
       </div>
     );
