@@ -1,14 +1,41 @@
+using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace football_history.Server.Repositories
 {
     public class FootballHistoryRepository : IFootballHistoryRepository
     {
+        private FootballHistoryContext m_Context { get; }
+
+        public FootballHistoryRepository(FootballHistoryContext context)
+        {
+            m_Context = context;
+        }
+
         public LeagueTable GetLeague()
         {
+            var sql = "SELECT COUNT(*) FROM dbo.Matches";
+            var result = 0;
+
+            using(var conn = m_Context.Database.GetDbConnection())
+            {
+                conn.Open();
+
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+                cmd.CommandType = CommandType.Text;
+
+                result = (Int32) cmd.ExecuteScalar();
+            }
+
+
             var league = new LeagueTable 
             {
-                Competition = "Premier League",
+                Competition = $"{result} Premier League",
                 Season = "2015 - 2016",
                 LeagueTableRow = new List<LeagueTableRow> 
                 {

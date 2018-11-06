@@ -19,6 +19,10 @@ namespace football_history
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .ConfigureAppConfiguration((hostingContext, config) => 
+                {
+                    config.AddEnvironmentVariables(prefix: "SQLAZURECONNSTR_");
+                })
                 .UseStartup<Startup>();
     }
 }
