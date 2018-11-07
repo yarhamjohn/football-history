@@ -19,7 +19,7 @@ namespace football_history.Controllers
         [HttpGet("[action]")]
         public LeagueTable GetLeague()
         {
-            return m_Repository.GetLeague();
+            return m_Repository.GetLeagueTable(CompetitionNames.PremierLeague, 2005);
         }
     }
 }

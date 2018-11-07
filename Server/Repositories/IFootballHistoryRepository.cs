@@ -4,6 +4,6 @@ namespace football_history.Server.Repositories
 {
     public interface IFootballHistoryRepository
     {
-        LeagueTable GetLeague();
+        LeagueTable GetLeagueTable(string competitionName, int seasonStartYear);
     }
 }
