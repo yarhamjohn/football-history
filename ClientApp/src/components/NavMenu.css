@@ -56,3 +56,11 @@
         text-overflow: ellipsis;
     }
 }
+
+@media (min-width: 992px) {
+    /* On large screens, convert the nav menu to a vertical sidebar */
+    .navbar {
+        height: 100%;
+        width: calc(16.67% - 20px);
+    }
+}
