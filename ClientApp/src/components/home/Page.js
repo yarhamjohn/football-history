@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 
-export class Home extends Component {
-  displayName = Home.name
-
+class Page extends Component {
   render() {
     return (
       <div>
@@ -24,3 +22,5 @@ export class Home extends Component {
     );
   }
 }
+
+export default Page;

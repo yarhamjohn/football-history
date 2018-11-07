@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 
-export class Leagues extends Component {
-  displayName = Leagues.name
-
+class Page extends Component {
   constructor(props) {
     super(props);
     this.state = { leagueTable: {}, loading: true };
@@ -66,3 +64,5 @@ export class Leagues extends Component {
     );
   }
 }
+
+export default Page;
