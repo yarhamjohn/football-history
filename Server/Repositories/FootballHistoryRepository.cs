@@ -17,8 +17,9 @@ namespace football_history.Server.Repositories
             m_Context = context;
         }
 
-        public LeagueTable GetLeagueTable(string competitionName, int seasonStartYear)
+        public LeagueTable GetLeagueTable(string competitionName, string season)
         {
+            var seasonStartYear = Convert.ToInt32(season.Substring(0, 4));
             var leagueTable = new LeagueTable
             {
                 Competition = competitionName,
@@ -126,6 +127,66 @@ ORDER BY Position
             }
 
             return leagueTable;
+        }
+
+        public LeagueFilterOptions GetLeagueFilterOptions()
+        {
+            var leagueFilterOptions = new LeagueFilterOptions
+            {
+                AllSeasons = new List<string>(),
+                AllDivisions = new List<string>()
+            };
+
+            var sql = @"
+SELECT Season
+FROM (
+    SELECT CASE WHEN MONTH(MatchDate) >= 7 
+                THEN CAST(YEAR(MatchDate) AS CHAR(4)) + ' - ' + CAST(YEAR(MatchDate) + 1 AS CHAR(4))
+                ELSE CAST(YEAR(MatchDate) - 1 AS CHAR(4)) + ' - ' + CAST(YEAR(MatchDate) AS CHAR(4))
+                END AS Season
+    FROM dbo.Matches
+) m
+GROUP BY Season;
+
+SELECT CompetitionName
+FROM dbo.Matches
+GROUP BY CompetitionName;
+";
+
+            using(var conn = m_Context.Database.GetDbConnection())
+            {
+                conn.Open();
+
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+
+                var reader = cmd.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        leagueFilterOptions.AllSeasons.Add(
+                            reader.GetString(0)
+                        );
+                    }
+
+                    reader.NextResult();
+
+                    while (reader.Read())
+                    {
+                        leagueFilterOptions.AllDivisions.Add(
+                            reader.GetString(0)                            
+                        );
+                    }
+                } 
+                else 
+                {
+                    System.Console.WriteLine("No rows found");
+                }
+                reader.Close();
+            }
+
+            return leagueFilterOptions;
         }
     }
 }

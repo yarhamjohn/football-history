@@ -17,9 +17,15 @@ namespace football_history.Controllers
         }
 
         [HttpGet("[action]")]
-        public LeagueTable GetLeague(string competition, int seasonStartYear)
+        public LeagueTable GetLeague(string competition, string season)
         {
-            return m_Repository.GetLeagueTable(competition, seasonStartYear);
+            return m_Repository.GetLeagueTable(competition, season);
+        }
+
+        [HttpGet("[action]")]
+        public LeagueFilterOptions GetLeagueFilterOptions()
+        {
+            return m_Repository.GetLeagueFilterOptions();
         }
     }
 }

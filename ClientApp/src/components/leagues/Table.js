@@ -1,11 +1,29 @@
 import React, { Component } from 'react';
 
 class Table extends Component {
-  render() {
-    const {leagueTable} = this.props;
+  constructor(props) {
+    super(props);
+    this.state = { leagueTable: {}, loading: true };
+  }
 
-    return (
-      <React.Fragment>
+  componentDidMount() {
+    const { season, division } = this.props;
+
+    fetch(`api/FootballHistory/GetLeague?competition=${division}&season=${season}`)
+      .then(response => response.json())
+      .then(data => {
+        this.setState({ leagueTable: data, loading: false });
+      });
+  }
+
+  render() {
+    const {leagueTable, loading} = this.state;
+    let body;
+
+    if (loading) {
+      body = <p><em>Loading...</em></p>
+    } else {
+      body = <React.Fragment>
         <h1>{leagueTable.competition} </h1>
         <h2>{leagueTable.season}</h2>
         <table className='table'>
@@ -40,6 +58,12 @@ class Table extends Component {
             )}
           </tbody>
         </table>
+      </React.Fragment>
+    }
+
+    return (
+      <React.Fragment>
+        {body}
       </React.Fragment>
     );
   }

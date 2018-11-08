@@ -5,32 +5,39 @@ import Filter from './Filter';
 class Page extends Component {
   constructor(props) {
     super(props);
-    this.state = { leagueTable: {}, loading: true };
+    this.state = { 
+      allSeasons: [],
+      allDivisions: [],
+      selectedDivision: null,
+      selectedSeason: null,
+      loading: true };
   }
 
   componentDidMount() {
-    // fetch all seasons, divisions 
-    // pass latest season and premier league into table to fetch league table data
-    // pass all into filter for creating options
-
-    // move this fetch to the table
-    fetch('api/FootballHistory/GetLeague?competition=Premier League&seasonStartYear=2010')
+    fetch(`api/FootballHistory/GetLeagueFilterOptions`)
       .then(response => response.json())
       .then(data => {
-        this.setState({ leagueTable: data, loading: false });
+        this.setState({ 
+          allSeasons: data.allSeasons.sort().reverse(), 
+          allDivisions: data.allDivisions, 
+          loading: false });
       });
   }
 
   render() {
-    let {leagueTable, loading} = this.state;
     let body;
+
+    let {loading, allSeasons, allDivisions, selectedDivision, selectedSeason} = this.state;
 
     if (loading) {
       body = <p><em>Loading...</em></p>
     } else {
+      var season = selectedSeason === null ? allSeasons[0] : selectedSeason;
+      var division = selectedDivision === null ? "Premier League" : selectedDivision;
+      
       body = <React.Fragment>
-        <Filter competition={leagueTable.competition} season={leagueTable.season} />
-        <Table leagueTable={leagueTable} />
+        <Filter allSeasons={allSeasons} allDivisions={allDivisions} selectedDivision={division} selectedSeason={season} />
+        <Table season={season} division={division} />
       </React.Fragment>
     }
 
