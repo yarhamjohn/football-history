@@ -6,7 +6,7 @@ class Filter extends Component {
     const { allDivisions } = this.props;
     allDivisions.sort((a, b) => a.tier - b.tier || a.firstSeason - b.firstSeason);
   };
-  
+
   render() {
     const { allSeasons, allDivisions, selectedDivision, selectedSeason } = this.props;
     
@@ -17,7 +17,7 @@ class Filter extends Component {
         <DropdownButton title="Division" id="DivisionSelect">
         {
           allDivisions.map(d => 
-            <MenuItem key={`${d.name} - ${d.tTier} - ${d.firstSeason}`} eventKey={`${d.name} - ${d.tier} - ${d.firstSeason}`} 
+            <MenuItem key={`${d.name} - ${d.tier} - ${d.firstSeason}`} eventKey={`${d.name} - ${d.tier} - ${d.firstSeason}`} 
               className={d.name === selectedDivision ? "active" : ""}
             >
               {d.name}
