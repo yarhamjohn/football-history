@@ -8,7 +8,7 @@ class Filter extends Component {
   };
 
   render() {
-    const { allSeasons, allDivisions, selectedDivision, selectedSeason } = this.props;
+    const { allSeasons, allDivisions, selectedDivision, selectedSeason, selectDivision, selectSeason } = this.props;
     
     this.sortDivisions();
     
@@ -17,8 +17,10 @@ class Filter extends Component {
         <DropdownButton title="Division" id="DivisionSelect">
         {
           allDivisions.map(d => 
-            <MenuItem key={`${d.name} - ${d.tier} - ${d.firstSeason}`} eventKey={`${d.name} - ${d.tier} - ${d.firstSeason}`} 
+            <MenuItem key={`${d.name} - ${d.tier} - ${d.firstSeason}`}
+              eventKey={d} 
               className={d.name === selectedDivision ? "active" : ""}
+              onSelect={(d) => selectDivision(d)}
             >
               {d.name}
             </MenuItem>)
@@ -29,6 +31,7 @@ class Filter extends Component {
           allSeasons.map(s =>
             <MenuItem key={s} eventKey={s}
               className={s === selectedSeason ? "active" : ""}
+              onSelect={(s) => selectSeason(s)}
             >
               {s}
             </MenuItem>)

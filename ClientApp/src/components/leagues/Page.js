@@ -24,9 +24,16 @@ class Page extends Component {
       });
   }
 
+  selectDivision(division) {
+    this.setState({selectedDivision: division.name});
+  }
+
+  selectSeason(season) {
+    this.setState({selectedSeason: season});
+  }
+
   render() {
     let body;
-
     let {loading, allSeasons, allDivisions, selectedDivision, selectedSeason} = this.state;
 
     if (loading) {
@@ -34,9 +41,16 @@ class Page extends Component {
     } else {
       var season = selectedSeason === null ? allSeasons[0] : selectedSeason;
       var division = selectedDivision === null ? "Premier League" : selectedDivision;
-      
+
       body = <React.Fragment>
-        <Filter allSeasons={allSeasons} allDivisions={allDivisions} selectedDivision={division} selectedSeason={season} />
+        <Filter 
+          allSeasons={allSeasons} 
+          allDivisions={allDivisions} 
+          selectedDivision={division} 
+          selectedSeason={season}
+          selectSeason={(s) => this.selectSeason(s)}
+          selectDivision={(d) => this.selectDivision(d)}
+        />
         <Table season={season} division={division} />
       </React.Fragment>
     }
