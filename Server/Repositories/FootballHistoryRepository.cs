@@ -30,13 +30,15 @@ namespace football_history.Server.Repositories
             var sql = @"
 WITH Matches AS 
 (
-SELECT [HomeTeam]
-    ,[AwayTeam]
-    ,[HomeGoals]
-    ,[AwayGoals]
-FROM [dbo].[Matches]
-WHERE CompetitionName = @CompetitionName
-    AND MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonStartYear + 1, 6, 30)
+    SELECT m.HomeTeam
+        ,m.AwayTeam
+        ,m.HomeGoals
+        ,m.AwayGoals
+    FROM dbo.Matches m
+    INNER JOIN dbo.Divisions d
+        ON m.DivisionId = d.Id
+    WHERE d.Name = @CompetitionName
+        AND m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonStartYear + 1, 6, 30)
 )
 
 SELECT ROW_NUMBER() OVER(ORDER BY Points DESC, GoalDifference DESC, GoalsFor DESC) AS Position
@@ -134,7 +136,7 @@ ORDER BY Position
             var leagueFilterOptions = new LeagueFilterOptions
             {
                 AllSeasons = new List<string>(),
-                AllDivisions = new List<string>()
+                AllDivisions = new List<Division>()
             };
 
             var sql = @"
@@ -148,9 +150,8 @@ FROM (
 ) m
 GROUP BY Season;
 
-SELECT CompetitionName
-FROM dbo.Matches
-GROUP BY CompetitionName;
+SELECT Name, Tier, FirstSeason
+FROM dbo.Divisions;
 ";
 
             using(var conn = m_Context.Database.GetDbConnection())
@@ -175,7 +176,12 @@ GROUP BY CompetitionName;
                     while (reader.Read())
                     {
                         leagueFilterOptions.AllDivisions.Add(
-                            reader.GetString(0)                            
+                            new Division
+                            {
+                                Name = reader.GetString(0),
+                                Tier = reader.GetByte(1),
+                                FirstSeason = reader.GetString(2)
+                            }
                         );
                     }
                 } 

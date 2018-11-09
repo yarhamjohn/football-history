@@ -2,18 +2,25 @@ import React, { Component } from 'react';
 import { ButtonToolbar, DropdownButton, MenuItem } from 'react-bootstrap';
 
 class Filter extends Component {
+  sortDivisions() {
+    const { allDivisions } = this.props;
+    allDivisions.sort((a, b) => a.tier - b.tier || a.firstSeason - b.firstSeason);
+  };
+  
   render() {
     const { allSeasons, allDivisions, selectedDivision, selectedSeason } = this.props;
-
+    
+    this.sortDivisions();
+    
     return (
       <ButtonToolbar>
         <DropdownButton title="Division" id="DivisionSelect">
         {
           allDivisions.map(d => 
-            <MenuItem key={d} eventKey={d} 
-              className={d === selectedDivision ? "active" : ""}
+            <MenuItem key={`${d.name} - ${d.tTier} - ${d.firstSeason}`} eventKey={`${d.name} - ${d.tier} - ${d.firstSeason}`} 
+              className={d.name === selectedDivision ? "active" : ""}
             >
-              {d}
+              {d.name}
             </MenuItem>)
         }
         </DropdownButton>
