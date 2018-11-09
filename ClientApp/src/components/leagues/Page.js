@@ -7,8 +7,8 @@ class Page extends Component {
     super(props);
     this.state = { 
       allSeasons: [],
-      allDivisions: [],
-      selectedDivision: null,
+      allTiers: [],
+      selectedTier: null,
       selectedSeason: null,
       loading: true };
   }
@@ -19,39 +19,34 @@ class Page extends Component {
       .then(data => {
         this.setState({ 
           allSeasons: data.allSeasons.sort().reverse(), 
-          allDivisions: data.allDivisions, 
+          allTiers: data.allTiers.sort((a, b) => a.tier - b.tier), 
           loading: false });
       });
   }
 
-  selectDivision(division) {
-    this.setState({selectedDivision: division.name});
-  }
-
-  selectSeason(season) {
-    this.setState({selectedSeason: season});
+  selectLeagueTable(season, tier) {
+    this.setState({selectedSeason: season, selectedTier: tier });
   }
 
   render() {
     let body;
-    let {loading, allSeasons, allDivisions, selectedDivision, selectedSeason} = this.state;
+    let {loading, allSeasons, allTiers, selectedTier, selectedSeason} = this.state;
 
     if (loading) {
       body = <p><em>Loading...</em></p>
     } else {
       var season = selectedSeason === null ? allSeasons[0] : selectedSeason;
-      var division = selectedDivision === null ? "Premier League" : selectedDivision;
+      var tier = selectedTier === null ? allTiers[0].level : selectedTier;
 
       body = <React.Fragment>
         <Filter 
           allSeasons={allSeasons} 
-          allDivisions={allDivisions} 
-          selectedDivision={division} 
+          allTiers={allTiers} 
+          selectedTier={tier} 
           selectedSeason={season}
-          selectSeason={(s) => this.selectSeason(s)}
-          selectDivision={(d) => this.selectDivision(d)}
+          selectLeagueTable={(season, tier) => this.selectLeagueTable(season, tier)}
         />
-        <Table season={season} division={division} />
+        <Table season={season} tier={tier} />
       </React.Fragment>
     }
 

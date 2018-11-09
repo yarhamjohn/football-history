@@ -7,9 +7,9 @@ class Table extends Component {
   }
 
   fetchLeagueTable() {
-    const { season, division } = this.props;
+    const { season, tier } = this.props;
 
-    fetch(`api/FootballHistory/GetLeague?competition=${division}&season=${season}`)
+    fetch(`api/FootballHistory/GetLeague?tier=${tier}&season=${season}`)
       .then(response => response.json())
       .then(data => {
         this.setState({ leagueTable: data, loading: false });
@@ -21,7 +21,7 @@ class Table extends Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (prevProps.season !== this.props.season || prevProps.division !== this.props.division) {
+    if (prevProps.season !== this.props.season || prevProps.tier !== this.props.tier) {
       this.fetchLeagueTable();
     }
   }

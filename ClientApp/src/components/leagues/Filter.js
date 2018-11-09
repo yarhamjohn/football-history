@@ -2,27 +2,35 @@ import React, { Component } from 'react';
 import { ButtonToolbar, DropdownButton, MenuItem } from 'react-bootstrap';
 
 class Filter extends Component {
-  sortDivisions() {
-    const { allDivisions } = this.props;
-    allDivisions.sort((a, b) => a.tier - b.tier || a.firstSeason - b.firstSeason);
+  selectTier(tier) {
+    const { selectLeagueTable, selectedSeason } = this.props;
+    selectLeagueTable(selectedSeason, tier.level);
   };
 
+  selectSeason(season) {
+    const { selectLeagueTable, selectedTier } = this.props;
+    selectLeagueTable(season, selectedTier);
+  };
+
+  getDivisionInfo(tier) {
+    let divisionNames = tier.divisions.map(d => `${d.name} (${d.seasonStartYear} - ${d.seasonEndYear})`);
+    return divisionNames.join(', ');
+  }
+
   render() {
-    const { allSeasons, allDivisions, selectedDivision, selectedSeason, selectDivision, selectSeason } = this.props;
-    
-    this.sortDivisions();
-    
+    const { allSeasons, allTiers, selectedTier, selectedSeason } = this.props;
+
     return (
       <ButtonToolbar>
-        <DropdownButton title="Division" id="DivisionSelect">
+        <DropdownButton title="Leagues" id="LeagueSelect">
         {
-          allDivisions.map(d => 
-            <MenuItem key={`${d.name} - ${d.tier} - ${d.firstSeason}`}
-              eventKey={d} 
-              className={d.name === selectedDivision ? "active" : ""}
-              onSelect={(d) => selectDivision(d)}
+          allTiers.map(t => 
+            <MenuItem key={t.level}
+              eventKey={t} 
+              className={t.level === selectedTier ? "active" : ""}
+              onSelect={(t) => this.selectTier(t)}
             >
-              {d.name}
+              {`Tier ${t.level}: ${this.getDivisionInfo(t)}`}
             </MenuItem>)
         }
         </DropdownButton>
@@ -31,7 +39,7 @@ class Filter extends Component {
           allSeasons.map(s =>
             <MenuItem key={s} eventKey={s}
               className={s === selectedSeason ? "active" : ""}
-              onSelect={(s) => selectSeason(s)}
+              onSelect={(s) => this.selectSeason(s)}
             >
               {s}
             </MenuItem>)

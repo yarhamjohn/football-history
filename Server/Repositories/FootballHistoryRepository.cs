@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -17,13 +18,14 @@ namespace football_history.Server.Repositories
             m_Context = context;
         }
 
-        public LeagueTable GetLeagueTable(string competitionName, string season)
+        public LeagueTable GetLeagueTable(int tier, string season)
         {
-            var seasonStartYear = Convert.ToInt32(season.Substring(0, 4));
+            var seasonStartYear = season.Substring(0, 4);
+            var seasonEndYear = season.Substring(7, 4);
             var leagueTable = new LeagueTable
             {
-                Competition = competitionName,
-                Season = $"{seasonStartYear} - {seasonStartYear + 1}",
+                Competition = "",
+                Season = $"{seasonStartYear} - {seasonEndYear}",
                 LeagueTableRow = new List<LeagueTableRow>()
             };
 
@@ -37,8 +39,8 @@ WITH Matches AS
     FROM dbo.Matches m
     INNER JOIN dbo.Divisions d
         ON m.DivisionId = d.Id
-    WHERE d.Name = @CompetitionName
-        AND m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonStartYear + 1, 6, 30)
+    WHERE d.Tier = @Tier
+        AND m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
 )
 
 SELECT ROW_NUMBER() OVER(ORDER BY Points DESC, GoalDifference DESC, GoalsFor DESC) AS Position
@@ -87,7 +89,11 @@ FROM (
 			GROUP BY AwayTeam
 		) AS m2 ON t.Team = m2.AwayTeam
 	) r
-ORDER BY Position
+ORDER BY Position;
+
+SELECT Name 
+FROM dbo.Divisions
+WHERE Tier = @Tier AND [From] <= @SeasonStartYear AND ([To] IS NULL OR [To] >= @SeasonEndYear)
 ";
 
             using(var conn = m_Context.Database.GetDbConnection())
@@ -96,8 +102,9 @@ ORDER BY Position
 
                 var cmd = conn.CreateCommand();
                 cmd.CommandText = sql;
-                cmd.Parameters.Add(new SqlParameter("@CompetitionName", competitionName));
+                cmd.Parameters.Add(new SqlParameter("@Tier", tier));
                 cmd.Parameters.Add(new SqlParameter("@SeasonStartYear", seasonStartYear));
+                cmd.Parameters.Add(new SqlParameter("@SeasonEndYear", seasonEndYear));
 
                 var reader = cmd.ExecuteReader();
                 if (reader.HasRows)
@@ -120,6 +127,13 @@ ORDER BY Position
                             }
                         );
                     }
+                    
+                    reader.NextResult();
+
+                    while (reader.Read())
+                    {
+                        leagueTable.Competition = reader.GetString(0);
+                    }
                 } 
                 else 
                 {
@@ -136,7 +150,7 @@ ORDER BY Position
             var leagueFilterOptions = new LeagueFilterOptions
             {
                 AllSeasons = new List<string>(),
-                AllDivisions = new List<Division>()
+                AllTiers = new List<Tier>()
             };
 
             var sql = @"
@@ -150,7 +164,7 @@ FROM (
 ) m
 GROUP BY Season;
 
-SELECT Name, Tier, FirstSeason
+SELECT Name, Tier, [From], [To]
 FROM dbo.Divisions;
 ";
 
@@ -175,14 +189,15 @@ FROM dbo.Divisions;
 
                     while (reader.Read())
                     {
-                        leagueFilterOptions.AllDivisions.Add(
-                            new Division
+                        var tier = reader.GetByte(1);
+                        var division = new Division
                             {
                                 Name = reader.GetString(0),
-                                Tier = reader.GetByte(1),
-                                FirstSeason = reader.GetString(2)
-                            }
-                        );
+                                SeasonStartYear = reader.GetInt16(2),
+                                SeasonEndYear = reader.IsDBNull(3) ? DateTime.UtcNow.Year : reader.GetInt16(3)
+                            };
+
+                        AddDivision(tier, division, leagueFilterOptions);
                     }
                 } 
                 else 
@@ -193,6 +208,31 @@ FROM dbo.Divisions;
             }
 
             return leagueFilterOptions;
+        }
+
+        private void AddDivision(int tier, Division division, LeagueFilterOptions leagueFilterOptions)
+        {
+            var tierExists = leagueFilterOptions.AllTiers.Where(t => t.Level == tier).ToList().Count == 1;
+            if (tierExists)
+            {
+                leagueFilterOptions.AllTiers = leagueFilterOptions.AllTiers
+                    .Select(t => {
+                        if (t.Level == tier) {
+                            t.Divisions.Add(division);
+                        }; 
+                        return t;
+                    }).ToList();
+            }
+            else 
+            {
+                leagueFilterOptions.AllTiers.Add(
+                    new Tier
+                    {
+                        Level = tier,
+                        Divisions = new List<Division> { division }
+                    }
+                );
+            }
         }
     }
 }

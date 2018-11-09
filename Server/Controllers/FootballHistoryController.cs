@@ -17,9 +17,9 @@ namespace football_history.Controllers
         }
 
         [HttpGet("[action]")]
-        public LeagueTable GetLeague(string competition, string season)
+        public LeagueTable GetLeague(string tier, string season)
         {
-            return m_Repository.GetLeagueTable(competition, season);
+            return m_Repository.GetLeagueTable(Convert.ToInt32(tier), season);
         }
 
         [HttpGet("[action]")]
