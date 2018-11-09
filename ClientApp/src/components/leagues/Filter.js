@@ -21,8 +21,8 @@ class Filter extends Component {
     const { allSeasons, allTiers, selectedTier, selectedSeason } = this.props;
 
     return (
-      <ButtonToolbar>
-        <DropdownButton title="Leagues" id="LeagueSelect">
+      <ButtonToolbar style={{marginTop: 20}}>
+        <DropdownButton title="League" id="LeagueSelect">
         {
           allTiers.map(t => 
             <MenuItem key={t.level}

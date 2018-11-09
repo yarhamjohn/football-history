@@ -47,7 +47,7 @@ class Table extends Component {
               <th>Lost</th>
               <th>Goals For</th>
               <th>Goals Against</th>
-              <th>Goal Diff.</th>
+              <th>Goal Difference</th>
               <th>Points</th>
             </tr>
           </thead>
