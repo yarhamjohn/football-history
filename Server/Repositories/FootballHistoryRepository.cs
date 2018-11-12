@@ -221,6 +221,56 @@ FROM dbo.Divisions;
             return leagueFilterOptions;
         }
 
+        public List<Results> GetMatchResultMatrix(int tier, string season)
+        {
+            var seasonStartYear = season.Substring(0, 4);
+            var seasonEndYear = season.Substring(7, 4);
+            
+            var sql = @"
+SELECT m.HomeTeam
+    ,m.AwayTeam
+    ,CONCAT(m.HomeGoals, '-', AwayGoals) AS Result
+FROM dbo.Matches m
+INNER JOIN dbo.Divisions d
+    ON m.DivisionId = d.Id
+WHERE d.Tier = @Tier
+    AND m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
+";
+
+            var resultsMatrix = new List<Results>();
+
+            using(var conn = m_Context.Database.GetDbConnection())
+            {
+                conn.Open();
+
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+                cmd.Parameters.Add(new SqlParameter("@Tier", tier));
+                cmd.Parameters.Add(new SqlParameter("@SeasonStartYear", seasonStartYear));
+                cmd.Parameters.Add(new SqlParameter("@SeasonEndYear", seasonEndYear));
+
+                var reader = cmd.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        var homeTeam = reader.GetString(0);
+                        var awayTeam = reader.GetString(1);
+                        var result = reader.GetString(2);
+
+                        AddResult(homeTeam, awayTeam, result, resultsMatrix);
+                    }
+                } 
+                else 
+                {
+                    System.Console.WriteLine("No rows found");
+                }
+                reader.Close();
+            }
+        
+            return resultsMatrix;
+        }
+
         private void AddDivision(int tier, Division division, LeagueFilterOptions leagueFilterOptions)
         {
             var tierExists = leagueFilterOptions.AllTiers.Where(t => t.Level == tier).ToList().Count == 1;
@@ -241,6 +291,31 @@ FROM dbo.Divisions;
                     {
                         Level = tier,
                         Divisions = new List<Division> { division }
+                    }
+                );
+            }
+        }
+
+        private void AddResult(string homeTeam, string awayTeam, string result, List<Results> resultsMatrix)
+        {
+            var homeTeamExists = resultsMatrix.Where(r => r.HomeTeam == homeTeam).ToList().Count == 1;
+            if (homeTeamExists)
+            {
+                resultsMatrix = resultsMatrix
+                    .Select(r => {
+                        if (r.HomeTeam == homeTeam) {
+                            r.Scores.Add((awayTeam, result));
+                        }; 
+                        return r;
+                    }).ToList();
+            }
+            else 
+            {
+                resultsMatrix.Add(
+                    new Results
+                    {
+                        HomeTeam = homeTeam,
+                        Scores = new List<(string AwayTeam, string Result)> { (homeTeam, null), (awayTeam, result) }
                     }
                 );
             }

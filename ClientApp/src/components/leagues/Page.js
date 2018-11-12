@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Table from './Table';
 import Filter from './Filter';
+import ResultMatrix from './ResultMatrix';
 
 class Page extends Component {
   constructor(props) {
@@ -47,6 +48,7 @@ class Page extends Component {
           selectLeagueTable={(season, tier) => this.selectLeagueTable(season, tier)}
         />
         <Table season={season} tier={tier} />
+        <ResultMatrix season={season} tier={tier} />
       </React.Fragment>
     }
 

@@ -70,12 +70,10 @@ class Table extends Component {
           </tbody>
         </table>
         <div>
-          {/* <ul> */}
-            {leagueTable.leagueTableRow.map(row =>
-              row.pointsDeducted > 0
-                ? <p key={row.team} className='point-deductions'>* {row.team} had {row.pointsDeducted} point{row.pointsDeducted > 1 ? 's' : ''} deducted ({row.pointsDeductionReason})</p>
-                : '')}
-          {/* </ul> */}
+          {leagueTable.leagueTableRow.map(row =>
+            row.pointsDeducted > 0
+              ? <p key={row.team} className='point-deductions'>* {row.team} had {row.pointsDeducted} point{row.pointsDeducted > 1 ? 's' : ''} deducted ({row.pointsDeductionReason})</p>
+              : '')}
         </div>
       </React.Fragment>
     }

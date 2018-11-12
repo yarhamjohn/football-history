@@ -27,5 +27,11 @@ namespace football_history.Controllers
         {
             return m_Repository.GetLeagueFilterOptions();
         }
+        
+        [HttpGet("[action]")]
+        public List<Results> GetMatchResultMatrix(string tier, string season)
+        {
+            return m_Repository.GetMatchResultMatrix(Convert.ToInt32(tier), season);
+        }
     }
 }
