@@ -1,0 +1,37 @@
+Id,Club,DivisionId,Season,PointsDeducted,Reason
+1,Brighton and Hove Albion,7,1996 - 1997,2,Failing to control spectators
+2,Middlesborough,1,1996 - 1997,3,Unauthorised postponing of a match
+3,Leyton Orient,7,1997 - 1998,3,Fielding an ineligible player
+4,Chesterfield,7,2000 - 2001,9,Financial irregularities
+5,Boston United,7,2002 - 2003,4,Financial irregularities
+6,Cambridge United,6,2004 - 2005,10,Entering administration
+7,Wrexham,4,2004 - 2005,10,Entering administration
+8,Bury,6,2005 - 2006,1,Fielding an ineligible player
+9,Boston United,6,2006 - 2007,10,Entering administration
+10,Rotherham United,4,2006 - 2007,10,Entering administration
+11,Leeds United,2,2006 - 2007,10,Entering administration
+12,Rotherham United,6,2007 - 2008,10,Entering administration
+13,Luton Town,4,2007 - 2008,10,Entering administration
+14,Leeds United,4,2007 - 2008,15,Breach of insolvency rules
+15,Bournemouth,4,2007 - 2008,10,Entering administration
+16,Rotherham United,6,2008 - 2009,17,Breach of insolvency rules
+17,Luton Town,6,2008 - 2009,30,Breach of insolvency rules and financial misconduct
+18,Bournemouth,6,2008 - 2009,17,Breach of insolvency rules
+19,Darlington,6,2008 - 2009,10,Entering administration
+20,Stockport County,4,2008 - 2009,10,Entering administration
+21,Crystal Palace,2,2008 - 2009,1,Fielding an ineligible player
+22,Southampton,4,2009 - 2010,10,Entering administration
+23,Hartlepool United,4,2009 - 2010,3,Fielding an ineligible player
+24,Crystal Palace,2,2009 - 2010,10,Entering administration
+25,Portsmouth,1,2009 - 2010,9,Entering administration
+26,Torquay United,6,2010 - 2011,1,Fielding an ineligible player
+27,Hereford United,6,2010 - 2011,3,Fielding an ineligible player
+28,Plymouth Argyle,4,2010 - 2011,10,Entering administration
+29,Port Value,6,2011 - 2012,10,Entering administration
+30,Portsmouth,2,2011 - 2012,10,Entering administration
+31,Portsmouth,4,2012 - 2013,10,Breach of insolvency rules
+32,Coventry City,4,2012 - 2013,10,Entering administration
+33,AFC Wimbledon,6,2013 - 2014,3,Fielding an ineligible player
+34,Coventry City,4,2013 - 2014,10,Breach of insolvency rules
+35,Rotherham United,2,2014 - 2015,3,Fielding an ineligible player
+36,Bury,4,2015 - 2016,3,Fielding an ineligible player
