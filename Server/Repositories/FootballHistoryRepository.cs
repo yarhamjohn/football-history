@@ -33,6 +33,7 @@ SELECT m.HomeTeam
     ,m.AwayTeam
     ,m.HomeGoals
     ,m.AwayGoals
+    ,m.DivisionId
     ,d.Name AS Division
 FROM dbo.Matches m
 INNER JOIN dbo.Divisions d
@@ -55,6 +56,8 @@ SELECT ROW_NUMBER() OVER(ORDER BY Points DESC, GoalDifference DESC, GoalsFor DES
 	,GoalsAgainst
 	,GoalDifference
 	,Points
+    ,PointsDeducted
+    ,PointsDeductionReason
 FROM (
 	SELECT Division
         ,Team
@@ -65,11 +68,23 @@ FROM (
 		,HomeGoalsFor + AwayGoalsFor AS GoalsFor
 		,HomeGoalsAgainst + AwayGoalsAgainst AS GoalsAgainst
 		,HomeGoalsFor + AwayGoalsFor - HomeGoalsAgainst - AwayGoalsAgainst AS GoalDifference
-		,(HomeWins + AwayWins) * 3 + HomeDraws + AwayDraws AS Points
+		,(HomeWins + AwayWins) * 3 + HomeDraws + AwayDraws - PointsDeducted AS Points
+        ,PointsDeducted
+        ,PointsDeductionReason
 	FROM (
-		SELECT HomeTeam AS Team, Division
-		FROM MatchesInSeason
-		GROUP BY HomeTeam, Division
+        SELECT m.HomeTeam AS Team
+            ,m.Division
+            ,COALESCE(pd.PointsDeducted, 0) AS PointsDeducted
+            ,pd.Reason AS PointsDeductionReason
+        FROM (
+            SELECT HomeTeam, Division, DivisionId
+            FROM MatchesInSeason
+            GROUP BY HomeTeam, Division, DivisionId
+        ) m
+        LEFT JOIN dbo.PointDeductions pd
+        ON m.DivisionId = pd.DivisionId
+            AND m.HomeTeam = pd.Club
+            AND pd.Season = CONCAT(@SeasonStartYear, ' - ', @SeasonEndYear)
 	) t
 	INNER JOIN (
 			SELECT HomeTeam
@@ -124,7 +139,9 @@ ORDER BY Position;
                                 GoalsFor = reader.GetInt32(7),
                                 GoalsAgainst = reader.GetInt32(8),
                                 GoalDifference = reader.GetInt32(9),
-                                Points = reader.GetInt32(10)
+                                Points = reader.GetInt32(10),
+                                PointsDeducted = reader.GetInt32(11),
+                                PointsDeductionReason = reader.IsDBNull(12) ? string.Empty : reader.GetString(12)
                             }
                         );
                     }

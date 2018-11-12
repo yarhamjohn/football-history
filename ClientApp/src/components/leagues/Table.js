@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import './Table.css';
 
 class Table extends Component {
   constructor(props) {
@@ -63,11 +64,19 @@ class Table extends Component {
                 <td>{row.goalsFor}</td>
                 <td>{row.goalsAgainst}</td>
                 <td>{row.goalDifference}</td>
-                <td>{row.points}</td>
+                <td>{row.points}{row.pointsDeducted > 0 ? <span className='point-deductions'> *</span> : ''}</td>
               </tr>
             )}
           </tbody>
         </table>
+        <div>
+          {/* <ul> */}
+            {leagueTable.leagueTableRow.map(row =>
+              row.pointsDeducted > 0
+                ? <p key={row.team} className='point-deductions'>* {row.team} had {row.pointsDeducted} point{row.pointsDeducted > 1 ? 's' : ''} deducted ({row.pointsDeductionReason})</p>
+                : '')}
+          {/* </ul> */}
+        </div>
       </React.Fragment>
     }
 

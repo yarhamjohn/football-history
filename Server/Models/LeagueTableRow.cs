@@ -10,4 +10,6 @@ public class LeagueTableRow
     public int GoalsAgainst { get; set; }
     public int GoalDifference { get; set; }
     public int Points { get; set; }
+    public int PointsDeducted { get; set; }
+    public string PointsDeductionReason { get; set; }
 }
