@@ -1,25 +1,25 @@
 <?xml version="1.0"?>
 <DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
   DTS:refId="Package"
-  DTS:CreationDate="11/13/2018 2:25:15 PM"
+  DTS:CreationDate="11/13/2018 11:13:59 PM"
   DTS:CreationName="Microsoft.Package"
   DTS:CreatorComputerName="NEWLAPTOP"
   DTS:CreatorName="NEWLAPTOP\John and Julia"
   DTS:Description="SSIS Package Description"
-  DTS:DTSID="{9020646E-E4B1-4CE6-A7E4-17663180F89C}"
+  DTS:DTSID="{90A4F78A-6F4F-4067-A4E4-8CF028F45ED9}"
   DTS:ExecutableType="Microsoft.Package"
   DTS:LastModifiedProductVersion="14.0.3026.27"
   DTS:LocaleID="2057"
   DTS:MaxErrorCount="0"
   DTS:ObjectName="Extract Clubs data"
-  DTS:VersionGUID="{2D1948FC-EDF8-444C-9788-36EDF01CEE72}">
+  DTS:VersionGUID="{3670A288-78E6-4A7F-BA23-745EDE4C7F9F}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
     <DTS:ConnectionManager
       DTS:refId="Package.ConnectionManagers[DestinationConnectionFlatFile]"
       DTS:CreationName="FLATFILE"
-      DTS:DTSID="{52D2D7E1-A9E9-45AF-8B2B-49FFF5077B17}"
+      DTS:DTSID="{95FBD209-9D21-4172-A1F9-89046A2609A7}"
       DTS:ObjectName="DestinationConnectionFlatFile">
       <DTS:ObjectData>
         <DTS:ConnectionManager
@@ -39,7 +39,7 @@
               DTS:DataType="20"
               DTS:TextQualified="True"
               DTS:ObjectName="Id"
-              DTS:DTSID="{F9300E47-F1F1-43FA-B51A-923DD7AC03E5}"
+              DTS:DTSID="{3B33BC87-FF15-476B-84E9-3BBBF5758DC4}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -48,7 +48,7 @@
               DTS:DataType="130"
               DTS:TextQualified="True"
               DTS:ObjectName="Name"
-              DTS:DTSID="{5413E7AF-AB49-48E5-A33C-3B302C8431AB}"
+              DTS:DTSID="{A9FB081B-B40E-4D15-A9A1-69A1552EBC22}"
               DTS:CreationName="" />
             <DTS:FlatFileColumn
               DTS:ColumnType="Delimited"
@@ -57,7 +57,7 @@
               DTS:DataType="129"
               DTS:TextQualified="True"
               DTS:ObjectName="Abbreviation"
-              DTS:DTSID="{2BA2DA64-CAC6-4229-A157-9C78A80335EC}"
+              DTS:DTSID="{36998F5C-6E94-4405-91F2-7E8964AD4508}"
               DTS:CreationName="" />
           </DTS:FlatFileColumns>
         </DTS:ConnectionManager>
@@ -66,7 +66,7 @@
     <DTS:ConnectionManager
       DTS:refId="Package.ConnectionManagers[SourceConnectionOLEDB]"
       DTS:CreationName="OLEDB"
-      DTS:DTSID="{2E711C2E-27A2-4A8D-B940-C778D9E994C5}"
+      DTS:DTSID="{59DA7EAA-C1D8-4730-9818-98E9B61F0DD3}"
       DTS:ObjectName="SourceConnectionOLEDB">
       <DTS:ObjectData>
         <DTS:ConnectionManager
@@ -74,7 +74,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAooRcAb7yv0mr+f3RVbtMUwAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAAD3PCDbjsmPeZg/vjVmzUjHfAomPVleXQiqYj5T/TIscwAAAAAOgAAAAAIAACAAAADYmi8B4lgiJXvGP1br5XFscOT3b+cHxle2WfIaBiuEMiAAAACeg2ChSTfbxMzqKxEjbFCieAcovmtWSRj1FKsqEITNMkAAAABK1MB8/rUKNhGYT67F0Jcih0yNh55ZL/yJzWRy/3/0mJF/axxv7eZT6w7YnWhhGdkGoiIZUdLsFB139C4cR1Ew</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAooRcAb7yv0mr+f3RVbtMUwAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAACTSAm1+jKwj4iiycRoYYZV3astunHwMvdgW+rvfyHPsgAAAAAOgAAAAAIAACAAAABNZmQ+SC9/AlAR1ACo8UPLkMkjnGp1fomD4EY9Lp78/iAAAACe12ha95O4lsjXjXCuxwFRY71rfEYYTDgPC/aNLPG84kAAAACXy7U2RFHo4GbUR4KT4MsaBp0kX2x8r8LROGDpOG5sVpAjHJp6ywKREbpgaFqA4SzlvrgyMU1MwUBaGZ4nJRio</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -84,8 +84,7 @@
     <DTS:Executable
       DTS:refId="Package\Data Flow Task 1"
       DTS:CreationName="Microsoft.Pipeline"
-      DTS:DelayValidation="True"
-      DTS:DTSID="{A4A56B7A-F3C8-48E1-B984-CD2FAD7A587D}"
+      DTS:DTSID="{85335F50-D176-4AF5-BFB2-8F6011B66686}"
       DTS:ExecutableType="Microsoft.Pipeline"
       DTS:FailPackageOnFailure="True"
       DTS:LocaleID="-1"
@@ -103,13 +102,12 @@
               contactInfo="Flat File Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
               description="Flat File Destination"
               localeId="2057"
-              name="Destination - Clubs_txt"
-              validateExternalMetadata="False">
+              name="Destination - Clubs_txt">
               <properties>
                 <property
                   dataType="System.Boolean"
                   description="Specifies whether the data will overwrite or append to the destination file."
-                  name="Overwrite">true</property>
+                  name="Overwrite">false</property>
                 <property
                   dataType="System.String"
                   description="Specifies the text to write to the destination file before any data is written."

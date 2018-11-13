@@ -110,3 +110,115 @@ Id|Name|Abbreviation
 110|Wycombe Wanderers|WYC
 111|Yeovil Town|YEO
 112|York City|YOR
+Id|Name|Abbreviation
+1|Accrington Stanley|ACC
+2|AFC Bournemouth|BOU
+3|AFC Wimbledon|WIM
+4|Aldershot Town|ALD
+5|Arsenal|ARS
+6|Aston Villa|AST
+7|Barnet|BAR
+8|Barnsley|BAR
+9|Birmingham City|BIR
+10|Blackburn Rovers|BLB
+11|Blackpool|BLP
+12|Bolton Wanderers|BOL
+13|Boston United|BOS
+14|Bradford City|BRA
+15|Brentford|BRE
+16|Brighton and Hove Albion|BHA
+17|Bristol City|BRI
+18|Bristol Rovers|BRR
+19|Burnley|BUR
+20|Burton Albion|BRT
+21|Bury|BUR
+22|Cambridge United|CAM
+23|Cardiff City|CAR
+24|Carlisle United|CAR
+25|Charlton Athletic|CHA
+26|Chelsea|CHE
+27|Cheltenham Town|CHL
+28|Chester City|CHE
+29|Chesterfield|CHE
+30|Colchester United|COL
+31|Coventry City|COV
+32|Crawley Town|CRA
+33|Crewe Alexandra|CRE
+34|Crystal Palace|CRY
+35|Dagenham and Redbridge|DAG
+36|Darlington|DAR
+37|Derby County|DER
+38|Doncaster Rovers|DON
+39|Everton|EVE
+40|Exeter City|EXE
+41|Fleetwood Town|FLE
+42|Forest Green Rovers|FGR
+43|Fulham|FUL
+44|Gillingham|GIL
+45|Grimsby Town|GRI
+46|Halifax Town|HAL
+47|Hartlepool United|HAR
+48|Hereford United|HER
+49|Huddersfield Town|HUD
+50|Hull City|HUL
+51|Ipswich Town|IPS
+52|Kidderminster Harriers|KID
+53|Leeds United|LEE
+54|Leicester City|LEI
+55|Leyton Orient|LEY
+56|Lincoln City|LIN
+57|Liverpool|LIV
+58|Luton Town|LUT
+59|Macclesfield Town|MAC
+60|Manchester City|MCI
+61|Manchester United|MUN
+62|Mansfield Town|MAN
+64|Middlesbrough|MID
+65|Millwall|MIL
+66|Milton Keynes Dons|MKD
+67|Morecambe|MOR
+68|Newcastle United|NEW
+69|Newport County|NEW
+70|Northampton Town|NOR
+71|Norwich City|NOR
+72|Nottingham Forest|NOT
+73|Notts County|NOT
+74|Oldham Athletic|OLD
+75|Oxford United|OXF
+76|Peterborough United|PET
+77|Plymouth Argyle|PLY
+78|Port Vale|POR
+79|Portsmouth|POR
+80|Preston North End|PNE
+81|QPR|QPR
+82|Reading|REA
+83|Rochdale|ROC
+84|Rotherham United|ROT
+85|Rushden and Diamonds|RUS
+86|Scarborough|SCA
+87|Scunthorpe United|SCU
+88|Sheffield United|SHU
+89|Sheffield Wednesday|SHW
+90|Shrewsbury Town|SHR
+91|Southampton|SOU
+92|Southend United|STD
+93|Stevenage|STE
+94|Stockport County|STO
+95|Stoke City|STO
+96|Sunderland|SUN
+97|Swansea City|SWA
+98|Swindon Town|SWI
+99|Torquay United|TOR
+100|Tottenham Hotspur|TOT
+101|Tranmere Rovers|TRA
+102|Walsall|WAL
+103|Watford|WAT
+104|West Bromwich Albion|WBA
+105|West Ham United|WHU
+106|Wigan Athletic|WIG
+107|Wimbledon|WIM
+108|Wolverhampton Wanderers|WOL
+109|Wrexham|WRE
+110|Wycombe Wanderers|WYC
+111|Yeovil Town|YEO
+112|York City|YOR
