@@ -35,7 +35,7 @@ SELECT hc.Name AS HomeTeam
     ,m.AwayGoals
     ,m.DivisionId
     ,d.Name AS Division
-FROM dbo.Matches m
+FROM dbo.LeagueMatches m
 INNER JOIN dbo.Divisions d ON m.DivisionId = d.Id
 INNER JOIN dbo.Clubs hc ON m.HomeClubId = hc.Id
 INNER JOIN dbo.Clubs ac ON m.AwayClubId = ac.Id
@@ -204,7 +204,7 @@ FROM (
                 THEN CAST(YEAR(MatchDate) AS CHAR(4)) + ' - ' + CAST(YEAR(MatchDate) + 1 AS CHAR(4))
                 ELSE CAST(YEAR(MatchDate) - 1 AS CHAR(4)) + ' - ' + CAST(YEAR(MatchDate) AS CHAR(4))
                 END AS Season
-    FROM dbo.Matches
+    FROM dbo.LeagueMatches
 ) m
 GROUP BY Season;
 
@@ -267,7 +267,7 @@ SELECT hc.Name AS HomeTeam
     ,CASE WHEN m.HomeGoals > m.AwayGoals THEN 'W'
           WHEN m.HomeGoals = m.AwayGoals THEN 'D'
           ELSE 'L' END AS Result
-FROM dbo.Matches m
+FROM dbo.LeagueMatches m
 INNER JOIN dbo.Divisions d ON m.DivisionId = d.Id
 INNER JOIN dbo.Clubs hc ON m.HomeClubId = hc.Id
 INNER JOIN dbo.Clubs ac ON m.AwayClubId = ac.Id
