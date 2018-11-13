@@ -46,72 +46,98 @@ WHERE d.Tier = @Tier
             var sql = $@"
 WITH MatchesInSeason AS ({matchesInSeason})
 
-SELECT ROW_NUMBER() OVER(ORDER BY Points DESC, GoalDifference DESC, GoalsFor DESC) AS Position
-	,Division
+SELECT Position
+    ,Division
     ,Team
-	,GamesPlayed
-	,GamesWon
-	,GamesDrawn
-	,GamesLost
-	,GoalsFor
-	,GoalsAgainst
-	,GoalDifference
-	,Points
+    ,GamesPlayed
+    ,GamesWon
+    ,GamesDrawn
+    ,GamesLost
+    ,GoalsFor
+    ,GoalsAgainst
+    ,GoalDifference
+    ,Points
     ,PointsDeducted
     ,PointsDeductionReason
+    ,Status
 FROM (
-	SELECT Division
+    SELECT ROW_NUMBER() OVER(ORDER BY Points DESC, GoalDifference DESC, GoalsFor DESC) AS Position
+        ,Division
         ,Team
-		,HomeWins + HomeDraws + HomeLosses + AwayWins + AwayDraws + AwayLosses AS GamesPlayed
-		,HomeWins + AwayWins AS GamesWon
-		,HomeDraws + AwayDraws AS GamesDrawn
-		,HomeLosses + AwayLosses AS GamesLost
-		,HomeGoalsFor + AwayGoalsFor AS GoalsFor
-		,HomeGoalsAgainst + AwayGoalsAgainst AS GoalsAgainst
-		,HomeGoalsFor + AwayGoalsFor - HomeGoalsAgainst - AwayGoalsAgainst AS GoalDifference
-		,(HomeWins + AwayWins) * 3 + HomeDraws + AwayDraws - PointsDeducted AS Points
+        ,GamesPlayed
+        ,GamesWon
+        ,GamesDrawn
+        ,GamesLost
+        ,GoalsFor
+        ,GoalsAgainst
+        ,GoalDifference
+        ,Points
         ,PointsDeducted
         ,PointsDeductionReason
-	FROM (
-        SELECT m.HomeTeam AS Team
-            ,m.Division
-            ,COALESCE(pd.PointsDeducted, 0) AS PointsDeducted
-            ,pd.Reason AS PointsDeductionReason
+    FROM (
+        SELECT Division
+            ,Team
+            ,HomeWins + HomeDraws + HomeLosses + AwayWins + AwayDraws + AwayLosses AS GamesPlayed
+            ,HomeWins + AwayWins AS GamesWon
+            ,HomeDraws + AwayDraws AS GamesDrawn
+            ,HomeLosses + AwayLosses AS GamesLost
+            ,HomeGoalsFor + AwayGoalsFor AS GoalsFor
+            ,HomeGoalsAgainst + AwayGoalsAgainst AS GoalsAgainst
+            ,HomeGoalsFor + AwayGoalsFor - HomeGoalsAgainst - AwayGoalsAgainst AS GoalDifference
+            ,(HomeWins + AwayWins) * 3 + HomeDraws + AwayDraws - PointsDeducted AS Points
+            ,PointsDeducted
+            ,PointsDeductionReason
         FROM (
-            SELECT HomeTeam, Division, DivisionId
-            FROM MatchesInSeason
-            GROUP BY HomeTeam, Division, DivisionId
-        ) m
-        LEFT JOIN (
-            SELECT DivisionId, Season, Name AS Club, PointsDeducted, Reason
-            FROM dbo.PointDeductions pd
-            INNER JOIN dbo.Clubs c ON pd.ClubId = c.Id
-        ) pd
-        ON m.DivisionId = pd.DivisionId
-            AND m.HomeTeam = pd.Club
-            AND pd.Season = CONCAT(@SeasonStartYear, ' - ', @SeasonEndYear)
-	) t
-	INNER JOIN (
-			SELECT HomeTeam
-				,SUM(CASE WHEN HomeGoals > AwayGoals THEN 1 ELSE 0 END) AS HomeWins
-				,SUM(CASE WHEN HomeGoals = AwayGoals THEN 1 ELSE 0 END) AS HomeDraws 
-				,SUM(CASE WHEN HomeGoals < AwayGoals THEN 1 ELSE 0 END) AS HomeLosses
-				,SUM(HomeGoals) AS HomeGoalsFor
-				,SUM(AwayGoals) AS HomeGoalsAgainst
-			FROM MatchesInSeason
-			GROUP BY HomeTeam
-		) AS m1 ON t.Team = m1.HomeTeam
-	INNER JOIN (
-			SELECT AwayTeam
-				,SUM(CASE WHEN AwayGoals > HomeGoals THEN 1 ELSE 0 END) AS AwayWins
-				,SUM(CASE WHEN AwayGoals = HomeGoals THEN 1 ELSE 0 END) AS AwayDraws
-				,SUM(CASE WHEN AwayGoals < HomeGoals THEN 1 ELSE 0 END) AS AwayLosses
-				,SUM(AwayGoals) AS AwayGoalsFor
-				,SUM(HomeGoals) AS AwayGoalsAgainst
-			FROM MatchesInSeason
-			GROUP BY AwayTeam
-		) AS m2 ON t.Team = m2.AwayTeam
-	) r
+            SELECT m.HomeTeam AS Team
+                ,m.Division
+                ,COALESCE(pd.PointsDeducted, 0) AS PointsDeducted
+                ,pd.Reason AS PointsDeductionReason
+            FROM (
+                SELECT HomeTeam, Division, DivisionId
+                FROM MatchesInSeason
+                GROUP BY HomeTeam, Division, DivisionId
+            ) m
+            LEFT JOIN (
+                SELECT DivisionId, Season, Name AS Club, PointsDeducted, Reason
+                FROM dbo.PointDeductions pd
+                INNER JOIN dbo.Clubs c ON pd.ClubId = c.Id
+            ) pd
+            ON m.DivisionId = pd.DivisionId
+                AND m.HomeTeam = pd.Club
+                AND pd.Season = CONCAT(@SeasonStartYear, ' - ', @SeasonEndYear)
+        ) t
+        INNER JOIN (
+                SELECT HomeTeam
+                    ,SUM(CASE WHEN HomeGoals > AwayGoals THEN 1 ELSE 0 END) AS HomeWins
+                    ,SUM(CASE WHEN HomeGoals = AwayGoals THEN 1 ELSE 0 END) AS HomeDraws 
+                    ,SUM(CASE WHEN HomeGoals < AwayGoals THEN 1 ELSE 0 END) AS HomeLosses
+                    ,SUM(HomeGoals) AS HomeGoalsFor
+                    ,SUM(AwayGoals) AS HomeGoalsAgainst
+                FROM MatchesInSeason
+                GROUP BY HomeTeam
+            ) AS m1 ON t.Team = m1.HomeTeam
+        INNER JOIN (
+                SELECT AwayTeam
+                    ,SUM(CASE WHEN AwayGoals > HomeGoals THEN 1 ELSE 0 END) AS AwayWins
+                    ,SUM(CASE WHEN AwayGoals = HomeGoals THEN 1 ELSE 0 END) AS AwayDraws
+                    ,SUM(CASE WHEN AwayGoals < HomeGoals THEN 1 ELSE 0 END) AS AwayLosses
+                    ,SUM(AwayGoals) AS AwayGoalsFor
+                    ,SUM(HomeGoals) AS AwayGoalsAgainst
+                FROM MatchesInSeason
+                GROUP BY AwayTeam
+            ) AS m2 ON t.Team = m2.AwayTeam
+        ) r
+) a
+CROSS APPLY (
+    SELECT CASE WHEN a.Position = 1 THEN 'Champions' 
+                WHEN a.Position <= ls.PromotionPlaces THEN 'Promoted' 
+                WHEN a.Position <= ls.PromotionPlaces + ls.PlayOffPlaces THEN 'Play Offs'
+                WHEN a.Position > ls.TotalPlaces - ls.RelegationPlaces THEN 'Relegated'
+                ELSE NULL END AS Status
+    FROM dbo.LeagueStatuses ls
+    INNER JOIN dbo.Divisions d ON d.Id = ls.DivisionId
+    WHERE d.Tier = @Tier AND ls.Season = CONCAT(@SeasonStartYear, ' - ', @SeasonEndYear)
+) b
 ORDER BY Position;
 ";
 
@@ -130,12 +156,13 @@ ORDER BY Position;
                 {
                     while (reader.Read())
                     {
-                        leagueTable.Competition = reader.GetString(1);
+                        var position = (int) reader.GetInt64(0);
 
+                        leagueTable.Competition = reader.GetString(1);
                         leagueTable.LeagueTableRow.Add(
                             new LeagueTableRow
                             {
-                                Position = (int) reader.GetInt64(0),
+                                Position = position,
                                 Team = reader.GetString(2),
                                 Played = reader.GetInt32(3),
                                 Won = reader.GetInt32(4),
@@ -146,7 +173,8 @@ ORDER BY Position;
                                 GoalDifference = reader.GetInt32(9),
                                 Points = reader.GetInt32(10),
                                 PointsDeducted = reader.GetInt32(11),
-                                PointsDeductionReason = reader.IsDBNull(12) ? string.Empty : reader.GetString(12)
+                                PointsDeductionReason = reader.IsDBNull(12) ? string.Empty : reader.GetString(12),
+                                Status = reader.IsDBNull(13) ? string.Empty : reader.GetString(13)
                             }
                         );
                     }

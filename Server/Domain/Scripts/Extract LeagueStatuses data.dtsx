@@ -1,0 +1,481 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="11/13/2018 4:38:47 PM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="NEWLAPTOP"
+  DTS:CreatorName="NEWLAPTOP\John and Julia"
+  DTS:Description="SSIS Package Description"
+  DTS:DTSID="{F615828A-BA2B-4BCC-AA32-B4B5F4015BDF}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="14.0.3026.27"
+  DTS:LocaleID="2057"
+  DTS:MaxErrorCount="0"
+  DTS:ObjectName="Extract LeagueStatuses data"
+  DTS:VersionGUID="{6CD11838-CD4D-492D-8EB3-695EF8E001C1}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[DestinationConnectionFlatFile]"
+      DTS:CreationName="FLATFILE"
+      DTS:DTSID="{484554B2-E011-472E-9B6A-8467846378B7}"
+      DTS:ObjectName="DestinationConnectionFlatFile">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:Format="Delimited"
+          DTS:LocaleID="2057"
+          DTS:HeaderRowDelimiter="_x000D__x000A_"
+          DTS:ColumnNamesInFirstDataRow="True"
+          DTS:RowDelimiter=""
+          DTS:TextQualifier="_x003C_none_x003E_"
+          DTS:CodePage="1252"
+          DTS:ConnectionString="C:\Users\John and Julia\Documents\Projects\football-history\Server\Domain\Data\LeagueStatuses.txt">
+          <DTS:FlatFileColumns>
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x007C_"
+              DTS:MaximumWidth="20"
+              DTS:DataType="20"
+              DTS:TextQualified="True"
+              DTS:ObjectName="Id"
+              DTS:DTSID="{CBFB8674-9205-4934-83D7-D0D80D1EEC60}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x007C_"
+              DTS:MaximumWidth="20"
+              DTS:DataType="20"
+              DTS:TextQualified="True"
+              DTS:ObjectName="DivisionId"
+              DTS:DTSID="{7903B898-5A94-4B4E-80AA-B4CF4404C7BF}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x007C_"
+              DTS:MaximumWidth="11"
+              DTS:DataType="129"
+              DTS:TextQualified="True"
+              DTS:ObjectName="Season"
+              DTS:DTSID="{67E2AA0D-10FA-4DC4-A59D-8AA9E0E9F41C}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x007C_"
+              DTS:MaximumWidth="3"
+              DTS:DataType="17"
+              DTS:TextQualified="True"
+              DTS:ObjectName="TotalPlaces"
+              DTS:DTSID="{1D0D34AB-8B46-43B2-A13B-14E2634968A1}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x007C_"
+              DTS:MaximumWidth="3"
+              DTS:DataType="17"
+              DTS:TextQualified="True"
+              DTS:ObjectName="PromotionPlaces"
+              DTS:DTSID="{4D37703B-9CDC-42BC-A4BE-D7CF0A2BD841}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x007C_"
+              DTS:MaximumWidth="3"
+              DTS:DataType="17"
+              DTS:TextQualified="True"
+              DTS:ObjectName="PlayOffPlaces"
+              DTS:DTSID="{504B8614-8009-440E-85C8-FD652F0C6BFF}"
+              DTS:CreationName="" />
+            <DTS:FlatFileColumn
+              DTS:ColumnType="Delimited"
+              DTS:ColumnDelimiter="_x000D__x000A_"
+              DTS:MaximumWidth="3"
+              DTS:DataType="17"
+              DTS:TextQualified="True"
+              DTS:ObjectName="RelegationPlaces"
+              DTS:DTSID="{89533E95-7711-4432-B72D-8899F5BF5E26}"
+              DTS:CreationName="" />
+          </DTS:FlatFileColumns>
+        </DTS:ConnectionManager>
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[SourceConnectionOLEDB]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{019CB1E6-BEC5-4552-AEE1-2D720FDD6F03}"
+      DTS:ObjectName="SourceConnectionOLEDB">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectionString="Data Source=sql-football.database.windows.net;User ID=FootballAdmin;Initial Catalog=Football;Provider=SQLNCLI11;Auto Translate=false;">
+          <DTS:Password
+            DTS:Name="Password"
+            Sensitive="1"
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAooRcAb7yv0mr+f3RVbtMUwAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAADQnqoFT8okfa3LANS/YN/s7hUbH4RAi3QwIOLAnyVTYwAAAAAOgAAAAAIAACAAAABKZzF5p473p7SCqV0oii0+PyWgcMD0Qu021jCjyrbD/iAAAABkOyxhHXlsmUfuQECQvb4zACvdoYRdIcQJnlqLYvf05EAAAACiyjXQaXVo77HErmnO9/fvXq5vU7v9dfQ3XEYL11/J3WdhmcvOdjC8N85f3QoagV/Z1ilU/7TWvNDCNHL2Vwiq</DTS:Password>
+        </DTS:ConnectionManager>
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:Variables />
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\Data Flow Task 1"
+      DTS:CreationName="Microsoft.Pipeline"
+      DTS:DelayValidation="True"
+      DTS:DTSID="{67E7CF2D-22A5-4D22-A52E-27ACC6686220}"
+      DTS:ExecutableType="Microsoft.Pipeline"
+      DTS:FailPackageOnFailure="True"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Data Flow Task 1"
+      DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+      <DTS:Variables />
+      <DTS:ObjectData>
+        <pipeline
+          defaultBufferSize="3145728"
+          version="1">
+          <components>
+            <component
+              refId="Package\Data Flow Task 1\Destination - LeagueStatuses_txt"
+              componentClassID="Microsoft.FlatFileDestination"
+              contactInfo="Flat File Destination;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;0"
+              description="Flat File Destination"
+              localeId="2057"
+              name="Destination - LeagueStatuses_txt"
+              validateExternalMetadata="False">
+              <properties>
+                <property
+                  dataType="System.Boolean"
+                  description="Specifies whether the data will overwrite or append to the destination file."
+                  name="Overwrite">true</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the text to write to the destination file before any data is written."
+                  expressionType="Notify"
+                  name="Header"></property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\Data Flow Task 1\Destination - LeagueStatuses_txt.Connections[FlatFileConnection]"
+                  connectionManagerID="Package.ConnectionManagers[DestinationConnectionFlatFile]"
+                  connectionManagerRefId="Package.ConnectionManagers[DestinationConnectionFlatFile]"
+                  name="FlatFileConnection" />
+              </connections>
+              <inputs>
+                <input
+                  refId="Package\Data Flow Task 1\Destination - LeagueStatuses_txt.Inputs[Flat File Destination Input]"
+                  hasSideEffects="true"
+                  name="Flat File Destination Input">
+                  <inputColumns>
+                    <inputColumn
+                      refId="Package\Data Flow Task 1\Destination - LeagueStatuses_txt.Inputs[Flat File Destination Input].Columns[Id]"
+                      cachedDataType="i8"
+                      cachedName="Id"
+                      externalMetadataColumnId="Package\Data Flow Task 1\Destination - LeagueStatuses_txt.Inputs[Flat File Destination Input].ExternalColumns[Id]"
+                      lineageId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].Columns[Id]" />
+                    <inputColumn
+                      refId="Package\Data Flow Task 1\Destination - LeagueStatuses_txt.Inputs[Flat File Destination Input].Columns[DivisionId]"
+                      cachedDataType="i8"
+                      cachedName="DivisionId"
+                      externalMetadataColumnId="Package\Data Flow Task 1\Destination - LeagueStatuses_txt.Inputs[Flat File Destination Input].ExternalColumns[DivisionId]"
+                      lineageId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].Columns[DivisionId]" />
+                    <inputColumn
+                      refId="Package\Data Flow Task 1\Destination - LeagueStatuses_txt.Inputs[Flat File Destination Input].Columns[Season]"
+                      cachedCodepage="1252"
+                      cachedDataType="str"
+                      cachedLength="11"
+                      cachedName="Season"
+                      externalMetadataColumnId="Package\Data Flow Task 1\Destination - LeagueStatuses_txt.Inputs[Flat File Destination Input].ExternalColumns[Season]"
+                      lineageId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].Columns[Season]" />
+                    <inputColumn
+                      refId="Package\Data Flow Task 1\Destination - LeagueStatuses_txt.Inputs[Flat File Destination Input].Columns[TotalPlaces]"
+                      cachedDataType="ui1"
+                      cachedName="TotalPlaces"
+                      externalMetadataColumnId="Package\Data Flow Task 1\Destination - LeagueStatuses_txt.Inputs[Flat File Destination Input].ExternalColumns[TotalPlaces]"
+                      lineageId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].Columns[TotalPlaces]" />
+                    <inputColumn
+                      refId="Package\Data Flow Task 1\Destination - LeagueStatuses_txt.Inputs[Flat File Destination Input].Columns[PromotionPlaces]"
+                      cachedDataType="ui1"
+                      cachedName="PromotionPlaces"
+                      externalMetadataColumnId="Package\Data Flow Task 1\Destination - LeagueStatuses_txt.Inputs[Flat File Destination Input].ExternalColumns[PromotionPlaces]"
+                      lineageId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].Columns[PromotionPlaces]" />
+                    <inputColumn
+                      refId="Package\Data Flow Task 1\Destination - LeagueStatuses_txt.Inputs[Flat File Destination Input].Columns[PlayOffPlaces]"
+                      cachedDataType="ui1"
+                      cachedName="PlayOffPlaces"
+                      externalMetadataColumnId="Package\Data Flow Task 1\Destination - LeagueStatuses_txt.Inputs[Flat File Destination Input].ExternalColumns[PlayOffPlaces]"
+                      lineageId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].Columns[PlayOffPlaces]" />
+                    <inputColumn
+                      refId="Package\Data Flow Task 1\Destination - LeagueStatuses_txt.Inputs[Flat File Destination Input].Columns[RelegationPlaces]"
+                      cachedDataType="ui1"
+                      cachedName="RelegationPlaces"
+                      externalMetadataColumnId="Package\Data Flow Task 1\Destination - LeagueStatuses_txt.Inputs[Flat File Destination Input].ExternalColumns[RelegationPlaces]"
+                      lineageId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].Columns[RelegationPlaces]" />
+                  </inputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\Data Flow Task 1\Destination - LeagueStatuses_txt.Inputs[Flat File Destination Input].ExternalColumns[Id]"
+                      dataType="i8"
+                      name="Id" />
+                    <externalMetadataColumn
+                      refId="Package\Data Flow Task 1\Destination - LeagueStatuses_txt.Inputs[Flat File Destination Input].ExternalColumns[DivisionId]"
+                      dataType="i8"
+                      name="DivisionId" />
+                    <externalMetadataColumn
+                      refId="Package\Data Flow Task 1\Destination - LeagueStatuses_txt.Inputs[Flat File Destination Input].ExternalColumns[Season]"
+                      codePage="1252"
+                      dataType="str"
+                      length="11"
+                      name="Season" />
+                    <externalMetadataColumn
+                      refId="Package\Data Flow Task 1\Destination - LeagueStatuses_txt.Inputs[Flat File Destination Input].ExternalColumns[TotalPlaces]"
+                      dataType="ui1"
+                      name="TotalPlaces" />
+                    <externalMetadataColumn
+                      refId="Package\Data Flow Task 1\Destination - LeagueStatuses_txt.Inputs[Flat File Destination Input].ExternalColumns[PromotionPlaces]"
+                      dataType="ui1"
+                      name="PromotionPlaces" />
+                    <externalMetadataColumn
+                      refId="Package\Data Flow Task 1\Destination - LeagueStatuses_txt.Inputs[Flat File Destination Input].ExternalColumns[PlayOffPlaces]"
+                      dataType="ui1"
+                      name="PlayOffPlaces" />
+                    <externalMetadataColumn
+                      refId="Package\Data Flow Task 1\Destination - LeagueStatuses_txt.Inputs[Flat File Destination Input].ExternalColumns[RelegationPlaces]"
+                      dataType="ui1"
+                      name="RelegationPlaces" />
+                  </externalMetadataColumns>
+                </input>
+              </inputs>
+            </component>
+            <component
+              refId="Package\Data Flow Task 1\Source - LeagueStatuses"
+              componentClassID="Microsoft.OLEDBSource"
+              contactInfo="OLE DB Source;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved; http://www.microsoft.com/sql/support;7"
+              description="OLE DB Source"
+              name="Source - LeagueStatuses"
+              usesDispositions="true"
+              version="7">
+              <properties>
+                <property
+                  dataType="System.Int32"
+                  description="The number of seconds before a command times out.  A value of 0 indicates an infinite time-out."
+                  name="CommandTimeout">0</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the name of the database object used to open a rowset."
+                  name="OpenRowset">[dbo].[LeagueStatuses]</property>
+                <property
+                  dataType="System.String"
+                  description="Specifies the variable that contains the name of the database object used to open a rowset."
+                  name="OpenRowsetVariable"></property>
+                <property
+                  dataType="System.String"
+                  description="The SQL command to be executed."
+                  name="SqlCommand"
+                  UITypeEditor="Microsoft.DataTransformationServices.Controls.ModalMultilineStringEditor"></property>
+                <property
+                  dataType="System.String"
+                  description="The variable that contains the SQL command to be executed."
+                  name="SqlCommandVariable"></property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the column code page to use when code page information is unavailable from the data source."
+                  name="DefaultCodePage">1252</property>
+                <property
+                  dataType="System.Boolean"
+                  description="Forces the use of the DefaultCodePage property value when describing character data."
+                  name="AlwaysUseDefaultCodePage">false</property>
+                <property
+                  dataType="System.Int32"
+                  description="Specifies the mode used to access the database."
+                  name="AccessMode"
+                  typeConverter="AccessMode">0</property>
+                <property
+                  dataType="System.String"
+                  description="The mappings between the parameters in the SQL command and variables."
+                  name="ParameterMapping"></property>
+              </properties>
+              <connections>
+                <connection
+                  refId="Package\Data Flow Task 1\Source - LeagueStatuses.Connections[OleDbConnection]"
+                  connectionManagerID="Package.ConnectionManagers[SourceConnectionOLEDB]"
+                  connectionManagerRefId="Package.ConnectionManagers[SourceConnectionOLEDB]"
+                  description="The OLE DB runtime connection used to access the database."
+                  name="OleDbConnection" />
+              </connections>
+              <outputs>
+                <output
+                  refId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output]"
+                  name="OLE DB Source Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].Columns[Id]"
+                      dataType="i8"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].ExternalColumns[Id]"
+                      lineageId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].Columns[Id]"
+                      name="Id"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].Columns[DivisionId]"
+                      dataType="i8"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].ExternalColumns[DivisionId]"
+                      lineageId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].Columns[DivisionId]"
+                      name="DivisionId"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].Columns[Season]"
+                      codePage="1252"
+                      dataType="str"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].ExternalColumns[Season]"
+                      length="11"
+                      lineageId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].Columns[Season]"
+                      name="Season"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].Columns[TotalPlaces]"
+                      dataType="ui1"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].ExternalColumns[TotalPlaces]"
+                      lineageId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].Columns[TotalPlaces]"
+                      name="TotalPlaces"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].Columns[PromotionPlaces]"
+                      dataType="ui1"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].ExternalColumns[PromotionPlaces]"
+                      lineageId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].Columns[PromotionPlaces]"
+                      name="PromotionPlaces"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].Columns[PlayOffPlaces]"
+                      dataType="ui1"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].ExternalColumns[PlayOffPlaces]"
+                      lineageId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].Columns[PlayOffPlaces]"
+                      name="PlayOffPlaces"
+                      truncationRowDisposition="FailComponent" />
+                    <outputColumn
+                      refId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].Columns[RelegationPlaces]"
+                      dataType="ui1"
+                      errorOrTruncationOperation="Conversion"
+                      errorRowDisposition="FailComponent"
+                      externalMetadataColumnId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].ExternalColumns[RelegationPlaces]"
+                      lineageId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].Columns[RelegationPlaces]"
+                      name="RelegationPlaces"
+                      truncationRowDisposition="FailComponent" />
+                  </outputColumns>
+                  <externalMetadataColumns
+                    isUsed="True">
+                    <externalMetadataColumn
+                      refId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].ExternalColumns[Id]"
+                      dataType="i8"
+                      name="Id" />
+                    <externalMetadataColumn
+                      refId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].ExternalColumns[DivisionId]"
+                      dataType="i8"
+                      name="DivisionId" />
+                    <externalMetadataColumn
+                      refId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].ExternalColumns[Season]"
+                      codePage="1252"
+                      dataType="str"
+                      length="11"
+                      name="Season" />
+                    <externalMetadataColumn
+                      refId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].ExternalColumns[TotalPlaces]"
+                      dataType="ui1"
+                      name="TotalPlaces" />
+                    <externalMetadataColumn
+                      refId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].ExternalColumns[PromotionPlaces]"
+                      dataType="ui1"
+                      name="PromotionPlaces" />
+                    <externalMetadataColumn
+                      refId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].ExternalColumns[PlayOffPlaces]"
+                      dataType="ui1"
+                      name="PlayOffPlaces" />
+                    <externalMetadataColumn
+                      refId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output].ExternalColumns[RelegationPlaces]"
+                      dataType="ui1"
+                      name="RelegationPlaces" />
+                  </externalMetadataColumns>
+                </output>
+                <output
+                  refId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Error Output]"
+                  isErrorOut="true"
+                  name="OLE DB Source Error Output">
+                  <outputColumns>
+                    <outputColumn
+                      refId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Error Output].Columns[Id]"
+                      dataType="i8"
+                      lineageId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Error Output].Columns[Id]"
+                      name="Id" />
+                    <outputColumn
+                      refId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Error Output].Columns[DivisionId]"
+                      dataType="i8"
+                      lineageId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Error Output].Columns[DivisionId]"
+                      name="DivisionId" />
+                    <outputColumn
+                      refId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Error Output].Columns[Season]"
+                      codePage="1252"
+                      dataType="str"
+                      length="11"
+                      lineageId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Error Output].Columns[Season]"
+                      name="Season" />
+                    <outputColumn
+                      refId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Error Output].Columns[TotalPlaces]"
+                      dataType="ui1"
+                      lineageId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Error Output].Columns[TotalPlaces]"
+                      name="TotalPlaces" />
+                    <outputColumn
+                      refId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Error Output].Columns[PromotionPlaces]"
+                      dataType="ui1"
+                      lineageId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Error Output].Columns[PromotionPlaces]"
+                      name="PromotionPlaces" />
+                    <outputColumn
+                      refId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Error Output].Columns[PlayOffPlaces]"
+                      dataType="ui1"
+                      lineageId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Error Output].Columns[PlayOffPlaces]"
+                      name="PlayOffPlaces" />
+                    <outputColumn
+                      refId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Error Output].Columns[RelegationPlaces]"
+                      dataType="ui1"
+                      lineageId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Error Output].Columns[RelegationPlaces]"
+                      name="RelegationPlaces" />
+                    <outputColumn
+                      refId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      dataType="i4"
+                      lineageId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Error Output].Columns[ErrorCode]"
+                      name="ErrorCode"
+                      specialFlags="1" />
+                    <outputColumn
+                      refId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      dataType="i4"
+                      lineageId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Error Output].Columns[ErrorColumn]"
+                      name="ErrorColumn"
+                      specialFlags="2" />
+                  </outputColumns>
+                  <externalMetadataColumns />
+                </output>
+              </outputs>
+            </component>
+          </components>
+          <paths>
+            <path
+              refId="Package\Data Flow Task 1.Paths[OLE DB Source Output]"
+              endId="Package\Data Flow Task 1\Destination - LeagueStatuses_txt.Inputs[Flat File Destination Input]"
+              name="OLE DB Source Output"
+              startId="Package\Data Flow Task 1\Source - LeagueStatuses.Outputs[OLE DB Source Output]" />
+          </paths>
+        </pipeline>
+      </DTS:ObjectData>
+    </DTS:Executable>
+  </DTS:Executables>
+</DTS:Executable>

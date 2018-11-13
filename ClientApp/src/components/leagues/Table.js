@@ -50,6 +50,7 @@ class Table extends Component {
               <th>Goals Against</th>
               <th>Goal Difference</th>
               <th>Points</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
@@ -65,6 +66,7 @@ class Table extends Component {
                 <td>{row.goalsAgainst}</td>
                 <td>{row.goalDifference}</td>
                 <td>{row.points}{row.pointsDeducted > 0 ? <span className='point-deductions'> *</span> : ''}</td>
+                <td>{row.status}</td>
               </tr>
             )}
           </tbody>
