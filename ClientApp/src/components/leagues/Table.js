@@ -27,6 +27,20 @@ class Table extends Component {
     }
   }
 
+  getRowColour(status) {
+    if (status === 'Champions') {
+      return '#BBF3FF';
+    } else if (status === 'Promoted') {
+      return '#BFB';
+    } else if (status === 'Relegated') {
+      return '#FBB';
+    } else if (status === 'Play Offs') {
+      return '#FFB';
+    }
+
+    return '';
+  }
+
   render() {
     const {leagueTable, loading} = this.state;
     let body;
@@ -55,7 +69,7 @@ class Table extends Component {
           </thead>
           <tbody>
             {leagueTable.leagueTableRow.map(row =>
-              <tr key={row.position}>
+              <tr key={row.position} style={{backgroundColor: this.getRowColour(row.status)}}>
                 <td>{row.position}</td>
                 <td>{row.team}</td>
                 <td>{row.played}</td>
