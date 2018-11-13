@@ -229,7 +229,10 @@ FROM dbo.Divisions;
             var sql = @"
 SELECT m.HomeTeam
     ,m.AwayTeam
-    ,CONCAT(m.HomeGoals, '-', AwayGoals) AS Result
+    ,CONCAT(m.HomeGoals, '-', AwayGoals) AS Score
+    ,CASE WHEN m.HomeGoals > m.AwayGoals THEN 'W'
+          WHEN m.HomeGoals = m.AwayGoals THEN 'D'
+          ELSE 'L' END AS Result
 FROM dbo.Matches m
 INNER JOIN dbo.Divisions d
     ON m.DivisionId = d.Id
@@ -256,9 +259,10 @@ WHERE d.Tier = @Tier
                     {
                         var homeTeam = reader.GetString(0);
                         var awayTeam = reader.GetString(1);
-                        var result = reader.GetString(2);
+                        var score = reader.GetString(2);
+                        var result = reader.GetString(3);
 
-                        AddResult(homeTeam, awayTeam, result, resultsMatrix);
+                        AddResult(homeTeam, awayTeam, score, result, resultsMatrix);
                     }
                 } 
                 else 
@@ -296,7 +300,7 @@ WHERE d.Tier = @Tier
             }
         }
 
-        private void AddResult(string homeTeam, string awayTeam, string result, List<Results> resultsMatrix)
+        private void AddResult(string homeTeam, string awayTeam, string score, string result, List<Results> resultsMatrix)
         {
             var homeTeamExists = resultsMatrix.Where(r => r.HomeTeam == homeTeam).ToList().Count == 1;
             if (homeTeamExists)
@@ -304,7 +308,7 @@ WHERE d.Tier = @Tier
                 resultsMatrix = resultsMatrix
                     .Select(r => {
                         if (r.HomeTeam == homeTeam) {
-                            r.Scores.Add((awayTeam, result));
+                            r.Scores.Add((awayTeam, score, result));
                         }; 
                         return r;
                     }).ToList();
@@ -315,7 +319,7 @@ WHERE d.Tier = @Tier
                     new Results
                     {
                         HomeTeam = homeTeam,
-                        Scores = new List<(string AwayTeam, string Result)> { (homeTeam, null), (awayTeam, result) }
+                        Scores = new List<(string AwayTeam, string Score, string Result)> { (homeTeam, null, null), (awayTeam, score, result) }
                     }
                 );
             }

@@ -26,6 +26,18 @@ class ResultMatrix extends Component {
     }
   }
 
+  getBackgroundColor(result) {
+    if (result === null) {
+      return '#BBB';
+    }
+
+    return result === 'W' 
+      ? '#BFB' 
+      : result === 'D' 
+        ? '#FFB' 
+        : '#FBB'
+  }
+
   render() {
     const {resultMatrix, loading} = this.state;
     let body;
@@ -55,7 +67,13 @@ class ResultMatrix extends Component {
                     {
                       teams.map(t => {
                         const score = row.scores.filter(s => s.item1 === t)[0];
-                        return <td key={t + score.item2 + score.item1}>{score.item2}</td>
+                        return (
+                          <td key={t + score.item1 + score.item2} 
+                              style={{backgroundColor: this.getBackgroundColor(score.item3)}}
+                          >
+                            {score.item2}
+                          </td>
+                        )
                       })
                     }
                   </tr>
