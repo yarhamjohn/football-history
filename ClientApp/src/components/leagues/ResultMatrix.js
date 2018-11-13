@@ -42,7 +42,7 @@ class ResultMatrix extends Component {
     const {resultMatrix, loading} = this.state;
     let body;
 
-    const teams = resultMatrix.map(r => r.homeTeam).sort();
+    const teams = resultMatrix.map(r => ({ homeTeam: r.homeTeam, homeTeamAbbreviation: r.homeTeamAbbreviation })).sort((a, b) => a.homeTeam.localeCompare(b.homeTeam));
 
     if (loading) {
       body = <p><em>Loading...</em></p>
@@ -53,20 +53,20 @@ class ResultMatrix extends Component {
             <tr>
               <th>Home / Away</th>
               {
-                teams.map(t => <th key={t}>{t}</th>)
+                teams.map(t => <th key={t.homeTeam}>{t.homeTeamAbbreviation}</th>)
               }
             </tr>
           </thead>
           <tbody>
             {
               teams.map(t => {
-                const row = resultMatrix.filter(r => r.homeTeam === t)[0];
+                const row = resultMatrix.filter(r => r.homeTeam === t.homeTeam)[0];
                 return (
-                  <tr key={t}>
-                    <td>{t}</td>
+                  <tr key={t.homeTeam}>
+                    <td>{t.homeTeam}</td>
                     {
                       teams.map(t => {
-                        const score = row.scores.filter(s => s.item1 === t)[0];
+                        const score = row.scores.filter(s => s.item1 === t.homeTeam)[0];
                         return (
                           <td key={t + score.item1 + score.item2} 
                               style={{backgroundColor: this.getBackgroundColor(score.item3)}}

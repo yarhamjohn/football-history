@@ -29,15 +29,16 @@ namespace football_history.Server.Repositories
             };
 
             var matchesInSeason = @"
-SELECT m.HomeTeam
-    ,m.AwayTeam
+SELECT hc.Name AS HomeTeam
+    ,ac.Name AS AwayTeam
     ,m.HomeGoals
     ,m.AwayGoals
     ,m.DivisionId
     ,d.Name AS Division
 FROM dbo.Matches m
-INNER JOIN dbo.Divisions d
-    ON m.DivisionId = d.Id
+INNER JOIN dbo.Divisions d ON m.DivisionId = d.Id
+INNER JOIN dbo.Clubs hc ON m.HomeClubId = hc.Id
+INNER JOIN dbo.Clubs ac ON m.AwayClubId = ac.Id
 WHERE d.Tier = @Tier
     AND m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
 ";
@@ -81,7 +82,11 @@ FROM (
             FROM MatchesInSeason
             GROUP BY HomeTeam, Division, DivisionId
         ) m
-        LEFT JOIN dbo.PointDeductions pd
+        LEFT JOIN (
+            SELECT DivisionId, Season, Name AS Club, PointsDeducted, Reason
+            FROM dbo.PointDeductions pd
+            INNER JOIN dbo.Clubs c ON pd.ClubId = c.Id
+        ) pd
         ON m.DivisionId = pd.DivisionId
             AND m.HomeTeam = pd.Club
             AND pd.Season = CONCAT(@SeasonStartYear, ' - ', @SeasonEndYear)
@@ -227,15 +232,17 @@ FROM dbo.Divisions;
             var seasonEndYear = season.Substring(7, 4);
             
             var sql = @"
-SELECT m.HomeTeam
-    ,m.AwayTeam
+SELECT hc.Name AS HomeTeam
+    ,ac.Name AS AwayTeam
+    ,hc.Abbreviation AS HomeTeamAbbreviation
     ,CONCAT(m.HomeGoals, '-', AwayGoals) AS Score
     ,CASE WHEN m.HomeGoals > m.AwayGoals THEN 'W'
           WHEN m.HomeGoals = m.AwayGoals THEN 'D'
           ELSE 'L' END AS Result
 FROM dbo.Matches m
-INNER JOIN dbo.Divisions d
-    ON m.DivisionId = d.Id
+INNER JOIN dbo.Divisions d ON m.DivisionId = d.Id
+INNER JOIN dbo.Clubs hc ON m.HomeClubId = hc.Id
+INNER JOIN dbo.Clubs ac ON m.AwayClubId = ac.Id
 WHERE d.Tier = @Tier
     AND m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
 ";
@@ -259,10 +266,11 @@ WHERE d.Tier = @Tier
                     {
                         var homeTeam = reader.GetString(0);
                         var awayTeam = reader.GetString(1);
-                        var score = reader.GetString(2);
-                        var result = reader.GetString(3);
+                        var homeTeamAbbreviation = reader.GetString(2);
+                        var score = reader.GetString(3);
+                        var result = reader.GetString(4);
 
-                        AddResult(homeTeam, awayTeam, score, result, resultsMatrix);
+                        AddResult(homeTeam, awayTeam, homeTeamAbbreviation, score, result, resultsMatrix);
                     }
                 } 
                 else 
@@ -300,7 +308,7 @@ WHERE d.Tier = @Tier
             }
         }
 
-        private void AddResult(string homeTeam, string awayTeam, string score, string result, List<Results> resultsMatrix)
+        private void AddResult(string homeTeam, string awayTeam, string homeTeamAbbreviation, string score, string result, List<Results> resultsMatrix)
         {
             var homeTeamExists = resultsMatrix.Where(r => r.HomeTeam == homeTeam).ToList().Count == 1;
             if (homeTeamExists)
@@ -308,7 +316,7 @@ WHERE d.Tier = @Tier
                 resultsMatrix = resultsMatrix
                     .Select(r => {
                         if (r.HomeTeam == homeTeam) {
-                            r.Scores.Add((awayTeam, score, result));
+                            r.Scores.Add((awayTeam,  score, result));
                         }; 
                         return r;
                     }).ToList();
@@ -319,7 +327,8 @@ WHERE d.Tier = @Tier
                     new Results
                     {
                         HomeTeam = homeTeam,
-                        Scores = new List<(string AwayTeam, string Score, string Result)> { (homeTeam, null, null), (awayTeam, score, result) }
+                        HomeTeamAbbreviation = homeTeamAbbreviation,
+                        Scores = new List<(string AwayTeam,string Score, string Result)> { (homeTeam, null, null), (awayTeam, score, result) }
                     }
                 );
             }
