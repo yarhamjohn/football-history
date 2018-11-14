@@ -18,9 +18,9 @@ export class NavMenu extends Component {
         </Navbar.Header>
         <Navbar.Collapse>
           <Nav>
-            <LinkContainer to={'/leagues'}>
+            <LinkContainer to={'/seasons'}>
               <NavItem>
-                <Glyphicon glyph='th-list' /> Leagues
+                <Glyphicon glyph='th-list' /> Seasons
               </NavItem>
             </LinkContainer>
           </Nav>
