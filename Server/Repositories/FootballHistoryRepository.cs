@@ -131,11 +131,28 @@ FROM (
 CROSS APPLY (
     SELECT CASE WHEN a.Position = 1 THEN 'Champions' 
                 WHEN a.Position <= ls.PromotionPlaces THEN 'Promoted' 
+                WHEN a.Team = pom.PlayOffWinner THEN 'Play Off Winner'
                 WHEN a.Position <= ls.PromotionPlaces + ls.PlayOffPlaces THEN 'Play Offs'
                 WHEN a.Position > ls.TotalPlaces - ls.RelegationPlaces THEN 'Relegated'
                 ELSE NULL END AS Status
     FROM dbo.LeagueStatuses ls
     INNER JOIN dbo.Divisions d ON d.Id = ls.DivisionId
+    LEFT JOIN (
+        SELECT DivisionId
+            ,MatchDate
+            ,CASE WHEN (homegoals + homegoalset) > (awaygoals + awaygoalset) THEN hc.name 
+                WHEN (homegoals + homegoalset) < (awaygoals + awaygoalset) THEN ac.name
+	            ELSE CASE WHEN homepenaltiesscored > awaypenaltiesscored THEN hc.name 
+                    ELSE ac.name END
+                END AS PlayOffWinner 
+        FROM dbo.PlayOffMatches pom
+        LEFT JOIN dbo.Clubs hc ON hc.Id = pom.HomeClubId
+        LEFT JOIN dbo.Clubs ac ON ac.Id = pom.AwayClubId
+        WHERE pom.Round = 'Final'
+            AND pom.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
+    ) pom
+    ON pom.DivisionId = ls.DivisionId
+
     WHERE d.Tier = @Tier AND ls.Season = CONCAT(@SeasonStartYear, ' - ', @SeasonEndYear)
 ) b
 ORDER BY Position;

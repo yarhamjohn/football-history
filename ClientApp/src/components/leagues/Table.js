@@ -34,6 +34,8 @@ class Table extends Component {
       return '#BFB';
     } else if (status === 'Relegated') {
       return '#FBB';
+    } else if (status === 'Play Off Winner') {
+      return '#FFE4B5';
     } else if (status === 'Play Offs') {
       return '#FFB';
     }
