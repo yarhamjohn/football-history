@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Globalization;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -438,6 +439,64 @@ ORDER BY MatchDate
             }
         
             return playoffStages;
+        }
+
+        public List<Match> GetLeagueTableDrillDown(int tier, string season, string team) 
+        {
+            var seasonStartYear = season.Substring(0, 4);
+            var seasonEndYear = season.Substring(7, 4);
+            
+            var sql = @"
+SELECT MatchDate
+    ,CASE WHEN hc.Name = @Team AND HomeGoals > AwayGoals THEN 'W' 
+          WHEN hc.Name = @Team AND HomeGoals < AwayGoals THEN 'L'
+          WHEN ac.Name = @Team AND HomeGoals > AwayGoals THEN 'L'
+          WHEN ac.Name = @Team AND HomeGoals < AwayGoals THEN 'W'
+          ELSE 'D' END AS Result
+FROM dbo.LeagueMatches m
+INNER JOIN dbo.Divisions d ON m.DivisionId = d.Id
+INNER JOIN dbo.Clubs hc ON hc.Id = m.HomeClubId
+INNER JOIN dbo.Clubs ac ON ac.Id = m.AwayClubId
+WHERE d.Tier = @Tier
+    AND m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
+    AND (hc.Name = @Team OR ac.Name = @Team)
+ORDER BY MatchDate
+";
+
+            var matches = new List<Match>();
+
+            using(var conn = m_Context.Database.GetDbConnection())
+            {
+                conn.Open();
+
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+                cmd.Parameters.Add(new SqlParameter("@Tier", tier));
+                cmd.Parameters.Add(new SqlParameter("@SeasonStartYear", seasonStartYear));
+                cmd.Parameters.Add(new SqlParameter("@SeasonEndYear", seasonEndYear));
+                cmd.Parameters.Add(new SqlParameter("@Team", team));
+
+                var reader = cmd.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        matches.Add(
+                            new Match {
+                                MatchDate = reader.GetDateTime(0),
+                                Result = reader.GetString(1),
+                            }
+                        );
+                    }
+                } 
+                else 
+                {
+                    System.Console.WriteLine("No rows found");
+                }
+                reader.Close();
+            }
+        
+            return matches;
         }
 
         private PlayOffResult GetPlayOffResult(DbDataReader reader)

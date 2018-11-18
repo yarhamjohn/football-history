@@ -39,5 +39,11 @@ namespace football_history.Controllers
         {
             return m_Repository.GetPlayOffMatches(Convert.ToInt32(tier), season);
         }
+                        
+        [HttpGet("[action]")]
+        public List<Match> GetLeagueTableDrillDown(string tier, string season, string team)
+        {
+            return m_Repository.GetLeagueTableDrillDown(Convert.ToInt32(tier), season, team);
+        }
     }
 }
