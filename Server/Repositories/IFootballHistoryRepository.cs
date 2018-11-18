@@ -7,5 +7,7 @@ namespace football_history.Server.Repositories
         LeagueTable GetLeagueTable(int tier, string season);
         LeagueFilterOptions GetLeagueFilterOptions();
         List<Results> GetMatchResultMatrix(int tier, string season);
+
+        PlayOff GetPlayOffMatches(int tier, string season);
     }
 }

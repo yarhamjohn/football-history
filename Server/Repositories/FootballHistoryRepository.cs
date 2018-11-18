@@ -25,7 +25,7 @@ namespace football_history.Server.Repositories
             var leagueTable = new LeagueTable
             {
                 Season = $"{seasonStartYear} - {seasonEndYear}",
-                LeagueTableRow = new List<LeagueTableRow>()
+                LeagueTableRows = new List<LeagueTableRow>()
             };
 
             var matchesInSeason = @"
@@ -176,7 +176,7 @@ ORDER BY Position;
                         var position = (int) reader.GetInt64(0);
 
                         leagueTable.Competition = reader.GetString(1);
-                        leagueTable.LeagueTableRow.Add(
+                        leagueTable.LeagueTableRows.Add(
                             new LeagueTableRow
                             {
                                 Position = position,
@@ -326,6 +326,135 @@ WHERE d.Tier = @Tier
             }
         
             return resultsMatrix;
+        }
+
+        public PlayOff GetPlayOffMatches(int tier, string season)
+        {
+            if (tier == 1) {
+                return new PlayOff();
+            }
+
+            var seasonStartYear = season.Substring(0, 4);
+            var seasonEndYear = season.Substring(7, 4);
+            
+            var sql = @"
+SELECT Round
+    ,hc.Name AS HomeClub
+    ,ac.Name AS AwayClub
+    ,HomeGoals
+    ,AwayGoals
+    ,ExtraTime
+    ,HomeGoalsET
+    ,AwayGoalsET
+    ,PenaltyShootout
+    ,HomePenaltiesTaken
+    ,HomePenaltiesScored
+    ,AwayPenaltiesTaken
+    ,AwayPenaltiesScored
+    ,MatchDate
+FROM dbo.PlayOffMatches pom
+INNER JOIN dbo.Divisions d ON pom.DivisionId = d.Id
+INNER JOIN dbo.Clubs hc ON hc.Id = pom.HomeClubId
+INNER JOIN dbo.Clubs ac ON ac.Id = pom.AwayClubId
+WHERE d.Tier = @Tier
+    AND pom.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
+ORDER BY MatchDate
+";
+
+            var playoffStages = new PlayOff
+            {
+                SemiFinals = new List<PlayOffSemiFinal>
+                {
+                    new PlayOffSemiFinal
+                    {
+                        FirstLeg = new PlayOffResult(),
+                        SecondLeg = new PlayOffResult()
+                    },
+                    new PlayOffSemiFinal
+                    {
+                        FirstLeg = new PlayOffResult(),
+                        SecondLeg = new PlayOffResult()
+                    }
+                },
+                Final = new PlayOffResult()
+            };
+
+            using(var conn = m_Context.Database.GetDbConnection())
+            {
+                conn.Open();
+
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+                cmd.Parameters.Add(new SqlParameter("@Tier", tier));
+                cmd.Parameters.Add(new SqlParameter("@SeasonStartYear", seasonStartYear));
+                cmd.Parameters.Add(new SqlParameter("@SeasonEndYear", seasonEndYear));
+
+                var reader = cmd.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    var count = 0;
+
+                    while (reader.Read())
+                    {
+                        var playOffResult = GetPlayOffResult(reader);
+                        if (reader.GetString(0) == "Final")
+                        {
+                            playoffStages.Final = playOffResult;
+                        }
+                        else
+                        {
+                            if (count == 0)
+                            {
+                                Console.WriteLine(playOffResult);
+                                Console.WriteLine(playoffStages.SemiFinals[0].FirstLeg);
+
+                                playoffStages.SemiFinals[0].FirstLeg = playOffResult;
+
+                                Console.WriteLine(playoffStages.SemiFinals[0].FirstLeg);
+
+                            }
+                            else if (count == 1)
+                            {
+                                playoffStages.SemiFinals[1].FirstLeg = playOffResult;
+                            }
+                            else if (playOffResult.HomeTeam == playoffStages.SemiFinals[0].FirstLeg.AwayTeam)
+                            {
+                                playoffStages.SemiFinals[0].SecondLeg = playOffResult;
+                            }
+                            else
+                            {
+                                playoffStages.SemiFinals[1].SecondLeg = playOffResult;
+                            }
+
+                            count++;
+                        }
+                    }
+                } 
+                else 
+                {
+                    System.Console.WriteLine("No rows found");
+                }
+                reader.Close();
+            }
+        
+            return playoffStages;
+        }
+
+        private PlayOffResult GetPlayOffResult(DbDataReader reader)
+        {
+            return new PlayOffResult
+            {
+                HomeTeam = reader.GetString(1),
+                AwayTeam = reader.GetString(2),
+                HomeGoals = reader.GetByte(3),
+                AwayGoals = reader.GetByte(4),
+                HomeGoalsET = reader.GetBoolean(5) ? reader.GetByte(6) : (int?) null,
+                AwayGoalsET = reader.GetBoolean(5) ? reader.GetByte(7) : (int?) null,
+                HomePenaltiesTaken = reader.GetBoolean(8) ? reader.GetByte(9) : (int?) null,
+                HomePenaltiesScored = reader.GetBoolean(8) ? reader.GetByte(10) : (int?) null,
+                AwayPenaltiesTaken = reader.GetBoolean(8) ? reader.GetByte(11) : (int?) null,
+                AwayPenaltiesScored = reader.GetBoolean(8) ? reader.GetByte(12) : (int?) null
+            };
         }
 
         private void AddDivision(int tier, Division division, LeagueFilterOptions leagueFilterOptions)

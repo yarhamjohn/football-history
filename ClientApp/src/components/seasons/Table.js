@@ -50,7 +50,7 @@ class Table extends Component {
     if (loading) {
       body = <p><em>Loading...</em></p>
     } else {
-      body = <React.Fragment>
+      body = <div style={{marginRight: 100}}>
         <h1>{leagueTable.competition} </h1>
         <h2>{leagueTable.season}</h2>
         <table className='table'>
@@ -62,15 +62,15 @@ class Table extends Component {
               <th>Won</th>
               <th>Drawn</th>
               <th>Lost</th>
-              <th>Goals For</th>
-              <th>Goals Against</th>
-              <th>Goal Difference</th>
+              <th>GF</th>
+              <th>GA</th>
+              <th>Diff</th>
               <th>Points</th>
               <th>Status</th>
             </tr>
           </thead>
           <tbody>
-            {leagueTable.leagueTableRow.map(row =>
+            {leagueTable.leagueTableRows.map(row =>
               <tr key={row.position} style={{backgroundColor: this.getRowColour(row.status)}}>
                 <td>{row.position}</td>
                 <td>{row.team}</td>
@@ -82,18 +82,18 @@ class Table extends Component {
                 <td>{row.goalsAgainst}</td>
                 <td>{row.goalDifference}</td>
                 <td>{row.points}{row.pointsDeducted > 0 ? <span className='point-deductions'> *</span> : ''}</td>
-                <td>{row.status}</td>
+                <td>{row.status === 'Champions' ? 'C' : row.status === 'Promoted' ? 'P' : row.status === 'Play Offs' ? 'PO' : row.status === 'Play Off Winner' ? 'P (PO)' : row.status === 'Relegated' ? 'R' : ''}</td>
               </tr>
             )}
           </tbody>
         </table>
         <div>
-          {leagueTable.leagueTableRow.map(row =>
+          {leagueTable.leagueTableRows.map(row =>
             row.pointsDeducted > 0
               ? <p key={row.team} className='point-deductions'>* {row.team} had {row.pointsDeducted} point{row.pointsDeducted > 1 ? 's' : ''} deducted ({row.pointsDeductionReason})</p>
               : '')}
         </div>
-      </React.Fragment>
+      </div>
     }
 
     return (

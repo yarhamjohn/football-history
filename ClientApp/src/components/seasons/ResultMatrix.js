@@ -47,8 +47,7 @@ class ResultMatrix extends Component {
     if (loading) {
       body = <p><em>Loading...</em></p>
     } else {
-      body = <React.Fragment>
-        <table className='table'>
+      body = <table className='table'>
           <thead>
             <tr>
               <th>Home / Away</th>
@@ -82,13 +81,12 @@ class ResultMatrix extends Component {
             }
           </tbody>
         </table>
-      </React.Fragment>
     }
 
     return (
-      <React.Fragment>
+      <div>
         {body}
-      </React.Fragment>
+      </div>
     );
   }
 }

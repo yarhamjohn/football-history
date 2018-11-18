@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Table from './Table';
 import Filter from './Filter';
 import ResultMatrix from './ResultMatrix';
+import PlayOffMatches from './PlayOffMatches';
 
 class Page extends Component {
   constructor(props) {
@@ -47,15 +48,18 @@ class Page extends Component {
           selectedSeason={season}
           selectLeagueTable={(season, tier) => this.selectLeagueTable(season, tier)}
         />
-        <Table season={season} tier={tier} />
+        <div style={{display: 'flex', flexWrap: 'wrap'}}>
+          <Table season={season} tier={tier} />
+          {tier !== 1 && <PlayOffMatches season={season} tier={tier} />}
+        </div>
         <ResultMatrix season={season} tier={tier} />
       </React.Fragment>
     }
 
     return (
-      <div>
+      <React.Fragment>
         {body}
-      </div>
+      </React.Fragment>
     );
   }
 }
