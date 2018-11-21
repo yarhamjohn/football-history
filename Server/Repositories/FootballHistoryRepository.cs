@@ -140,7 +140,13 @@ FROM dbo.Divisions;
 
             AddLeagueRows(leagueTable, matchDetails);
             IncludePointDeductions(leagueTable, pointDeductions);
-            SortLeagueTable(leagueTable);
+
+            leagueTable = leagueTable
+                .OrderByDescending(t => t.Points)
+                .ThenByDescending(t => t.GoalDifference)
+                .ThenByDescending(t => t.GoalsFor) // head to head, alphabetical unless P/R spots, then a play off (never happened)
+                .ToList();
+
             SetLeaguePosition(leagueTable);
             AddTeamStatus(leagueTable, leagueDetail, matchDetails);
 
@@ -276,8 +282,8 @@ ORDER BY lm.matchDate
             var teams = matchDetails.Select(m => m.HomeTeam).Distinct().ToList();
             foreach (var team in teams)
             {
-                var homeGames = matchDetails.Where(m => m.HomeTeam == team).ToList();
-                var awayGames = matchDetails.Where(m => m.AwayTeam == team).ToList();
+                var homeGames = matchDetails.Where(m => m.HomeTeam == team && m.Type == "League").ToList();
+                var awayGames = matchDetails.Where(m => m.AwayTeam == team && m.Type == "League").ToList();
 
                 leagueTable.Add(
                     new LeagueTableRow
@@ -322,15 +328,6 @@ ORDER BY lm.matchDate
             }
         }
         
-        private void SortLeagueTable(List<LeagueTableRow> table)
-        {
-            table = table
-                .OrderByDescending(t => t.Points)
-                .ThenByDescending(t => t.GoalDifference)
-                .ThenByDescending(t => t.GoalsFor) // head to head, alphabetical unless P/R spots, then a play off (never happened)
-                .ToList();
-        }
-
         private void SetLeaguePosition(List<LeagueTableRow> table)
         {
             table = table.Select((t, i) => { 
