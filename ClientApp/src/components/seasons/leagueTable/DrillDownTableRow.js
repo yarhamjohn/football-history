@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import './Table.css';
+import './DrillDownTableRow.css';
 
 class DrillDownTableRow extends Component {
   constructor(props) {
@@ -29,9 +29,11 @@ class DrillDownTableRow extends Component {
 
     return (
       <tr>
-        <td colSpan="12"><div style={{display: 'flex', justifyContent: 'space-around'}}>
-          {form.map(f => <span key={f.matchDate} style={{fontWeight: 'bold', color: f.result === 'W' ? 'green' : f.result === 'D' ? 'darkorange' : 'red'}}>{f.result}</span>)}
-        </div></td>
+        <td colSpan="12">
+          <div className='drilldown-form'>
+            {form.map(f => <span key={f.matchDate} style={{fontWeight: 'bold', color: f.result === 'W' ? 'green' : f.result === 'D' ? 'darkorange' : 'red'}}>{f.result}</span>)}
+          </div>
+        </td>
       </tr>
     )
   }

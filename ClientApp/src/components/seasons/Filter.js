@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { ButtonToolbar, DropdownButton, MenuItem } from 'react-bootstrap';
+import './Filter.css';
 
 class Filter extends Component {
   selectTier(tier) {
@@ -21,7 +22,7 @@ class Filter extends Component {
     const { allSeasons, allTiers, selectedTier, selectedSeason } = this.props;
 
     return (
-        <ButtonToolbar style={{marginTop: 20}}>
+        <ButtonToolbar className='filter-buttons'>
           <DropdownButton title="League" id="LeagueSelect">
           {
             allTiers.map(t => 

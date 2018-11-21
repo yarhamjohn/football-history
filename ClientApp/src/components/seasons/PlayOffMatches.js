@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
 import { Table } from 'react-bootstrap';
+import './PlayOffMatches.css';
 
 class PlayOffMatches extends Component {
   render() {
     const {playOffs} = this.props;
 
     return (
-      <div style={{display: 'flex', height: 250}}>
-        <div style={{marginRight: 100, display: 'flex', justifyContent: 'space-between', flexDirection: 'column'}}>
+      <div className='playoff-container'>
+        <div className='playoff-semifinal-container'>
           <Table striped condensed>
             <thead>
               <tr>
@@ -63,7 +64,7 @@ class PlayOffMatches extends Component {
             </tbody>
           </Table>
         </div>
-        <div style={{alignItems: 'center', display: 'flex'}}>
+        <div className='playoff-final-container'>
           <Table striped condensed>
             <thead>
               <tr>

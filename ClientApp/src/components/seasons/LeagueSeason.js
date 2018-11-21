@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import PlayOffMatches from './PlayOffMatches';
 import ResultMatrix from './ResultMatrix';
-import Table from './Table';
-import './Table.css';
+import Table from './leagueTable/Table';
+import './LeagueSeason.css';
 
 class LeagueSeason extends Component {
   constructor(props) {
@@ -41,7 +41,7 @@ class LeagueSeason extends Component {
       <React.Fragment>
         <h1>{leagueSeason.competitionName}</h1>
         <h2>{leagueSeason.season}</h2>
-        <div style={{display: 'flex', flexWrap: 'wrap'}}>
+        <div className='table-container'>
           <Table leagueSeason={leagueSeason} />
           {leagueSeason.tier !== 1 && <PlayOffMatches playOffs={leagueSeason.playOffs} />}
         </div>

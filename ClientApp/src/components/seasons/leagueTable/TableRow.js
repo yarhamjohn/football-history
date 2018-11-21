@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Glyphicon } from 'react-bootstrap';
 import DrillDownTableRow from './DrillDownTableRow';
-import './Table.css';
 
 class TableRow extends Component {
   constructor(props) {
