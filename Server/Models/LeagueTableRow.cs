@@ -1,11 +1,6 @@
 using System;
 using System.Collections.Generic;
 
-public class LeagueTable
-{
-    public List<LeagueTableRow> Rows { get; set; }
-}
-
 public class LeagueTableRow
 {
     public int Position { get; set; }
