@@ -4,12 +4,12 @@ import { ButtonToolbar, DropdownButton, MenuItem } from 'react-bootstrap';
 class Filter extends Component {
   selectTier(tier) {
     const { selectLeagueTable, selectedSeason } = this.props;
-    selectLeagueTable(selectedSeason, tier.level);
+    selectLeagueTable(tier.level, selectedSeason);
   };
 
   selectSeason(season) {
     const { selectLeagueTable, selectedTier } = this.props;
-    selectLeagueTable(season, selectedTier);
+    selectLeagueTable(selectedTier, season);
   };
 
   getDivisionInfo(tier) {

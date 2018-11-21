@@ -17,33 +17,10 @@ namespace football_history.Controllers
         }
 
         [HttpGet("[action]")]
-        public LeagueTable GetLeague(string tier, string season)
+        public LeagueSeason GetLeagueSeason(string tier, string season)
         {
-            return m_Repository.GetLeagueTable(Convert.ToInt32(tier), season);
-        }
-
-        [HttpGet("[action]")]
-        public LeagueFilterOptions GetLeagueFilterOptions()
-        {
-            return m_Repository.GetLeagueFilterOptions();
-        }
-        
-        [HttpGet("[action]")]
-        public List<Results> GetMatchResultMatrix(string tier, string season)
-        {
-            return m_Repository.GetMatchResultMatrix(Convert.ToInt32(tier), season);
-        }
-                
-        [HttpGet("[action]")]
-        public PlayOff GetPlayOffMatches(string tier, string season)
-        {
-            return m_Repository.GetPlayOffMatches(Convert.ToInt32(tier), season);
-        }
-                        
-        [HttpGet("[action]")]
-        public List<Match> GetLeagueTableDrillDown(string tier, string season, string team)
-        {
-            return m_Repository.GetLeagueTableDrillDown(Convert.ToInt32(tier), season, team);
+            var selectedTier = tier == "null" ? (int?) null : Convert.ToInt32(tier);
+            return m_Repository.GetLeagueSeason(selectedTier, season == "null" ? null : season);
         }
     }
 }

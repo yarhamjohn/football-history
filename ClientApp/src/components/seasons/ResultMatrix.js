@@ -1,53 +1,13 @@
 import React, { Component } from 'react';
 
 class ResultMatrix extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { resultMatrix: [], loading: true };
-  }
-
-  fetchResultMatrix() {
-    const { season, tier } = this.props;
-
-    fetch(`api/FootballHistory/GetMatchResultMatrix?tier=${tier}&season=${season}`)
-      .then(response => response.json())
-      .then(data => {
-        this.setState({ resultMatrix: data, loading: false });
-      });
-  }
-
-  componentDidMount() {
-    this.fetchResultMatrix();
-  }
-
-  componentDidUpdate(prevProps) {
-    if (prevProps.season !== this.props.season || prevProps.tier !== this.props.tier) {
-      this.fetchResultMatrix();
-    }
-  }
-
-  getBackgroundColor(result) {
-    if (result === null) {
-      return '#BBB';
-    }
-
-    return result === 'W' 
-      ? '#BFB' 
-      : result === 'D' 
-        ? '#FFB' 
-        : '#FBB'
-  }
-
   render() {
-    const {resultMatrix, loading} = this.state;
-    let body;
+    const {resultMatrix} = this.props;
+    const teams = resultMatrix.rows.map(r => ({ homeTeam: r.homeTeam, homeTeamAbbreviation: r.homeTeamAbbreviation })).sort((a, b) => a.homeTeam.localeCompare(b.homeTeam));
 
-    const teams = resultMatrix.map(r => ({ homeTeam: r.homeTeam, homeTeamAbbreviation: r.homeTeamAbbreviation })).sort((a, b) => a.homeTeam.localeCompare(b.homeTeam));
-
-    if (loading) {
-      body = <p><em>Loading...</em></p>
-    } else {
-      body = <table className='table'>
+    return (
+      <div>
+        <table className='table'>
           <thead>
             <tr>
               <th>Home / Away</th>
@@ -59,18 +19,18 @@ class ResultMatrix extends Component {
           <tbody>
             {
               teams.map(t => {
-                const row = resultMatrix.filter(r => r.homeTeam === t.homeTeam)[0];
+                const row = resultMatrix.rows.filter(r => r.homeTeam === t.homeTeam)[0];
                 return (
                   <tr key={t.homeTeam}>
                     <td>{t.homeTeam}</td>
                     {
                       teams.map(t => {
-                        const score = row.scores.filter(s => s.item1 === t.homeTeam)[0];
+                        const score = row.scores.filter(s => s.awayTeam === t.homeTeam)[0];
                         return (
-                          <td key={t + score.item1 + score.item2} 
-                              style={{backgroundColor: this.getBackgroundColor(score.item3)}}
+                          <td key={t + score.awayTeam + score.score} 
+                              style={{backgroundColor: getBackgroundColor(score.result)}}
                           >
-                            {score.item2}
+                            {score.score}
                           </td>
                         )
                       })
@@ -81,14 +41,21 @@ class ResultMatrix extends Component {
             }
           </tbody>
         </table>
-    }
-
-    return (
-      <div>
-        {body}
       </div>
     );
   }
+}
+
+function getBackgroundColor(result) {
+  if (result === null) {
+    return '#BBB';
+  }
+
+  return result === 'W' 
+    ? '#BFB' 
+    : result === 'D' 
+      ? '#FFB' 
+      : '#FBB'
 }
 
 export default ResultMatrix;

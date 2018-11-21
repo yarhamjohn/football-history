@@ -19,195 +19,38 @@ namespace football_history.Server.Repositories
             m_Context = context;
         }
 
-        public LeagueTable GetLeagueTable(int tier, string season)
+        public LeagueSeason GetLeagueSeason(int? tier, string season)
         {
-            var seasonStartYear = season.Substring(0, 4);
-            var seasonEndYear = season.Substring(7, 4);
-            var leagueTable = new LeagueTable
-            {
-                Season = $"{seasonStartYear} - {seasonEndYear}",
-                LeagueTableRows = new List<LeagueTableRow>()
-            };
-
-            var matchesInSeason = @"
-SELECT hc.Name AS HomeTeam
-    ,ac.Name AS AwayTeam
-    ,m.HomeGoals
-    ,m.AwayGoals
-    ,m.DivisionId
-    ,d.Name AS Division
-FROM dbo.LeagueMatches m
-INNER JOIN dbo.Divisions d ON m.DivisionId = d.Id
-INNER JOIN dbo.Clubs hc ON m.HomeClubId = hc.Id
-INNER JOIN dbo.Clubs ac ON m.AwayClubId = ac.Id
-WHERE d.Tier = @Tier
-    AND m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
-";
-
-            var sql = $@"
-WITH MatchesInSeason AS ({matchesInSeason})
-
-SELECT Position
-    ,Division
-    ,Team
-    ,GamesPlayed
-    ,GamesWon
-    ,GamesDrawn
-    ,GamesLost
-    ,GoalsFor
-    ,GoalsAgainst
-    ,GoalDifference
-    ,Points
-    ,PointsDeducted
-    ,PointsDeductionReason
-    ,Status
-FROM (
-    SELECT ROW_NUMBER() OVER(ORDER BY Points DESC, GoalDifference DESC, GoalsFor DESC) AS Position
-        ,Division
-        ,Team
-        ,GamesPlayed
-        ,GamesWon
-        ,GamesDrawn
-        ,GamesLost
-        ,GoalsFor
-        ,GoalsAgainst
-        ,GoalDifference
-        ,Points
-        ,PointsDeducted
-        ,PointsDeductionReason
-    FROM (
-        SELECT Division
-            ,Team
-            ,HomeWins + HomeDraws + HomeLosses + AwayWins + AwayDraws + AwayLosses AS GamesPlayed
-            ,HomeWins + AwayWins AS GamesWon
-            ,HomeDraws + AwayDraws AS GamesDrawn
-            ,HomeLosses + AwayLosses AS GamesLost
-            ,HomeGoalsFor + AwayGoalsFor AS GoalsFor
-            ,HomeGoalsAgainst + AwayGoalsAgainst AS GoalsAgainst
-            ,HomeGoalsFor + AwayGoalsFor - HomeGoalsAgainst - AwayGoalsAgainst AS GoalDifference
-            ,(HomeWins + AwayWins) * 3 + HomeDraws + AwayDraws - PointsDeducted AS Points
-            ,PointsDeducted
-            ,PointsDeductionReason
-        FROM (
-            SELECT m.HomeTeam AS Team
-                ,m.Division
-                ,COALESCE(pd.PointsDeducted, 0) AS PointsDeducted
-                ,pd.Reason AS PointsDeductionReason
-            FROM (
-                SELECT HomeTeam, Division, DivisionId
-                FROM MatchesInSeason
-                GROUP BY HomeTeam, Division, DivisionId
-            ) m
-            LEFT JOIN (
-                SELECT DivisionId, Season, Name AS Club, PointsDeducted, Reason
-                FROM dbo.PointDeductions pd
-                INNER JOIN dbo.Clubs c ON pd.ClubId = c.Id
-            ) pd
-            ON m.DivisionId = pd.DivisionId
-                AND m.HomeTeam = pd.Club
-                AND pd.Season = CONCAT(@SeasonStartYear, ' - ', @SeasonEndYear)
-        ) t
-        INNER JOIN (
-                SELECT HomeTeam
-                    ,SUM(CASE WHEN HomeGoals > AwayGoals THEN 1 ELSE 0 END) AS HomeWins
-                    ,SUM(CASE WHEN HomeGoals = AwayGoals THEN 1 ELSE 0 END) AS HomeDraws 
-                    ,SUM(CASE WHEN HomeGoals < AwayGoals THEN 1 ELSE 0 END) AS HomeLosses
-                    ,SUM(HomeGoals) AS HomeGoalsFor
-                    ,SUM(AwayGoals) AS HomeGoalsAgainst
-                FROM MatchesInSeason
-                GROUP BY HomeTeam
-            ) AS m1 ON t.Team = m1.HomeTeam
-        INNER JOIN (
-                SELECT AwayTeam
-                    ,SUM(CASE WHEN AwayGoals > HomeGoals THEN 1 ELSE 0 END) AS AwayWins
-                    ,SUM(CASE WHEN AwayGoals = HomeGoals THEN 1 ELSE 0 END) AS AwayDraws
-                    ,SUM(CASE WHEN AwayGoals < HomeGoals THEN 1 ELSE 0 END) AS AwayLosses
-                    ,SUM(AwayGoals) AS AwayGoalsFor
-                    ,SUM(HomeGoals) AS AwayGoalsAgainst
-                FROM MatchesInSeason
-                GROUP BY AwayTeam
-            ) AS m2 ON t.Team = m2.AwayTeam
-        ) r
-) a
-CROSS APPLY (
-    SELECT CASE WHEN a.Position = 1 THEN 'Champions' 
-                WHEN a.Position <= ls.PromotionPlaces THEN 'Promoted' 
-                WHEN a.Team = pom.PlayOffWinner THEN 'Play Off Winner'
-                WHEN a.Position <= ls.PromotionPlaces + ls.PlayOffPlaces THEN 'Play Offs'
-                WHEN a.Position > ls.TotalPlaces - ls.RelegationPlaces THEN 'Relegated'
-                ELSE NULL END AS Status
-    FROM dbo.LeagueStatuses ls
-    INNER JOIN dbo.Divisions d ON d.Id = ls.DivisionId
-    LEFT JOIN (
-        SELECT DivisionId
-            ,MatchDate
-            ,CASE WHEN (homegoals + homegoalset) > (awaygoals + awaygoalset) THEN hc.name 
-                WHEN (homegoals + homegoalset) < (awaygoals + awaygoalset) THEN ac.name
-	            ELSE CASE WHEN homepenaltiesscored > awaypenaltiesscored THEN hc.name 
-                    ELSE ac.name END
-                END AS PlayOffWinner 
-        FROM dbo.PlayOffMatches pom
-        LEFT JOIN dbo.Clubs hc ON hc.Id = pom.HomeClubId
-        LEFT JOIN dbo.Clubs ac ON ac.Id = pom.AwayClubId
-        WHERE pom.Round = 'Final'
-            AND pom.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
-    ) pom
-    ON pom.DivisionId = ls.DivisionId
-
-    WHERE d.Tier = @Tier AND ls.Season = CONCAT(@SeasonStartYear, ' - ', @SeasonEndYear)
-) b
-ORDER BY Position;
-";
-
+            var leagueSeason = new LeagueSeason();
+            
             using(var conn = m_Context.Database.GetDbConnection())
             {
                 conn.Open();
+                leagueSeason.LeagueFilterOptions = GetFilterOptions(conn);
 
-                var cmd = conn.CreateCommand();
-                cmd.CommandText = sql;
-                cmd.Parameters.Add(new SqlParameter("@Tier", tier));
-                cmd.Parameters.Add(new SqlParameter("@SeasonStartYear", seasonStartYear));
-                cmd.Parameters.Add(new SqlParameter("@SeasonEndYear", seasonEndYear));
+                var highestTier = leagueSeason.LeagueFilterOptions.AllTiers.First().Level;
+                var selectedTier = tier == null ? highestTier : (int) tier;
 
-                var reader = cmd.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        var position = (int) reader.GetInt64(0);
+                var latestSeason = leagueSeason.LeagueFilterOptions.AllSeasons.First();
+                var selectedSeason = season == null ? latestSeason : season;
 
-                        leagueTable.Competition = reader.GetString(1);
-                        leagueTable.LeagueTableRows.Add(
-                            new LeagueTableRow
-                            {
-                                Position = position,
-                                Team = reader.GetString(2),
-                                Played = reader.GetInt32(3),
-                                Won = reader.GetInt32(4),
-                                Drawn = reader.GetInt32(5),
-                                Lost = reader.GetInt32(6),
-                                GoalsFor = reader.GetInt32(7),
-                                GoalsAgainst = reader.GetInt32(8),
-                                GoalDifference = reader.GetInt32(9),
-                                Points = reader.GetInt32(10),
-                                PointsDeducted = reader.GetInt32(11),
-                                PointsDeductionReason = reader.IsDBNull(12) ? string.Empty : reader.GetString(12),
-                                Status = reader.IsDBNull(13) ? string.Empty : reader.GetString(13)
-                            }
-                        );
-                    }
-                } 
-                else 
-                {
-                    System.Console.WriteLine("No rows found");
-                }
-                reader.Close();
+                leagueSeason.Season = selectedSeason;
+                leagueSeason.Tier = selectedTier;
+
+                var seasonStartYear = selectedSeason.Substring(0, 4);
+                var seasonEndYear = selectedSeason.Substring(7, 4);
+
+                var matchDetails = GetMatchDetails(conn, selectedTier, seasonStartYear, seasonEndYear);
+                var leagueDetail = GetLeagueDetail(conn, selectedTier, selectedSeason);
+                var pointDeductions = GetPointDeductions(conn, selectedTier, selectedSeason);
+
+                CreateLeagueSeason(leagueSeason, matchDetails, leagueDetail, pointDeductions);
             }
 
-            return leagueTable;
+            return leagueSeason;
         }
 
-        public LeagueFilterOptions GetLeagueFilterOptions()
+        private LeagueFilterOptions GetFilterOptions(DbConnection conn)
         {
             var leagueFilterOptions = new LeagueFilterOptions
             {
@@ -230,290 +73,43 @@ SELECT Name, Tier, [From], [To]
 FROM dbo.Divisions;
 ";
 
-            using(var conn = m_Context.Database.GetDbConnection())
+            var cmd = conn.CreateCommand();
+            cmd.CommandText = sql;
+
+            var reader = cmd.ExecuteReader();
+            if (reader.HasRows)
             {
-                conn.Open();
-
-                var cmd = conn.CreateCommand();
-                cmd.CommandText = sql;
-
-                var reader = cmd.ExecuteReader();
-                if (reader.HasRows)
+                while (reader.Read())
                 {
-                    while (reader.Read())
-                    {
-                        leagueFilterOptions.AllSeasons.Add(
-                            reader.GetString(0)
-                        );
-                    }
-
-                    reader.NextResult();
-
-                    while (reader.Read())
-                    {
-                        var tier = reader.GetByte(1);
-                        var division = new Division
-                            {
-                                Name = reader.GetString(0),
-                                SeasonStartYear = reader.GetInt16(2),
-                                SeasonEndYear = reader.IsDBNull(3) ? DateTime.UtcNow.Year : reader.GetInt16(3)
-                            };
-
-                        AddDivision(tier, division, leagueFilterOptions);
-                    }
-                } 
-                else 
-                {
-                    System.Console.WriteLine("No rows found");
+                    leagueFilterOptions.AllSeasons.Add(
+                        reader.GetString(0)
+                    );
                 }
-                reader.Close();
-            }
 
+                reader.NextResult();
+
+                while (reader.Read())
+                {
+                    var tier = reader.GetByte(1);
+                    var division = new Division
+                        {
+                            Name = reader.GetString(0),
+                            SeasonStartYear = reader.GetInt16(2),
+                            SeasonEndYear = reader.IsDBNull(3) ? DateTime.UtcNow.Year : reader.GetInt16(3)
+                        };
+
+                    AddDivision(tier, division, leagueFilterOptions);
+                }
+            } 
+            else 
+            {
+                System.Console.WriteLine("No rows found");
+            }
+            reader.Close();
+
+            leagueFilterOptions.AllTiers = leagueFilterOptions.AllTiers.OrderBy(t => t.Level).ToList();
+            leagueFilterOptions.AllSeasons = leagueFilterOptions.AllSeasons.OrderByDescending(s => s).ToList();
             return leagueFilterOptions;
-        }
-
-        public List<Results> GetMatchResultMatrix(int tier, string season)
-        {
-            var seasonStartYear = season.Substring(0, 4);
-            var seasonEndYear = season.Substring(7, 4);
-            
-            var sql = @"
-SELECT hc.Name AS HomeTeam
-    ,ac.Name AS AwayTeam
-    ,hc.Abbreviation AS HomeTeamAbbreviation
-    ,CONCAT(m.HomeGoals, '-', AwayGoals) AS Score
-    ,CASE WHEN m.HomeGoals > m.AwayGoals THEN 'W'
-          WHEN m.HomeGoals = m.AwayGoals THEN 'D'
-          ELSE 'L' END AS Result
-FROM dbo.LeagueMatches m
-INNER JOIN dbo.Divisions d ON m.DivisionId = d.Id
-INNER JOIN dbo.Clubs hc ON m.HomeClubId = hc.Id
-INNER JOIN dbo.Clubs ac ON m.AwayClubId = ac.Id
-WHERE d.Tier = @Tier
-    AND m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
-";
-
-            var resultsMatrix = new List<Results>();
-
-            using(var conn = m_Context.Database.GetDbConnection())
-            {
-                conn.Open();
-
-                var cmd = conn.CreateCommand();
-                cmd.CommandText = sql;
-                cmd.Parameters.Add(new SqlParameter("@Tier", tier));
-                cmd.Parameters.Add(new SqlParameter("@SeasonStartYear", seasonStartYear));
-                cmd.Parameters.Add(new SqlParameter("@SeasonEndYear", seasonEndYear));
-
-                var reader = cmd.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        var homeTeam = reader.GetString(0);
-                        var awayTeam = reader.GetString(1);
-                        var homeTeamAbbreviation = reader.GetString(2);
-                        var score = reader.GetString(3);
-                        var result = reader.GetString(4);
-
-                        AddResult(homeTeam, awayTeam, homeTeamAbbreviation, score, result, resultsMatrix);
-                    }
-                } 
-                else 
-                {
-                    System.Console.WriteLine("No rows found");
-                }
-                reader.Close();
-            }
-        
-            return resultsMatrix;
-        }
-
-        public PlayOff GetPlayOffMatches(int tier, string season)
-        {
-            if (tier == 1) {
-                return new PlayOff();
-            }
-
-            var seasonStartYear = season.Substring(0, 4);
-            var seasonEndYear = season.Substring(7, 4);
-            
-            var sql = @"
-SELECT Round
-    ,hc.Name AS HomeClub
-    ,ac.Name AS AwayClub
-    ,HomeGoals
-    ,AwayGoals
-    ,ExtraTime
-    ,HomeGoalsET
-    ,AwayGoalsET
-    ,PenaltyShootout
-    ,HomePenaltiesTaken
-    ,HomePenaltiesScored
-    ,AwayPenaltiesTaken
-    ,AwayPenaltiesScored
-    ,MatchDate
-FROM dbo.PlayOffMatches pom
-INNER JOIN dbo.Divisions d ON pom.DivisionId = d.Id
-INNER JOIN dbo.Clubs hc ON hc.Id = pom.HomeClubId
-INNER JOIN dbo.Clubs ac ON ac.Id = pom.AwayClubId
-WHERE d.Tier = @Tier
-    AND pom.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
-ORDER BY MatchDate
-";
-
-            var playoffStages = new PlayOff
-            {
-                SemiFinals = new List<PlayOffSemiFinal>
-                {
-                    new PlayOffSemiFinal
-                    {
-                        FirstLeg = new PlayOffResult(),
-                        SecondLeg = new PlayOffResult()
-                    },
-                    new PlayOffSemiFinal
-                    {
-                        FirstLeg = new PlayOffResult(),
-                        SecondLeg = new PlayOffResult()
-                    }
-                },
-                Final = new PlayOffResult()
-            };
-
-            using(var conn = m_Context.Database.GetDbConnection())
-            {
-                conn.Open();
-
-                var cmd = conn.CreateCommand();
-                cmd.CommandText = sql;
-                cmd.Parameters.Add(new SqlParameter("@Tier", tier));
-                cmd.Parameters.Add(new SqlParameter("@SeasonStartYear", seasonStartYear));
-                cmd.Parameters.Add(new SqlParameter("@SeasonEndYear", seasonEndYear));
-
-                var reader = cmd.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    var count = 0;
-
-                    while (reader.Read())
-                    {
-                        var playOffResult = GetPlayOffResult(reader);
-                        if (reader.GetString(0) == "Final")
-                        {
-                            playoffStages.Final = playOffResult;
-                        }
-                        else
-                        {
-                            if (count == 0)
-                            {
-                                Console.WriteLine(playOffResult);
-                                Console.WriteLine(playoffStages.SemiFinals[0].FirstLeg);
-
-                                playoffStages.SemiFinals[0].FirstLeg = playOffResult;
-
-                                Console.WriteLine(playoffStages.SemiFinals[0].FirstLeg);
-
-                            }
-                            else if (count == 1)
-                            {
-                                playoffStages.SemiFinals[1].FirstLeg = playOffResult;
-                            }
-                            else if (playOffResult.HomeTeam == playoffStages.SemiFinals[0].FirstLeg.AwayTeam)
-                            {
-                                playoffStages.SemiFinals[0].SecondLeg = playOffResult;
-                            }
-                            else
-                            {
-                                playoffStages.SemiFinals[1].SecondLeg = playOffResult;
-                            }
-
-                            count++;
-                        }
-                    }
-                } 
-                else 
-                {
-                    System.Console.WriteLine("No rows found");
-                }
-                reader.Close();
-            }
-        
-            return playoffStages;
-        }
-
-        public List<Match> GetLeagueTableDrillDown(int tier, string season, string team) 
-        {
-            var seasonStartYear = season.Substring(0, 4);
-            var seasonEndYear = season.Substring(7, 4);
-            
-            var sql = @"
-SELECT MatchDate
-    ,CASE WHEN hc.Name = @Team AND HomeGoals > AwayGoals THEN 'W' 
-          WHEN hc.Name = @Team AND HomeGoals < AwayGoals THEN 'L'
-          WHEN ac.Name = @Team AND HomeGoals > AwayGoals THEN 'L'
-          WHEN ac.Name = @Team AND HomeGoals < AwayGoals THEN 'W'
-          ELSE 'D' END AS Result
-FROM dbo.LeagueMatches m
-INNER JOIN dbo.Divisions d ON m.DivisionId = d.Id
-INNER JOIN dbo.Clubs hc ON hc.Id = m.HomeClubId
-INNER JOIN dbo.Clubs ac ON ac.Id = m.AwayClubId
-WHERE d.Tier = @Tier
-    AND m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
-    AND (hc.Name = @Team OR ac.Name = @Team)
-ORDER BY MatchDate
-";
-
-            var matches = new List<Match>();
-
-            using(var conn = m_Context.Database.GetDbConnection())
-            {
-                conn.Open();
-
-                var cmd = conn.CreateCommand();
-                cmd.CommandText = sql;
-                cmd.Parameters.Add(new SqlParameter("@Tier", tier));
-                cmd.Parameters.Add(new SqlParameter("@SeasonStartYear", seasonStartYear));
-                cmd.Parameters.Add(new SqlParameter("@SeasonEndYear", seasonEndYear));
-                cmd.Parameters.Add(new SqlParameter("@Team", team));
-
-                var reader = cmd.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        matches.Add(
-                            new Match {
-                                MatchDate = reader.GetDateTime(0),
-                                Result = reader.GetString(1),
-                            }
-                        );
-                    }
-                } 
-                else 
-                {
-                    System.Console.WriteLine("No rows found");
-                }
-                reader.Close();
-            }
-        
-            return matches;
-        }
-
-        private PlayOffResult GetPlayOffResult(DbDataReader reader)
-        {
-            return new PlayOffResult
-            {
-                HomeTeam = reader.GetString(1),
-                AwayTeam = reader.GetString(2),
-                HomeGoals = reader.GetByte(3),
-                AwayGoals = reader.GetByte(4),
-                HomeGoalsET = reader.GetBoolean(5) ? reader.GetByte(6) : (int?) null,
-                AwayGoalsET = reader.GetBoolean(5) ? reader.GetByte(7) : (int?) null,
-                HomePenaltiesTaken = reader.GetBoolean(8) ? reader.GetByte(9) : (int?) null,
-                HomePenaltiesScored = reader.GetBoolean(8) ? reader.GetByte(10) : (int?) null,
-                AwayPenaltiesTaken = reader.GetBoolean(8) ? reader.GetByte(11) : (int?) null,
-                AwayPenaltiesScored = reader.GetBoolean(8) ? reader.GetByte(12) : (int?) null
-            };
         }
 
         private void AddDivision(int tier, Division division, LeagueFilterOptions leagueFilterOptions)
@@ -541,30 +137,462 @@ ORDER BY MatchDate
             }
         }
 
-        private void AddResult(string homeTeam, string awayTeam, string homeTeamAbbreviation, string score, string result, List<Results> resultsMatrix)
+        private void CreateLeagueSeason(LeagueSeason leagueSeason, List<MatchDetail> matchDetails, LeagueDetail leagueDetail, List<PointDeduction> pointDeductions)
         {
-            var homeTeamExists = resultsMatrix.Where(r => r.HomeTeam == homeTeam).ToList().Count == 1;
-            if (homeTeamExists)
+            leagueSeason.CompetitionName = leagueDetail.Competition;
+            leagueSeason.LeagueTable = CreateLeagueTable(matchDetails, leagueDetail, pointDeductions);
+            leagueSeason.PlayOffs = CreatePlayOffs(matchDetails);
+            leagueSeason.ResultMatrix = CreateResultMatrix(matchDetails);
+        }
+
+        private LeagueTable CreateLeagueTable(List<MatchDetail> matchDetails, LeagueDetail leagueDetail, List<PointDeduction> pointDeductions)
+        {
+            var leagueTable = new LeagueTable { Rows = new List<LeagueTableRow>() };
+
+            AddLeagueRows(leagueTable, matchDetails);
+            IncludePointDeductions(leagueTable, pointDeductions);
+            SortLeagueTable(leagueTable);
+            SetLeaguePosition(leagueTable);
+            AddTeamStatus(leagueTable, leagueDetail, matchDetails);
+            AddLeagueForm(leagueTable, matchDetails);
+
+            return leagueTable;
+        }
+
+        private void AddLeagueForm(LeagueTable leagueTable, List<MatchDetail> matchDetails)
+        {
+            foreach (var row in leagueTable.Rows)
             {
-                resultsMatrix = resultsMatrix
-                    .Select(r => {
-                        if (r.HomeTeam == homeTeam) {
-                            r.Scores.Add((awayTeam,  score, result));
-                        }; 
-                        return r;
-                    }).ToList();
+                var matches = matchDetails.Where(m => m.Type == "League" && (m.HomeTeam == row.Team || m.AwayTeam == row.Team)).OrderBy(m => m.Date).ToList();
+                var form = matches.Select(m => new MatchResult
+                {
+                    MatchDate = m.Date,
+                    Result = row.Team == m.HomeTeam ? (m.HomeGoals > m.AwayGoals ? "W" : m.HomeGoals < m.AwayGoals ? "L" : "D") : (m.HomeGoals < m.AwayGoals ? "W" : m.HomeGoals > m.AwayGoals ? "L" : "D")
+                }).ToList();
+
+                row.Form = form;
             }
-            else 
+        }
+
+        private void AddTeamStatus(LeagueTable leagueTable, LeagueDetail leagueDetail, List<MatchDetail> matchDetails)
+        {
+            var playOffFinal = matchDetails.Where(m => m.Type == "PlayOff" && m.Round == "Final").ToList();
+            
+            foreach (var row in leagueTable.Rows)
             {
-                resultsMatrix.Add(
-                    new Results
+                if (row.Position == 1)
+                {
+                    row.Status = "C";
+                }
+                else if (row.Position <= leagueDetail.PromotionPlaces)
+                {
+                    row.Status = "P";
+                }
+                else if (playOffFinal.Count == 1 && row.Position <= leagueDetail.PlayOffPlaces + leagueDetail.PromotionPlaces)
+                {
+                    var final = playOffFinal.Single();
+                    var winner = final.PenaltyShootout 
+                        ? (final.HomePenaltiesScored > final.AwayPenaltiesScored ? final.HomeTeam : final.AwayTeam) 
+                        : final.ExtraTime
+                            ? (final.HomeGoalsET > final.AwayGoalsET ? final.HomeTeam : final.AwayTeam) 
+                            : (final.HomeGoals > final.AwayGoals ? final.HomeTeam : final.AwayTeam);
+                    
+                    if (row.Team == winner)
                     {
-                        HomeTeam = homeTeam,
-                        HomeTeamAbbreviation = homeTeamAbbreviation,
-                        Scores = new List<(string AwayTeam,string Score, string Result)> { (homeTeam, null, null), (awayTeam, score, result) }
+                        row.Status = "PO (P)";
+                    }
+                    else
+                    {
+                        row.Status = "PO";
+                    }
+                }
+                else if (row.Position > leagueDetail.TotalPlaces - leagueDetail.RelegationPlaces)
+                {
+                    row.Status = "R";
+                }
+                else
+                {
+                    row.Status = string.Empty;
+                }
+            }
+        }
+
+        private void AddLeagueRows(LeagueTable leagueTable, List<MatchDetail> matchDetails)
+        {
+            var teams = matchDetails.Select(m => m.HomeTeam).Distinct().ToList();
+            foreach (var team in teams)
+            {
+                var homeGames = matchDetails.Where(m => m.HomeTeam == team).ToList();
+                var awayGames = matchDetails.Where(m => m.AwayTeam == team).ToList();
+
+                leagueTable.Rows.Add(
+                    new LeagueTableRow
+                    {
+                        Team = team,
+                        Won = homeGames.Count(g => g.HomeGoals > g.AwayGoals) + awayGames.Count(g => g.AwayGoals > g.HomeGoals),
+                        Drawn = homeGames.Count(g => g.HomeGoals == g.AwayGoals) + awayGames.Count(g => g.AwayGoals == g.HomeGoals),
+                        Lost = homeGames.Count(g => g.HomeGoals < g.AwayGoals) + awayGames.Count(g => g.AwayGoals < g.HomeGoals),
+                        GoalsFor = homeGames.Sum(g => g.HomeGoals) + awayGames.Sum(g => g.AwayGoals),
+                        GoalsAgainst = homeGames.Sum(g => g.AwayGoals) + awayGames.Sum(g => g.HomeGoals),
                     }
                 );
             }
+
+            foreach (var row in leagueTable.Rows)
+            {
+                row.Played = row.Won + row.Drawn + row.Lost;
+                row.GoalDifference = row.GoalsFor - row.GoalsAgainst;
+                row.Points = (row.Won * 3) + row.Drawn;
+            }
+        }
+
+        private void IncludePointDeductions(LeagueTable table, List<PointDeduction> pointDeductions)
+        {
+            foreach (var row in table.Rows)
+            {
+                var deduction = pointDeductions.Where(d => d.Team == row.Team).ToList();
+
+                if (deduction.Count == 0)
+                {
+                    row.PointsDeducted = 0;
+                    row.PointsDeductionReason = string.Empty;
+                } 
+                else 
+                {
+                    var d = deduction.Single();
+
+                    row.PointsDeducted = d.PointsDeducted;
+                    row.PointsDeductionReason = d.Reason;
+                    row.Points -= d.PointsDeducted;
+                }
+            }
+        }
+        
+        private void SortLeagueTable(LeagueTable table)
+        {
+            table.Rows = table.Rows
+                .OrderByDescending(t => t.Points)
+                .ThenByDescending(t => t.GoalDifference)
+                .ThenByDescending(t => t.GoalsFor) // head to head, alphabetical unless P/R spots, then a play off (never happened)
+                .ToList();
+        }
+
+        private void SetLeaguePosition(LeagueTable table)
+        {
+            table.Rows = table.Rows.Select((t, i) => { 
+                t.Position = i + 1; 
+                return t; 
+            }).ToList();
+        }
+
+        private PlayOffs CreatePlayOffs(List<MatchDetail> matchDetails)
+        {
+            var playOffMatches = matchDetails
+                .Where(m => m.Type == "PlayOff")
+                .Select(m => new MatchDetail 
+                    {
+                        Competition = m.Competition,
+                        Type = m.Type,
+                        Round = m.Round,
+                        Date = m.Date,
+                        HomeTeam = m.HomeTeam,
+                        HomeTeamAbbreviation = m.HomeTeamAbbreviation,
+                        AwayTeam = m.AwayTeam,
+                        AwayTeamAbbreviation = m.AwayTeamAbbreviation,
+                        HomeGoals = m.HomeGoals,
+                        AwayGoals = m.AwayGoals,
+                        ExtraTime = m.ExtraTime,
+                        HomeGoalsET = m.ExtraTime ? m.HomeGoalsET : (int?) null,
+                        AwayGoalsET = m.ExtraTime ? m.AwayGoalsET : (int?) null,
+                        PenaltyShootout = m.PenaltyShootout,
+                        HomePenaltiesTaken = m.PenaltyShootout ? m.HomePenaltiesTaken : (int?) null,
+                        HomePenaltiesScored = m.PenaltyShootout ? m.HomePenaltiesScored : (int?) null,
+                        AwayPenaltiesTaken = m.PenaltyShootout ? m.AwayPenaltiesTaken : (int?) null,
+                        AwayPenaltiesScored = m.PenaltyShootout ? m.AwayPenaltiesScored : (int?) null
+                    })
+                .OrderBy(m => m.Date)
+                .ToList();
+            
+            var playOffs = new PlayOffs { SemiFinals = new List<SemiFinal>() };
+            foreach(var match in playOffMatches)
+            {
+                if (match.Round == "Final")
+                {
+                    playOffs.Final = match;
+                }
+                else
+                {
+                    AddSemiFinal(playOffs, match);
+                }
+            }
+
+            return playOffs;
+        }
+
+        private void AddSemiFinal(PlayOffs playOffs, MatchDetail match)
+        {
+            if (playOffs.SemiFinals.Count == 0)
+            {
+                playOffs.SemiFinals.Add(new SemiFinal { FirstLeg = match });
+            } 
+            else if (playOffs.SemiFinals.Count == 1)
+            {
+                if (match.HomeTeam == playOffs.SemiFinals[0].FirstLeg.AwayTeam)
+                {
+                    playOffs.SemiFinals[0].SecondLeg = match;
+                }
+                else
+                {
+                    playOffs.SemiFinals.Add(new SemiFinal { FirstLeg = match });
+                }
+            }
+            else
+            {
+                if (match.HomeTeam == playOffs.SemiFinals[0].FirstLeg.AwayTeam)
+                {
+                    playOffs.SemiFinals[0].SecondLeg = match;
+                }
+                else
+                {
+                    playOffs.SemiFinals[1].SecondLeg = match;
+                }
+            }
+        }
+
+        private ResultMatrix CreateResultMatrix(List<MatchDetail> matchDetails)
+        {
+            var teams = matchDetails.Select(m => (m.HomeTeam, m.HomeTeamAbbreviation)).Distinct().ToList();
+
+            var resultMatrix = new ResultMatrix { Rows = new List<ResultMatrixRow>() };
+            foreach (var team in teams)
+            {
+                resultMatrix.Rows.Add(
+                    new ResultMatrixRow
+                    {
+                        HomeTeam = team.Item1,
+                        HomeTeamAbbreviation = team.Item2,
+                        Scores = GetScores(matchDetails, team.Item1, team.Item1)
+                    }
+                );
+            }
+
+            return resultMatrix;
+        }
+        private List<ResultScore> GetScores(List<MatchDetail> matchDetails, string awayTeam, string homeTeam)
+        {
+            var homeGames = matchDetails.Where(m => m.HomeTeam == awayTeam).ToList();
+
+            var resultScores = new List<ResultScore> { new ResultScore { AwayTeam = homeTeam, Score = null, Result = null } };
+            foreach(var game in homeGames)
+            {
+                resultScores.Add(
+                    new ResultScore
+                    {
+                        AwayTeam = game.AwayTeam,
+                        Score = $"{game.HomeGoals}-{game.AwayGoals}",
+                        Result = game.HomeGoals > game.AwayGoals ? "W" : game.HomeGoals < game.AwayGoals ? "L" : "D"
+                    }
+                );
+            }
+
+            return resultScores;
+        }
+
+        private List<MatchDetail> GetMatchDetails(DbConnection conn, int tier, string seasonStartYear, string seasonEndYear)
+        {
+            var leagueMatchesSql = @"
+SELECT d.Name AS CompetitionName
+    ,'League' AS Type
+    ,'Regular Season' AS Round
+    ,lm.matchDate
+    ,hc.Name AS HomeTeam
+    ,hc.Abbreviation AS HomeAbbreviation
+    ,ac.Name as AwayTeam
+    ,ac.Abbreviation as AwayAbbreviation
+    ,lm.HomeGoals
+    ,lm.AwayGoals
+    ,0 AS ExtraTime
+    ,NULL AS HomeGoalsET
+    ,NULL AS AwayGoalsET
+    ,0 AS PenaltyShootout
+    ,NULL AS HomePenaltiesTaken
+    ,NULL AS HomePenaltiesScored
+    ,NULL AS AwayPenaltiesTaken
+    ,NULL AS AwayPenaltiesScored
+FROM dbo.LeagueMatches AS lm
+INNER JOIN dbo.Divisions d ON d.Id = lm.DivisionId
+INNER JOIN dbo.Clubs AS hc ON hc.Id = lm.HomeClubId
+INNER JOIN dbo.Clubs AS ac ON ac.Id = lm.AwayClubId
+WHERE d.Tier = @Tier
+    AND lm.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
+";
+
+            var playOffMatchesSql = @"
+SELECT d.Name AS CompetitionName
+    ,'PlayOff' AS Type
+    ,pom.Round
+    ,pom.matchDate
+    ,hc.Name AS HomeTeam
+    ,hc.Abbreviation AS HomeAbbreviation
+    ,ac.Name as AwayTeam
+    ,ac.Abbreviation as AwayAbbreviation
+    ,pom.HomeGoals
+    ,pom.AwayGoals
+    ,pom.ExtraTime AS ExtraTime
+    ,pom.HomeGoalsET
+    ,pom.AwayGoalsET
+    ,pom.PenaltyShootout
+    ,pom.HomePenaltiesTaken
+    ,pom.HomePenaltiesScored
+    ,pom.AwayPenaltiesTaken
+    ,pom.AwayPenaltiesScored
+FROM dbo.PlayOffMatches AS pom
+INNER JOIN dbo.Divisions d ON d.Id = pom.DivisionId
+INNER JOIN dbo.Clubs AS hc ON hc.Id = pom.HomeClubId
+INNER JOIN dbo.Clubs AS ac ON ac.Id = pom.AwayClubId
+WHERE d.Tier = @Tier
+    AND pom.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
+";
+
+            var sql = $@"{leagueMatchesSql} UNION ALL {playOffMatchesSql}";
+
+            var matchDetails = new List<MatchDetail>();
+
+            var cmd = conn.CreateCommand();
+            cmd.CommandText = sql;
+            cmd.Parameters.Add(new SqlParameter("@Tier", tier));
+            cmd.Parameters.Add(new SqlParameter("@SeasonStartYear", seasonStartYear));
+            cmd.Parameters.Add(new SqlParameter("@SeasonEndYear", seasonEndYear));
+
+            var reader = cmd.ExecuteReader();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    var extraTime = reader.GetInt32(10) == 1 ? true : false;
+                    var penaltyShootout = reader.GetInt32(13) == 1 ? true : false;
+
+                    matchDetails.Add(
+                        new MatchDetail
+                        {
+                            Competition = reader.GetString(0),
+                            Type = reader.GetString(1),
+                            Round = reader.GetString(2),
+                            Date = reader.GetDateTime(3),
+                            HomeTeam = reader.GetString(4),
+                            HomeTeamAbbreviation = reader.GetString(5),
+                            AwayTeam = reader.GetString(6),
+                            AwayTeamAbbreviation = reader.GetString(7),
+                            HomeGoals = reader.GetByte(8),
+                            AwayGoals = reader.GetByte(9),
+                            ExtraTime = extraTime,
+                            HomeGoalsET = extraTime ? reader.GetByte(11) : (int?) null,
+                            AwayGoalsET = extraTime ? reader.GetByte(12) : (int?) null,
+                            PenaltyShootout = penaltyShootout,
+                            HomePenaltiesTaken = penaltyShootout ? reader.GetByte(14) : (int?) null,
+                            HomePenaltiesScored = penaltyShootout ? reader.GetByte(15) : (int?) null,
+                            AwayPenaltiesTaken = penaltyShootout ? reader.GetByte(16) : (int?) null,
+                            AwayPenaltiesScored = penaltyShootout ? reader.GetByte(17) : (int?) null
+                        }
+                    );
+                }
+            }
+            else 
+            {
+                System.Console.WriteLine("No rows found");
+            }
+            reader.Close();
+
+            return matchDetails;
+        }
+        
+        private LeagueDetail GetLeagueDetail(DbConnection conn, int tier, string season)
+        {
+            var sql = @"
+SELECT d.Name AS CompetitionName
+    ,ls.TotalPlaces
+    ,ls.PromotionPlaces
+    ,ls.PlayOffPlaces
+    ,ls.RelegationPlaces
+FROM dbo.LeagueStatuses AS ls
+INNER JOIN dbo.Divisions d ON d.Id = ls.DivisionId
+WHERE d.Tier = @Tier AND ls.Season = @Season
+";
+
+            var leagueDetails = new LeagueDetail();
+
+            var cmd = conn.CreateCommand();
+            cmd.CommandText = sql;
+            cmd.Parameters.Add(new SqlParameter("@Tier", tier));
+            cmd.Parameters.Add(new SqlParameter("@Season", season));
+
+            var reader = cmd.ExecuteReader();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    leagueDetails = new LeagueDetail
+                    {
+                        Competition = reader.GetString(0),
+                        TotalPlaces = reader.GetByte(1),
+                        PromotionPlaces = reader.GetByte(2),
+                        PlayOffPlaces = reader.GetByte(3),
+                        RelegationPlaces = reader.GetByte(4)
+                    };
+                }
+            }
+            else 
+            {
+                System.Console.WriteLine("No rows found");
+            }
+            reader.Close();
+
+            return leagueDetails;
+        }
+
+        private List<PointDeduction> GetPointDeductions(DbConnection conn, int tier, string season)
+        {
+            var sql = @"
+SELECT d.Name AS Competition
+    ,c.Name AS TeamName
+    ,pd.PointsDeducted
+    ,pd.Reason
+FROM dbo.PointDeductions AS pd
+INNER JOIN dbo.Divisions d ON d.Id = pd.DivisionId
+INNER JOIN dbo.Clubs AS c ON c.Id = pd.ClubId
+WHERE d.Tier = @Tier AND pd.Season = @Season
+";
+
+            var pointDeductions = new List<PointDeduction>();
+
+            var cmd = conn.CreateCommand();
+            cmd.CommandText = sql;
+            cmd.Parameters.Add(new SqlParameter("@Tier", tier));
+            cmd.Parameters.Add(new SqlParameter("@Season", season));
+
+            var reader = cmd.ExecuteReader();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    pointDeductions.Add(
+                        new PointDeduction
+                        {
+                            Competition = reader.GetString(0),
+                            Team = reader.GetString(1),
+                            PointsDeducted = reader.GetByte(2),
+                            Reason = reader.GetString(3)
+                        }
+                    );
+                }
+            }
+            else 
+            {
+                System.Console.WriteLine("No rows found");
+            }
+            reader.Close();
+
+            return pointDeductions;
         }
     }
 }

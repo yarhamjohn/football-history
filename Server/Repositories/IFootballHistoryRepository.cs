@@ -4,11 +4,6 @@ namespace football_history.Server.Repositories
 {
     public interface IFootballHistoryRepository
     {
-        LeagueTable GetLeagueTable(int tier, string season);
-        LeagueFilterOptions GetLeagueFilterOptions();
-        List<Results> GetMatchResultMatrix(int tier, string season);
-
-        PlayOff GetPlayOffMatches(int tier, string season);
-        List<Match> GetLeagueTableDrillDown(int tier, string season, string team);
+        LeagueSeason GetLeagueSeason(int? tier, string season);
     }
 }

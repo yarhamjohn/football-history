@@ -1,10 +1,9 @@
+using System;
 using System.Collections.Generic;
 
 public class LeagueTable
 {
-    public string Competition { get; set; }
-    public string Season { get; set; }
-    public List<LeagueTableRow> LeagueTableRows { get; set; }
+    public List<LeagueTableRow> Rows { get; set; }
 }
 
 public class LeagueTableRow
@@ -22,4 +21,11 @@ public class LeagueTableRow
     public int PointsDeducted { get; set; }
     public string PointsDeductionReason { get; set; }
     public string Status { get; set; }
+    public List<MatchResult> Form { get; set; } 
+}
+
+public class MatchResult
+{
+    public DateTime MatchDate { get; set; }
+    public string Result { get; set; } 
 }
