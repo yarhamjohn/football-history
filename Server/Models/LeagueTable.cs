@@ -21,11 +21,4 @@ public class LeagueTableRow
     public int PointsDeducted { get; set; }
     public string PointsDeductionReason { get; set; }
     public string Status { get; set; }
-    public List<MatchResult> Form { get; set; } 
-}
-
-public class MatchResult
-{
-    public DateTime MatchDate { get; set; }
-    public string Result { get; set; } 
 }

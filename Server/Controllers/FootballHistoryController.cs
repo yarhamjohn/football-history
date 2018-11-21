@@ -27,5 +27,11 @@ namespace football_history.Controllers
         {
             return m_Repository.GetLeagueSeason(Convert.ToInt32(tier), season);
         }
+                
+        [HttpGet("[action]")]
+        public List<MatchResult> GetLeagueForm(string tier, string season, string team)
+        {
+            return m_Repository.GetLeagueForm(Convert.ToInt32(tier), season, team);
+        }
     }
 }

@@ -6,5 +6,7 @@ namespace football_history.Server.Repositories
     {
         FilterOptions GetFilterOptions();
         LeagueSeason GetLeagueSeason(int tier, string season);
+
+        List<MatchResult> GetLeagueForm(int tier, string season, string team);
     }
 }

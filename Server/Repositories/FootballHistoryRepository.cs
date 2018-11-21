@@ -143,24 +143,89 @@ FROM dbo.Divisions;
             SortLeagueTable(leagueTable);
             SetLeaguePosition(leagueTable);
             AddTeamStatus(leagueTable, leagueDetail, matchDetails);
-            AddLeagueForm(leagueTable, matchDetails);
 
             return leagueTable;
         }
 
-        private void AddLeagueForm(LeagueTable leagueTable, List<MatchDetail> matchDetails)
+        public List<MatchResult> GetLeagueForm(int tier, string season, string team)
         {
-            foreach (var row in leagueTable.Rows)
-            {
-                var matches = matchDetails.Where(m => m.Type == "League" && (m.HomeTeam == row.Team || m.AwayTeam == row.Team)).OrderBy(m => m.Date).ToList();
-                var form = matches.Select(m => new MatchResult
-                {
-                    MatchDate = m.Date,
-                    Result = row.Team == m.HomeTeam ? (m.HomeGoals > m.AwayGoals ? "W" : m.HomeGoals < m.AwayGoals ? "L" : "D") : (m.HomeGoals < m.AwayGoals ? "W" : m.HomeGoals > m.AwayGoals ? "L" : "D")
-                }).ToList();
+            var seasonStartYear = season.Substring(0, 4);
+            var seasonEndYear = season.Substring(7, 4);
 
-                row.Form = form;
+            var sql = @"
+SELECT lm.matchDate
+    ,hc.Name AS HomeTeam
+    ,ac.Name as AwayTeam
+    ,lm.HomeGoals
+    ,lm.AwayGoals
+FROM dbo.LeagueMatches AS lm
+INNER JOIN dbo.Divisions d ON d.Id = lm.DivisionId
+INNER JOIN dbo.Clubs AS hc ON hc.Id = lm.HomeClubId
+INNER JOIN dbo.Clubs AS ac ON ac.Id = lm.AwayClubId
+WHERE d.Tier = @Tier
+    AND (hc.Name = @Team OR ac.Name = @Team)
+    AND lm.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
+ORDER BY lm.matchDate
+";
+            
+            var form = new List<MatchResult>();
+            using(var conn = m_Context.Database.GetDbConnection())
+            {
+                conn.Open();
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+                cmd.Parameters.Add(new SqlParameter("@Tier", tier));
+                cmd.Parameters.Add(new SqlParameter("@SeasonStartYear", seasonStartYear));
+                cmd.Parameters.Add(new SqlParameter("@SeasonEndYear", seasonEndYear));
+                cmd.Parameters.Add(new SqlParameter("@Team", team));
+
+                var reader = cmd.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        form.Add(
+                            new MatchResult
+                            {
+                                MatchDate = reader.GetDateTime(0),
+                                Result = GetMatchResult(team, reader)
+                            }
+                        );
+                    }
+                } 
+                else 
+                {
+                    System.Console.WriteLine("No rows found");
+                }
+                reader.Close();
             }
+
+            return form;
+        }
+
+        private string GetMatchResult(string team, DbDataReader reader)
+        {
+            var homeTeam = reader.GetString(1);
+            var awayTeam = reader.GetString(2);
+            var homeGoals = reader.GetByte(3);
+            var awayGoals = reader.GetByte(4);
+
+            var homeWin = (team == homeTeam) && (homeGoals > awayGoals);
+            var awayWin = (team == awayTeam) && (homeGoals < awayGoals);
+            var homeLoss = (team == homeTeam) && (homeGoals < awayGoals);
+            var awayLoss = (team == awayTeam) && (homeGoals > awayGoals);
+            
+            if (homeWin || awayWin)
+            {
+                return "W";
+            }
+
+            if (homeLoss || awayLoss)
+            {
+                return "L";
+            }
+
+            return "D";
         }
 
         private void AddTeamStatus(LeagueTable leagueTable, LeagueDetail leagueDetail, List<MatchDetail> matchDetails)

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Season from './Table';
+import LeagueSeason from './LeagueSeason';
 import Filter from './Filter';
 
 class Page extends Component {
@@ -48,7 +48,7 @@ class Page extends Component {
           selectedSeason={season}
           selectLeagueTable={(tier, season) => this.selectSeason(tier, season)}
         />
-        <Season season={season} tier={tier} />
+        <LeagueSeason season={season} tier={tier} />
       </React.Fragment>
     );
   }
