@@ -4,6 +4,7 @@ namespace football_history.Server.Repositories
 {
     public interface IFootballHistoryRepository
     {
-        LeagueSeason GetLeagueSeason(int? tier, string season);
+        FilterOptions GetFilterOptions();
+        LeagueSeason GetLeagueSeason(int tier, string season);
     }
 }

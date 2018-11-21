@@ -19,30 +19,20 @@ namespace football_history.Server.Repositories
             m_Context = context;
         }
 
-        public LeagueSeason GetLeagueSeason(int? tier, string season)
+        public LeagueSeason GetLeagueSeason(int tier, string season)
         {
-            var leagueSeason = new LeagueSeason();
+            var leagueSeason = new LeagueSeason() { Season = season, Tier = tier};
             
             using(var conn = m_Context.Database.GetDbConnection())
             {
                 conn.Open();
-                leagueSeason.LeagueFilterOptions = GetFilterOptions(conn);
 
-                var highestTier = leagueSeason.LeagueFilterOptions.AllTiers.First().Level;
-                var selectedTier = tier == null ? highestTier : (int) tier;
+                var seasonStartYear = season.Substring(0, 4);
+                var seasonEndYear = season.Substring(7, 4);
 
-                var latestSeason = leagueSeason.LeagueFilterOptions.AllSeasons.First();
-                var selectedSeason = season == null ? latestSeason : season;
-
-                leagueSeason.Season = selectedSeason;
-                leagueSeason.Tier = selectedTier;
-
-                var seasonStartYear = selectedSeason.Substring(0, 4);
-                var seasonEndYear = selectedSeason.Substring(7, 4);
-
-                var matchDetails = GetMatchDetails(conn, selectedTier, seasonStartYear, seasonEndYear);
-                var leagueDetail = GetLeagueDetail(conn, selectedTier, selectedSeason);
-                var pointDeductions = GetPointDeductions(conn, selectedTier, selectedSeason);
+                var matchDetails = GetMatchDetails(conn, tier, seasonStartYear, seasonEndYear);
+                var leagueDetail = GetLeagueDetail(conn, tier, season);
+                var pointDeductions = GetPointDeductions(conn, tier, season);
 
                 CreateLeagueSeason(leagueSeason, matchDetails, leagueDetail, pointDeductions);
             }
@@ -50,9 +40,9 @@ namespace football_history.Server.Repositories
             return leagueSeason;
         }
 
-        private LeagueFilterOptions GetFilterOptions(DbConnection conn)
+        public FilterOptions GetFilterOptions()
         {
-            var leagueFilterOptions = new LeagueFilterOptions
+            var filterOptions = new FilterOptions
             {
                 AllSeasons = new List<string>(),
                 AllTiers = new List<Tier>()
@@ -72,47 +62,48 @@ GROUP BY Season;
 SELECT Name, Tier, [From], [To]
 FROM dbo.Divisions;
 ";
-
-            var cmd = conn.CreateCommand();
-            cmd.CommandText = sql;
-
-            var reader = cmd.ExecuteReader();
-            if (reader.HasRows)
+            using(var conn = m_Context.Database.GetDbConnection())
             {
-                while (reader.Read())
+                conn.Open();
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+
+                var reader = cmd.ExecuteReader();
+                if (reader.HasRows)
                 {
-                    leagueFilterOptions.AllSeasons.Add(
-                        reader.GetString(0)
-                    );
-                }
+                    while (reader.Read())
+                    {
+                        filterOptions.AllSeasons.Add(
+                            reader.GetString(0)
+                        );
+                    }
 
-                reader.NextResult();
+                    reader.NextResult();
 
-                while (reader.Read())
+                    while (reader.Read())
+                    {
+                        var tier = reader.GetByte(1);
+                        var division = new Division
+                            {
+                                Name = reader.GetString(0),
+                                SeasonStartYear = reader.GetInt16(2),
+                                SeasonEndYear = reader.IsDBNull(3) ? DateTime.UtcNow.Year : reader.GetInt16(3)
+                            };
+
+                        AddDivision(tier, division, filterOptions);
+                    }
+                } 
+                else 
                 {
-                    var tier = reader.GetByte(1);
-                    var division = new Division
-                        {
-                            Name = reader.GetString(0),
-                            SeasonStartYear = reader.GetInt16(2),
-                            SeasonEndYear = reader.IsDBNull(3) ? DateTime.UtcNow.Year : reader.GetInt16(3)
-                        };
-
-                    AddDivision(tier, division, leagueFilterOptions);
+                    System.Console.WriteLine("No rows found");
                 }
-            } 
-            else 
-            {
-                System.Console.WriteLine("No rows found");
+                reader.Close();
             }
-            reader.Close();
 
-            leagueFilterOptions.AllTiers = leagueFilterOptions.AllTiers.OrderBy(t => t.Level).ToList();
-            leagueFilterOptions.AllSeasons = leagueFilterOptions.AllSeasons.OrderByDescending(s => s).ToList();
-            return leagueFilterOptions;
+            return filterOptions;
         }
 
-        private void AddDivision(int tier, Division division, LeagueFilterOptions leagueFilterOptions)
+        private void AddDivision(int tier, Division division, FilterOptions leagueFilterOptions)
         {
             var tierExists = leagueFilterOptions.AllTiers.Where(t => t.Level == tier).ToList().Count == 1;
             if (tierExists)

@@ -17,10 +17,15 @@ namespace football_history.Controllers
         }
 
         [HttpGet("[action]")]
+        public FilterOptions GetFilterOptions()
+        {
+            return m_Repository.GetFilterOptions();
+        }
+        
+        [HttpGet("[action]")]
         public LeagueSeason GetLeagueSeason(string tier, string season)
         {
-            var selectedTier = tier == "null" ? (int?) null : Convert.ToInt32(tier);
-            return m_Repository.GetLeagueSeason(selectedTier, season == "null" ? null : season);
+            return m_Repository.GetLeagueSeason(Convert.ToInt32(tier), season);
         }
     }
 }

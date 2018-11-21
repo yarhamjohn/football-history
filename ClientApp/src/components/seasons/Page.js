@@ -1,54 +1,59 @@
 import React, { Component } from 'react';
 import Table from './Table';
 import Filter from './Filter';
-import ResultMatrix from './ResultMatrix';
-import PlayOffMatches from './PlayOffMatches';
 
 class Page extends Component {
   constructor(props) {
     super(props);
     this.state = { 
-      leagueSeason: {},
+      allSeasons: [],
+      allTiers: [],
+      selectedSeason: null,
+      selectedTier: null,
       loading: true };
   }
 
-  fetchData(tier, season) {
-    fetch(`api/FootballHistory/GetLeagueSeason?tier=${tier}&season=${season}`)
-      .then(response => response.json())
-      .then(data => {
-        this.setState({ leagueSeason: data, loading: false });
-      });
+  selectSeason(tier, season) {
+    this.setState({selectedSeason: season, selectedTier: tier });
   }
 
   componentDidMount() {
-    this.fetchData(null, null);
+    fetch(`api/FootballHistory/GetFilterOptions`)
+      .then(response => response.json())
+      .then(data => {
+        this.setState({ 
+          allSeasons: data.allSeasons.sort().reverse(), 
+          allTiers: data.allTiers.sort((a, b) => a.tier - b.tier), 
+          loading: false 
+        });
+      });
+  }
+
+  getCompetitionName(season, tier) {
+    return "Competition Name";
   }
 
   render() {
     let body;
-    let {loading, leagueSeason} = this.state;
+    let { loading, allSeasons, allTiers, selectedSeason, selectedTier } = this.state;
     
     if (loading) {
       body = <p><em>Loading...</em></p>
     } else {
-      var season = leagueSeason.season;
-      var tier = leagueSeason.tier;
+      var season = selectedSeason === null ? allSeasons[0] : selectedSeason;
+      var tier = selectedTier === null ? allTiers[0] : selectedTier;
 
       body = <React.Fragment>
         <Filter 
-          allSeasons={leagueSeason.leagueFilterOptions.allSeasons} 
-          allTiers={leagueSeason.leagueFilterOptions.allTiers} 
+          allSeasons={allSeasons} 
+          allTiers={allTiers} 
           selectedTier={tier} 
           selectedSeason={season}
-          selectLeagueTable={(tier, season) => this.fetchData(tier, season)}
+          selectLeagueTable={(tier, season) => {console.log("1:", tier); this.selectSeason(tier, season)}}
         />
-        <h1>{leagueSeason.competitionName}</h1>
+        <h1>{this.getCompetitionName(season, tier)}</h1>
         <h2>{season}</h2>
-        <div style={{display: 'flex', flexWrap: 'wrap'}}>
-          <Table leagueTable={leagueSeason.leagueTable} />
-          {tier !== 1 && <PlayOffMatches playOffs={leagueSeason.playOffs} />}
-        </div>
-        <ResultMatrix resultMatrix={leagueSeason.resultMatrix} />
+        <Table season={season} tier={tier} />
       </React.Fragment>
     }
 

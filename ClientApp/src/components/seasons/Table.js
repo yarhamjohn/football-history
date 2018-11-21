@@ -1,42 +1,77 @@
 import React, { Component } from 'react';
 import { Glyphicon } from 'react-bootstrap';
+import PlayOffMatches from './PlayOffMatches';
+import ResultMatrix from './ResultMatrix';
 import './Table.css';
 
 class Table extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { leagueSeason: {}, loading: true };
+  }
+
+  fetchLeagueTable() {
+    const { season, tier } = this.props;
+
+    fetch(`api/FootballHistory/GetLeagueSeason?tier=${tier.level}&season=${season}`)
+      .then(response => response.json())
+      .then(data => {
+        this.setState({ leagueSeason: data, loading: false });
+      });
+  }
+
+  componentDidMount() {
+    this.fetchLeagueTable();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.season !== this.props.season || prevProps.tier.level !== this.props.tier.level) {
+      this.fetchLeagueTable();
+    }
+  }
+
   render() {
-    const {leagueTable} = this.props;
+    const { leagueSeason, loading } = this.state;
+    if (loading)
+    {
+      return <div>Loading...</div>;
+    }
 
     return (
       <React.Fragment>
-        <div className='league-table'>
-          <table className='table'>
-            <thead>
-              <tr>
-                <th></th>
-                <th>Position</th>
-                <th>Team</th>
-                <th>Played</th>
-                <th>Won</th>
-                <th>Drawn</th>
-                <th>Lost</th>
-                <th>GF</th>
-                <th>GA</th>
-                <th>Diff</th>
-                <th>Points</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {leagueTable.rows.map(row => <TableRow row={row} season={leagueTable.season} tier={leagueTable.tier} key={row.position} drillDown={row.form} />)}
-            </tbody>
-          </table>
-          <div>
-            {leagueTable.rows.map(row =>
-              row.pointsDeducted > 0
-                ? PointsDeductionMessage(row.team, row.pointsDeducted, row.pointsDeductionReason)
-                : '')}
+        <div style={{display: 'flex', flexWrap: 'wrap'}}>
+          <div className='league-table'>
+            <table className='table'>
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Position</th>
+                  <th>Team</th>
+                  <th>Played</th>
+                  <th>Won</th>
+                  <th>Drawn</th>
+                  <th>Lost</th>
+                  <th>GF</th>
+                  <th>GA</th>
+                  <th>Diff</th>
+                  <th>Points</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                {leagueSeason.leagueTable.rows.map(row => <TableRow row={row} drillDown={row.form} key={row.position} />)}
+              </tbody>
+            </table>
+            <div>
+              {leagueSeason.leagueTable.rows.map(row =>
+                row.pointsDeducted > 0
+                  ? PointsDeductionMessage(row.team, row.pointsDeducted, row.pointsDeductionReason)
+                  : '')}
+            </div>
           </div>
+          {leagueSeason.tier !== 1 && <PlayOffMatches playOffs={leagueSeason.playOffs} />}
         </div>
+        <ResultMatrix resultMatrix={leagueSeason.resultMatrix} />
       </React.Fragment>
     );
   }

@@ -11,5 +11,4 @@ public class LeagueSeason
 
     public PlayOffs PlayOffs { get; set; }
     public ResultMatrix ResultMatrix { get; set; }
-    public LeagueFilterOptions LeagueFilterOptions { get; set; }
 }
