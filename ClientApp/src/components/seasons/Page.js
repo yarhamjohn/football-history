@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Table from './Table';
+import Season from './Table';
 import Filter from './Filter';
 
 class Page extends Component {
@@ -29,37 +29,26 @@ class Page extends Component {
       });
   }
 
-  getCompetitionName(season, tier) {
-    return "Competition Name";
-  }
-
   render() {
-    let body;
     let { loading, allSeasons, allTiers, selectedSeason, selectedTier } = this.state;
     
     if (loading) {
-      body = <p><em>Loading...</em></p>
-    } else {
-      var season = selectedSeason === null ? allSeasons[0] : selectedSeason;
-      var tier = selectedTier === null ? allTiers[0] : selectedTier;
+      return <p><em>Loading...</em></p>;
+    }
+  
+    var season = selectedSeason === null ? allSeasons[0] : selectedSeason;
+    var tier = selectedTier === null ? allTiers[0] : selectedTier;
 
-      body = <React.Fragment>
+    return (
+      <React.Fragment>
         <Filter 
           allSeasons={allSeasons} 
           allTiers={allTiers} 
           selectedTier={tier} 
           selectedSeason={season}
-          selectLeagueTable={(tier, season) => {console.log("1:", tier); this.selectSeason(tier, season)}}
+          selectLeagueTable={(tier, season) => this.selectSeason(tier, season)}
         />
-        <h1>{this.getCompetitionName(season, tier)}</h1>
-        <h2>{season}</h2>
-        <Table season={season} tier={tier} />
-      </React.Fragment>
-    }
-
-    return (
-      <React.Fragment>
-        {body}
+        <Season season={season} tier={tier} />
       </React.Fragment>
     );
   }

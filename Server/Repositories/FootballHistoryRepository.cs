@@ -25,8 +25,6 @@ namespace football_history.Server.Repositories
             
             using(var conn = m_Context.Database.GetDbConnection())
             {
-                conn.Open();
-
                 var seasonStartYear = season.Substring(0, 4);
                 var seasonEndYear = season.Substring(7, 4);
 
@@ -449,6 +447,7 @@ WHERE d.Tier = @Tier
 
             var matchDetails = new List<MatchDetail>();
 
+            conn.Open();
             var cmd = conn.CreateCommand();
             cmd.CommandText = sql;
             cmd.Parameters.Add(new SqlParameter("@Tier", tier));
@@ -493,6 +492,7 @@ WHERE d.Tier = @Tier
                 System.Console.WriteLine("No rows found");
             }
             reader.Close();
+            conn.Close();
 
             return matchDetails;
         }
@@ -512,6 +512,7 @@ WHERE d.Tier = @Tier AND ls.Season = @Season
 
             var leagueDetails = new LeagueDetail();
 
+            conn.Open();
             var cmd = conn.CreateCommand();
             cmd.CommandText = sql;
             cmd.Parameters.Add(new SqlParameter("@Tier", tier));
@@ -537,6 +538,7 @@ WHERE d.Tier = @Tier AND ls.Season = @Season
                 System.Console.WriteLine("No rows found");
             }
             reader.Close();
+            conn.Close();
 
             return leagueDetails;
         }
@@ -555,7 +557,8 @@ WHERE d.Tier = @Tier AND pd.Season = @Season
 ";
 
             var pointDeductions = new List<PointDeduction>();
-
+            
+            conn.Open();
             var cmd = conn.CreateCommand();
             cmd.CommandText = sql;
             cmd.Parameters.Add(new SqlParameter("@Tier", tier));
@@ -582,6 +585,7 @@ WHERE d.Tier = @Tier AND pd.Season = @Season
                 System.Console.WriteLine("No rows found");
             }
             reader.Close();
+            conn.Close();
 
             return pointDeductions;
         }

@@ -4,13 +4,13 @@ import PlayOffMatches from './PlayOffMatches';
 import ResultMatrix from './ResultMatrix';
 import './Table.css';
 
-class Table extends Component {
+class Season extends Component {
   constructor(props) {
     super(props);
     this.state = { leagueSeason: {}, loading: true };
   }
 
-  fetchLeagueTable() {
+  fetchLeagueSeason() {
     const { season, tier } = this.props;
 
     fetch(`api/FootballHistory/GetLeagueSeason?tier=${tier.level}&season=${season}`)
@@ -21,12 +21,12 @@ class Table extends Component {
   }
 
   componentDidMount() {
-    this.fetchLeagueTable();
+    this.fetchLeagueSeason();
   }
 
   componentDidUpdate(prevProps) {
     if (prevProps.season !== this.props.season || prevProps.tier.level !== this.props.tier.level) {
-      this.fetchLeagueTable();
+      this.fetchLeagueSeason();
     }
   }
 
@@ -34,11 +34,13 @@ class Table extends Component {
     const { leagueSeason, loading } = this.state;
     if (loading)
     {
-      return <div>Loading...</div>;
+      return <p><em>Loading...</em></p>;
     }
 
     return (
       <React.Fragment>
+        <h1>{leagueSeason.competitionName}</h1>
+        <h2>{leagueSeason.season}</h2>
         <div style={{display: 'flex', flexWrap: 'wrap'}}>
           <div className='league-table'>
             <table className='table'>
@@ -159,4 +161,4 @@ function PointsDeductionMessage(team, pointsDeducted, pointsDeductionReason)
   return <p key={team} className='point-deductions'>{message}</p>
 }
 
-export default Table;
+export default Season;
