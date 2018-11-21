@@ -134,9 +134,9 @@ FROM dbo.Divisions;
             leagueSeason.ResultMatrix = CreateResultMatrix(matchDetails);
         }
 
-        private LeagueTable CreateLeagueTable(List<MatchDetail> matchDetails, LeagueDetail leagueDetail, List<PointDeduction> pointDeductions)
+        private List<LeagueTableRow> CreateLeagueTable(List<MatchDetail> matchDetails, LeagueDetail leagueDetail, List<PointDeduction> pointDeductions)
         {
-            var leagueTable = new LeagueTable { Rows = new List<LeagueTableRow>() };
+            var leagueTable = new List<LeagueTableRow>();
 
             AddLeagueRows(leagueTable, matchDetails);
             IncludePointDeductions(leagueTable, pointDeductions);
@@ -228,11 +228,11 @@ ORDER BY lm.matchDate
             return "D";
         }
 
-        private void AddTeamStatus(LeagueTable leagueTable, LeagueDetail leagueDetail, List<MatchDetail> matchDetails)
+        private void AddTeamStatus(List<LeagueTableRow> leagueTable, LeagueDetail leagueDetail, List<MatchDetail> matchDetails)
         {
             var playOffFinal = matchDetails.Where(m => m.Type == "PlayOff" && m.Round == "Final").ToList();
             
-            foreach (var row in leagueTable.Rows)
+            foreach (var row in leagueTable)
             {
                 if (row.Position == 1)
                 {
@@ -271,7 +271,7 @@ ORDER BY lm.matchDate
             }
         }
 
-        private void AddLeagueRows(LeagueTable leagueTable, List<MatchDetail> matchDetails)
+        private void AddLeagueRows(List<LeagueTableRow> leagueTable, List<MatchDetail> matchDetails)
         {
             var teams = matchDetails.Select(m => m.HomeTeam).Distinct().ToList();
             foreach (var team in teams)
@@ -279,7 +279,7 @@ ORDER BY lm.matchDate
                 var homeGames = matchDetails.Where(m => m.HomeTeam == team).ToList();
                 var awayGames = matchDetails.Where(m => m.AwayTeam == team).ToList();
 
-                leagueTable.Rows.Add(
+                leagueTable.Add(
                     new LeagueTableRow
                     {
                         Team = team,
@@ -292,7 +292,7 @@ ORDER BY lm.matchDate
                 );
             }
 
-            foreach (var row in leagueTable.Rows)
+            foreach (var row in leagueTable)
             {
                 row.Played = row.Won + row.Drawn + row.Lost;
                 row.GoalDifference = row.GoalsFor - row.GoalsAgainst;
@@ -300,9 +300,9 @@ ORDER BY lm.matchDate
             }
         }
 
-        private void IncludePointDeductions(LeagueTable table, List<PointDeduction> pointDeductions)
+        private void IncludePointDeductions(List<LeagueTableRow> table, List<PointDeduction> pointDeductions)
         {
-            foreach (var row in table.Rows)
+            foreach (var row in table)
             {
                 var deduction = pointDeductions.Where(d => d.Team == row.Team).ToList();
 
@@ -322,18 +322,18 @@ ORDER BY lm.matchDate
             }
         }
         
-        private void SortLeagueTable(LeagueTable table)
+        private void SortLeagueTable(List<LeagueTableRow> table)
         {
-            table.Rows = table.Rows
+            table = table
                 .OrderByDescending(t => t.Points)
                 .ThenByDescending(t => t.GoalDifference)
                 .ThenByDescending(t => t.GoalsFor) // head to head, alphabetical unless P/R spots, then a play off (never happened)
                 .ToList();
         }
 
-        private void SetLeaguePosition(LeagueTable table)
+        private void SetLeaguePosition(List<LeagueTableRow> table)
         {
-            table.Rows = table.Rows.Select((t, i) => { 
+            table = table.Select((t, i) => { 
                 t.Position = i + 1; 
                 return t; 
             }).ToList();

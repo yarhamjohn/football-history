@@ -7,7 +7,7 @@ public class LeagueSeason
     public int Tier { get; set; }
     public string CompetitionName { get; set; }
 
-    public LeagueTable LeagueTable { get; set; }
+    public List<LeagueTableRow> LeagueTable { get; set; }
 
     public PlayOffs PlayOffs { get; set; }
     public ResultMatrix ResultMatrix { get; set; }

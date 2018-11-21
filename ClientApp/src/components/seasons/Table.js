@@ -26,11 +26,11 @@ class Table extends Component {
                 </tr>
               </thead>
               <tbody>
-                {leagueSeason.leagueTable.rows.map(row => <TableRow row={row} tier={leagueSeason.tier} season={leagueSeason.season} key={row.position} />)}
+                {leagueSeason.leagueTable.map(row => <TableRow row={row} tier={leagueSeason.tier} season={leagueSeason.season} key={row.position} />)}
               </tbody>
             </table>
             <div>
-              {leagueSeason.leagueTable.rows.map(row =>
+              {leagueSeason.leagueTable.map(row =>
                 row.pointsDeducted > 0
                   ? PointsDeductionMessage(row.team, row.pointsDeducted, row.pointsDeductionReason)
                   : '')}
