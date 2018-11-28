@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
+import { Well } from 'react-bootstrap';
 import { LineChart } from 'react-chartkick'
-
 import './DrillDownTableRow.css';
 
 class DrillDownTableRow extends Component {
@@ -36,14 +36,28 @@ class DrillDownTableRow extends Component {
     return (
       <tr>
         <td colSpan="12">
-          <div className='drilldown-form'>
-            {form.map(f => <span key={f.matchDate} style={{fontWeight: 'bold', color: f.result === 'W' ? 'green' : f.result === 'D' ? 'darkorange' : 'red'}}>{f.result}</span>)}
-          </div>
-          <LineChart data={test} min={1} max={numRows} library={{chartArea: {width: '90%'}, vAxis: {direction: -1, baseline: relegationPosition, baselineColor: 'red' }}} />
+          <Well>
+            <div style={{backgroundColor: 'white', padding: 5}}>
+              <div className='drilldown-form'>
+                {form.map(f => <span key={f.matchDate} style={{fontWeight: 'bold', color: f.result === 'W' ? 'green' : f.result === 'D' ? 'darkorange' : 'red'}}>{f.result}</span>)}
+              </div>
+              <LineChart data={test} min={1} max={numRows} library={{chartArea: {width: '90%', height: '75%'}, hAxis: {gridlines: {color: '#CCC', count: -1}, format: 'MMM d, y'}, vAxis: {ticks: GetTicks(numRows), direction: -1, baseline: relegationPosition, baselineColor: 'red' }}} />
+            </div>
+          </Well>
         </td>
       </tr>
     )
   }
+}
+
+function GetTicks(numRows)
+{
+  if (numRows === 20)
+  {
+    return [1,5,10,15,20];
+  }
+
+  return [1,6,12,18,24];
 }
 
 export default DrillDownTableRow;
