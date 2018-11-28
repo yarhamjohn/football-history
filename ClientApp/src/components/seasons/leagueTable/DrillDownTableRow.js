@@ -24,7 +24,7 @@ class DrillDownTableRow extends Component {
     const { form, loading } = this.state;
 
     if (loading) {
-      return <tr><td><em>Loading...</em></td></tr>;
+      return <tr><td colSpan="12"><em>Loading...</em></td></tr>;
     }
 
     return (

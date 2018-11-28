@@ -159,19 +159,31 @@ FROM dbo.Divisions;
             var seasonEndYear = season.Substring(7, 4);
 
             var sql = @"
-SELECT lm.matchDate
-    ,hc.Name AS HomeTeam
-    ,ac.Name as AwayTeam
-    ,lm.HomeGoals
-    ,lm.AwayGoals
+SELECT lm.MatchDate
+	,CASE WHEN lm.HomeGoals > lm.AwayGoals THEN 'W'
+		  WHEN lm.AwayGoals > lm.HomeGoals THEN 'L' 
+		  ELSE 'D' END AS Result
 FROM dbo.LeagueMatches AS lm
 INNER JOIN dbo.Divisions d ON d.Id = lm.DivisionId
 INNER JOIN dbo.Clubs AS hc ON hc.Id = lm.HomeClubId
+WHERE d.Tier = @Tier
+    AND (hc.Name = @Team)
+    AND lm.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
+
+UNION ALL
+
+SELECT lm.MatchDate
+	,CASE WHEN lm.HomeGoals < lm.AwayGoals THEN 'W'
+		  WHEN lm.AwayGoals < lm.HomeGoals THEN 'L' 
+		  ELSE 'D' END AS Result
+FROM dbo.LeagueMatches AS lm
+INNER JOIN dbo.Divisions d ON d.Id = lm.DivisionId
 INNER JOIN dbo.Clubs AS ac ON ac.Id = lm.AwayClubId
 WHERE d.Tier = @Tier
-    AND (hc.Name = @Team OR ac.Name = @Team)
+    AND (ac.Name = @Team)
     AND lm.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
-ORDER BY lm.matchDate
+
+ORDER BY MatchDate
 ";
             
             var form = new List<MatchResult>();
@@ -194,7 +206,7 @@ ORDER BY lm.matchDate
                             new MatchResult
                             {
                                 MatchDate = reader.GetDateTime(0),
-                                Result = GetMatchResult(team, reader)
+                                Result = reader.GetString(1)
                             }
                         );
                     }
@@ -207,31 +219,6 @@ ORDER BY lm.matchDate
             }
 
             return form;
-        }
-
-        private string GetMatchResult(string team, DbDataReader reader)
-        {
-            var homeTeam = reader.GetString(1);
-            var awayTeam = reader.GetString(2);
-            var homeGoals = reader.GetByte(3);
-            var awayGoals = reader.GetByte(4);
-
-            var homeWin = (team == homeTeam) && (homeGoals > awayGoals);
-            var awayWin = (team == awayTeam) && (homeGoals < awayGoals);
-            var homeLoss = (team == homeTeam) && (homeGoals < awayGoals);
-            var awayLoss = (team == awayTeam) && (homeGoals > awayGoals);
-            
-            if (homeWin || awayWin)
-            {
-                return "W";
-            }
-
-            if (homeLoss || awayLoss)
-            {
-                return "L";
-            }
-
-            return "D";
         }
 
         private void AddTeamStatus(List<LeagueTableRow> leagueTable, LeagueDetail leagueDetail, List<MatchDetail> matchDetails)
