@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using static football_history.Server.Repositories.FootballHistoryRepository;
 
 namespace football_history.Server.Repositories
 {
@@ -7,6 +8,6 @@ namespace football_history.Server.Repositories
         FilterOptions GetFilterOptions();
         LeagueSeason GetLeagueSeason(int tier, string season);
 
-        List<MatchResult> GetLeagueForm(int tier, string season, string team);
+        LeagueRowDrillDown GetDrillDown(int tier, string season, string team);
     }
 }

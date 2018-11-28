@@ -4,24 +4,25 @@ import './DrillDownTableRow.css';
 class DrillDownTableRow extends Component {
   constructor(props) {
     super(props);
-    this.state = { form: [], loading: true }
+    this.state = { form: [], positions: [], loading: true }
   }
 
   componentDidMount() {
     const { tier, season, team } = this.props;
 
-    fetch(`api/FootballHistory/GetLeagueForm?tier=${tier}&season=${season}&team=${team}`)
+    fetch(`api/FootballHistory/GetDrillDown?tier=${tier}&season=${season}&team=${team}`)
       .then(response => response.json())
       .then(data => {
         this.setState({ 
-          form: data,
+          form: data.form,
+          positions: data.positions,
           loading: false 
         });
       });
   }
 
   render() {
-    const { form, loading } = this.state;
+    const { form, positions, loading } = this.state;
 
     if (loading) {
       return <tr><td colSpan="12"><em>Loading...</em></td></tr>;

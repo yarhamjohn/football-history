@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using football_history.Server.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using static football_history.Server.Repositories.FootballHistoryRepository;
 
 namespace football_history.Controllers
 {
@@ -29,9 +30,9 @@ namespace football_history.Controllers
         }
                 
         [HttpGet("[action]")]
-        public List<MatchResult> GetLeagueForm(string tier, string season, string team)
+        public LeagueRowDrillDown GetDrillDown(string tier, string season, string team)
         {
-            return m_Repository.GetLeagueForm(Convert.ToInt32(tier), season, team);
+            return m_Repository.GetDrillDown(Convert.ToInt32(tier), season, team);
         }
     }
 }
