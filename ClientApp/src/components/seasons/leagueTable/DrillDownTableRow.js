@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { LineChart } from 'react-chartkick'
+
 import './DrillDownTableRow.css';
 
 class DrillDownTableRow extends Component {
@@ -23,10 +25,13 @@ class DrillDownTableRow extends Component {
 
   render() {
     const { form, positions, loading } = this.state;
+    const { numRows, relegationPosition } = this.props;
 
     if (loading) {
       return <tr><td colSpan="12"><em>Loading...</em></td></tr>;
     }
+
+    const test = positions.map(p => [p.date, p.position, 'point { shape-type: star }']);
 
     return (
       <tr>
@@ -34,6 +39,7 @@ class DrillDownTableRow extends Component {
           <div className='drilldown-form'>
             {form.map(f => <span key={f.matchDate} style={{fontWeight: 'bold', color: f.result === 'W' ? 'green' : f.result === 'D' ? 'darkorange' : 'red'}}>{f.result}</span>)}
           </div>
+          <LineChart data={test} min={1} max={numRows} library={{chartArea: {width: '90%'}, vAxis: {direction: -1, baseline: relegationPosition, baselineColor: 'red' }}} />
         </td>
       </tr>
     )

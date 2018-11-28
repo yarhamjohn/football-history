@@ -35,7 +35,7 @@ class TableRow extends Component {
   }
 
   render() {
-    const { row, tier, season } = this.props;
+    const { row, tier, season, numRows, relegationPosition } = this.props;
 
     return (
       <React.Fragment>
@@ -57,7 +57,7 @@ class TableRow extends Component {
           <td>{row.points}{row.pointsDeducted > 0 ? <span className='point-deductions'> *</span> : ''}</td>
           <td>{row.status}</td>
         </tr>
-        {this.state.DrillDownShowing && <DrillDownTableRow tier={tier} season={season} team={row.team} />}
+        {this.state.DrillDownShowing && <DrillDownTableRow tier={tier} season={season} team={row.team} numRows={numRows} relegationPosition={relegationPosition}/>}
       </React.Fragment>
     )
   }

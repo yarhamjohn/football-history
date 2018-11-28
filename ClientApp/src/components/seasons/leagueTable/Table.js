@@ -26,7 +26,7 @@ class Table extends Component {
                 </tr>
               </thead>
               <tbody>
-                {leagueSeason.leagueTable.map(row => <TableRow row={row} tier={leagueSeason.tier} season={leagueSeason.season} key={row.position} />)}
+                {leagueSeason.leagueTable.map(row => <TableRow row={row} numRows={leagueSeason.leagueTable.length} tier={leagueSeason.tier} season={leagueSeason.season} key={row.position} relegationPosition={GetRelegationPosition(leagueSeason.leagueTable)} />)}
               </tbody>
             </table>
             <div>
@@ -38,6 +38,12 @@ class Table extends Component {
           </div>
     );
   }
+}
+
+function GetRelegationPosition(leagueTable)
+{
+  const relegationRows = leagueTable.filter(r => r.status === 'R');
+  return leagueTable.length - relegationRows.length + 1;
 }
 
 function PointsDeductionMessage(team, pointsDeducted, pointsDeductionReason)
