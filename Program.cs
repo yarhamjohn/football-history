@@ -21,7 +21,7 @@ namespace football_history
             WebHost.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((hostingContext, config) => 
                 {
-                    config.AddEnvironmentVariables(prefix: "SQLAZURECONNSTR_");
+                    config.AddEnvironmentVariables();
                 })
                 .UseStartup<Startup>();
     }
