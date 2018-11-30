@@ -1,8 +1,11 @@
+using System;
+using football_history.Server.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,6 +24,10 @@ namespace football_history
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddTransient<IFootballHistoryRepository, FootballHistoryRepository>();
+
+            var connString = Configuration.GetConnectionString("FootballHistory");
+            services.AddDbContext<FootballHistoryContext>(options => options.UseSqlServer(connString));
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
