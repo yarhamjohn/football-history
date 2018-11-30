@@ -31,7 +31,7 @@ class DrillDownTableRow extends Component {
       return <tr><td colSpan="12"><em>Loading...</em></td></tr>;
     }
 
-    const test = positions.map(p => [p.date, p.position, 'point { shape-type: star }']);
+    const test = positions.map(p => [p.date, p.position]);
 
     return (
       <tr>
@@ -41,7 +41,29 @@ class DrillDownTableRow extends Component {
               <div className='drilldown-form'>
                 {form.map(f => <span key={f.matchDate} style={{fontWeight: 'bold', color: f.result === 'W' ? 'green' : f.result === 'D' ? 'darkorange' : 'red'}}>{f.result}</span>)}
               </div>
-              <LineChart data={test} min={1} max={numRows} library={{chartArea: {width: '90%', height: '75%'}, hAxis: {gridlines: {color: '#CCC', count: -1}, format: 'MMM d, y'}, vAxis: {ticks: GetTicks(numRows), direction: -1, baseline: relegationPosition, baselineColor: 'red' }}} />
+              <LineChart 
+                data={[[positions[0].date, positions[0].position, "annotationText: {sdfsf}"],[positions[1].date, positions[1].position]]} 
+                min={1} 
+                max={numRows} 
+                library={{
+                  chartArea: {
+                    width: '90%', 
+                    height: '75%'
+                  }, 
+                  hAxis: {
+                    gridlines: {
+                      color: '#CCC', 
+                      count: -1
+                    }, 
+                    format: 'MMM d, y'
+                  }, 
+                  vAxis: {
+                    ticks: GetTicks(numRows), 
+                    direction: -1, 
+                    baseline: relegationPosition, 
+                    baselineColor: 'red'
+                  }
+                }} />
             </div>
           </Well>
         </td>
