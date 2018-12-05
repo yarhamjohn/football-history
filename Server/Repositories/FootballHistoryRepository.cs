@@ -664,9 +664,10 @@ WHERE d.Tier = @Tier AND pd.Season = @Season
             var positions = new List<LeaguePosition>();
 
             var dates = matchDetails.Select(m => m.Date).Distinct().OrderBy(m => m.Date).ToList();
-            dates.Add(dates.Last().AddDays(1));
+            var lastDate = dates.Last().AddDays(1);
+            var firstDate = dates.First();
 
-            foreach (var dt in dates)
+            for (var dt = firstDate; dt <= lastDate; dt = dt.AddDays(1))
             {
                 var leagueTable = new List<LeagueTableRow>();
 

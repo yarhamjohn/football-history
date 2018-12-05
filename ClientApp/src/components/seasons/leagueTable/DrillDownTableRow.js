@@ -50,6 +50,7 @@ class DrillDownTableRow extends Component {
                     width: '90%', 
                     height: '75%'
                   }, 
+                  pointSize: 0,
                   hAxis: {
                     gridlines: {
                       color: '#CCC', 
