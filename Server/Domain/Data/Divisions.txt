@@ -6,3 +6,18 @@ Id|Name|Tier|From|To
 5|Division 2|3|1992|2004
 6|League 2|4|2004|
 7|Division 3|4|1992|2004
+Id|Name|Tier|From|To|Region
+1|Premier League|1|1992||
+2|Championship|2|2004||
+3|First Division|2|1992|2004|
+4|League 1|3|2004||
+5|Second Division|3|1992|2004|
+6|League 2|4|2004||
+7|Third Division|4|1992|2004|
+10|First Division|1|1888|1992|
+11|Second Division|2|1892|1992|
+12|Third Division|3|1958|1992|
+13|Third Division|3|1920|1921|
+14|Third Division North|3|1921|1958|N
+15|Third Division South|3|1921|1958|S
+16|Fourth Division|4|1958|1992|
