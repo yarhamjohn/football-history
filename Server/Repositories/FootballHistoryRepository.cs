@@ -58,7 +58,8 @@ FROM (
 GROUP BY Season;
 
 SELECT Name, Tier, [From], [To]
-FROM dbo.Divisions;
+FROM dbo.Divisions
+WHERE [From] >= 1992;
 ";
             using(var conn = m_Context.Database.GetDbConnection())
             {
