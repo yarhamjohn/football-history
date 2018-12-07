@@ -714,10 +714,10 @@ WHERE d.Tier = @Tier AND pd.Season = @Season
         {
             return leagueTable
                     .OrderByDescending(t => t.Points)
-                    .ThenByDescending(t => t.GoalDifference)
+                    .ThenByDescending(t => t.GoalDifference) // Goal ratio was used prior to 1976-77
                     .ThenByDescending(t => t.GoalsFor)
                     // head to head
-                    .ThenBy(t => t.Team) // unless it affects a promotion/relgeation spot at the end of the season in which case a play-off occurs (this has never happened)
+                    .ThenBy(t => t.Team) // unless it affects a promotion/relegation spot at the end of the season in which case a play-off occurs (this has never happened)
                     .ToList();
         }
     }

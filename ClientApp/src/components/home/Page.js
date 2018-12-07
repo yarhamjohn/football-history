@@ -5,7 +5,10 @@ class Page extends Component {
     return (
       <div>
         <h1>History of the English Football League</h1>
-        <p>This application provides data and analyses across each of the seasons, leagues and teams involved in the English Football League since its inception. There are now 92 clubs playing in the top 4 divisions of English Football, with an extensive non-league structure below League Two.</p>
+        <p>
+          This application currently provides league tables and match results for each of the top 4 divisions in the English Football League since the 1992-93 season.
+          Further data will be added covering the Football League all the way back to 1888 when it was founded, as well as pages dedicated to club and league histories.
+        </p>
       
         <h3>League structure</h3>
         <ul>
