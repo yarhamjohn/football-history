@@ -10,11 +10,11 @@ using Microsoft.Extensions.Configuration;
 
 namespace football_history.Server.Repositories
 {
-    public class FootballHistoryRepository : IFootballHistoryRepository
+    public class LeagueSeasonRepository : ILeagueSeasonRepository
     {
-        private FootballHistoryContext m_Context { get; }
+        private LeagueSeasonContext m_Context { get; }
 
-        public FootballHistoryRepository(FootballHistoryContext context)
+        public LeagueSeasonRepository(LeagueSeasonContext context)
         {
             m_Context = context;
         }

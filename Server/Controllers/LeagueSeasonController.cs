@@ -4,15 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using football_history.Server.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using static football_history.Server.Repositories.FootballHistoryRepository;
+using static football_history.Server.Repositories.LeagueSeasonRepository;
 
 namespace football_history.Controllers
 {
     [Route("api/[controller]")]
-    public class FootballHistoryController : Controller
+    public class LeagueSeasonController : Controller
     {
-        public IFootballHistoryRepository m_Repository { get; }
-        public FootballHistoryController(IFootballHistoryRepository repository)
+        public ILeagueSeasonRepository m_Repository { get; }
+        public LeagueSeasonController(ILeagueSeasonRepository repository)
         {
             m_Repository = repository;
         }
