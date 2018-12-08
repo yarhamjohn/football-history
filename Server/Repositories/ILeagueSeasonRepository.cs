@@ -5,9 +5,11 @@ namespace football_history.Server.Repositories
 {
     public interface ILeagueSeasonRepository
     {
+        DefaultFilter GetDefaultFilter();
         FilterOptions GetFilterOptions();
-        LeagueSeason GetLeagueSeason(int tier, string season);
-
+        List<ResultMatrixRow> GetResultMatrix(int tier, string season);
+        PlayOffs GetPlayOffMatches(int tier, string season);
+        List<LeagueTableRow> GetLeagueTable(int tier, string season);
         LeagueRowDrillDown GetDrillDown(int tier, string season, string team);
     }
 }

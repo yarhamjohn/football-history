@@ -1,10 +1,5 @@
 using System.Collections.Generic;
 
-public class ResultMatrix
-{
-    public List<ResultMatrixRow> Rows { get; set; }
-}
-
 public class ResultMatrixRow
 {
     public string HomeTeam { get; set; }

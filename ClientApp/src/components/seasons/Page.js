@@ -1,57 +1,74 @@
 import React, { Component } from 'react';
-import LeagueSeason from './LeagueSeason';
 import Filter from './Filter';
+import LeagueTable from './leagueTable/LeagueTable';
+import PlayOffMatches from './PlayOffMatches';
+import ResultMatrix from './ResultMatrix';
+import './Page.css';
 
 class Page extends Component {
   constructor(props) {
     super(props);
     this.state = { 
-      allSeasons: [],
-      allTiers: [],
-      selectedSeason: null,
-      selectedTier: null,
-      loading: true };
-  }
+      tier: null,
+      season: null,
+      isLoading: true 
+    };
+  };
 
-  selectSeason(tier, season) {
-    this.setState({selectedSeason: season, selectedTier: tier });
-  }
+  updateFilter(selectedTier, selectedSeason) {
+    this.setState({ 
+      tier: selectedTier, 
+      season: selectedSeason
+    });
+  };
 
   componentDidMount() {
-    fetch(`api/FootballHistory/GetFilterOptions`)
+    fetch(`api/LeagueSeason/GetDefaultFilter`)
       .then(response => response.json())
       .then(data => {
         this.setState({ 
-          allSeasons: data.allSeasons.sort().reverse(), 
-          allTiers: data.allTiers.sort((a, b) => a.tier - b.tier), 
-          loading: false 
+          tier: data.tier,
+          season: data.season,
+          isLoading: false 
         });
       });
+  };
+
+  getDivisionName(tier, season) {
+    const seasonStartYear = season.substring(0, 4);
+    const seasonEndYear = season.substring(7);
+
+    const divisions = tier.divisions.filter(d => seasonStartYear >= d.activeFrom && seasonEndYear <= d.activeTo);
+    return divisions[0].name;
   }
 
   render() {
-    let { loading, allSeasons, allTiers, selectedSeason, selectedTier } = this.state;
-    
-    if (loading) {
+    const { tier, season, isLoading } = this.state;
+
+    if (isLoading) {
       return <p><em>Loading...</em></p>;
     }
-  
-    var season = selectedSeason === null ? allSeasons[0] : selectedSeason;
-    var tier = selectedTier === null ? allTiers[0] : selectedTier;
 
     return (
       <React.Fragment>
+        <h1>{this.getDivisionName(tier, season)}</h1>
+        <h2>{season}</h2>
+        
         <Filter 
-          allSeasons={allSeasons} 
-          allTiers={allTiers} 
           selectedTier={tier} 
           selectedSeason={season}
-          selectLeagueTable={(tier, season) => this.selectSeason(tier, season)}
+          updateFilter={(tier, season) => this.updateFilter(tier, season)}
         />
-        <LeagueSeason season={season} tier={tier} />
+
+        <div className='table-container'>
+          <LeagueTable tier={tier} season={season} />
+          {tier.level !== 1 && <PlayOffMatches tier={tier} season={season} />}
+        </div>
+
+        <ResultMatrix tier={tier} season={season} />
       </React.Fragment>
     );
-  }
+  };
 }
 
 export default Page;

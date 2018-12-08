@@ -3,7 +3,6 @@ using System;
 public class MatchDetail
 {
     public string Competition { get; set; }
-    public string Type { get; set; }
     public string Round { get; set; }
     public DateTime Date { get; set; }
     public string HomeTeam { get; set; }
