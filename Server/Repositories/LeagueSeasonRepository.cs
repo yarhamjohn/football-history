@@ -90,14 +90,14 @@ WHERE d.[From] >= @OldestStartYear AND d.Tier = @TopTier
             var getSeasonsSql = @"
 SELECT DISTINCT Season
 FROM dbo.LeagueStatuses
-WHERE CAST(SUBSTRING(Season, 1, 4) AS INT) >= 1992
+WHERE CAST(SUBSTRING(Season, 1, 4) AS INT) >= @OldestStartYear
 GROUP BY Season;
 ";
 
             var getTiersSql = @"
 SELECT Name, Tier, [From], [To]
 FROM dbo.Divisions
-WHERE [From] >= 1992;
+WHERE [From] >= @OldestStartYear;
 ";
 
             var sql = $"{getSeasonsSql} {getTiersSql}";
@@ -107,6 +107,7 @@ WHERE [From] >= 1992;
                 conn.Open();
                 var cmd = conn.CreateCommand();
                 cmd.CommandText = sql;
+                cmd.Parameters.Add(new SqlParameter("@OldestStartYear", m_OldestStartYear));
 
                 var reader = cmd.ExecuteReader();
                 if (reader.HasRows)
@@ -206,25 +207,16 @@ WHERE [From] >= 1992;
                 var leagueDetail = GetLeagueDetail(conn, tier, season);
                 var pointDeductions = GetPointDeductions(conn, tier, season);
 
-                table = CreateLeagueTable(leagueMatchDetails, playOffMatchDetails, leagueDetail, pointDeductions);
+                AddLeagueRows(table, leagueMatchDetails);
+                IncludePointDeductions(table, pointDeductions);
+
+                table = SortLeagueTable(table);
+
+                SetLeaguePosition(table);
+                AddTeamStatus(table, leagueDetail, playOffMatchDetails);            
             }
 
             return table;
-        }
-
-        private List<LeagueTableRow> CreateLeagueTable(List<MatchDetail> leagueMatchDetails, List<MatchDetail> playOffMatchDetails, LeagueDetail leagueDetail, List<PointDeduction> pointDeductions)
-        {
-            var leagueTable = new List<LeagueTableRow>();
-
-            AddLeagueRows(leagueTable, leagueMatchDetails);
-            IncludePointDeductions(leagueTable, pointDeductions);
-
-            leagueTable = SortLeagueTable(leagueTable);
-
-            SetLeaguePosition(leagueTable);
-            AddTeamStatus(leagueTable, leagueDetail, playOffMatchDetails);
-
-            return leagueTable;
         }
 
         public LeagueRowDrillDown GetDrillDown(int tier, string season, string team)
