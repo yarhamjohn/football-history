@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootballHistory", "FootballHistory\FootballHistory.csproj", "{37C8E77B-C530-4DC8-9F3A-FFD0CDCC861E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootballHistoryTests", "FootballHistoryTests\FootballHistoryTests.csproj", "{B31AFDDF-B19E-4B91-94B3-7B4179D60588}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{37C8E77B-C530-4DC8-9F3A-FFD0CDCC861E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{37C8E77B-C530-4DC8-9F3A-FFD0CDCC861E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{37C8E77B-C530-4DC8-9F3A-FFD0CDCC861E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B31AFDDF-B19E-4B91-94B3-7B4179D60588}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B31AFDDF-B19E-4B91-94B3-7B4179D60588}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B31AFDDF-B19E-4B91-94B3-7B4179D60588}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B31AFDDF-B19E-4B91-94B3-7B4179D60588}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
