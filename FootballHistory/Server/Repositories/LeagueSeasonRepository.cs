@@ -1,172 +1,18 @@
-using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
-using System.Globalization;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace FootballHistory.Server.Repositories
 {
     public class LeagueSeasonRepository : ILeagueSeasonRepository
     {
-        private readonly int m_TopTier = 1;
-        private readonly int m_OldestStartYear = 1992;
-        private LeagueSeasonContext m_Context { get; }
+        private LeagueSeasonContext Context { get; }
 
         public LeagueSeasonRepository(LeagueSeasonContext context)
         {
-            m_Context = context;
-        }
-
-        public DefaultFilter GetDefaultFilter()
-        {
-            var defaultFilter = new DefaultFilter
-            {
-                Tier = new Tier
-                {
-                    Divisions = new List<Division>(),
-                    Level = m_TopTier
-                }
-            };
-
-            var sql = @"
-SELECT d.Name
-    ,d.[From]
-    ,d.[To]
-    ,ls.Season
-FROM dbo.divisions d 
-CROSS JOIN (
-    SELECT TOP(1) Season
-    FROM dbo.LeagueStatuses 
-    ORDER BY Season DESC
-) ls 
-WHERE d.[From] >= @OldestStartYear AND d.Tier = @TopTier
-";
-            using(var conn = m_Context.Database.GetDbConnection())
-            {
-                conn.Open();
-                var cmd = conn.CreateCommand();
-                cmd.CommandText = sql;
-                cmd.Parameters.Add(new SqlParameter("@TopTier", m_TopTier));
-                cmd.Parameters.Add(new SqlParameter("@OldestStartYear", m_OldestStartYear));
-
-                var reader = cmd.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        defaultFilter.Season = reader.GetString(3);
-                        defaultFilter.Tier.Divisions.Add(
-                            new Division
-                            {
-                                Name = reader.GetString(0),
-                                ActiveFrom = reader.GetInt16(1),
-                                ActiveTo = reader.IsDBNull(2) ? DateTime.UtcNow.Year : reader.GetInt16(2)
-                            }
-                        );
-                    }
-                } 
-                else 
-                {
-                    System.Console.WriteLine("No rows found");
-                }
-                reader.Close();
-            }
-
-            return defaultFilter;
-        }
-
-        public FilterOptions GetFilterOptions()
-        {
-            var filterOptions = new FilterOptions
-            {
-                AllSeasons = new List<string>(),
-                AllTiers = new List<Tier>()
-            };
-
-            var getSeasonsSql = @"
-SELECT DISTINCT Season
-FROM dbo.LeagueStatuses
-WHERE CAST(SUBSTRING(Season, 1, 4) AS INT) >= @OldestStartYear
-GROUP BY Season;
-";
-
-            var getTiersSql = @"
-SELECT Name, Tier, [From], [To]
-FROM dbo.Divisions
-WHERE [From] >= @OldestStartYear;
-";
-
-            var sql = $"{getSeasonsSql} {getTiersSql}";
-
-            using(var conn = m_Context.Database.GetDbConnection())
-            {
-                conn.Open();
-                var cmd = conn.CreateCommand();
-                cmd.CommandText = sql;
-                cmd.Parameters.Add(new SqlParameter("@OldestStartYear", m_OldestStartYear));
-
-                var reader = cmd.ExecuteReader();
-                if (reader.HasRows)
-                {
-                    while (reader.Read())
-                    {
-                        filterOptions.AllSeasons.Add(
-                            reader.GetString(0)
-                        );
-                    }
-
-                    reader.NextResult();
-
-                    while (reader.Read())
-                    {
-                        var tier = reader.GetByte(1);
-                        var division = new Division
-                            {
-                                Name = reader.GetString(0),
-                                ActiveFrom = reader.GetInt16(2),
-                                ActiveTo = reader.IsDBNull(3) ? DateTime.UtcNow.Year : reader.GetInt16(3)
-                            };
-
-                        AddDivision(tier, division, filterOptions);
-                    }
-                } 
-                else 
-                {
-                    System.Console.WriteLine("No rows found");
-                }
-                reader.Close();
-            }
-
-            return filterOptions;
-        }
-
-        private void AddDivision(int tier, Division division, FilterOptions leagueFilterOptions)
-        {
-            var tierExists = leagueFilterOptions.AllTiers.Where(t => t.Level == tier).ToList().Count == 1;
-            if (tierExists)
-            {
-                leagueFilterOptions.AllTiers = leagueFilterOptions.AllTiers
-                    .Select(t => {
-                        if (t.Level == tier) {
-                            t.Divisions.Add(division);
-                        }; 
-                        return t;
-                    }).ToList();
-            }
-            else 
-            {
-                leagueFilterOptions.AllTiers.Add(
-                    new Tier
-                    {
-                        Level = tier,
-                        Divisions = new List<Division> { division }
-                    }
-                );
-            }
+            Context = context;
         }
 
         public List<ResultMatrixRow> GetResultMatrix(int tier, string season)
@@ -174,11 +20,11 @@ WHERE [From] >= @OldestStartYear;
             var seasonStartYear = season.Substring(0, 4);
             var seasonEndYear = season.Substring(7, 4);
 
-            using(var conn = m_Context.Database.GetDbConnection())
+            using(var conn = Context.Database.GetDbConnection())
             {
                 var matchDetails = GetLeagueMatchDetails(conn, tier, seasonStartYear, seasonEndYear);
                 return CreateResultMatrix(matchDetails);
-            };
+            }
         }
 
         public PlayOffs GetPlayOffMatches(int tier, string season)
@@ -186,18 +32,18 @@ WHERE [From] >= @OldestStartYear;
             var seasonStartYear = season.Substring(0, 4);
             var seasonEndYear = season.Substring(7, 4);
 
-            using(var conn = m_Context.Database.GetDbConnection())
+            using(var conn = Context.Database.GetDbConnection())
             {
                 var matchDetails = GetPlayOffMatchDetails(conn, tier, seasonStartYear, seasonEndYear);
                 return CreatePlayOffs(matchDetails);
-            };
+            }
         }
 
         public List<LeagueTableRow> GetLeagueTable(int tier, string season)
         {
             var table = new List<LeagueTableRow>();
 
-            using(var conn = m_Context.Database.GetDbConnection())
+            using(var conn = Context.Database.GetDbConnection())
             {
                 var seasonStartYear = season.Substring(0, 4);
                 var seasonEndYear = season.Substring(7, 4);
@@ -223,7 +69,7 @@ WHERE [From] >= @OldestStartYear;
         {
             var result = new LeagueRowDrillDown();
 
-            using(var conn = m_Context.Database.GetDbConnection())
+            using(var conn = Context.Database.GetDbConnection())
             {
                 result.Form = GetLeagueForm(conn, tier, season, team);
                 result.Positions = GetIncrementalLeaguePositions(conn, tier, season, team);

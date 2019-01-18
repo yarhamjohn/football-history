@@ -23,6 +23,7 @@ namespace FootballHistory
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddTransient<ILeagueSeasonRepository, LeagueSeasonRepository>();
+            services.AddTransient<IFilterRepository, FilterRepository>();
 
             var connString = Configuration.GetConnectionString("FootballHistory");
             services.AddDbContext<LeagueSeasonContext>(options => options.UseSqlServer(connString));
