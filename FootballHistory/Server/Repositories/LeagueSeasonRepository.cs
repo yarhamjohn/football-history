@@ -8,7 +8,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace football_history.Server.Repositories
+namespace FootballHistory.Server.Repositories
 {
     public class LeagueSeasonRepository : ILeagueSeasonRepository
     {

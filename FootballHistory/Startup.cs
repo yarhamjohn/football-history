@@ -1,5 +1,5 @@
 using System;
-using football_history.Server.Repositories;
+using FootballHistory.Server.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace football_history
+namespace FootballHistory
 {
     public class Startup
     {

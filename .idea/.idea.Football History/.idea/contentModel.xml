@@ -6,13 +6,25 @@
     <e p="C:\Users\John.Yarham\.Rider2018.3\system\extResources" t="IncludeRecursive" />
     <e p="C:\Users\John.Yarham\.Rider2018.3\system\resharper-host\local\Transient\ReSharperHost\v183\SolutionCaches\_Football History.570276410.00" t="ExcludeRecursive" />
     <e p="C:\Users\John.Yarham\Documents\Projects\Football History" t="IncludeFlat">
-      <e p="Football History" t="IncludeRecursive">
+      <e p="Football History.sln" t="IncludeFlat" />
+      <e p="FootballHistory" t="IncludeRecursive">
         <e p="appsettings.Development.json" t="Include" />
         <e p="appsettings.json" t="Include" />
         <e p="azure-pipelines.yml" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="ClientApp" t="Include">
           <e p=".gitignore" t="Include" />
+          <e p="node_modules" t="ExcludeRecursive">
+            <e p="bootstrap" t="IncludeRecursive" />
+            <e p="react" t="IncludeRecursive" />
+            <e p="react-bootstrap" t="IncludeRecursive" />
+            <e p="react-chartkick" t="IncludeRecursive" />
+            <e p="react-dom" t="IncludeRecursive" />
+            <e p="react-router-bootstrap" t="IncludeRecursive" />
+            <e p="react-router-dom" t="IncludeRecursive" />
+            <e p="react-scripts" t="IncludeRecursive" />
+            <e p="rimraf" t="IncludeRecursive" />
+          </e>
           <e p="package-lock.json" t="Include" />
           <e p="package.json" t="Include" />
           <e p="public" t="Include">
@@ -53,11 +65,11 @@
             <e p="registerServiceWorker.js" t="Include" />
           </e>
         </e>
-        <e p="Football History.csproj" t="IncludeRecursive" />
+        <e p="FootballHistory.csproj" t="IncludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp2.1" t="Include">
-              <e p="Football History.AssemblyInfo.cs" t="Include" />
+              <e p="FootballHistory.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
         </e>
@@ -237,7 +249,6 @@
         </e>
         <e p="Startup.cs" t="Include" />
       </e>
-      <e p="Football History.sln" t="IncludeFlat" />
       <e p="packages" t="ExcludeRecursive" />
     </e>
   </component>

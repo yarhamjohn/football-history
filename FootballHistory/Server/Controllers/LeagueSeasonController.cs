@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using football_history.Server.Repositories;
+using FootballHistory.Server.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using static football_history.Server.Repositories.LeagueSeasonRepository;
+using static FootballHistory.Server.Repositories.LeagueSeasonRepository;
 
-namespace football_history.Controllers
+namespace FootballHistory.Controllers
 {
     [Route("api/[controller]")]
     public class LeagueSeasonController : Controller
