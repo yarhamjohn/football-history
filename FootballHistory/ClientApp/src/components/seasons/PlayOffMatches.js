@@ -45,7 +45,7 @@ class PlayOffMatches extends Component {
       <div className='playoff-container'>
         <div className='playoff-semifinal-container'>
         {
-          playOffs.semiFinals.map(sf => <PlayOffSemiFinal semiFinal={sf} />)
+          playOffs.semiFinals.map(sf => <PlayOffSemiFinal key={sf.firstLeg.homeTeam + sf.firstLeg.awayTeam} semiFinal={sf} />)
         }
         </div>
         <div className='playoff-final-container'>
