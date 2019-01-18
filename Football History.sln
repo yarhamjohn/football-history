@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "football-history", "football-history\football-history.csproj", "{37C8E77B-C530-4DC8-9F3A-FFD0CDCC861E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Football History", "Football History\Football History.csproj", "{37C8E77B-C530-4DC8-9F3A-FFD0CDCC861E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

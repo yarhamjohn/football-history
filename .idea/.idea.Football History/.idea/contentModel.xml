@@ -6,8 +6,7 @@
     <e p="C:\Users\John.Yarham\.Rider2018.3\system\extResources" t="IncludeRecursive" />
     <e p="C:\Users\John.Yarham\.Rider2018.3\system\resharper-host\local\Transient\ReSharperHost\v183\SolutionCaches\_Football History.570276410.00" t="ExcludeRecursive" />
     <e p="C:\Users\John.Yarham\Documents\Projects\Football History" t="IncludeFlat">
-      <e p="Football History.sln" t="IncludeFlat" />
-      <e p="football-history" t="IncludeRecursive">
+      <e p="Football History" t="IncludeRecursive">
         <e p="appsettings.Development.json" t="Include" />
         <e p="appsettings.json" t="Include" />
         <e p="azure-pipelines.yml" t="Include" />
@@ -54,11 +53,11 @@
             <e p="registerServiceWorker.js" t="Include" />
           </e>
         </e>
-        <e p="football-history.csproj" t="IncludeRecursive" />
+        <e p="Football History.csproj" t="IncludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp2.1" t="Include">
-              <e p="football-history.AssemblyInfo.cs" t="Include" />
+              <e p="Football History.AssemblyInfo.cs" t="Include" />
             </e>
           </e>
         </e>
@@ -238,6 +237,7 @@
         </e>
         <e p="Startup.cs" t="Include" />
       </e>
+      <e p="Football History.sln" t="IncludeFlat" />
       <e p="packages" t="ExcludeRecursive" />
     </e>
   </component>
