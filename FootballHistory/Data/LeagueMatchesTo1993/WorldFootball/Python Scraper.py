@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Dec  1 13:53:15 2018
-
-@author: John and Julia
-"""
-
 import requests
 import bs4
 import pandas as pd
@@ -45,7 +38,7 @@ def getLink(soup, previousSeason):
     return table[4].find('a')
     
 def getTierResults(tier, baseUrl, fileName):
-    filePath = os.path.join("C:\\","Users","John and Julia","Desktop")
+    filePath = os.path.join("C:\\","Data")
     url = baseUrl
     output = pd.DataFrame(columns=['Date', 'Home Team', 'Away Team', 'Home Goals', 'Away Goals'])
 
@@ -91,7 +84,5 @@ def getTierResults(tier, baseUrl, fileName):
 def Main():
     getTierResults(1, "https://www.worldfootball.net/schedule/eng-premier-league-1992-1993-spieltag/", "PremierLeague.csv")
     getTierResults(2, "https://www.worldfootball.net/schedule/eng-championship-1992-1993-spieltag/", "Championship.csv")
-    getTierResults(3, "https://www.worldfootball.net/schedule/eng-league-one-1992-1993-spieltag/", "LeagueOne.csv")
-    getTierResults(4, "https://www.worldfootball.net/schedule/eng-league-two-1992-1993-spieltag/", "LeagueTwo.csv")
     
 Main()

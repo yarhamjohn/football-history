@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Dec  1 13:53:15 2018
-
-@author: John and Julia
-"""
-
 import requests
 import bs4
 import pandas as pd
@@ -95,7 +88,7 @@ def transformData(df, date, leagueName):
 
 
 def main():
-    filePath = os.path.join("C:\\", "Users", "John and Julia", "Desktop")
+    filePath = os.path.join("C:\\", "Data")
     date = datetime.date(1993, 5, 31)
     endDate = datetime.date(1888, 7, 31)
 
