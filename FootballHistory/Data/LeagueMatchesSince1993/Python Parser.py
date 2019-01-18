@@ -1,16 +1,9 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Nov  4 13:09:23 2018
-
-@author: John and Julia
-"""
-
 import csv
 import glob
 
 def parser():
-    files = glob.glob('C:\\Users\\John and Julia\\Downloads\\*).csv')
-    target = open('C:\\Users\\John and Julia\\Downloads\\Result\\result.csv', 'w')
+    files = glob.glob('C:\\Data\\*.csv')
+    target = open('C:\\Data\\result.csv', 'w')
     
     for file in files:
         with open(file) as csvfile:
