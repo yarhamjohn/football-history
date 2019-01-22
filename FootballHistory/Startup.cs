@@ -1,3 +1,4 @@
+using FootballHistory.Server.Models;
 using FootballHistory.Server.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -24,6 +25,8 @@ namespace FootballHistory
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddTransient<ILeagueSeasonRepository, LeagueSeasonRepository>();
             services.AddTransient<IFilterRepository, FilterRepository>();
+            services.AddTransient<IDivisionRepository, DivisionRepository>();
+            services.AddTransient<ILeagueSeasonFilterBuilder, LeagueSeasonFilterBuilder>();
 
             var connString = Configuration.GetConnectionString("FootballHistory");
             services.AddDbContext<LeagueSeasonContext>(options => options.UseSqlServer(connString));
