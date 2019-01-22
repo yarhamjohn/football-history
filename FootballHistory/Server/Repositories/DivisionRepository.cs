@@ -31,21 +31,21 @@ SELECT [Name]
                 var cmd = conn.CreateCommand();
                 cmd.CommandText = sql;
 
-                var reader = cmd.ExecuteReader();
-                while (reader.Read())
+                using (var reader = cmd.ExecuteReader())
                 {
-                    divisionModels.Add(
-                        new DivisionModel
-                        {
-                            Name = reader.GetString(0),
-                            Tier = reader.GetInt32(1),
-                            From = reader.GetInt16(2),
-                            To = reader.IsDBNull(3) ? DateTime.UtcNow.Year : reader.GetInt16(3)
-                        }
-                    );
+                    while (reader.Read())
+                    {
+                        divisionModels.Add(
+                            new DivisionModel
+                            {
+                                Name = reader.GetString(0),
+                                Tier = reader.GetInt32(1),
+                                From = reader.GetInt16(2),
+                                To = reader.IsDBNull(3) ? DateTime.UtcNow.Year : reader.GetInt16(3)
+                            }
+                        );
+                    }
                 }
-
-                reader.Close();
             }
 
             return divisionModels;

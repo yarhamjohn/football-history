@@ -12,37 +12,42 @@ namespace FootballHistory.Server.Models
     {
         public LeagueSeasonFilter Build(List<DivisionModel> divisionModels)
         {
-            var leagueSeasonFilter = new LeagueSeasonFilter
+            return new LeagueSeasonFilter
             {
-                AllSeasons = new List<string>(),
-                AllTiers = new List<Tier>
-                {
-                    new Tier
-                    {
-                        Divisions = new List<Division>
-                        {
-                            new Division
-                            {
-                                Name = divisionModels.First().Name,
-                                ActiveFrom = divisionModels.First().From,
-                                ActiveTo = divisionModels.First().To
-                            }
-                        },
-                        Level = divisionModels.First().Tier
-                    }
-
-                }
+                AllSeasons = GetSeasons(divisionModels),
+                AllTiers = GetTiers(divisionModels)
             };
-            
-            var from = divisionModels.First().From;
-            var to = divisionModels.First().To;
-            for (var year = from; year < to; year++)
+        }
+
+        private static List<string> GetSeasons(IEnumerable<DivisionModel> divisionModels)
+        {
+            var seasons = new HashSet<string>();
+            foreach (var divisionModel in divisionModels)
             {
-                leagueSeasonFilter.AllSeasons.Add($"{year}-{year+1}");
+                for (var year = divisionModel.From; year < divisionModel.To; year++)
+                {
+                    seasons.Add($"{year}-{year+1}");
+                }
             }
 
-            return leagueSeasonFilter;
-        }    
+            return seasons.ToList();
+        }
+
+        private static List<Tier> GetTiers(IEnumerable<DivisionModel> divisionModels)
+        {
+            return divisionModels.GroupBy(model => model.Tier).Select(group => new Tier
+                {
+                    Divisions = group.Select(d => new Division
+                        {
+                            Name = d.Name,
+                            ActiveFrom = d.From,
+                            ActiveTo = d.To
+                        }
+                    ).ToList(),
+                    Level = group.Key
+                }
+            ).ToList();
+        }
     }
     
     public class LeagueSeasonFilter
