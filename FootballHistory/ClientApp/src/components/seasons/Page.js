@@ -9,30 +9,47 @@ class Page extends Component {
   constructor(props) {
     super(props);
     this.state = { 
-      tier: null,
-      season: null,
+      allTiers: [],
+      allSeasons: [],
+      selectedTier: null,
+      selectedSeason: null,
       isLoading: true 
     };
   };
 
   updateFilter(selectedTier, selectedSeason) {
     this.setState({ 
-      tier: selectedTier, 
-      season: selectedSeason
+      selectedTier: selectedTier, 
+      selectedSeason: selectedSeason
     });
   };
 
   componentDidMount() {
-    fetch(`api/LeagueSeason/GetDefaultFilter`)
+    fetch(`api/LeagueSeason/GetLeagueSeasonFilters`)
       .then(response => response.json())
       .then(data => {
-        this.setState({ 
-          tier: data.tier,
-          season: data.season,
-          isLoading: false 
+        
+        let filteredSeasons = data.allSeasons.filter(s => s.slice(0, 4) >= 1992 && s.slice(7, 11) <= 2018);
+        
+        this.setState({
+          allTiers: data.allTiers,
+          allSeasons: filteredSeasons,
+          selectedTier: this.getDefaultTier(data.allTiers),
+          selectedSeason: this.getDefaultSeason(filteredSeasons),
+          isLoading: false
         });
       });
   };
+  
+  getDefaultTier(tiers)
+  {
+    return tiers.filter(t => t.level === 1)[0];
+  }
+  
+  getDefaultSeason(seasons)
+  {
+    return seasons.sort().slice(-1)[0];
+  }
 
   getDivisionName(tier, season) {
     const seasonStartYear = season.substring(0, 4);
@@ -43,7 +60,7 @@ class Page extends Component {
   }
 
   render() {
-    const { tier, season, isLoading } = this.state;
+    const { allTiers, allSeasons, selectedTier, selectedSeason, isLoading } = this.state;
 
     if (isLoading) {
       return <p><em>Loading...</em></p>;
@@ -51,21 +68,23 @@ class Page extends Component {
 
     return (
       <React.Fragment>
-        <h1>{this.getDivisionName(tier, season)}</h1>
-        <h2>{season}</h2>
+        <h1>{this.getDivisionName(selectedTier, selectedSeason)}</h1>
+        <h2>{selectedSeason}</h2>
         
         <Filter 
-          selectedTier={tier} 
-          selectedSeason={season}
-          updateFilter={(tier, season) => this.updateFilter(tier, season)}
+          allTiers={allTiers}
+          allSeasons={allSeasons}
+          selectedTier={selectedTier} 
+          selectedSeason={selectedSeason}
+          updateFilter={(selectedTier, selectedSeason) => this.updateFilter(selectedTier, selectedSeason)}
         />
 
         <div className='table-container'>
-          <LeagueTable tier={tier} season={season} />
-          {tier.level !== 1 && <PlayOffMatches tier={tier} season={season} />}
+          <LeagueTable tier={selectedTier} season={selectedSeason} />
+          {selectedTier.level !== 1 && <PlayOffMatches tier={selectedTier} season={selectedSeason} />}
         </div>
 
-        <ResultMatrix tier={tier} season={season} />
+        <ResultMatrix tier={selectedTier} season={selectedSeason} />
       </React.Fragment>
     );
   };

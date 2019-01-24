@@ -3,27 +3,6 @@ import { ButtonToolbar, DropdownButton, MenuItem } from 'react-bootstrap';
 import './Filter.css';
 
 class Filter extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { 
-      allSeasons: [], 
-      allTiers: [], 
-      isLoading: true 
-    };
-  };
-
-  componentDidMount() {
-    fetch(`api/LeagueSeason/GetLeagueSeasonFilters`)
-      .then(response => response.json())
-      .then(data => {
-        this.setState({ 
-          allTiers: data.allTiers,
-          allSeasons: data.allSeasons,
-          isLoading: false 
-        });
-      });
-  };
-
   updateTier(tier) {
     const { updateFilter, selectedSeason } = this.props;
     updateFilter(tier, selectedSeason);
@@ -40,12 +19,7 @@ class Filter extends Component {
   };
 
   render() {
-    const { allTiers, allSeasons, isLoading } = this.state;
-    const { selectedTier, selectedSeason } = this.props;
-
-    if (isLoading) {
-      return <p><em>Loading...</em></p>;
-    }
+    const { allTiers, allSeasons, selectedTier, selectedSeason } = this.props;
 
     return (
       <ButtonToolbar className='filter-buttons'>
@@ -62,7 +36,7 @@ class Filter extends Component {
         </DropdownButton>
         <DropdownButton title="Season" id="SeasonSelect">
         {
-          allSeasons.map(s =>
+          allSeasons.sort().reverse().map(s =>
             <MenuItem key={s} eventKey={s}
               className={s === selectedSeason ? "active" : ""}
               onSelect={(s) => this.updateSeason(s)}
