@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using FootballHistory.Server.Models;
 
 namespace FootballHistory.Server.Repositories
