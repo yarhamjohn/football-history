@@ -24,7 +24,6 @@ namespace FootballHistory
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddTransient<ILeagueSeasonRepository, LeagueSeasonRepository>();
-            services.AddTransient<IFilterRepository, FilterRepository>();
             services.AddTransient<IDivisionRepository, DivisionRepository>();
             services.AddTransient<ILeagueSeasonFilterBuilder, LeagueSeasonFilterBuilder>();
             services.AddTransient<ILeagueSeasonFilterRepository, LeagueSeasonFilterRepository>();

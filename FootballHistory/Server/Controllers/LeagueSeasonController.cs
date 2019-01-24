@@ -10,13 +10,11 @@ namespace FootballHistory.Server.Controllers
     public class LeagueSeasonController : Controller
     {
         private ILeagueSeasonRepository LeagueSeasonRepository { get; }
-        private IFilterRepository FilterRepository { get; }
         public ILeagueSeasonFilterRepository LeagueSeasonFilterRepository { get; }
 
-        public LeagueSeasonController(ILeagueSeasonRepository leagueSeasonRepository, IFilterRepository filterRepository, ILeagueSeasonFilterRepository leagueSeasonFilterRepository)
+        public LeagueSeasonController(ILeagueSeasonRepository leagueSeasonRepository, ILeagueSeasonFilterRepository leagueSeasonFilterRepository)
         {
             LeagueSeasonRepository = leagueSeasonRepository;
-            FilterRepository = filterRepository;
             LeagueSeasonFilterRepository = leagueSeasonFilterRepository;
         }
 
@@ -26,12 +24,6 @@ namespace FootballHistory.Server.Controllers
             return LeagueSeasonFilterRepository.GetLeagueSeasonFilters();
         }
         
-        [HttpGet("[action]")]
-        public DefaultFilter GetDefaultFilter()
-        {
-            return FilterRepository.GetDefaultFilter();
-        }
-                
         [HttpGet("[action]")]
         public List<ResultMatrixRow> GetResultMatrix(string tier, string season)
         {
