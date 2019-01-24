@@ -6,6 +6,5 @@ namespace FootballHistory.Server.Repositories
     public interface IFilterRepository
     {
         DefaultFilter GetDefaultFilter();
-        FilterOptions GetFilterOptions();
     }
 }
