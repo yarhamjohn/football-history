@@ -39,7 +39,7 @@ SELECT [Name]
                             new DivisionModel
                             {
                                 Name = reader.GetString(0),
-                                Tier = reader.GetInt32(1),
+                                Tier = reader.GetByte(1),
                                 From = reader.GetInt16(2),
                                 To = reader.IsDBNull(3) ? DateTime.UtcNow.Year : reader.GetInt16(3)
                             }
