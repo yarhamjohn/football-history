@@ -13,7 +13,7 @@ class Filter extends Component {
   };
 
   componentDidMount() {
-    fetch(`api/LeagueSeason/GetFilterOptions`)
+    fetch(`api/LeagueSeason/GetLeagueSeasonFilters`)
       .then(response => response.json())
       .then(data => {
         this.setState({ 

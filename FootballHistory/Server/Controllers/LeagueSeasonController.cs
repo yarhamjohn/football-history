@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using FootballHistory.Server.Models;
 using FootballHistory.Server.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,17 +11,19 @@ namespace FootballHistory.Server.Controllers
     {
         private ILeagueSeasonRepository LeagueSeasonRepository { get; }
         private IFilterRepository FilterRepository { get; }
+        public ILeagueSeasonFilterRepository LeagueSeasonFilterRepository { get; }
 
-        public LeagueSeasonController(ILeagueSeasonRepository leagueSeasonRepository, IFilterRepository filterRepository)
+        public LeagueSeasonController(ILeagueSeasonRepository leagueSeasonRepository, IFilterRepository filterRepository, ILeagueSeasonFilterRepository leagueSeasonFilterRepository)
         {
             LeagueSeasonRepository = leagueSeasonRepository;
             FilterRepository = filterRepository;
+            LeagueSeasonFilterRepository = leagueSeasonFilterRepository;
         }
 
         [HttpGet("[action]")]
-        public FilterOptions GetFilterOptions()
+        public LeagueSeasonFilter GetLeagueSeasonFilters()
         {
-            return FilterRepository.GetFilterOptions();
+            return LeagueSeasonFilterRepository.GetLeagueSeasonFilters();
         }
         
         [HttpGet("[action]")]
