@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 public class LeagueRowDrillDown
 {
-    public List<MatchResult> Form { get; set; }
+    public List<MatchResultOld> Form { get; set; }
     public List<LeaguePosition> Positions {get; set; }
 }
 
-public class MatchResult
+public class MatchResultOld
 {
     public DateTime MatchDate { get; set; }
     public string Result { get; set; } 
