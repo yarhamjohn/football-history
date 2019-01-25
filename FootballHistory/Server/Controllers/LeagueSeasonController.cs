@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using FootballHistory.Server.Builders;
 using FootballHistory.Server.Builders.Models;
+using FootballHistory.Server.Models.LeagueSeason;
 using FootballHistory.Server.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,12 +13,14 @@ namespace FootballHistory.Server.Controllers
     {
         private readonly IDivisionRepository _divisionRepository;
         private readonly ILeagueSeasonFilterBuilder _leagueSeasonFilterBuilder;
+        private readonly IResultMatrixRepository _resultMatrixRepository;
         private readonly ILeagueSeasonRepository _leagueSeasonRepository;
 
-        public LeagueSeasonController(ILeagueSeasonRepository leagueSeasonRepository, IDivisionRepository divisionRepository, ILeagueSeasonFilterBuilder leagueSeasonFilterBuilder)
+        public LeagueSeasonController(ILeagueSeasonRepository leagueSeasonRepository, IDivisionRepository divisionRepository, ILeagueSeasonFilterBuilder leagueSeasonFilterBuilder, IResultMatrixRepository resultMatrixRepository)
         {
             _divisionRepository = divisionRepository;
             _leagueSeasonFilterBuilder = leagueSeasonFilterBuilder;
+            _resultMatrixRepository = resultMatrixRepository;
             _leagueSeasonRepository = leagueSeasonRepository;
         }
 
@@ -29,9 +32,9 @@ namespace FootballHistory.Server.Controllers
         }
         
         [HttpGet("[action]")]
-        public List<ResultMatrixRow> GetResultMatrix(string tier, string season)
+        public ResultMatrix GetResultMatrix(string tier, string season)
         {
-            return _leagueSeasonRepository.GetResultMatrix(Convert.ToInt32(tier), season);
+            return _resultMatrixRepository.GetResultMatrix(Convert.ToInt32(tier), season);
         }
                                 
         [HttpGet("[action]")]
