@@ -21,7 +21,7 @@ namespace FootballHistory.Server.Repositories
         {
             using(var conn = Context.Database.GetDbConnection())
             {
-                var cmd = GetDbCommand(tier, season, conn);
+                var cmd = GetDbCommand(conn, tier, season);
                 return GetMatchDetails(cmd);
             }
         }
@@ -55,12 +55,9 @@ namespace FootballHistory.Server.Repositories
             return matchDetails;
         }
 
-        private static DbCommand GetDbCommand(int tier, string season, DbConnection conn)
+        private static DbCommand GetDbCommand(DbConnection conn, int tier, string season)
         {
-            var seasonStartYear = season.Substring(0, 4);
-            var seasonEndYear = season.Substring(7, 4);
-
-            var sql = @"
+            const string sql = @"
 SELECT d.Name AS CompetitionName
     ,lm.matchDate
     ,hc.Name AS HomeTeam
@@ -74,7 +71,7 @@ INNER JOIN dbo.Divisions d ON d.Id = lm.DivisionId
 INNER JOIN dbo.Clubs AS hc ON hc.Id = lm.HomeClubId
 INNER JOIN dbo.Clubs AS ac ON ac.Id = lm.AwayClubId
 WHERE d.Tier = @Tier
-    AND lm.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
+    AND lm.MatchDate BETWEEN DATEFROMPARTS(@StartYear, 7, 1) AND DATEFROMPARTS(@EndYear, 6, 30)
 ";
 
             conn.Open();
@@ -82,8 +79,8 @@ WHERE d.Tier = @Tier
             var cmd = conn.CreateCommand();
             cmd.CommandText = sql;
             cmd.Parameters.Add(new SqlParameter("@Tier", tier));
-            cmd.Parameters.Add(new SqlParameter("@SeasonStartYear", seasonStartYear));
-            cmd.Parameters.Add(new SqlParameter("@SeasonEndYear", seasonEndYear));
+            cmd.Parameters.Add(new SqlParameter("@StartYear", season.Substring(0, 4)));
+            cmd.Parameters.Add(new SqlParameter("@EndYear", season.Substring(7, 4)));
             
             return cmd;
         }
