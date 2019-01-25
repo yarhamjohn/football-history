@@ -16,18 +16,6 @@ namespace FootballHistory.Server.Repositories
             Context = context;
         }
 
-        public List<ResultMatrixRow> GetResultMatrix(int tier, string season)
-        {
-            var seasonStartYear = season.Substring(0, 4);
-            var seasonEndYear = season.Substring(7, 4);
-
-            using(var conn = Context.Database.GetDbConnection())
-            {
-                var matchDetails = GetLeagueMatchDetails(conn, tier, seasonStartYear, seasonEndYear);
-                return CreateResultMatrix(matchDetails);
-            }
-        }
-
         public PlayOffs GetPlayOffMatches(int tier, string season)
         {
             var seasonStartYear = season.Substring(0, 4);
@@ -79,7 +67,7 @@ namespace FootballHistory.Server.Repositories
             return result;
         }
 
-        private List<MatchResult> GetLeagueForm(DbConnection conn, int tier, string season, string team)
+        private List<MatchResultOld> GetLeagueForm(DbConnection conn, int tier, string season, string team)
         {
             var seasonStartYear = season.Substring(0, 4);
             var seasonEndYear = season.Substring(7, 4);
@@ -112,7 +100,7 @@ WHERE d.Tier = @Tier
 ORDER BY MatchDate
 ";
             
-            var form = new List<MatchResult>();
+            var form = new List<MatchResultOld>();
 
             conn.Open();
             var cmd = conn.CreateCommand();
@@ -128,7 +116,7 @@ ORDER BY MatchDate
                 while (reader.Read())
                 {
                     form.Add(
-                        new MatchResult
+                        new MatchResultOld
                         {
                             MatchDate = reader.GetDateTime(0),
                             Result = reader.GetString(1)
@@ -322,46 +310,6 @@ ORDER BY MatchDate
                     playOffs.SemiFinals[1].SecondLeg = match;
                 }
             }
-        }
-
-        private List<ResultMatrixRow> CreateResultMatrix(List<MatchDetail> matchDetails)
-        {
-            var teams = matchDetails.Select(m => (m.HomeTeam, m.HomeTeamAbbreviation)).Distinct().ToList();
-
-            var rows = new List<ResultMatrixRow>();
-            foreach (var team in teams)
-            {
-                rows.Add(
-                    new ResultMatrixRow
-                    {
-                        HomeTeam = team.Item1,
-                        HomeTeamAbbreviation = team.Item2,
-                        Scores = GetScores(matchDetails, team.Item1, team.Item1)
-                    }
-                );
-            }
-
-            return rows;
-        }
-
-        private List<ResultScore> GetScores(List<MatchDetail> matchDetails, string awayTeam, string homeTeam)
-        {
-            var homeGames = matchDetails.Where(m => m.HomeTeam == awayTeam).ToList();
-
-            var resultScores = new List<ResultScore> { new ResultScore { AwayTeam = homeTeam, Score = null, Result = null } };
-            foreach(var game in homeGames)
-            {
-                resultScores.Add(
-                    new ResultScore
-                    {
-                        AwayTeam = game.AwayTeam,
-                        Score = $"{game.HomeGoals}-{game.AwayGoals}",
-                        Result = game.HomeGoals > game.AwayGoals ? "W" : game.HomeGoals < game.AwayGoals ? "L" : "D"
-                    }
-                );
-            }
-
-            return resultScores;
         }
 
         private List<MatchDetail> GetLeagueMatchDetails(DbConnection conn, int tier, string seasonStartYear, string seasonEndYear)
