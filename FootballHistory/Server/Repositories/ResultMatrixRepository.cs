@@ -35,17 +35,15 @@ namespace FootballHistory.Server.Repositories
                     matchDetails.Add(
                         new MatchDetailModel
                         {
-                            Competition = reader.GetString(0),
-                            Date = reader.GetDateTime(1),
-                            HomeTeam = reader.GetString(2),
-                            HomeTeamAbbreviation = reader.GetString(3),
-                            AwayTeam = reader.GetString(4),
-                            AwayTeamAbbreviation = reader.GetString(5),
-                            HomeGoals = reader.GetByte(6),
-                            AwayGoals = reader.GetByte(7),
+                            Date = reader.GetDateTime(0),
+                            HomeTeam = reader.GetString(1),
+                            HomeTeamAbbreviation = reader.GetString(2),
+                            AwayTeam = reader.GetString(3),
+                            AwayTeamAbbreviation = reader.GetString(4),
+                            HomeGoals = reader.GetByte(5),
+                            AwayGoals = reader.GetByte(6),
                             ExtraTime = false,
-                            PenaltyShootout = false,
-                            Round = "League"
+                            PenaltyShootout = false
                         }
                     );
                 }
@@ -57,8 +55,7 @@ namespace FootballHistory.Server.Repositories
         private static DbCommand GetDbCommand(DbConnection conn, int tier, string season)
         {
             const string sql = @"
-SELECT d.Name AS CompetitionName
-    ,lm.matchDate
+SELECT lm.matchDate
     ,hc.Name AS HomeTeam
     ,hc.Abbreviation AS HomeAbbreviation
     ,ac.Name as AwayTeam
