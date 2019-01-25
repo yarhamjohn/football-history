@@ -28,6 +28,7 @@ namespace FootballHistory
             services.AddTransient<IDivisionRepository, DivisionRepository>();
             services.AddTransient<IResultMatrixRepository, ResultMatrixRepository>();
             services.AddTransient<ILeagueSeasonFilterBuilder, LeagueSeasonFilterBuilder>();
+            services.AddTransient<IResultMatrixBuilder, ResultMatrixBuilder>();
 
             var connString = Configuration.GetConnectionString("FootballHistory");
             services.AddDbContext<LeagueSeasonContext>(options => options.UseSqlServer(connString));

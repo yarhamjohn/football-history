@@ -14,13 +14,20 @@ namespace FootballHistory.Server.Controllers
         private readonly IDivisionRepository _divisionRepository;
         private readonly ILeagueSeasonFilterBuilder _leagueSeasonFilterBuilder;
         private readonly IResultMatrixRepository _resultMatrixRepository;
+        private readonly IResultMatrixBuilder _resultMatrixBuilder;
         private readonly ILeagueSeasonRepository _leagueSeasonRepository;
 
-        public LeagueSeasonController(ILeagueSeasonRepository leagueSeasonRepository, IDivisionRepository divisionRepository, ILeagueSeasonFilterBuilder leagueSeasonFilterBuilder, IResultMatrixRepository resultMatrixRepository)
+        public LeagueSeasonController(
+            ILeagueSeasonRepository leagueSeasonRepository, 
+            IDivisionRepository divisionRepository, 
+            ILeagueSeasonFilterBuilder leagueSeasonFilterBuilder, 
+            IResultMatrixRepository resultMatrixRepository, 
+            IResultMatrixBuilder resultMatrixBuilder)
         {
             _divisionRepository = divisionRepository;
             _leagueSeasonFilterBuilder = leagueSeasonFilterBuilder;
             _resultMatrixRepository = resultMatrixRepository;
+            _resultMatrixBuilder = resultMatrixBuilder;
             _leagueSeasonRepository = leagueSeasonRepository;
         }
 
@@ -34,7 +41,8 @@ namespace FootballHistory.Server.Controllers
         [HttpGet("[action]")]
         public ResultMatrix GetResultMatrix(string tier, string season)
         {
-            return _resultMatrixRepository.GetResultMatrix(Convert.ToInt32(tier), season);
+            var matchDetails = _resultMatrixRepository.GetResultMatrix(Convert.ToInt32(tier), season);
+            return _resultMatrixBuilder.Build(matchDetails);
         }
                                 
         [HttpGet("[action]")]
