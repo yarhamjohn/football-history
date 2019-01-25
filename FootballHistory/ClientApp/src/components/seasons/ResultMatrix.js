@@ -1,4 +1,6 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
+import * as moment from 'moment';
+import './ResultMatrix.css';
 
 class ResultMatrix extends Component {
   constructor(props) {
@@ -63,7 +65,7 @@ class ResultMatrix extends Component {
           </thead>
           <tbody>
             {
-              teams.map(t => <MatrixRow matrix={matrix} team={t} teams={teams} key={t.homeTeam} />)
+              teams.map(t => <MatrixRow className="matrix-cell" matrix={matrix} team={t} teams={teams} key={t.homeTeam} />)
             }
           </tbody>
         </table>
@@ -73,22 +75,24 @@ class ResultMatrix extends Component {
 }
 
 function MatrixRow(props) {
-    const row = props.matrix.filter(r => r.homeTeam === props.team.homeTeam)[0];
-    return (
-      <tr>
-        <td>{props.team.homeTeam}</td>
-        {
-          props.teams.map(t => <MatrixCell results={row.results} team={t} key={t.homeTeam} />)
-        }
-      </tr>
-    )
+  const row = props.matrix.filter(r => r.homeTeam === props.team.homeTeam)[0];
+  return (
+    <tr>
+      <td>{props.team.homeTeam}</td>
+      {
+        props.teams.map(t => <MatrixCell results={row.results} team={t} key={t.homeTeam} />)
+      }
+    </tr>
+  )
 }
 
 function MatrixCell(props) {
-    const result = props.results.filter(s => s.awayTeam === props.team.homeTeam)[0];
-    return (
-      <td style={{backgroundColor: getBackgroundColor(result.homeScore, result.awayScore)}}>
-        {result.homeScore === null || result.awayScore === null ? "" : `${result.homeScore}-${result.awayScore}`}
+  const result = props.results.filter(s => s.awayTeam === props.team.homeTeam)[0];
+
+  return (
+      <td style={{backgroundColor: getBackgroundColor(result.homeScore, result.awayScore)}} 
+          title={moment(result.matchDate).format("ddd, Do MMM YYYY")}>
+          {result.homeScore === null || result.awayScore === null ? "" : `${result.homeScore}-${result.awayScore}`}
       </td>
     )
 }
