@@ -1,13 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
+using FootballHistory.Server.Builders.Models;
+using FootballHistory.Server.Domain.Models;
 
-namespace FootballHistory.Server.Models
+namespace FootballHistory.Server.Builders
 {
-    public interface ILeagueSeasonFilterBuilder
-    {
-        LeagueSeasonFilter Build(List<DivisionModel> divisionModels);
-    }
-    
     public class LeagueSeasonFilterBuilder : ILeagueSeasonFilterBuilder
     {
         public LeagueSeasonFilter Build(List<DivisionModel> divisionModels)
@@ -48,11 +45,5 @@ namespace FootballHistory.Server.Models
                 }
             ).ToList();
         }
-    }
-    
-    public class LeagueSeasonFilter
-    {
-        public List<string> AllSeasons;
-        public List<Tier> AllTiers;
     }
 }
