@@ -41,7 +41,7 @@ namespace FootballHistory.Server.Controllers
         [HttpGet("[action]")]
         public ResultMatrix GetResultMatrix(string tier, string season)
         {
-            var matchDetails = _resultMatrixRepository.GetResultMatrix(Convert.ToInt32(tier), season);
+            var matchDetails = _resultMatrixRepository.GetLeagueMatches(Convert.ToInt32(tier), season);
             return _resultMatrixBuilder.Build(matchDetails);
         }
                                 

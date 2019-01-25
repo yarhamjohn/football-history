@@ -4,6 +4,6 @@ namespace FootballHistory.Server.Repositories
 {
     public interface IResultMatrixRepository
     {
-        List<MatchDetail> GetResultMatrix(int tier, string season);
+        List<MatchDetail> GetLeagueMatches(int tier, string season);
     }
 }
