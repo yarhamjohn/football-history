@@ -4,16 +4,16 @@ using FootballHistory.Server.Builders;
 using FootballHistory.Server.Domain.Models;
 using NUnit.Framework;
 
-namespace FootballHistoryUnitTests.Server.Models
+namespace FootballHistoryUnitTests.Server.Builders
 {
     public class LeagueSeasonFilterBuilderTests
     {
-        private ILeagueSeasonFilterBuilder LeagueSeasonFilterBuilder;
+        private ILeagueSeasonFilterBuilder _leagueSeasonFilterBuilder;
 
         [SetUp]
         public void SetUp()
         {
-            LeagueSeasonFilterBuilder = new LeagueSeasonFilterBuilder();
+            _leagueSeasonFilterBuilder = new LeagueSeasonFilterBuilder();
         }
 
         [Test]
@@ -21,7 +21,7 @@ namespace FootballHistoryUnitTests.Server.Models
         {
             var divisionModel = new DivisionModel {From = 2015, To = 2016};
             
-            var leagueSeasonFilter = LeagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModel });
+            var leagueSeasonFilter = _leagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModel });
 
             Assert.AreEqual(new List<string> {"2015-2016"}, leagueSeasonFilter.AllSeasons);
         }
@@ -31,7 +31,7 @@ namespace FootballHistoryUnitTests.Server.Models
         {
             var divisionModel = new DivisionModel {From = 2015, To = 2017};
             
-            var leagueSeasonFilter = LeagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModel });
+            var leagueSeasonFilter = _leagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModel });
 
             Assert.AreEqual(new List<string> {"2015-2016", "2016-2017"}, leagueSeasonFilter.AllSeasons);
         }
@@ -42,7 +42,7 @@ namespace FootballHistoryUnitTests.Server.Models
             var divisionModelOne = new DivisionModel {From = 2015, To = 2016};
             var divisionModelTwo = new DivisionModel {From = 2015, To = 2016};
             
-            var leagueSeasonFilter = LeagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModelOne, divisionModelTwo });
+            var leagueSeasonFilter = _leagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModelOne, divisionModelTwo });
 
             Assert.AreEqual(new List<string> {"2015-2016"}, leagueSeasonFilter.AllSeasons);
         }
@@ -53,7 +53,7 @@ namespace FootballHistoryUnitTests.Server.Models
             var divisionModelOne = new DivisionModel {From = 2015, To = 2017};
             var divisionModelTwo = new DivisionModel {From = 2017, To = 2019};
             
-            var leagueSeasonFilter = LeagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModelOne, divisionModelTwo });
+            var leagueSeasonFilter = _leagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModelOne, divisionModelTwo });
 
             Assert.AreEqual(new List<string> {"2015-2016", "2016-2017", "2017-2018", "2018-2019"}, leagueSeasonFilter.AllSeasons);
         }
@@ -64,7 +64,7 @@ namespace FootballHistoryUnitTests.Server.Models
             var divisionModelOne = new DivisionModel {From = 2015, To = 2017};
             var divisionModelTwo = new DivisionModel {From = 2015, To = 2017};
             
-            var leagueSeasonFilter = LeagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModelOne, divisionModelTwo });
+            var leagueSeasonFilter = _leagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModelOne, divisionModelTwo });
 
             Assert.AreEqual(new List<string> {"2015-2016", "2016-2017"}, leagueSeasonFilter.AllSeasons);
         }
@@ -75,7 +75,7 @@ namespace FootballHistoryUnitTests.Server.Models
             var divisionModelOne = new DivisionModel {From = 2015, To = 2017};
             var divisionModelTwo = new DivisionModel {From = 2016, To = 2018};
             
-            var leagueSeasonFilter = LeagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModelOne, divisionModelTwo });
+            var leagueSeasonFilter = _leagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModelOne, divisionModelTwo });
 
             Assert.AreEqual(new List<string> {"2015-2016", "2016-2017", "2017-2018"}, leagueSeasonFilter.AllSeasons);
         }
@@ -85,7 +85,7 @@ namespace FootballHistoryUnitTests.Server.Models
         {
             var divisionModel = new DivisionModel {Tier = 1};
 
-            var leagueSeasonFilter = LeagueSeasonFilterBuilder.Build(new List<DivisionModel> {divisionModel});
+            var leagueSeasonFilter = _leagueSeasonFilterBuilder.Build(new List<DivisionModel> {divisionModel});
             var levels = leagueSeasonFilter.AllTiers.Select(t => t.Level).ToArray();
             
             Assert.AreEqual(new[] { 1 }, levels);
@@ -97,7 +97,7 @@ namespace FootballHistoryUnitTests.Server.Models
             var divisionModelOne = new DivisionModel {Tier = 1};
             var divisionModelTwo = new DivisionModel {Tier = 2};
 
-            var leagueSeasonFilter = LeagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModelOne, divisionModelTwo });
+            var leagueSeasonFilter = _leagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModelOne, divisionModelTwo });
             var levels = leagueSeasonFilter.AllTiers.Select(t => t.Level).ToArray();
             
             Assert.AreEqual(new[] { 1, 2 }, levels);
@@ -109,7 +109,7 @@ namespace FootballHistoryUnitTests.Server.Models
             var divisionModelOne = new DivisionModel {Tier = 1};
             var divisionModelTwo = new DivisionModel {Tier = 1};
 
-            var leagueSeasonFilter = LeagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModelOne, divisionModelTwo });
+            var leagueSeasonFilter = _leagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModelOne, divisionModelTwo });
             var levels = leagueSeasonFilter.AllTiers.Select(t => t.Level).ToArray();
             
             Assert.AreEqual(new[] { 1 }, levels);
@@ -120,7 +120,7 @@ namespace FootballHistoryUnitTests.Server.Models
         {
             var divisionModel = new DivisionModel {Name = "DivisionName"};
 
-            var leagueSeasonFilter = LeagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModel });
+            var leagueSeasonFilter = _leagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModel });
             var divisionNames = leagueSeasonFilter.AllTiers.SelectMany(t => t.Divisions).Select(d => d.Name).ToArray();
             
             Assert.AreEqual(new[] { "DivisionName" }, divisionNames);
@@ -132,7 +132,7 @@ namespace FootballHistoryUnitTests.Server.Models
             var divisionModelOne = new DivisionModel {Name = "DivisionName", Tier = 1};
             var divisionModelTwo = new DivisionModel {Name = "AnotherDivisionName", Tier = 1};
 
-            var leagueSeasonFilter = LeagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModelOne, divisionModelTwo });
+            var leagueSeasonFilter = _leagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModelOne, divisionModelTwo });
             var tier = leagueSeasonFilter.AllTiers.Single();
             var divisionNames = tier.Divisions.Select(d => d.Name).ToArray();
             
@@ -145,7 +145,7 @@ namespace FootballHistoryUnitTests.Server.Models
             var divisionModelOne = new DivisionModel {Name = "DivisionName", Tier = 1};
             var divisionModelTwo = new DivisionModel {Name = "AnotherDivisionName", Tier = 2};
 
-            var leagueSeasonFilter = LeagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModelOne, divisionModelTwo });
+            var leagueSeasonFilter = _leagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModelOne, divisionModelTwo });
             var firstTier = leagueSeasonFilter.AllTiers.First();
             var firstTierDivisionNames = firstTier.Divisions.Select(d => d.Name).ToArray();
             var secondTier = leagueSeasonFilter.AllTiers.Last();
