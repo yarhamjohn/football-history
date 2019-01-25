@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
-using System.Linq;
 using FootballHistory.Server.Domain;
-using FootballHistory.Server.Models.LeagueSeason;
+using FootballHistory.Server.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballHistory.Server.Repositories
@@ -17,7 +16,7 @@ namespace FootballHistory.Server.Repositories
             Context = context;
         }
 
-        public List<MatchDetail> GetLeagueMatches(int tier, string season)
+        public List<MatchDetailModel> GetLeagueMatches(int tier, string season)
         {
             using(var conn = Context.Database.GetDbConnection())
             {
@@ -26,15 +25,15 @@ namespace FootballHistory.Server.Repositories
             }
         }
 
-        private static List<MatchDetail> GetMatchDetails(DbCommand cmd)
+        private static List<MatchDetailModel> GetMatchDetails(DbCommand cmd)
         {
-            var matchDetails = new List<MatchDetail>();
+            var matchDetails = new List<MatchDetailModel>();
             using (var reader = cmd.ExecuteReader())
             {
                 while (reader.Read())
                 {
                     matchDetails.Add(
-                        new MatchDetail
+                        new MatchDetailModel
                         {
                             Competition = reader.GetString(0),
                             Date = reader.GetDateTime(1),

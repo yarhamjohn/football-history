@@ -2,7 +2,10 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using FootballHistory.Server.Builders.Models;
 using FootballHistory.Server.Domain;
+using FootballHistory.Server.Domain.Models;
+using FootballHistory.Server.Models.LeagueSeason;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballHistory.Server.Repositories
@@ -134,7 +137,7 @@ ORDER BY MatchDate
             return form;
         }
 
-        private void AddTeamStatus(List<LeagueTableRow> leagueTable, LeagueDetail leagueDetail, List<MatchDetail> playOffMatchDetails)
+        private void AddTeamStatus(List<LeagueTableRow> leagueTable, LeagueDetail leagueDetail, List<MatchDetailModel> playOffMatchDetails)
         {
             var playOffFinal = playOffMatchDetails.Where(m => m.Round == "Final").ToList();
             
@@ -177,7 +180,7 @@ ORDER BY MatchDate
             }
         }
 
-        private void AddLeagueRows(List<LeagueTableRow> leagueTable, List<MatchDetail> leagueMatchDetails)
+        private void AddLeagueRows(List<LeagueTableRow> leagueTable, List<MatchDetailModel> leagueMatchDetails)
         {
             var filteredHomeTeams = leagueMatchDetails.Select(m => m.HomeTeam).ToList();
             var filteredAwayTeams = leagueMatchDetails.Select(m => m.AwayTeam).ToList();
@@ -239,10 +242,10 @@ ORDER BY MatchDate
             }).ToList();
         }
 
-        private PlayOffs CreatePlayOffs(List<MatchDetail> matchDetails)
+        private PlayOffs CreatePlayOffs(List<MatchDetailModel> matchDetails)
         {
             var playOffMatches = matchDetails
-                .Select(m => new MatchDetail 
+                .Select(m => new MatchDetailModel 
                     {
                         Competition = m.Competition,
                         Round = m.Round,
@@ -282,7 +285,7 @@ ORDER BY MatchDate
             return playOffs;
         }
 
-        private void AddSemiFinal(PlayOffs playOffs, MatchDetail match)
+        private void AddSemiFinal(PlayOffs playOffs, MatchDetailModel match)
         {
             if (playOffs.SemiFinals.Count == 0)
             {
@@ -312,7 +315,7 @@ ORDER BY MatchDate
             }
         }
 
-        private List<MatchDetail> GetLeagueMatchDetails(DbConnection conn, int tier, string seasonStartYear, string seasonEndYear)
+        private List<MatchDetailModel> GetLeagueMatchDetails(DbConnection conn, int tier, string seasonStartYear, string seasonEndYear)
         {
             var sql = @"
 SELECT d.Name AS CompetitionName
@@ -331,7 +334,7 @@ WHERE d.Tier = @Tier
     AND lm.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
 ";
 
-            var matchDetails = new List<MatchDetail>();
+            var matchDetails = new List<MatchDetailModel>();
 
             conn.Open();
             var cmd = conn.CreateCommand();
@@ -346,7 +349,7 @@ WHERE d.Tier = @Tier
                 while (reader.Read())
                 {
                     matchDetails.Add(
-                        new MatchDetail
+                        new MatchDetailModel
                         {
                             Competition = reader.GetString(0),
                             Date = reader.GetDateTime(1),
@@ -373,7 +376,7 @@ WHERE d.Tier = @Tier
             return matchDetails;
         }
 
-        private List<MatchDetail> GetPlayOffMatchDetails(DbConnection conn, int tier, string seasonStartYear, string seasonEndYear)
+        private List<MatchDetailModel> GetPlayOffMatchDetails(DbConnection conn, int tier, string seasonStartYear, string seasonEndYear)
         {
             var sql = @"
 SELECT d.Name AS CompetitionName
@@ -401,7 +404,7 @@ WHERE d.Tier = @Tier
     AND pom.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
 ";
 
-            var matchDetails = new List<MatchDetail>();
+            var matchDetails = new List<MatchDetailModel>();
 
             conn.Open();
             var cmd = conn.CreateCommand();
@@ -419,7 +422,7 @@ WHERE d.Tier = @Tier
                     var penaltyShootout = reader.GetBoolean(12); // == 1 ? true : false;
 
                     matchDetails.Add(
-                        new MatchDetail
+                        new MatchDetailModel
                         {
                             Competition = reader.GetString(0),
                             Round = reader.GetString(1),

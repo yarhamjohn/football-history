@@ -1,17 +1,18 @@
 using System.Collections.Generic;
 using System.Linq;
+using FootballHistory.Server.Domain.Models;
 using FootballHistory.Server.Models.LeagueSeason;
 
 namespace FootballHistory.Server.Builders
 {
     public class ResultMatrixBuilder : IResultMatrixBuilder
     {
-        public ResultMatrix Build(List<MatchDetail> matchDetails)
+        public ResultMatrix Build(List<MatchDetailModel> matchDetails)
         {
             return CreateResultMatrix(matchDetails);
         }
 
-        private ResultMatrix CreateResultMatrix(List<MatchDetail> matchDetails)
+        private ResultMatrix CreateResultMatrix(List<MatchDetailModel> matchDetails)
         {
             var teams = matchDetails.Select(m => (m.HomeTeam, m.HomeTeamAbbreviation)).Distinct().ToList();
 
@@ -31,7 +32,7 @@ namespace FootballHistory.Server.Builders
             return resultMatrix;
         }
 
-        private List<MatchResult> GetScores(List<MatchDetail> matchDetails, string awayTeam, string homeTeam)
+        private List<MatchResult> GetScores(List<MatchDetailModel> matchDetails, string awayTeam, string homeTeam)
         {
             var homeGames = matchDetails.Where(m => m.HomeTeam == awayTeam).ToList();
 
