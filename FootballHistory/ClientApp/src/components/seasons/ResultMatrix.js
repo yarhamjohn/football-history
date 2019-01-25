@@ -16,7 +16,7 @@ class ResultMatrix extends Component {
       .then(response => response.json())
       .then(data => {
         this.setState({ 
-          matrix: data,
+          matrix: data.rows,
           isLoading: false 
         });
       });
@@ -38,7 +38,7 @@ class ResultMatrix extends Component {
       homeTeamAbbreviation: r.homeTeamAbbreviation })
     );
 
-    return teams.sort((a, b) => a.homeTeam.localeCompare(b.homeTeam));
+    return teams.sort((a, b) => a.homeTeamAbbreviation.localeCompare(b.homeTeamAbbreviation));
   }
 
   render() {
@@ -78,31 +78,31 @@ function MatrixRow(props) {
       <tr>
         <td>{props.team.homeTeam}</td>
         {
-          props.teams.map(t => <MatrixCell scores={row.scores} team={t} key={t.homeTeam} />)
+          props.teams.map(t => <MatrixCell results={row.results} team={t} key={t.homeTeam} />)
         }
       </tr>
     )
 }
 
 function MatrixCell(props) {
-    const score = props.scores.filter(s => s.awayTeam === props.team.homeTeam)[0];
+    const result = props.results.filter(s => s.awayTeam === props.team.homeTeam)[0];
     return (
-      <td style={{backgroundColor: getBackgroundColor(score.result)}}>
-        {score.score}
+      <td style={{backgroundColor: getBackgroundColor(result.homeScore, result.awayScore)}}>
+        {result.homeScore === null || result.awayScore === null ? "" : `${result.homeScore}-${result.awayScore}`}
       </td>
     )
 }
 
-function getBackgroundColor(result) {
-  if (result === null) {
+function getBackgroundColor(homeScore, awayScore) {
+  if (homeScore === null || awayScore === null) {
     return '#BBB';
   }
 
-  return result === 'W' 
+  return homeScore > awayScore
     ? '#BFB' 
-    : result === 'D' 
-      ? '#FFB' 
-      : '#FBB'
+    : homeScore < awayScore
+      ? '#FBB' 
+      : '#FFB'
 }
 
 export default ResultMatrix;
