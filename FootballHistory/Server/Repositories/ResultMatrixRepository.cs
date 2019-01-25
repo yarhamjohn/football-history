@@ -17,7 +17,7 @@ namespace FootballHistory.Server.Repositories
             Context = context;
         }
 
-        public ResultMatrix GetResultMatrix(int tier, string season)
+        public List<MatchDetail> GetResultMatrix(int tier, string season)
         {
             var seasonStartYear = season.Substring(0, 4);
             var seasonEndYear = season.Substring(7, 4);

@@ -1,9 +1,9 @@
-using FootballHistory.Server.Models.LeagueSeason;
+using System.Collections.Generic;
 
 namespace FootballHistory.Server.Repositories
 {
     public interface IResultMatrixRepository
     {
-        ResultMatrix GetResultMatrix(int tier, string season);
+        List<MatchDetail> GetResultMatrix(int tier, string season);
     }
 }
