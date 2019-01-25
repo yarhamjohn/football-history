@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using FootballHistory.Server.Domain;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballHistory.Server.Repositories

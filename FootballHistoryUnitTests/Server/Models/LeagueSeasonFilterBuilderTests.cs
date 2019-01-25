@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
-using FootballHistory.Server.Models;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+using FootballHistory.Server.Builders;
+using FootballHistory.Server.Domain.Models;
 using NUnit.Framework;
 
 namespace FootballHistoryUnitTests.Server.Models

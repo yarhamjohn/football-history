@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
-using FootballHistory.Server.Models;
+using FootballHistory.Server.Domain;
+using FootballHistory.Server.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballHistory.Server.Repositories

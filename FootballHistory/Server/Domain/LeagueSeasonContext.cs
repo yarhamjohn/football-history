@@ -1,9 +1,11 @@
-using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 
-public class LeagueSeasonContext : DbContext
+namespace FootballHistory.Server.Domain
 {
-    public LeagueSeasonContext(DbContextOptions<LeagueSeasonContext> options) : base(options)
+    public class LeagueSeasonContext : DbContext
     {
+        public LeagueSeasonContext(DbContextOptions<LeagueSeasonContext> options) : base(options)
+        {
+        }
     }
 }

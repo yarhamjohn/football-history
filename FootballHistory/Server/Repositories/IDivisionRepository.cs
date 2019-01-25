@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using FootballHistory.Server.Models;
+using FootballHistory.Server.Domain.Models;
 
 namespace FootballHistory.Server.Repositories
 {

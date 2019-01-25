@@ -1,4 +1,4 @@
-namespace FootballHistory.Server.Models
+namespace FootballHistory.Server.Domain.Models
 {
     public class DivisionModel
     {
