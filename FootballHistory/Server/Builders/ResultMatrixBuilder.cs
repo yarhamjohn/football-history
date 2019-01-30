@@ -12,19 +12,22 @@ namespace FootballHistory.Server.Builders
             return CreateResultMatrix(matchDetails);
         }
 
-        private ResultMatrix CreateResultMatrix(List<MatchDetailModel> matchDetails)
+        private static ResultMatrix CreateResultMatrix(IReadOnlyCollection<MatchDetailModel> matchDetails)
         {
-            var teams = matchDetails.Select(m => (m.HomeTeam, m.HomeTeamAbbreviation)).Distinct().ToList();
+            var teams = matchDetails
+                .Select(m => (HomeTeam: m.HomeTeam, HomeTeamAbbreviation: m.HomeTeamAbbreviation))
+                .Distinct()
+                .ToList();
 
             var resultMatrix = new ResultMatrix();
-            foreach (var team in teams)
+            foreach (var (homeTeam, homeTeamAbbreviation) in teams)
             {
                 resultMatrix.Rows.Add(
                     new ResultMatrixRow
                     {
-                        HomeTeam = team.Item1,
-                        HomeTeamAbbreviation = team.Item2,
-                        Results = GetScores(matchDetails, team.Item1, team.Item1)
+                        HomeTeam = homeTeam,
+                        HomeTeamAbbreviation = homeTeamAbbreviation,
+                        Results = GetScores(matchDetails, homeTeam, homeTeamAbbreviation)
                     }
                 );
             }
@@ -32,17 +35,19 @@ namespace FootballHistory.Server.Builders
             return resultMatrix;
         }
 
-        private List<MatchResult> GetScores(List<MatchDetailModel> matchDetails, string awayTeam, string homeTeam)
+        private static List<MatchResult> GetScores(IEnumerable<MatchDetailModel> matchDetails, string homeTeam, string homeTeamAbbreviation)
         {
-            var homeGames = matchDetails.Where(m => m.HomeTeam == awayTeam).ToList();
+            var homeGames = matchDetails.Where(m => m.HomeTeam == homeTeam).ToList();
 
-            var resultScores = new List<MatchResult> { new MatchResult { AwayTeam = homeTeam, AwayTeamAbbreviation = null, HomeScore = null, AwayScore = null, MatchDate = null } };
+            var resultScores = new List<MatchResult> { GetMatchResultAgainstSelf(homeTeam, homeTeamAbbreviation) };
+
             foreach(var game in homeGames)
             {
                 resultScores.Add(
                     new MatchResult
                     {
                         AwayTeam = game.AwayTeam,
+                        AwayTeamAbbreviation = game.AwayTeamAbbreviation,
                         HomeScore = game.HomeGoals,
                         AwayScore = game.AwayGoals,
                         MatchDate = game.Date
@@ -51,6 +56,18 @@ namespace FootballHistory.Server.Builders
             }
 
             return resultScores;
+        }
+
+        private static MatchResult GetMatchResultAgainstSelf(string homeTeam, string homeTeamAbbreviation)
+        {
+            return new MatchResult
+            {
+                AwayTeam = homeTeam, 
+                AwayTeamAbbreviation = homeTeamAbbreviation, 
+                HomeScore = null, 
+                AwayScore = null,
+                MatchDate = null
+            };
         }
     }
 }
