@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import TableRow from './TableRow';
+import baseUrl from "../../../api/LeagueSeasonApi";
 import './LeagueTable.css';
 
 class LeagueTable extends Component {
@@ -14,7 +15,7 @@ class LeagueTable extends Component {
   fetchLeagueTable() {
     const { tier, season } = this.props;
 
-    fetch(`api/LeagueSeason/GetLeagueTable?tier=${tier.level}&season=${season}`)
+    fetch(`${baseUrl}/api/LeagueSeason/GetLeagueTable?tier=${tier.level}&season=${season}`)
       .then(response => response.json())
       .then(data => {
         this.setState({ 

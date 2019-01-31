@@ -3,6 +3,7 @@ import Filter from './Filter';
 import LeagueTable from './leagueTable/LeagueTable';
 import PlayOffMatches from './PlayOffMatches';
 import ResultMatrix from './ResultMatrix';
+import baseUrl from "../../api/LeagueSeasonApi";
 import './Page.css';
 
 class Page extends Component {
@@ -25,7 +26,7 @@ class Page extends Component {
   };
 
   componentDidMount() {
-    fetch(`https://localhost:44338/api/LeagueSeason/GetLeagueSeasonFilters`)
+    fetch(`${baseUrl}/api/LeagueSeason/GetLeagueSeasonFilters`)
       .then(response => response.json())
       .then(data => {
         

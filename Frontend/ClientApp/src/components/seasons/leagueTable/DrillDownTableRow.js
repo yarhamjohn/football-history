@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Well } from 'react-bootstrap';
 import { LineChart } from 'react-chartkick'
+import baseUrl from "../../../api/LeagueSeasonApi";
 import './DrillDownTableRow.css';
 
 class DrillDownTableRow extends Component {
@@ -12,7 +13,7 @@ class DrillDownTableRow extends Component {
   componentDidMount() {
     const { tier, season, team } = this.props;
 
-    fetch(`api/LeagueSeason/GetDrillDown?tier=${tier.level}&season=${season}&team=${team}`)
+    fetch(`${baseUrl}/api/LeagueSeason/GetDrillDown?tier=${tier.level}&season=${season}&team=${team}`)
       .then(response => response.json())
       .then(data => {
         this.setState({ 

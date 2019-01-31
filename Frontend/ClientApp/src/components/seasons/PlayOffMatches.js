@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Table } from 'react-bootstrap';
+import baseUrl from "../../api/LeagueSeasonApi";
 import './PlayOffMatches.css';
 
 class PlayOffMatches extends Component {
@@ -14,7 +15,7 @@ class PlayOffMatches extends Component {
   fetchPlayOffMatches() {
     const { tier, season } = this.props;
 
-    fetch(`api/LeagueSeason/GetPlayOffMatches?tier=${tier.level}&season=${season}`)
+      fetch(`${baseUrl}/api/LeagueSeason/GetPlayOffMatches?tier=${tier.level}&season=${season}`)
       .then(response => response.json())
       .then(data => {
         this.setState({ 

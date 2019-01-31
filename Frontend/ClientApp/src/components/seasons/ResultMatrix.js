@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import * as moment from 'moment';
+import baseUrl from "../../api/LeagueSeasonApi";
 import './ResultMatrix.css';
 
 class ResultMatrix extends Component {
@@ -14,7 +15,7 @@ class ResultMatrix extends Component {
   fetchResultMatrix() {
     const { tier, season } = this.props;
 
-    fetch(`api/LeagueSeason/GetResultMatrix?tier=${tier.level}&season=${season}`)
+      fetch(`${baseUrl}/api/LeagueSeason/GetResultMatrix?tier=${tier.level}&season=${season}`)
       .then(response => response.json())
       .then(data => {
         this.setState({ 
