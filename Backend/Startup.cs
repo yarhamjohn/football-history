@@ -54,7 +54,10 @@ namespace Backend
                 app.UseHsts();
             }
 
-            app.UseCors(builder => builder.WithOrigins("https://localhost:44379"));
+            app.UseCors(builder =>
+            {
+                builder.WithOrigins(Configuration.GetSection("WhitelistedDevUrls").Get<string[]>());
+            });
 
             app.UseHttpsRedirection();
             app.UseMvc();
