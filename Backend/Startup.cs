@@ -54,6 +54,8 @@ namespace Backend
                 app.UseHsts();
             }
 
+            app.UseCors(builder => builder.WithOrigins("https://localhost:44379"));
+
             app.UseHttpsRedirection();
             app.UseMvc();
         }
