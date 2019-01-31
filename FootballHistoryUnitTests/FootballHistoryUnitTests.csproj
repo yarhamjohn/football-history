@@ -16,11 +16,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\FootballHistory\FootballHistory.csproj" />
+      <Folder Include="Server\Repositories" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Server\Repositories" />
+      <ProjectReference Include="..\Backend\Backend.csproj" />
     </ItemGroup>
 
 </Project>
