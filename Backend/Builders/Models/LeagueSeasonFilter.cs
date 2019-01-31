@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using Backend.Models.LeagueSeason;
 
-namespace FootballHistory.Server.Builders.Models
+namespace Backend.Builders.Models
 {
     public class LeagueSeasonFilter
     {

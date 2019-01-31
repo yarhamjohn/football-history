@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace FootballHistory.Server.Models.LeagueSeason
+namespace Backend.Models.LeagueSeason
 {
     public class ResultMatrix
     {

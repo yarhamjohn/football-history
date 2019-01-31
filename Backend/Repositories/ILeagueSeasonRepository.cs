@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using FootballHistory.Server.Models.LeagueSeason;
+using Backend.Models.LeagueSeason;
 
-namespace FootballHistory.Server.Repositories
+namespace Backend.Repositories
 {
     public interface ILeagueSeasonRepository
     {

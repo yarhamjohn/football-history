@@ -2,13 +2,12 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
-using FootballHistory.Server.Builders.Models;
-using FootballHistory.Server.Domain;
-using FootballHistory.Server.Domain.Models;
-using FootballHistory.Server.Models.LeagueSeason;
+using Backend.Domain;
+using Backend.Domain.Models;
+using Backend.Models.LeagueSeason;
 using Microsoft.EntityFrameworkCore;
 
-namespace FootballHistory.Server.Repositories
+namespace Backend.Repositories
 {
     public class LeagueSeasonRepository : ILeagueSeasonRepository
     {

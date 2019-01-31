@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using FootballHistory.Server.Domain;
-using FootballHistory.Server.Domain.Models;
+using Backend.Domain;
+using Backend.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace FootballHistory.Server.Repositories
+namespace Backend.Repositories
 {
     public class DivisionRepository : IDivisionRepository
     {

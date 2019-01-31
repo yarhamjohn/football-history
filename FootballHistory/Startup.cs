@@ -24,14 +24,6 @@ namespace FootballHistory
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddTransient<ILeagueSeasonRepository, LeagueSeasonRepository>();
-            services.AddTransient<IDivisionRepository, DivisionRepository>();
-            services.AddTransient<IResultMatrixRepository, ResultMatrixRepository>();
-            services.AddTransient<ILeagueSeasonFilterBuilder, LeagueSeasonFilterBuilder>();
-            services.AddTransient<IResultMatrixBuilder, ResultMatrixBuilder>();
-
-            var connString = Configuration.GetConnectionString("FootballHistory");
-            services.AddDbContext<LeagueSeasonContext>(options => options.UseSqlServer(connString));
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

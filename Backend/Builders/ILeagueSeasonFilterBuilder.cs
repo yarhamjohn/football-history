@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using FootballHistory.Server.Builders.Models;
-using FootballHistory.Server.Domain.Models;
+using Backend.Builders.Models;
+using Backend.Domain.Models;
 
-namespace FootballHistory.Server.Builders
+namespace Backend.Builders
 {
     public interface ILeagueSeasonFilterBuilder
     {

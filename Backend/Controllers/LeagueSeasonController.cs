@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
-using FootballHistory.Server.Builders;
-using FootballHistory.Server.Builders.Models;
-using FootballHistory.Server.Models.LeagueSeason;
-using FootballHistory.Server.Repositories;
+using Backend.Builders;
+using Backend.Builders.Models;
+using Backend.Models.LeagueSeason;
+using Backend.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
-namespace FootballHistory.Server.Controllers
+namespace Backend.Controllers
 {
     [Route("api/[controller]")]
     public class LeagueSeasonController : Controller

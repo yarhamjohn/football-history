@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
-using FootballHistory.Server.Builders.Models;
-using FootballHistory.Server.Domain.Models;
+using Backend.Builders.Models;
+using Backend.Domain.Models;
+using Backend.Models.LeagueSeason;
 
-namespace FootballHistory.Server.Builders
+namespace Backend.Builders
 {
     public class LeagueSeasonFilterBuilder : ILeagueSeasonFilterBuilder
     {

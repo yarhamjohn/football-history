@@ -1,8 +1,8 @@
 using System.Collections.Generic;
-using FootballHistory.Server.Domain.Models;
-using FootballHistory.Server.Models.LeagueSeason;
+using Backend.Domain.Models;
+using Backend.Models.LeagueSeason;
 
-namespace FootballHistory.Server.Builders
+namespace Backend.Builders
 {
     public interface IResultMatrixBuilder
     {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
-using FootballHistory.Server.Domain.Models;
+using Backend.Domain.Models;
 
-namespace FootballHistory.Server.Models.LeagueSeason
+namespace Backend.Models.LeagueSeason
 {
     public class PlayOffs
     {

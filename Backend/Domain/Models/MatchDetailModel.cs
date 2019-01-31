@@ -1,6 +1,6 @@
 using System;
 
-namespace FootballHistory.Server.Domain.Models
+namespace Backend.Domain.Models
 {
     public class MatchDetailModel
     {

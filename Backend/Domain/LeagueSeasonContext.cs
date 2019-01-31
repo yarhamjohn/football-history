@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace FootballHistory.Server.Domain
+namespace Backend.Domain
 {
     public class LeagueSeasonContext : DbContext
     {
