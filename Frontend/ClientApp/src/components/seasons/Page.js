@@ -25,7 +25,7 @@ class Page extends Component {
   };
 
   componentDidMount() {
-    fetch(`api/LeagueSeason/GetLeagueSeasonFilters`)
+    fetch(`https://localhost:44338/api/LeagueSeason/GetLeagueSeasonFilters`)
       .then(response => response.json())
       .then(data => {
         
