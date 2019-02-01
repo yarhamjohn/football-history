@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Backend.Builders;
-using Backend.Domain.Models;
-using Backend.Models.LeagueSeason;
+using FootballHistory.Api.Builders;
+using FootballHistory.Api.Domain.Models;
+using FootballHistory.Api.Models.LeagueSeason;
 using NUnit.Framework;
 
 namespace FootballHistoryUnitTests.Server.Builders

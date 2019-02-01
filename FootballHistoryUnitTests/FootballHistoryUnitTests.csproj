@@ -20,7 +20,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Backend\Backend.csproj" />
+      <ProjectReference Include="..\FootballHistory.Api\FootballHistory.Api.csproj" />
     </ItemGroup>
 
 </Project>

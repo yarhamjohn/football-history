@@ -8,7 +8,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FootballHistoryUnitTests", 
 		{66830267-A13B-4C6E-8243-2D4F3C241343} = {66830267-A13B-4C6E-8243-2D4F3C241343}
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Backend", "Backend\Backend.csproj", "{66830267-A13B-4C6E-8243-2D4F3C241343}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FootballHistory.Api", "FootballHistory.Api\FootballHistory.Api.csproj", "{66830267-A13B-4C6E-8243-2D4F3C241343}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Frontend", "Frontend\Frontend.csproj", "{50785B87-DB5E-45ED-94DD-78D83BA8CA50}"
 EndProject
