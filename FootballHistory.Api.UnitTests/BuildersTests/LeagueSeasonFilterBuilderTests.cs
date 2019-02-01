@@ -4,7 +4,7 @@ using FootballHistory.Api.Builders;
 using FootballHistory.Api.Domain.Models;
 using NUnit.Framework;
 
-namespace FootballHistoryUnitTests.Server.Builders
+namespace FootballHistory.Api.UnitTests.Builders
 {
     public class LeagueSeasonFilterBuilderTests
     {
@@ -23,7 +23,7 @@ namespace FootballHistoryUnitTests.Server.Builders
             
             var leagueSeasonFilter = _leagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModel });
 
-            Assert.AreEqual(new List<string> {"2015-2016"}, leagueSeasonFilter.AllSeasons);
+            Assert.AreEqual(new List<string> {"2015 - 2016"}, leagueSeasonFilter.AllSeasons);
         }
         
         [Test]
@@ -33,7 +33,7 @@ namespace FootballHistoryUnitTests.Server.Builders
             
             var leagueSeasonFilter = _leagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModel });
 
-            Assert.AreEqual(new List<string> {"2015-2016", "2016-2017"}, leagueSeasonFilter.AllSeasons);
+            Assert.AreEqual(new List<string> {"2015 - 2016", "2016 - 2017"}, leagueSeasonFilter.AllSeasons);
         }
         
         [Test]
@@ -44,7 +44,7 @@ namespace FootballHistoryUnitTests.Server.Builders
             
             var leagueSeasonFilter = _leagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModelOne, divisionModelTwo });
 
-            Assert.AreEqual(new List<string> {"2015-2016"}, leagueSeasonFilter.AllSeasons);
+            Assert.AreEqual(new List<string> {"2015 - 2016"}, leagueSeasonFilter.AllSeasons);
         }
         
         [Test]
@@ -55,7 +55,7 @@ namespace FootballHistoryUnitTests.Server.Builders
             
             var leagueSeasonFilter = _leagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModelOne, divisionModelTwo });
 
-            Assert.AreEqual(new List<string> {"2015-2016", "2016-2017", "2017-2018", "2018-2019"}, leagueSeasonFilter.AllSeasons);
+            Assert.AreEqual(new List<string> {"2015 - 2016", "2016 - 2017", "2017 - 2018", "2018 - 2019"}, leagueSeasonFilter.AllSeasons);
         }
                 
         [Test]
@@ -66,7 +66,7 @@ namespace FootballHistoryUnitTests.Server.Builders
             
             var leagueSeasonFilter = _leagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModelOne, divisionModelTwo });
 
-            Assert.AreEqual(new List<string> {"2015-2016", "2016-2017"}, leagueSeasonFilter.AllSeasons);
+            Assert.AreEqual(new List<string> {"2015 - 2016", "2016 - 2017"}, leagueSeasonFilter.AllSeasons);
         }
                 
         [Test]
@@ -77,7 +77,7 @@ namespace FootballHistoryUnitTests.Server.Builders
             
             var leagueSeasonFilter = _leagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModelOne, divisionModelTwo });
 
-            Assert.AreEqual(new List<string> {"2015-2016", "2016-2017", "2017-2018"}, leagueSeasonFilter.AllSeasons);
+            Assert.AreEqual(new List<string> {"2015 - 2016", "2016 - 2017", "2017 - 2018"}, leagueSeasonFilter.AllSeasons);
         }
 
         [Test]

@@ -6,7 +6,7 @@ using FootballHistory.Api.Domain.Models;
 using FootballHistory.Api.Models.LeagueSeason;
 using NUnit.Framework;
 
-namespace FootballHistoryUnitTests.Server.Builders
+namespace FootballHistory.Api.UnitTests.Builders
 {
     [TestFixture]
     public class ResultMatrixBuilderTests
