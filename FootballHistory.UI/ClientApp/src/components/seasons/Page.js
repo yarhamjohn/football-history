@@ -26,7 +26,7 @@ class Page extends Component {
   };
 
   componentDidMount() {
-    fetch(`${process.env.REACT_APP_API_URL}/api/LeagueSeason/GetLeagueSeasonFilters`)
+    fetch(`${baseUrl}/api/LeagueSeason/GetLeagueSeasonFilters`)
       .then(response => response.json())
       .then(data => {
         
