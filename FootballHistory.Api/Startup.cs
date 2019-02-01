@@ -43,23 +43,21 @@ namespace FootballHistory.Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            string whitelistedUrls;
             if (env.IsDevelopment())
             {
-                whitelistedUrls = "WhitelistedDevUrls";
+
+                app.UseCors(builder =>
+                {
+                    builder.WithOrigins(Configuration.GetSection("WhitelistedUrls").Get<string[]>());
+                });
                 app.UseDeveloperExceptionPage();
                 
             }
             else
             {
-                whitelistedUrls = "WhitelistedProdUrls";
                 app.UseHsts();
             }
 
-            app.UseCors(builder =>
-            {
-                builder.WithOrigins(Configuration.GetSection("https://locahost:5011").Get<string[]>());
-            });
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
