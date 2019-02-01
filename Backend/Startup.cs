@@ -14,6 +14,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace Backend
 {
@@ -31,7 +33,11 @@ namespace Backend
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Football  History API", Version = "v1" });
+            });
+            
             services.AddTransient<ILeagueSeasonRepository, LeagueSeasonRepository>();
             services.AddTransient<IDivisionRepository, DivisionRepository>();
             services.AddTransient<IResultMatrixRepository, ResultMatrixRepository>();
@@ -59,6 +65,12 @@ namespace Backend
                 builder.WithOrigins(Configuration.GetSection("WhitelistedDevUrls").Get<string[]>());
             });
 
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Football History API v1");
+            });
+            
             app.UseHttpsRedirection();
             app.UseMvc();
         }
