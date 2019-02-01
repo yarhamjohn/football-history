@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28307.271
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FootballHistory.Api", "FootballHistory.Api\FootballHistory.Api.csproj", "{66830267-A13B-4C6E-8243-2D4F3C241343}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Frontend", "Frontend\Frontend.csproj", "{50785B87-DB5E-45ED-94DD-78D83BA8CA50}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootballHistory.UI", "FootballHistory.UI\FootballHistory.UI.csproj", "{50785B87-DB5E-45ED-94DD-78D83BA8CA50}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootballHistory.Api.UnitTests", "FootballHistory.Api.UnitTests\FootballHistory.Api.UnitTests.csproj", "{9D9649AF-10CB-4A90-8B7B-1DEB14D61B66}"
 EndProject
