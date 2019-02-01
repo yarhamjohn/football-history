@@ -232,9 +232,3 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
-
-### JetBrains Ignores
-
-# User specific
-**/.idea/
-
