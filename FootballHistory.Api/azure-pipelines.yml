@@ -10,9 +10,7 @@ variables:
 steps:
 - script: |
     dotnet build FootballHistory.Api --configuration $(buildConfiguration)
-    dotnet build FootballHistory.Api.UnitTests --configuration $(buildConfiguration)
     dotnet publish FootballHistory.Api --configuration $(buildConfiguration) --output $BUILD_ARTIFACTSTAGINGDIRECTORY
-    dotnet publish FootballHistory.Api.UnitTests --configuration $(buildConfiguration) --output $BUILD_ARTIFACTSTAGINGDIRECTORY
   displayName: 'dotnet build $(buildConfiguration)'
 
 - task: PublishBuildArtifacts@1
