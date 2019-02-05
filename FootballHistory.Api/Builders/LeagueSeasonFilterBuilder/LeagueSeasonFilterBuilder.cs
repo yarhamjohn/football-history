@@ -1,19 +1,18 @@
 using System.Collections.Generic;
 using System.Linq;
-using FootballHistory.Api.Builders.Models;
-using FootballHistory.Api.Domain.Models;
-using FootballHistory.Api.Models.LeagueSeason;
+using FootballHistory.Api.Models.ControllerModels;
+using FootballHistory.Api.Models.DatabaseModels;
 
-namespace FootballHistory.Api.Builders
+namespace FootballHistory.Api.Builders.LeagueSeasonFilterBuilder
 {
     public class LeagueSeasonFilterBuilder : ILeagueSeasonFilterBuilder
     {
-        public LeagueSeasonFilter Build(List<DivisionModel> divisionModels)
+        public LeagueSeasonFilter Build(List<DivisionModel> divisions)
         {
             return new LeagueSeasonFilter
             {
-                AllSeasons = GetSeasons(divisionModels),
-                AllTiers = GetTiers(divisionModels)
+                AllSeasons = GetSeasons(divisions),
+                AllTiers = GetTiers(divisions)
             };
         }
 

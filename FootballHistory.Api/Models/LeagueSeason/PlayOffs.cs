@@ -1,7 +1,7 @@
+using FootballHistory.Api.Models.DatabaseModels;
 using System.Collections.Generic;
-using FootballHistory.Api.Domain.Models;
 
-namespace FootballHistory.Api.Models.LeagueSeason
+namespace FootballHistory.Api.Models.Controller
 {
     public class PlayOffs
     {

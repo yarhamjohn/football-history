@@ -1,7 +1,13 @@
 using System.Collections.Generic;
 
-namespace FootballHistory.Api.Models.LeagueSeason
+namespace FootballHistory.Api.Models.ControllerModels
 {
+    public class LeagueSeasonFilter
+    {
+        public List<string> AllSeasons;
+        public List<Tier> AllTiers;
+    }
+
     public class Tier
     {
         public List<Division> Divisions { get; set; }

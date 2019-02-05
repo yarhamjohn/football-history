@@ -1,7 +1,7 @@
+using FootballHistory.Api.Models.DatabaseModels;
 using System.Collections.Generic;
-using FootballHistory.Api.Domain.Models;
 
-namespace FootballHistory.Api.Repositories
+namespace FootballHistory.Api.Repositories.ResultMatrixRepository
 {
     public interface IResultMatrixRepository
     {

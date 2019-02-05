@@ -1,4 +1,4 @@
-namespace FootballHistory.Api.Domain.Models
+namespace FootballHistory.Api.Models.DatabaseModels
 {
     public class DivisionModel
     {

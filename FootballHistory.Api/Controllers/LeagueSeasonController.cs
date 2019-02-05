@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
-using FootballHistory.Api.Builders;
-using FootballHistory.Api.Builders.Models;
-using FootballHistory.Api.Models.LeagueSeason;
-using FootballHistory.Api.Repositories;
+using FootballHistory.Api.Builders.LeagueSeasonFilterBuilder;
+using FootballHistory.Api.Builders.ResultMatrixBuilder;
+using FootballHistory.Api.Models.Controller;
+using FootballHistory.Api.Models.ControllerModels;
+using FootballHistory.Api.Repositories.DivisionRepository;
+using FootballHistory.Api.Repositories.LeagueSeasonRepository;
+using FootballHistory.Api.Repositories.ResultMatrixRepository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FootballHistory.Api.Controllers
@@ -34,8 +37,8 @@ namespace FootballHistory.Api.Controllers
         [HttpGet("[action]")]
         public LeagueSeasonFilter GetLeagueSeasonFilters()
         {
-            var divisionModels = _divisionRepository.GetDivisionModels();
-            return _leagueSeasonFilterBuilder.Build(divisionModels);
+            var divisions = _divisionRepository.GetDivisions();
+            return _leagueSeasonFilterBuilder.Build(divisions);
         }
         
         [HttpGet("[action]")]

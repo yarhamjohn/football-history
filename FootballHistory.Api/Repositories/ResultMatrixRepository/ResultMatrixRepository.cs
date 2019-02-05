@@ -1,11 +1,11 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
-using FootballHistory.Api.Domain;
-using FootballHistory.Api.Domain.Models;
+using FootballHistory.Api.Models;
+using FootballHistory.Api.Models.DatabaseModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace FootballHistory.Api.Repositories
+namespace FootballHistory.Api.Repositories.ResultMatrixRepository
 {
     public class ResultMatrixRepository : IResultMatrixRepository
     {

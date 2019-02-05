@@ -2,12 +2,12 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
-using FootballHistory.Api.Domain;
-using FootballHistory.Api.Domain.Models;
-using FootballHistory.Api.Models.LeagueSeason;
+using FootballHistory.Api.Models;
+using FootballHistory.Api.Models.Controller;
+using FootballHistory.Api.Models.DatabaseModels;
 using Microsoft.EntityFrameworkCore;
 
-namespace FootballHistory.Api.Repositories
+namespace FootballHistory.Api.Repositories.LeagueSeasonRepository
 {
     public class LeagueSeasonRepository : ILeagueSeasonRepository
     {

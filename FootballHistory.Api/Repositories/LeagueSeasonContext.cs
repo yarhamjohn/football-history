@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
-namespace FootballHistory.Api.Domain
+namespace FootballHistory.Api.Models
 {
     public class LeagueSeasonContext : DbContext
     {

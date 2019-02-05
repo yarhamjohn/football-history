@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace FootballHistory.Api.Models.LeagueSeason
+namespace FootballHistory.Api.Models.Controller
 {
     public class LeagueRowDrillDown
     {
