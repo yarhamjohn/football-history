@@ -17,15 +17,15 @@ namespace FootballHistory.Api.Models.LeagueSeason
     {
         public string HomeTeam { get; set; }
         public string HomeTeamAbbreviation { get; set; }
-        public List<MatchResult> Results { get; set; }
+        public List<ResultMatrixMatch> Results { get; set; }
 
         public ResultMatrixRow()
         {
-            Results = new List<MatchResult>();
+            Results = new List<ResultMatrixMatch>();
         }
     }
 
-    public class MatchResult
+    public class ResultMatrixMatch
     {
         public string AwayTeam { get; set; }
         public string AwayTeamAbbreviation { get; set; }

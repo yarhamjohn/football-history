@@ -211,7 +211,7 @@ namespace FootballHistory.Api.UnitTests.Builders
             Assert.That(MatchResultsMatch(expectedHomeTeam2Results, matchDetailModelTwo));
         }
         
-        private static bool MatchResultsMatch(MatchResult expectedMatchResult, MatchDetailModel sourceMatchDetail)
+        private static bool MatchResultsMatch(ResultMatrixMatch expectedMatchResult, MatchDetailModel sourceMatchDetail)
         {
             return expectedMatchResult.AwayTeam == sourceMatchDetail.AwayTeam
                    && expectedMatchResult.AwayTeamAbbreviation == sourceMatchDetail.AwayTeamAbbreviation

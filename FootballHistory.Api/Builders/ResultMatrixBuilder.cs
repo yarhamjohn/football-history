@@ -35,16 +35,16 @@ namespace FootballHistory.Api.Builders
             return resultMatrix;
         }
 
-        private static List<MatchResult> GetScores(IEnumerable<MatchDetailModel> matchDetails, string homeTeam, string homeTeamAbbreviation)
+        private static List<ResultMatrixMatch> GetScores(IEnumerable<MatchDetailModel> matchDetails, string homeTeam, string homeTeamAbbreviation)
         {
             var homeGames = matchDetails.Where(m => m.HomeTeam == homeTeam).ToList();
 
-            var resultScores = new List<MatchResult> { GetMatchResultAgainstSelf(homeTeam, homeTeamAbbreviation) };
+            var resultScores = new List<ResultMatrixMatch> { GetMatchResultAgainstSelf(homeTeam, homeTeamAbbreviation) };
 
             foreach(var game in homeGames)
             {
                 resultScores.Add(
-                    new MatchResult
+                    new ResultMatrixMatch
                     {
                         AwayTeam = game.AwayTeam,
                         AwayTeamAbbreviation = game.AwayTeamAbbreviation,
@@ -58,9 +58,9 @@ namespace FootballHistory.Api.Builders
             return resultScores;
         }
 
-        private static MatchResult GetMatchResultAgainstSelf(string homeTeam, string homeTeamAbbreviation)
+        private static ResultMatrixMatch GetMatchResultAgainstSelf(string homeTeam, string homeTeamAbbreviation)
         {
-            return new MatchResult
+            return new ResultMatrixMatch
             {
                 AwayTeam = homeTeam, 
                 AwayTeamAbbreviation = homeTeamAbbreviation, 
