@@ -14,6 +14,7 @@ namespace FootballHistory.Api.Controllers
         private readonly IDivisionRepository _divisionRepository;
         private readonly IResultMatrixRepository _resultMatrixRepository;
         private readonly IPlayOffMatchesRepository _playOffMatchesRepository;
+        private readonly IPlayOffMatchesBuilder _playOffMatchesBuilder;
         private readonly ILeagueSeasonRepository _leagueSeasonRepository;
         private readonly IResultMatrixBuilder _resultMatrixBuilder;
         private readonly ILeagueSeasonFilterBuilder _leagueSeasonFilterBuilder;
@@ -24,7 +25,8 @@ namespace FootballHistory.Api.Controllers
             ILeagueSeasonFilterBuilder leagueSeasonFilterBuilder, 
             IResultMatrixRepository resultMatrixRepository, 
             IResultMatrixBuilder resultMatrixBuilder,
-            IPlayOffMatchesRepository playOffMatchesRepository)
+            IPlayOffMatchesRepository playOffMatchesRepository,
+            IPlayOffMatchesBuilder playOffMatchesBuilder)
         {
             _divisionRepository = divisionRepository;
             _leagueSeasonFilterBuilder = leagueSeasonFilterBuilder;
@@ -32,6 +34,7 @@ namespace FootballHistory.Api.Controllers
             _resultMatrixBuilder = resultMatrixBuilder;
             _leagueSeasonRepository = leagueSeasonRepository;
             _playOffMatchesRepository = playOffMatchesRepository;
+            _playOffMatchesBuilder = playOffMatchesBuilder;
         }
 
         [HttpGet("[action]")]
@@ -51,7 +54,8 @@ namespace FootballHistory.Api.Controllers
         [HttpGet("[action]")]
         public PlayOffs GetPlayOffMatches(string tier, string season)
         {
-            return _playOffMatchesRepository.GetPlayOffMatches(Convert.ToInt32(tier), season);
+            var matchDetails = _playOffMatchesRepository.GetPlayOffMatches(Convert.ToInt32(tier), season);
+            return _playOffMatchesBuilder.Build(matchDetails);
         }
                 
         [HttpGet("[action]")]

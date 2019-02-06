@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using FootballHistory.Api.Models.Controller;
+using FootballHistory.Api.Repositories.Models;
 
 namespace FootballHistory.Api.Repositories
 {
     public interface IPlayOffMatchesRepository
     {
-        PlayOffs GetPlayOffMatches(int tier, string season);
+        List<MatchDetailModel> GetPlayOffMatches(int tier, string season);
     }
 }
