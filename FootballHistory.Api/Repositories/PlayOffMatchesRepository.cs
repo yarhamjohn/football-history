@@ -18,17 +18,57 @@ namespace FootballHistory.Api.Repositories
 
         public List<MatchDetailModel> GetPlayOffMatches(int tier, string season)
         {
-            var seasonStartYear = season.Substring(0, 4);
-            var seasonEndYear = season.Substring(7, 4);
-
             using(var conn = Context.Database.GetDbConnection())
             {
-                return GetPlayOffMatchDetails(conn, tier, seasonStartYear, seasonEndYear);
+                var cmd = GetDbCommand(conn, tier, season);
+                return GetPlayOffMatchDetails(cmd);
             }
         }
 
-        private List<MatchDetailModel> GetPlayOffMatchDetails(DbConnection conn, int tier, string seasonStartYear, string seasonEndYear)
+        private List<MatchDetailModel> GetPlayOffMatchDetails(DbCommand cmd)
         {
+            var matchDetails = new List<MatchDetailModel>();
+
+            using (var reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    var extraTime = reader.GetBoolean(9);
+                    var penaltyShootout = reader.GetBoolean(12);
+
+                    matchDetails.Add(
+                        new MatchDetailModel
+                        {
+                            Competition = reader.GetString(0),
+                            Round = reader.GetString(1),
+                            Date = reader.GetDateTime(2),
+                            HomeTeam = reader.GetString(3),
+                            HomeTeamAbbreviation = reader.GetString(4),
+                            AwayTeam = reader.GetString(5),
+                            AwayTeamAbbreviation = reader.GetString(6),
+                            HomeGoals = reader.GetByte(7),
+                            AwayGoals = reader.GetByte(8),
+                            ExtraTime = extraTime,
+                            HomeGoalsET = extraTime ? reader.GetByte(10) : (int?) null,
+                            AwayGoalsET = extraTime ? reader.GetByte(11) : (int?) null,
+                            PenaltyShootout = penaltyShootout,
+                            HomePenaltiesTaken = penaltyShootout ? reader.GetByte(13) : (int?) null,
+                            HomePenaltiesScored = penaltyShootout ? reader.GetByte(14) : (int?) null,
+                            AwayPenaltiesTaken = penaltyShootout ? reader.GetByte(15) : (int?) null,
+                            AwayPenaltiesScored = penaltyShootout ? reader.GetByte(16) : (int?) null
+                        }
+                    );
+                }
+            }
+
+            return matchDetails;
+        }
+
+        private static DbCommand GetDbCommand(DbConnection conn, int tier, string season)
+        {
+            var seasonStartYear = season.Substring(0, 4);
+            var seasonEndYear = season.Substring(7, 4);
+            
             var sql = @"
 SELECT d.Name AS CompetitionName
     ,pom.Round
@@ -55,55 +95,15 @@ WHERE d.Tier = @Tier
     AND pom.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
 ";
 
-            var matchDetails = new List<MatchDetailModel>();
-
             conn.Open();
+            
             var cmd = conn.CreateCommand();
             cmd.CommandText = sql;
             cmd.Parameters.Add(new SqlParameter("@Tier", tier));
             cmd.Parameters.Add(new SqlParameter("@SeasonStartYear", seasonStartYear));
             cmd.Parameters.Add(new SqlParameter("@SeasonEndYear", seasonEndYear));
-
-            var reader = cmd.ExecuteReader();
-            if (reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    var extraTime = reader.GetBoolean(9); // == 1 ? true : false;
-                    var penaltyShootout = reader.GetBoolean(12); // == 1 ? true : false;
-
-                    matchDetails.Add(
-                        new MatchDetailModel
-                        {
-                            Competition = reader.GetString(0),
-                            Round = reader.GetString(1),
-                            Date = reader.GetDateTime(2),
-                            HomeTeam = reader.GetString(3),
-                            HomeTeamAbbreviation = reader.GetString(4),
-                            AwayTeam = reader.GetString(5),
-                            AwayTeamAbbreviation = reader.GetString(6),
-                            HomeGoals = reader.GetByte(7),
-                            AwayGoals = reader.GetByte(8),
-                            ExtraTime = extraTime,
-                            HomeGoalsET = extraTime ? reader.GetByte(10) : (int?) null,
-                            AwayGoalsET = extraTime ? reader.GetByte(11) : (int?) null,
-                            PenaltyShootout = penaltyShootout,
-                            HomePenaltiesTaken = penaltyShootout ? reader.GetByte(13) : (int?) null,
-                            HomePenaltiesScored = penaltyShootout ? reader.GetByte(14) : (int?) null,
-                            AwayPenaltiesTaken = penaltyShootout ? reader.GetByte(15) : (int?) null,
-                            AwayPenaltiesScored = penaltyShootout ? reader.GetByte(16) : (int?) null
-                        }
-                    );
-                }
-            }
-            else 
-            {
-                System.Console.WriteLine("No rows found");
-            }
-            reader.Close();
-            conn.Close();
-
-            return matchDetails;
+            
+            return cmd;
         }
     }
 }
