@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace FootballHistory.Api.Models.ControllerModels
+namespace FootballHistory.Api.Builders.Models
 {
     public class ResultMatrix
     {

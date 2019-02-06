@@ -1,11 +1,8 @@
-﻿using FootballHistory.Api.Builders.LeagueSeasonFilterBuilder;
-using FootballHistory.Api.Builders.ResultMatrixBuilder;
+﻿using FootballHistory.Api.Builders;
+using FootballHistory.Api.Domain;
 using FootballHistory.Api.Models;
 using FootballHistory.Api.Models;
 using FootballHistory.Api.Repositories;
-using FootballHistory.Api.Repositories.DivisionRepository;
-using FootballHistory.Api.Repositories.LeagueSeasonRepository;
-using FootballHistory.Api.Repositories.ResultMatrixRepository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;

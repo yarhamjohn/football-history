@@ -1,12 +1,9 @@
 using System;
 using System.Collections.Generic;
-using FootballHistory.Api.Builders.LeagueSeasonFilterBuilder;
-using FootballHistory.Api.Builders.ResultMatrixBuilder;
+using FootballHistory.Api.Builders;
+using FootballHistory.Api.Builders.Models;
 using FootballHistory.Api.Models.Controller;
-using FootballHistory.Api.Models.ControllerModels;
-using FootballHistory.Api.Repositories.DivisionRepository;
-using FootballHistory.Api.Repositories.LeagueSeasonRepository;
-using FootballHistory.Api.Repositories.ResultMatrixRepository;
+using FootballHistory.Api.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FootballHistory.Api.Controllers

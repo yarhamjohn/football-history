@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
-using FootballHistory.Api.Models.ControllerModels;
-using FootballHistory.Api.Models.DatabaseModels;
+using FootballHistory.Api.Builders.Models;
+using FootballHistory.Api.Repositories.Models;
 
-namespace FootballHistory.Api.Builders.LeagueSeasonFilterBuilder
+namespace FootballHistory.Api.Builders
 {
     public class LeagueSeasonFilterBuilder : ILeagueSeasonFilterBuilder
     {

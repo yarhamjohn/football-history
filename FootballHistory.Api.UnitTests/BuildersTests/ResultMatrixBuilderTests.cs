@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FootballHistory.Api.Builders.ResultMatrixBuilder;
-using FootballHistory.Api.Models.ControllerModels;
-using FootballHistory.Api.Models.DatabaseModels;
+using FootballHistory.Api.Builders;
+using FootballHistory.Api.Builders.Models;
+using FootballHistory.Api.Repositories.Models;
 using NUnit.Framework;
 
-namespace FootballHistory.Api.UnitTests.BuildersTests.ResultMatrixBuilderTests
+namespace FootballHistory.Api.UnitTests.BuildersTests
 {
     [TestFixture]
     public class ResultMatrixBuilderTests

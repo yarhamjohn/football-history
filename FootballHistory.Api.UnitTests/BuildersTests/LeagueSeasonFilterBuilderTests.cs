@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
-using FootballHistory.Api.Builders.LeagueSeasonFilterBuilder;
-using FootballHistory.Api.Models.DatabaseModels;
+using FootballHistory.Api.Builders;
+using FootballHistory.Api.Repositories.Models;
 using NUnit.Framework;
 
-namespace FootballHistory.Api.UnitTests.BuildersTests.LeagueSeasonFilterBuilderTests
+namespace FootballHistory.Api.UnitTests.BuildersTests
 {
     public class LeagueSeasonFilterBuilderTests
     {
