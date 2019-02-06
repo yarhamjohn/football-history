@@ -1,7 +1,5 @@
 ﻿using FootballHistory.Api.Builders;
 using FootballHistory.Api.Domain;
-using FootballHistory.Api.Models;
-using FootballHistory.Api.Models;
 using FootballHistory.Api.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -37,6 +35,7 @@ namespace FootballHistory.Api
             services.AddTransient<IResultMatrixRepository, ResultMatrixRepository>();
             services.AddTransient<ILeagueSeasonFilterBuilder, LeagueSeasonFilterBuilder>();
             services.AddTransient<IResultMatrixBuilder, ResultMatrixBuilder>();
+            services.AddTransient<IPlayOffMatchesRepository, PlayOffMatchesRepository>();
 
             var connString = Configuration.GetConnectionString("FootballHistory");
             services.AddDbContext<LeagueSeasonContext>(options => options.UseSqlServer(connString));
