@@ -33,29 +33,28 @@ namespace FootballHistory.Api.Repositories
             {
                 while (reader.Read())
                 {
-                    var extraTime = reader.GetBoolean(9);
-                    var penaltyShootout = reader.GetBoolean(12);
+                    var extraTime = reader.GetBoolean(8);
+                    var penaltyShootout = reader.GetBoolean(11);
 
                     matchDetails.Add(
                         new MatchDetailModel
                         {
-                            Competition = reader.GetString(0),
-                            Round = reader.GetString(1),
-                            Date = reader.GetDateTime(2),
-                            HomeTeam = reader.GetString(3),
-                            HomeTeamAbbreviation = reader.GetString(4),
-                            AwayTeam = reader.GetString(5),
-                            AwayTeamAbbreviation = reader.GetString(6),
-                            HomeGoals = reader.GetByte(7),
-                            AwayGoals = reader.GetByte(8),
+                            Round = reader.GetString(0),
+                            Date = reader.GetDateTime(1),
+                            HomeTeam = reader.GetString(2),
+                            HomeTeamAbbreviation = reader.GetString(3),
+                            AwayTeam = reader.GetString(4),
+                            AwayTeamAbbreviation = reader.GetString(5),
+                            HomeGoals = reader.GetByte(6),
+                            AwayGoals = reader.GetByte(7),
                             ExtraTime = extraTime,
-                            HomeGoalsET = extraTime ? reader.GetByte(10) : (int?) null,
-                            AwayGoalsET = extraTime ? reader.GetByte(11) : (int?) null,
+                            HomeGoalsET = extraTime ? reader.GetByte(9) : (int?) null,
+                            AwayGoalsET = extraTime ? reader.GetByte(10) : (int?) null,
                             PenaltyShootout = penaltyShootout,
-                            HomePenaltiesTaken = penaltyShootout ? reader.GetByte(13) : (int?) null,
-                            HomePenaltiesScored = penaltyShootout ? reader.GetByte(14) : (int?) null,
-                            AwayPenaltiesTaken = penaltyShootout ? reader.GetByte(15) : (int?) null,
-                            AwayPenaltiesScored = penaltyShootout ? reader.GetByte(16) : (int?) null
+                            HomePenaltiesTaken = penaltyShootout ? reader.GetByte(12) : (int?) null,
+                            HomePenaltiesScored = penaltyShootout ? reader.GetByte(13) : (int?) null,
+                            AwayPenaltiesTaken = penaltyShootout ? reader.GetByte(14) : (int?) null,
+                            AwayPenaltiesScored = penaltyShootout ? reader.GetByte(15) : (int?) null
                         }
                     );
                 }
@@ -66,12 +65,8 @@ namespace FootballHistory.Api.Repositories
 
         private static DbCommand GetDbCommand(DbConnection conn, int tier, string season)
         {
-            var seasonStartYear = season.Substring(0, 4);
-            var seasonEndYear = season.Substring(7, 4);
-            
             var sql = @"
-SELECT d.Name AS CompetitionName
-    ,pom.Round
+SELECT pom.Round
     ,pom.matchDate
     ,hc.Name AS HomeTeam
     ,hc.Abbreviation AS HomeAbbreviation
@@ -100,8 +95,8 @@ WHERE d.Tier = @Tier
             var cmd = conn.CreateCommand();
             cmd.CommandText = sql;
             cmd.Parameters.Add(new SqlParameter("@Tier", tier));
-            cmd.Parameters.Add(new SqlParameter("@SeasonStartYear", seasonStartYear));
-            cmd.Parameters.Add(new SqlParameter("@SeasonEndYear", seasonEndYear));
+            cmd.Parameters.Add(new SqlParameter("@SeasonStartYear", season.Substring(0, 4)));
+            cmd.Parameters.Add(new SqlParameter("@SeasonEndYear", season.Substring(7, 4)));
             
             return cmd;
         }
