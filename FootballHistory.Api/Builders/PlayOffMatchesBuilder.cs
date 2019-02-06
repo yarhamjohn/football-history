@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using FootballHistory.Api.Models.Controller;
+using FootballHistory.Api.Builders.Models;
 using FootballHistory.Api.Repositories.Models;
 
 namespace FootballHistory.Api.Builders
