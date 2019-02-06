@@ -38,7 +38,7 @@ namespace FootballHistory.Api.Builders
                 .OrderBy(m => m.Date)
                 .ToList();
             
-            var playOffs = new PlayOffs { SemiFinals = new List<SemiFinal>() };
+            var playOffs = new PlayOffs { SemiFinals = new List<PlayOffsSemiFinal>() };
 
             foreach(var match in playOffMatches)
             {
@@ -59,7 +59,7 @@ namespace FootballHistory.Api.Builders
         {
             if (playOffs.SemiFinals.Count == 0)
             {
-                playOffs.SemiFinals.Add(new SemiFinal { FirstLeg = match });
+                playOffs.SemiFinals.Add(new PlayOffsSemiFinal { FirstLeg = match });
             } 
             else if (playOffs.SemiFinals.Count == 1)
             {
@@ -69,7 +69,7 @@ namespace FootballHistory.Api.Builders
                 }
                 else
                 {
-                    playOffs.SemiFinals.Add(new SemiFinal { FirstLeg = match });
+                    playOffs.SemiFinals.Add(new PlayOffsSemiFinal { FirstLeg = match });
                 }
             }
             else

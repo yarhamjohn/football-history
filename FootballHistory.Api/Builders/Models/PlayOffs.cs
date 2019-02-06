@@ -5,11 +5,11 @@ namespace FootballHistory.Api.Builders.Models
 {
     public class PlayOffs
     {
-        public List<SemiFinal> SemiFinals { get; set; }
+        public List<PlayOffsSemiFinal> SemiFinals { get; set; }
         public MatchDetailModel Final { get; set; }
     }
 
-    public class SemiFinal
+    public class PlayOffsSemiFinal
     {
         public MatchDetailModel FirstLeg { get; set; }
         public MatchDetailModel SecondLeg { get; set; }
