@@ -11,12 +11,11 @@ steps:
 - script: |
     dotnet build FootballHistory.Api --configuration $(buildConfiguration)
     dotnet build FootballHistory.Api.UnitTests --configuration $(buildConfiguration)
-    dotnet test dotnetcore-tests --configuration $(buildConfiguration) --logger trx
     dotnet publish FootballHistory.Api --configuration $(buildConfiguration) --output $BUILD_ARTIFACTSTAGINGDIRECTORY
-  displayName: 'dotnet build $(buildConfiguration)'
+  displayName: 'dotnet build $(buildConfiguration); dotnet publish $BUILD_ARTIFACTSTAGINGDIRECTORY'
 
 - task: CopyFiles@2
-  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+  displayName: 'Copy Files to: $(build.artifactstagingdirectory) or $BUILD_ARTIFACTSTAGINGDIRECTORY'
   inputs:
     SourceFolder: '$(system.defaultworkingdirectory)'
     Contents: '**\bin\$(BuildConfiguration)**'
