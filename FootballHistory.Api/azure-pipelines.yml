@@ -10,15 +10,14 @@ variables:
 steps:
 - script: |
     dotnet build FootballHistory.Api --configuration $(buildConfiguration)
-    dotnet build FootballHistory.Api.UnitTests --configuration $(buildConfiguration)
     dotnet publish FootballHistory.Api --configuration $(buildConfiguration) --output $BUILD_ARTIFACTSTAGINGDIRECTORY
-  displayName: 'dotnet build $(buildConfiguration); dotnet publish $BUILD_ARTIFACTSTAGINGDIRECTORY'
+  displayName: 'dotnet build $(buildConfiguration)'
 
 - task: CopyFiles@2
-  displayName: 'Copy Files to: $(build.artifactstagingdirectory) or $BUILD_ARTIFACTSTAGINGDIRECTORY'
+  displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
   inputs:
     SourceFolder: '$(system.defaultworkingdirectory)'
     Contents: '**\bin\$(BuildConfiguration)**'
-    TargetFolder: '$(build.artifactstagingdirectory)'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
 
 - task: PublishBuildArtifacts@1
