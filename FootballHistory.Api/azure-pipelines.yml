@@ -10,6 +10,7 @@ variables:
 steps:
 - script: |
     dotnet build FootballHistory.Api --configuration $(buildConfiguration)
+    dotnet build FootballHistory.Api.UnitTests --configuration $(buildConfiguration)
     dotnet publish FootballHistory.Api --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
 
