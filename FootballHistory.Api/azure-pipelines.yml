@@ -14,10 +14,10 @@ steps:
   displayName: 'dotnet build $(buildConfiguration)'
 
 - task: CopyFiles@2
-  displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
+  displayName: $(Build.ArtifactStagingDirectory)
   inputs:
-    SourceFolder: '$(system.defaultworkingdirectory)'
+    SourceFolder: $(system.defaultworkingdirectory)
     Contents: '**\bin\$(BuildConfiguration)**'
-    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+    TargetFolder: $(Build.ArtifactStagingDirectory)
 
 - task: PublishBuildArtifacts@1
