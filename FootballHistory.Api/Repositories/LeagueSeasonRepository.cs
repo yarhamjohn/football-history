@@ -12,11 +12,13 @@ namespace FootballHistory.Api.Repositories
     public class LeagueSeasonRepository : ILeagueSeasonRepository
     {
         private readonly IPlayOffMatchesRepository _playOffMatchesRepository;
+        private readonly ILeagueMatchesRepository _leagueMatchesRepository;
         private LeagueSeasonContext Context { get; }
 
-        public LeagueSeasonRepository(LeagueSeasonContext context, IPlayOffMatchesRepository playOffMatchesRepository)
+        public LeagueSeasonRepository(LeagueSeasonContext context, IPlayOffMatchesRepository playOffMatchesRepository, ILeagueMatchesRepository leagueMatchesRepository)
         {
             _playOffMatchesRepository = playOffMatchesRepository;
+            _leagueMatchesRepository = leagueMatchesRepository;
             Context = context;
         }
 
@@ -26,10 +28,7 @@ namespace FootballHistory.Api.Repositories
 
             using(var conn = Context.Database.GetDbConnection())
             {
-                var seasonStartYear = season.Substring(0, 4);
-                var seasonEndYear = season.Substring(7, 4);
-
-                var leagueMatchDetails = CommonStuff.GetLeagueMatchDetails(conn, tier, seasonStartYear, seasonEndYear);
+                var leagueMatchDetails = _leagueMatchesRepository.GetLeagueMatches(tier, season);
 
                 var leagueDetail = GetLeagueDetail(conn, tier, season);
                 var pointDeductions = CommonStuff.GetPointDeductions(conn, tier, season);

@@ -32,7 +32,7 @@ namespace FootballHistory.Api
             
             services.AddTransient<ILeagueSeasonRepository, LeagueSeasonRepository>();
             services.AddTransient<IDivisionRepository, DivisionRepository>();
-            services.AddTransient<IResultMatrixRepository, ResultMatrixRepository>();
+            services.AddTransient<ILeagueMatchesRepository, LeagueMatchesRepository>();
             services.AddTransient<ILeagueSeasonFilterBuilder, LeagueSeasonFilterBuilder>();
             services.AddTransient<IResultMatrixBuilder, ResultMatrixBuilder>();
             services.AddTransient<IPlayOffMatchesRepository, PlayOffMatchesRepository>();
@@ -42,6 +42,7 @@ namespace FootballHistory.Api
             var connString = Configuration.GetConnectionString("FootballHistory");
             services.AddDbContext<LeagueSeasonContext>(options => options.UseSqlServer(connString));
             services.AddDbContext<PlayOffMatchesContext>(options => options.UseSqlServer(connString));
+            services.AddDbContext<LeagueMatchesContext>(options => options.UseSqlServer(connString));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

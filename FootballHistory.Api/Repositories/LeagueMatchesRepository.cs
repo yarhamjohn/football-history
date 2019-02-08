@@ -7,11 +7,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FootballHistory.Api.Repositories
 {
-    public class ResultMatrixRepository : IResultMatrixRepository
+    public class LeagueMatchesRepository : ILeagueMatchesRepository
     {
-        private LeagueSeasonContext Context { get; }
+        private LeagueMatchesContext Context { get; }
 
-        public ResultMatrixRepository(LeagueSeasonContext context)
+        public LeagueMatchesRepository(LeagueMatchesContext context)
         {
             Context = context;
         }

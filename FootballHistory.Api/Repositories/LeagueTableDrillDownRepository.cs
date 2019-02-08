@@ -11,10 +11,12 @@ namespace FootballHistory.Api.Repositories
 {
     public class LeagueTableDrillDownRepository : ILeagueTableDrillDownRepository
     {
+        private readonly ILeagueMatchesRepository _leagueMatchesRepository;
         private LeagueSeasonContext Context { get; }
 
-        public LeagueTableDrillDownRepository(LeagueSeasonContext context)
+        public LeagueTableDrillDownRepository(LeagueSeasonContext context, ILeagueMatchesRepository leagueMatchesRepository)
         {
+            _leagueMatchesRepository = leagueMatchesRepository;
             Context = context;
         }
 
@@ -103,7 +105,7 @@ ORDER BY MatchDate
             var seasonStartYear = season.Substring(0, 4);
             var seasonEndYear = season.Substring(7, 4);
 
-            var matchDetails = CommonStuff.GetLeagueMatchDetails(conn, tier, seasonStartYear, seasonEndYear);
+            var matchDetails = _leagueMatchesRepository.GetLeagueMatches(tier, season);
             var pointDeductions = CommonStuff.GetPointDeductions(conn, tier, season);
 
             var teams = matchDetails.Select(m => m.HomeTeam).Distinct().ToList();

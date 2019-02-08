@@ -71,67 +71,6 @@ namespace FootballHistory.Api.Repositories
             }).ToList();
         }
         
-        public static List<MatchDetailModel> GetLeagueMatchDetails(DbConnection conn, int tier, string seasonStartYear, string seasonEndYear)
-        {
-            var sql = @"
-SELECT d.Name AS CompetitionName
-    ,lm.matchDate
-    ,hc.Name AS HomeTeam
-    ,hc.Abbreviation AS HomeAbbreviation
-    ,ac.Name as AwayTeam
-    ,ac.Abbreviation as AwayAbbreviation
-    ,lm.HomeGoals
-    ,lm.AwayGoals
-FROM dbo.LeagueMatches AS lm
-INNER JOIN dbo.Divisions d ON d.Id = lm.DivisionId
-INNER JOIN dbo.Clubs AS hc ON hc.Id = lm.HomeClubId
-INNER JOIN dbo.Clubs AS ac ON ac.Id = lm.AwayClubId
-WHERE d.Tier = @Tier
-    AND lm.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
-";
-
-            var matchDetails = new List<MatchDetailModel>();
-
-            conn.Open();
-            var cmd = conn.CreateCommand();
-            cmd.CommandText = sql;
-            cmd.Parameters.Add(new SqlParameter("@Tier", tier));
-            cmd.Parameters.Add(new SqlParameter("@SeasonStartYear", seasonStartYear));
-            cmd.Parameters.Add(new SqlParameter("@SeasonEndYear", seasonEndYear));
-
-            var reader = cmd.ExecuteReader();
-            if (reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    matchDetails.Add(
-                        new MatchDetailModel
-                        {
-                            Competition = reader.GetString(0),
-                            Date = reader.GetDateTime(1),
-                            HomeTeam = reader.GetString(2),
-                            HomeTeamAbbreviation = reader.GetString(3),
-                            AwayTeam = reader.GetString(4),
-                            AwayTeamAbbreviation = reader.GetString(5),
-                            HomeGoals = reader.GetByte(6),
-                            AwayGoals = reader.GetByte(7),
-                            ExtraTime = false,
-                            PenaltyShootout = false,
-                            Round = "League"
-                        }
-                    );
-                }
-            }
-            else 
-            {
-                System.Console.WriteLine("No rows found");
-            }
-            reader.Close();
-            conn.Close();
-
-            return matchDetails;
-        }
-
         public static List<PointDeduction> GetPointDeductions(DbConnection conn, int tier, string season)
         {
             var sql = @"

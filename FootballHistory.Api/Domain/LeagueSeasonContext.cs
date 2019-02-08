@@ -15,4 +15,11 @@ namespace FootballHistory.Api.Domain
         {
         }
     }
+        
+    public class LeagueMatchesContext : DbContext
+    {
+        public LeagueMatchesContext(DbContextOptions<LeagueMatchesContext> options) : base(options)
+        {
+        }
+    }
 }

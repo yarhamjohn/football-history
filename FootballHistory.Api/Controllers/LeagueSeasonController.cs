@@ -12,7 +12,7 @@ namespace FootballHistory.Api.Controllers
     public class LeagueSeasonController : Controller
     {
         private readonly IDivisionRepository _divisionRepository;
-        private readonly IResultMatrixRepository _resultMatrixRepository;
+        private readonly ILeagueMatchesRepository _leagueMatchesRepository;
         private readonly IPlayOffMatchesRepository _playOffMatchesRepository;
         private readonly IPlayOffMatchesBuilder _playOffMatchesBuilder;
         private readonly ILeagueSeasonRepository _leagueSeasonRepository;
@@ -24,7 +24,7 @@ namespace FootballHistory.Api.Controllers
             ILeagueSeasonRepository leagueSeasonRepository, 
             IDivisionRepository divisionRepository, 
             ILeagueSeasonFilterBuilder leagueSeasonFilterBuilder, 
-            IResultMatrixRepository resultMatrixRepository, 
+            ILeagueMatchesRepository leagueMatchesRepository, 
             IResultMatrixBuilder resultMatrixBuilder,
             IPlayOffMatchesRepository playOffMatchesRepository,
             ILeagueTableDrillDownRepository leagueTableDrillDownRepository,
@@ -32,7 +32,7 @@ namespace FootballHistory.Api.Controllers
         {
             _divisionRepository = divisionRepository;
             _leagueSeasonFilterBuilder = leagueSeasonFilterBuilder;
-            _resultMatrixRepository = resultMatrixRepository;
+            _leagueMatchesRepository = leagueMatchesRepository;
             _resultMatrixBuilder = resultMatrixBuilder;
             _leagueSeasonRepository = leagueSeasonRepository;
             _playOffMatchesRepository = playOffMatchesRepository;
@@ -50,7 +50,7 @@ namespace FootballHistory.Api.Controllers
         [HttpGet("[action]")]
         public ResultMatrix GetResultMatrix(string tier, string season)
         {
-            var matchDetails = _resultMatrixRepository.GetLeagueMatches(Convert.ToInt32(tier), season);
+            var matchDetails = _leagueMatchesRepository.GetLeagueMatches(Convert.ToInt32(tier), season);
             return _resultMatrixBuilder.Build(matchDetails);
         }
                                 
