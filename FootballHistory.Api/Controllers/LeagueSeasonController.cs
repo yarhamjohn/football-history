@@ -16,6 +16,7 @@ namespace FootballHistory.Api.Controllers
         private readonly IPlayOffMatchesRepository _playOffMatchesRepository;
         private readonly IPlayOffMatchesBuilder _playOffMatchesBuilder;
         private readonly ILeagueSeasonRepository _leagueSeasonRepository;
+        private readonly ILeagueTableDrillDownRepository _leagueTableDrillDownRepository;
         private readonly IResultMatrixBuilder _resultMatrixBuilder;
         private readonly ILeagueSeasonFilterBuilder _leagueSeasonFilterBuilder;
 
@@ -26,6 +27,7 @@ namespace FootballHistory.Api.Controllers
             IResultMatrixRepository resultMatrixRepository, 
             IResultMatrixBuilder resultMatrixBuilder,
             IPlayOffMatchesRepository playOffMatchesRepository,
+            ILeagueTableDrillDownRepository leagueTableDrillDownRepository,
             IPlayOffMatchesBuilder playOffMatchesBuilder)
         {
             _divisionRepository = divisionRepository;
@@ -34,6 +36,7 @@ namespace FootballHistory.Api.Controllers
             _resultMatrixBuilder = resultMatrixBuilder;
             _leagueSeasonRepository = leagueSeasonRepository;
             _playOffMatchesRepository = playOffMatchesRepository;
+            _leagueTableDrillDownRepository = leagueTableDrillDownRepository;
             _playOffMatchesBuilder = playOffMatchesBuilder;
         }
 
@@ -67,7 +70,7 @@ namespace FootballHistory.Api.Controllers
         [HttpGet("[action]")]
         public LeagueRowDrillDown GetDrillDown(string tier, string season, string team)
         {
-            return _leagueSeasonRepository.GetDrillDown(Convert.ToInt32(tier), season, team);
+            return _leagueTableDrillDownRepository.GetDrillDown(Convert.ToInt32(tier), season, team);
         }
     }
 }

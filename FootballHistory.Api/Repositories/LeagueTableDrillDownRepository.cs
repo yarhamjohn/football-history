@@ -9,82 +9,93 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FootballHistory.Api.Repositories
 {
-    public class LeagueSeasonRepository : ILeagueSeasonRepository
+    public class LeagueTableDrillDownRepository : ILeagueTableDrillDownRepository
     {
         private LeagueSeasonContext Context { get; }
 
-        public LeagueSeasonRepository(LeagueSeasonContext context)
+        public LeagueTableDrillDownRepository(LeagueSeasonContext context)
         {
             Context = context;
         }
 
-        public List<LeagueTableRow> GetLeagueTable(int tier, string season)
+        public LeagueRowDrillDown GetDrillDown(int tier, string season, string team)
         {
-            var table = new List<LeagueTableRow>();
+            var result = new LeagueRowDrillDown();
 
             using(var conn = Context.Database.GetDbConnection())
             {
-                var seasonStartYear = season.Substring(0, 4);
-                var seasonEndYear = season.Substring(7, 4);
-
-                var leagueMatchDetails = GetLeagueMatchDetails(conn, tier, seasonStartYear, seasonEndYear);
-                var playOffMatchDetails = GetPlayOffMatchDetails(conn, tier, seasonStartYear, seasonEndYear);
-                var leagueDetail = GetLeagueDetail(conn, tier, season);
-                var pointDeductions = GetPointDeductions(conn, tier, season);
-
-                AddLeagueRows(table, leagueMatchDetails);
-                IncludePointDeductions(table, pointDeductions);
-
-                table = SortLeagueTable(table);
-
-                SetLeaguePosition(table);
-                AddTeamStatus(table, leagueDetail, playOffMatchDetails);            
+                result.Form = GetLeagueForm(conn, tier, season, team);
+                result.Positions = GetIncrementalLeaguePositions(conn, tier, season, team);
             }
 
-            return table;
+            return result;
         }
 
-        private void AddTeamStatus(List<LeagueTableRow> leagueTable, LeagueDetail leagueDetail, List<MatchDetailModel> playOffMatchDetails)
+        private List<MatchResultOld> GetLeagueForm(DbConnection conn, int tier, string season, string team)
         {
-            var playOffFinal = playOffMatchDetails.Where(m => m.Round == "Final").ToList();
+            var seasonStartYear = season.Substring(0, 4);
+            var seasonEndYear = season.Substring(7, 4);
+
+            var sql = @"
+SELECT lm.MatchDate
+	,CASE WHEN lm.HomeGoals > lm.AwayGoals THEN 'W'
+		  WHEN lm.AwayGoals > lm.HomeGoals THEN 'L' 
+		  ELSE 'D' END AS Result
+FROM dbo.LeagueMatches AS lm
+INNER JOIN dbo.Divisions d ON d.Id = lm.DivisionId
+INNER JOIN dbo.Clubs AS hc ON hc.Id = lm.HomeClubId
+WHERE d.Tier = @Tier
+    AND (hc.Name = @Team)
+    AND lm.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
+
+UNION ALL
+
+SELECT lm.MatchDate
+	,CASE WHEN lm.HomeGoals < lm.AwayGoals THEN 'W'
+		  WHEN lm.AwayGoals < lm.HomeGoals THEN 'L' 
+		  ELSE 'D' END AS Result
+FROM dbo.LeagueMatches AS lm
+INNER JOIN dbo.Divisions d ON d.Id = lm.DivisionId
+INNER JOIN dbo.Clubs AS ac ON ac.Id = lm.AwayClubId
+WHERE d.Tier = @Tier
+    AND (ac.Name = @Team)
+    AND lm.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
+
+ORDER BY MatchDate
+";
             
-            foreach (var row in leagueTable)
+            var form = new List<MatchResultOld>();
+
+            conn.Open();
+            var cmd = conn.CreateCommand();
+            cmd.CommandText = sql;
+            cmd.Parameters.Add(new SqlParameter("@Tier", tier));
+            cmd.Parameters.Add(new SqlParameter("@SeasonStartYear", seasonStartYear));
+            cmd.Parameters.Add(new SqlParameter("@SeasonEndYear", seasonEndYear));
+            cmd.Parameters.Add(new SqlParameter("@Team", team));
+
+            var reader = cmd.ExecuteReader();
+            if (reader.HasRows)
             {
-                if (row.Position == 1)
+                while (reader.Read())
                 {
-                    row.Status = "C";
+                    form.Add(
+                        new MatchResultOld
+                        {
+                            MatchDate = reader.GetDateTime(0),
+                            Result = reader.GetString(1)
+                        }
+                    );
                 }
-                else if (row.Position <= leagueDetail.PromotionPlaces)
-                {
-                    row.Status = "P";
-                }
-                else if (playOffFinal.Count == 1 && row.Position <= leagueDetail.PlayOffPlaces + leagueDetail.PromotionPlaces)
-                {
-                    var final = playOffFinal.Single();
-                    var winner = final.PenaltyShootout 
-                        ? (final.HomePenaltiesScored > final.AwayPenaltiesScored ? final.HomeTeam : final.AwayTeam) 
-                        : final.ExtraTime
-                            ? (final.HomeGoalsET > final.AwayGoalsET ? final.HomeTeam : final.AwayTeam) 
-                            : (final.HomeGoals > final.AwayGoals ? final.HomeTeam : final.AwayTeam);
-                    
-                    if (row.Team == winner)
-                    {
-                        row.Status = "PO (P)";
-                    }
-                    else
-                    {
-                        row.Status = "PO";
-                    }
-                }
-                else if (row.Position > leagueDetail.TotalPlaces - leagueDetail.RelegationPlaces)
-                {
-                    row.Status = "R";
-                }
-                else
-                {
-                    row.Status = string.Empty;
-                }
+            } 
+            else 
+            {
+                System.Console.WriteLine("No rows found");
             }
+            reader.Close();
+            conn.Close();
+
+            return form;
         }
 
         private void AddLeagueRows(List<LeagueTableRow> leagueTable, List<MatchDetailModel> leagueMatchDetails)
@@ -210,131 +221,6 @@ WHERE d.Tier = @Tier
             return matchDetails;
         }
 
-        private List<MatchDetailModel> GetPlayOffMatchDetails(DbConnection conn, int tier, string seasonStartYear, string seasonEndYear)
-        {
-            var sql = @"
-SELECT d.Name AS CompetitionName
-    ,pom.Round
-    ,pom.matchDate
-    ,hc.Name AS HomeTeam
-    ,hc.Abbreviation AS HomeAbbreviation
-    ,ac.Name as AwayTeam
-    ,ac.Abbreviation as AwayAbbreviation
-    ,pom.HomeGoals
-    ,pom.AwayGoals
-    ,pom.ExtraTime AS ExtraTime
-    ,pom.HomeGoalsET
-    ,pom.AwayGoalsET
-    ,pom.PenaltyShootout
-    ,pom.HomePenaltiesTaken
-    ,pom.HomePenaltiesScored
-    ,pom.AwayPenaltiesTaken
-    ,pom.AwayPenaltiesScored
-FROM dbo.PlayOffMatches AS pom
-INNER JOIN dbo.Divisions d ON d.Id = pom.DivisionId
-INNER JOIN dbo.Clubs AS hc ON hc.Id = pom.HomeClubId
-INNER JOIN dbo.Clubs AS ac ON ac.Id = pom.AwayClubId
-WHERE d.Tier = @Tier
-    AND pom.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
-";
-
-            var matchDetails = new List<MatchDetailModel>();
-
-            conn.Open();
-            var cmd = conn.CreateCommand();
-            cmd.CommandText = sql;
-            cmd.Parameters.Add(new SqlParameter("@Tier", tier));
-            cmd.Parameters.Add(new SqlParameter("@SeasonStartYear", seasonStartYear));
-            cmd.Parameters.Add(new SqlParameter("@SeasonEndYear", seasonEndYear));
-
-            var reader = cmd.ExecuteReader();
-            if (reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    var extraTime = reader.GetBoolean(9); // == 1 ? true : false;
-                    var penaltyShootout = reader.GetBoolean(12); // == 1 ? true : false;
-
-                    matchDetails.Add(
-                        new MatchDetailModel
-                        {
-                            Competition = reader.GetString(0),
-                            Round = reader.GetString(1),
-                            Date = reader.GetDateTime(2),
-                            HomeTeam = reader.GetString(3),
-                            HomeTeamAbbreviation = reader.GetString(4),
-                            AwayTeam = reader.GetString(5),
-                            AwayTeamAbbreviation = reader.GetString(6),
-                            HomeGoals = reader.GetByte(7),
-                            AwayGoals = reader.GetByte(8),
-                            ExtraTime = extraTime,
-                            HomeGoalsET = extraTime ? reader.GetByte(10) : (int?) null,
-                            AwayGoalsET = extraTime ? reader.GetByte(11) : (int?) null,
-                            PenaltyShootout = penaltyShootout,
-                            HomePenaltiesTaken = penaltyShootout ? reader.GetByte(13) : (int?) null,
-                            HomePenaltiesScored = penaltyShootout ? reader.GetByte(14) : (int?) null,
-                            AwayPenaltiesTaken = penaltyShootout ? reader.GetByte(15) : (int?) null,
-                            AwayPenaltiesScored = penaltyShootout ? reader.GetByte(16) : (int?) null
-                        }
-                    );
-                }
-            }
-            else 
-            {
-                System.Console.WriteLine("No rows found");
-            }
-            reader.Close();
-            conn.Close();
-
-            return matchDetails;
-        }
-        
-        private LeagueDetail GetLeagueDetail(DbConnection conn, int tier, string season)
-        {
-            var sql = @"
-SELECT d.Name AS CompetitionName
-    ,ls.TotalPlaces
-    ,ls.PromotionPlaces
-    ,ls.PlayOffPlaces
-    ,ls.RelegationPlaces
-FROM dbo.LeagueStatuses AS ls
-INNER JOIN dbo.Divisions d ON d.Id = ls.DivisionId
-WHERE d.Tier = @Tier AND ls.Season = @Season
-";
-
-            var leagueDetails = new LeagueDetail();
-
-            conn.Open();
-            var cmd = conn.CreateCommand();
-            cmd.CommandText = sql;
-            cmd.Parameters.Add(new SqlParameter("@Tier", tier));
-            cmd.Parameters.Add(new SqlParameter("@Season", season));
-
-            var reader = cmd.ExecuteReader();
-            if (reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    leagueDetails = new LeagueDetail
-                    {
-                        Competition = reader.GetString(0),
-                        TotalPlaces = reader.GetByte(1),
-                        PromotionPlaces = reader.GetByte(2),
-                        PlayOffPlaces = reader.GetByte(3),
-                        RelegationPlaces = reader.GetByte(4)
-                    };
-                }
-            }
-            else 
-            {
-                System.Console.WriteLine("No rows found");
-            }
-            reader.Close();
-            conn.Close();
-
-            return leagueDetails;
-        }
-
         private List<PointDeduction> GetPointDeductions(DbConnection conn, int tier, string season)
         {
             var sql = @"
@@ -380,6 +266,65 @@ WHERE d.Tier = @Tier AND pd.Season = @Season
             conn.Close();
 
             return pointDeductions;
+        }
+
+        private List<LeaguePosition> GetIncrementalLeaguePositions(DbConnection conn, int tier, string season, string team)
+        {
+            var seasonStartYear = season.Substring(0, 4);
+            var seasonEndYear = season.Substring(7, 4);
+
+            var matchDetails = GetLeagueMatchDetails(conn, tier, seasonStartYear, seasonEndYear);
+            var pointDeductions = GetPointDeductions(conn, tier, season);
+
+            var teams = matchDetails.Select(m => m.HomeTeam).Distinct().ToList();
+
+            var positions = new List<LeaguePosition>();
+
+            var dates = matchDetails.Select(m => m.Date).Distinct().OrderBy(m => m.Date).ToList();
+            var lastDate = dates.Last().AddDays(1);
+            var firstDate = dates.First();
+
+            for (var dt = firstDate; dt <= lastDate; dt = dt.AddDays(1))
+            {
+                var leagueTable = new List<LeagueTableRow>();
+
+                var filteredMatchDetails = matchDetails.Where(m => m.Date < dt).ToList();
+                var filteredHomeTeams = filteredMatchDetails.Select(m => m.HomeTeam).ToList();
+                var filteredAwayTeams = filteredMatchDetails.Select(m => m.AwayTeam).ToList();
+                var filteredTeams = filteredHomeTeams.Union(filteredAwayTeams).ToList();
+
+                var missingTeams = teams.Where(p => filteredTeams.All(p2 => p2 != p)).ToList();
+
+                foreach (var t in missingTeams)
+                {
+                    leagueTable.Add(new LeagueTableRow
+                    {
+                        Team = t,
+                        Won = 0,
+                        Drawn = 0,
+                        Lost = 0,
+                        GoalsFor = 0,
+                        GoalsAgainst = 0
+                    });
+                }
+                
+                AddLeagueRows(leagueTable, filteredMatchDetails);
+                IncludePointDeductions(leagueTable, pointDeductions);
+
+                leagueTable = SortLeagueTable(leagueTable);
+
+                SetLeaguePosition(leagueTable);
+
+                positions.Add(
+                    new LeaguePosition
+                    {
+                        Date = dt,
+                        Position = leagueTable.Where(l => l.Team == team).Select(r => r.Position).Single()
+                    }
+                );
+            }
+
+            return positions;
         }
 
         private List<LeagueTableRow> SortLeagueTable(List<LeagueTableRow> leagueTable)
