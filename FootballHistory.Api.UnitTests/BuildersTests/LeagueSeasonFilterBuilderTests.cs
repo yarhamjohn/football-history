@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FootballHistory.Api.Builders;
+using FootballHistory.Api.Builders.Models;
 using FootballHistory.Api.Repositories.Models;
 using NUnit.Framework;
 
@@ -118,41 +119,54 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
         [Test]
         public void GetCorrectDivisions_GivenOneDivisionModel()
         {
-            var divisionModel = new DivisionModel {Name = "DivisionName"};
+            var divisionModel = new DivisionModel {Name = "DivisionName", From = 2012, To = 2014};
 
             var leagueSeasonFilter = _leagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModel });
-            var divisionNames = leagueSeasonFilter.AllTiers.SelectMany(t => t.Divisions).Select(d => d.Name).ToArray();
-            
-            Assert.AreEqual(new[] { "DivisionName" }, divisionNames);
+
+            var divisions = leagueSeasonFilter
+                .AllTiers.Single()
+                .Divisions.Select(d => (d.Name, d.ActiveFrom, d.ActiveTo))
+                .ToArray();
+
+            Assert.AreEqual(new[] { ("DivisionName", 2012, 2014) }, divisions);
         }
         
         [Test]
         public void GetCorrectDivisions_GivenTwoDivisionModels_WithMatchingTiers()
         {
-            var divisionModelOne = new DivisionModel {Name = "DivisionName", Tier = 1};
-            var divisionModelTwo = new DivisionModel {Name = "AnotherDivisionName", Tier = 1};
+            var divisionModelOne = new DivisionModel {Name = "DivisionName", Tier = 1, From = 2012, To = 2014};
+            var divisionModelTwo = new DivisionModel {Name = "AnotherDivisionName", Tier = 1, From = 2014, To = 2016};
 
             var leagueSeasonFilter = _leagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModelOne, divisionModelTwo });
-            var tier = leagueSeasonFilter.AllTiers.Single();
-            var divisionNames = tier.Divisions.Select(d => d.Name).ToArray();
+
+            var divisions = leagueSeasonFilter
+                .AllTiers.Single().Divisions
+                .Select(d => (d.Name, d.ActiveFrom, d.ActiveTo))
+                .ToArray();
             
-            Assert.AreEqual(new[] { "DivisionName", "AnotherDivisionName" }, divisionNames);
+            Assert.AreEqual(new[] { ("DivisionName", 2012, 2014), ("AnotherDivisionName", 2014, 2016) }, divisions);
         }
                 
         [Test]
         public void GetCorrectDivisions_GivenTwoDivisionModels_WithNonMatchingTiers()
         {
-            var divisionModelOne = new DivisionModel {Name = "DivisionName", Tier = 1};
-            var divisionModelTwo = new DivisionModel {Name = "AnotherDivisionName", Tier = 2};
+            var divisionModelOne = new DivisionModel {Name = "DivisionName", Tier = 1, From = 2012, To = 2014};
+            var divisionModelTwo = new DivisionModel {Name = "AnotherDivisionName", Tier = 2, From = 2013, To = 2015};
 
             var leagueSeasonFilter = _leagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModelOne, divisionModelTwo });
-            var firstTier = leagueSeasonFilter.AllTiers.First();
-            var firstTierDivisionNames = firstTier.Divisions.Select(d => d.Name).ToArray();
-            var secondTier = leagueSeasonFilter.AllTiers.Last();
-            var secondTierDivisionNames = secondTier.Divisions.Select(d => d.Name).ToArray();
 
-            Assert.AreEqual(new[] { "DivisionName" }, firstTierDivisionNames);
-            Assert.AreEqual(new[] { "AnotherDivisionName" }, secondTierDivisionNames);
+            var firstTierDivisions = leagueSeasonFilter
+                .AllTiers.First().Divisions
+                .Select(d => (d.Name, d.ActiveFrom, d.ActiveTo))
+                .ToArray();
+
+            var secondTierDivisions = leagueSeasonFilter
+                .AllTiers.Last()
+                .Divisions.Select(d => (d.Name, d.ActiveFrom, d.ActiveTo))
+                .ToArray();
+
+            Assert.AreEqual(new[] { ("DivisionName", 2012, 2014) }, firstTierDivisions);
+            Assert.AreEqual(new[] { ("AnotherDivisionName", 2013, 2015) }, secondTierDivisions);
         }
     }
 }
