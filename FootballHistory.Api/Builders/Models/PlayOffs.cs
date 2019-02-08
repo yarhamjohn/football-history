@@ -7,6 +7,11 @@ namespace FootballHistory.Api.Builders.Models
     {
         public List<PlayOffsSemiFinal> SemiFinals { get; set; }
         public MatchDetailModel Final { get; set; }
+
+        public PlayOffs()
+        {
+            SemiFinals = new List<PlayOffsSemiFinal>();
+        }
     }
 
     public class PlayOffsSemiFinal

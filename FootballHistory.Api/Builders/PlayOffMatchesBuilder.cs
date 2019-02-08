@@ -38,7 +38,7 @@ namespace FootballHistory.Api.Builders
                 .OrderBy(m => m.Date)
                 .ToList();
             
-            var playOffs = new PlayOffs { SemiFinals = new List<PlayOffsSemiFinal>() };
+            var playOffs = new PlayOffs();
 
             foreach(var match in playOffMatches)
             {
