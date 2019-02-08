@@ -8,4 +8,11 @@ namespace FootballHistory.Api.Domain
         {
         }
     }
+    
+    public class PlayOffMatchesContext : DbContext
+    {
+        public PlayOffMatchesContext(DbContextOptions<PlayOffMatchesContext> options) : base(options)
+        {
+        }
+    }
 }

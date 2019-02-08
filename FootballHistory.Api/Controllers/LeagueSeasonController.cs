@@ -64,7 +64,8 @@ namespace FootballHistory.Api.Controllers
         [HttpGet("[action]")]
         public List<LeagueTableRow> GetLeagueTable(string tier, string season)
         {
-            return _leagueSeasonRepository.GetLeagueTable(Convert.ToInt32(tier), season);
+            var playOffMatches = _playOffMatchesRepository.GetPlayOffMatches(Convert.ToInt32(tier), season);
+            return _leagueSeasonRepository.GetLeagueTable(Convert.ToInt32(tier), season, playOffMatches);
         }
                 
         [HttpGet("[action]")]

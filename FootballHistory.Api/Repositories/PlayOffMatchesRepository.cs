@@ -9,9 +9,9 @@ namespace FootballHistory.Api.Repositories
 {
     public class PlayOffMatchesRepository : IPlayOffMatchesRepository
     {
-        private LeagueSeasonContext Context { get; }
+        private PlayOffMatchesContext Context { get; }
 
-        public PlayOffMatchesRepository(LeagueSeasonContext context)
+        public PlayOffMatchesRepository(PlayOffMatchesContext context)
         {
             Context = context;
         }
