@@ -5,7 +5,7 @@ namespace FootballHistory.Api.Builders.Models
 {
     public class LeagueRowDrillDown
     {
-        public List<MatchModel> Form { get; set; }
+        public List<Match> Form { get; set; }
         public List<LeaguePosition> Positions {get; set; }
     }
 }

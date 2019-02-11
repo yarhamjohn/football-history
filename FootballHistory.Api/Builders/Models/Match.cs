@@ -1,8 +1,8 @@
 using System;
 
-namespace FootballHistory.Api.Repositories.Models
+namespace FootballHistory.Api.Builders.Models
 {
-    public class MatchModel
+    public class Match
     {
         public DateTime MatchDate { get; set; }
         public string Result { get; set; } 

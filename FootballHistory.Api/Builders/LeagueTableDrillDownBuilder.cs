@@ -3,6 +3,8 @@ using System.Data.Common;
 using System.Linq;
 using FootballHistory.Api.Builders.Models;
 using FootballHistory.Api.Repositories;
+using FootballHistory.Api.Repositories.Models;
+using Microsoft.AspNetCore.JsonPatch.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballHistory.Api.Builders
@@ -24,12 +26,35 @@ namespace FootballHistory.Api.Builders
 
         public LeagueRowDrillDown GetDrillDown(int tier, string season, string team)
         {
+            var teamLeagueMatches = _leagueFormRepository.GetLeagueMatches(tier, season, team);
             return new LeagueRowDrillDown
             {
-                Form = _leagueFormRepository.GetLeagueForm(tier, season, team),
+                Form = GenerateForm(teamLeagueMatches, team),
                 Positions = GetIncrementalLeaguePositions(tier, season, team)
             };
         }
+
+        private static List<Match> GenerateForm(IEnumerable<MatchDetailModel> leagueForm, string team)
+        {
+            return leagueForm.OrderBy(m => m.Date)
+                .Select(match => new Match
+                {
+                    MatchDate = match.Date, 
+                    Result = GetResult(match, team)
+                })
+                .ToList();
+        }
+
+        private static string GetResult(MatchDetailModel match, string team)
+        {
+            if (match.HomeTeam == team)
+            {
+                return match.HomeGoals > match.AwayGoals ? "W" : match.HomeGoals < match.AwayGoals ? "L" : "D";
+            }
+            
+            return match.HomeGoals < match.AwayGoals ? "W" : match.HomeGoals > match.AwayGoals ? "L" : "D";
+        }
+
 
         private List<LeaguePosition> GetIncrementalLeaguePositions(int tier, string season, string team)
         {

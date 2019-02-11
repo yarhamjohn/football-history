@@ -16,7 +16,7 @@ namespace FootballHistory.Api.Repositories
             Context = context;
         }
 
-        public List<MatchModel> GetLeagueForm(int tier, string season, string team)
+        public List<MatchDetailModel> GetLeagueMatches(int tier, string season, string team)
         {
             using(var conn = Context.Database.GetDbConnection())
             {
@@ -29,12 +29,14 @@ namespace FootballHistory.Api.Repositories
         {
             const string sql = @"
 SELECT lm.MatchDate
-	,CASE WHEN lm.HomeGoals > lm.AwayGoals THEN 'W'
-		  WHEN lm.AwayGoals > lm.HomeGoals THEN 'L' 
-		  ELSE 'D' END AS Result
+    ,hc.Name AS HomeTeam
+    ,ac.Name AS AwayTeam
+	,lm.HomeGoals
+	,lm.AwayGoals
 FROM dbo.LeagueMatches AS lm
 INNER JOIN dbo.Divisions d ON d.Id = lm.DivisionId
 INNER JOIN dbo.Clubs AS hc ON hc.Id = lm.HomeClubId
+INNER JOIN dbo.Clubs AS ac ON ac.Id = lm.AwayClubId
 WHERE d.Tier = @Tier
     AND (hc.Name = @Team)
     AND lm.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
@@ -42,11 +44,13 @@ WHERE d.Tier = @Tier
 UNION ALL
 
 SELECT lm.MatchDate
-	,CASE WHEN lm.HomeGoals < lm.AwayGoals THEN 'W'
-		  WHEN lm.AwayGoals < lm.HomeGoals THEN 'L' 
-		  ELSE 'D' END AS Result
+    ,hc.Name AS HomeTeam
+    ,ac.Name AS AwayTeam
+	,lm.HomeGoals
+	,lm.AwayGoals
 FROM dbo.LeagueMatches AS lm
 INNER JOIN dbo.Divisions d ON d.Id = lm.DivisionId
+INNER JOIN dbo.Clubs AS hc ON hc.Id = lm.HomeClubId
 INNER JOIN dbo.Clubs AS ac ON ac.Id = lm.AwayClubId
 WHERE d.Tier = @Tier
     AND (ac.Name = @Team)
@@ -66,19 +70,22 @@ ORDER BY MatchDate
 
             return cmd;
         }
-        private static List<MatchModel> GetLeagueForm(DbCommand cmd)
+        private static List<MatchDetailModel> GetLeagueForm(DbCommand cmd)
         {
-            var form = new List<MatchModel>();
+            var form = new List<MatchDetailModel>();
             
             using(var reader = cmd.ExecuteReader())
             {
                 while (reader.Read())
                 {
                     form.Add(
-                        new MatchModel
+                        new MatchDetailModel
                         {
-                            MatchDate = reader.GetDateTime(0),
-                            Result = reader.GetString(1)
+                            Date = reader.GetDateTime(0),
+                            HomeTeam = reader.GetString(1),
+                            AwayTeam = reader.GetString(2),
+                            HomeGoals = reader.GetByte(3),
+                            AwayGoals = reader.GetByte(4),
                         }
                     );
                 }
