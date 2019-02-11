@@ -71,53 +71,6 @@ namespace FootballHistory.Api.Repositories
             }).ToList();
         }
         
-        public static List<PointDeduction> GetPointDeductions(DbConnection conn, int tier, string season)
-        {
-            var sql = @"
-SELECT d.Name AS Competition
-    ,c.Name AS TeamName
-    ,pd.PointsDeducted
-    ,pd.Reason
-FROM dbo.PointDeductions AS pd
-INNER JOIN dbo.Divisions d ON d.Id = pd.DivisionId
-INNER JOIN dbo.Clubs AS c ON c.Id = pd.ClubId
-WHERE d.Tier = @Tier AND pd.Season = @Season
-";
-
-            var pointDeductions = new List<PointDeduction>();
-            
-            conn.Open();
-            var cmd = conn.CreateCommand();
-            cmd.CommandText = sql;
-            cmd.Parameters.Add(new SqlParameter("@Tier", tier));
-            cmd.Parameters.Add(new SqlParameter("@Season", season));
-
-            var reader = cmd.ExecuteReader();
-            if (reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    pointDeductions.Add(
-                        new PointDeduction
-                        {
-                            Competition = reader.GetString(0),
-                            Team = reader.GetString(1),
-                            PointsDeducted = reader.GetByte(2),
-                            Reason = reader.GetString(3)
-                        }
-                    );
-                }
-            }
-            else 
-            {
-                System.Console.WriteLine("No rows found");
-            }
-            reader.Close();
-            conn.Close();
-
-            return pointDeductions;
-        }
-
         public static List<LeagueTableRow> SortLeagueTable(List<LeagueTableRow> leagueTable)
         {
             return leagueTable

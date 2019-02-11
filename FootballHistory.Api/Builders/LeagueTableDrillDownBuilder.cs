@@ -12,15 +12,18 @@ namespace FootballHistory.Api.Builders
     {
         private readonly ILeagueMatchesRepository _leagueMatchesRepository;
         private readonly ILeagueFormRepository _leagueFormRepository;
+        private readonly IPointDeductionsRepository _pointDeductionsRepository;
         private LeagueRepositoryContext Context { get; }
 
         public LeagueTableDrillDownBuilder(
             LeagueRepositoryContext context, 
             ILeagueMatchesRepository leagueMatchesRepository,
-            ILeagueFormRepository leagueFormRepository)
+            ILeagueFormRepository leagueFormRepository,
+            IPointDeductionsRepository pointDeductionsRepository)
         {
             _leagueMatchesRepository = leagueMatchesRepository;
             _leagueFormRepository = leagueFormRepository;
+            _pointDeductionsRepository = pointDeductionsRepository;
             Context = context;
         }
 
@@ -43,7 +46,7 @@ namespace FootballHistory.Api.Builders
             var seasonEndYear = season.Substring(7, 4);
 
             var matchDetails = _leagueMatchesRepository.GetLeagueMatches(tier, season);
-            var pointDeductions = CommonStuff.GetPointDeductions(conn, tier, season);
+            var pointDeductions = _pointDeductionsRepository.GetPointDeductions(tier, season);
 
             var teams = matchDetails.Select(m => m.HomeTeam).Distinct().ToList();
 

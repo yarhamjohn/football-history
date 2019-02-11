@@ -29,4 +29,11 @@ namespace FootballHistory.Api.Domain
         {
         }
     }
+                
+    public class PointDeductionsContext : DbContext
+    {
+        public PointDeductionsContext(DbContextOptions<PointDeductionsContext> options) : base(options)
+        {
+        }
+    }
 }

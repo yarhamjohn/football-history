@@ -13,17 +13,20 @@ namespace FootballHistory.Api.Builders
         private readonly IPlayOffMatchesRepository _playOffMatchesRepository;
         private readonly ILeagueMatchesRepository _leagueMatchesRepository;
         private readonly ILeagueRepository _leagueRepository;
+        private readonly IPointDeductionsRepository _pointDeductionsRepository;
         private LeagueSeasonContext Context { get; }
 
         public LeagueSeasonBuilder(
             LeagueSeasonContext context, 
             IPlayOffMatchesRepository playOffMatchesRepository, 
             ILeagueMatchesRepository leagueMatchesRepository,
-            ILeagueRepository leagueRepository)
+            ILeagueRepository leagueRepository,
+            IPointDeductionsRepository pointDeductionsRepository)
         {
             _playOffMatchesRepository = playOffMatchesRepository;
             _leagueMatchesRepository = leagueMatchesRepository;
             _leagueRepository = leagueRepository;
+            _pointDeductionsRepository = pointDeductionsRepository;
             Context = context;
         }
 
@@ -36,7 +39,7 @@ namespace FootballHistory.Api.Builders
                 var leagueMatchDetails = _leagueMatchesRepository.GetLeagueMatches(tier, season);
 
                 var leagueDetail = _leagueRepository.GetLeagueInfo(tier, season);
-                var pointDeductions = CommonStuff.GetPointDeductions(conn, tier, season);
+                var pointDeductions = _pointDeductionsRepository.GetPointDeductions(tier, season);
                 var playOffMatches = _playOffMatchesRepository.GetPlayOffMatches(tier, season);
 
                 CommonStuff.AddLeagueRows(table, leagueMatchDetails);
