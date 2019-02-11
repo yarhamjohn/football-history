@@ -1,6 +1,6 @@
-namespace FootballHistory.Api.Models.Controller
+namespace FootballHistory.Api.Repositories.Models
 {
-    public class PointDeduction
+    public class PointDeductionModel
     {
         public string Competition { get; set; }
         public string Team { get; set; }

@@ -3,6 +3,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using FootballHistory.Api.Domain;
 using FootballHistory.Api.Models.Controller;
+using FootballHistory.Api.Repositories.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballHistory.Api.Repositories
@@ -16,7 +17,7 @@ namespace FootballHistory.Api.Repositories
             RepositoryContext = repositoryContext;
         }
 
-        public List<PointDeduction>  GetPointDeductions(int tier, string season)
+        public List<PointDeductionModel>  GetPointDeductions(int tier, string season)
         {
             using(var conn = RepositoryContext.Database.GetDbConnection())
             {
@@ -25,16 +26,16 @@ namespace FootballHistory.Api.Repositories
             }
         }
 
-        private static List<PointDeduction> CalculatePointDeductions(DbCommand cmd)
+        private static List<PointDeductionModel> CalculatePointDeductions(DbCommand cmd)
         {
-            var pointDeductions = new List<PointDeduction>();
+            var pointDeductions = new List<PointDeductionModel>();
             
             using (var reader = cmd.ExecuteReader())
             {
                 while (reader.Read())
                 {
                     pointDeductions.Add(
-                        new PointDeduction
+                        new PointDeductionModel
                         {
                             Competition = reader.GetString(0),
                             Team = reader.GetString(1),

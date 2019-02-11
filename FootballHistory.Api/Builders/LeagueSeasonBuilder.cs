@@ -29,7 +29,6 @@ namespace FootballHistory.Api.Builders
             var table = new List<LeagueTableRow>();
 
             var leagueMatchDetails = _leagueMatchesRepository.GetLeagueMatches(tier, season);
-
             var leagueDetail = _leagueRepository.GetLeagueInfo(tier, season);
             var pointDeductions = _pointDeductionsRepository.GetPointDeductions(tier, season);
             var playOffMatches = _playOffMatchesRepository.GetPlayOffMatches(tier, season);

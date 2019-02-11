@@ -41,7 +41,7 @@ namespace FootballHistory.Api.Repositories
             }
         }
 
-        public static void IncludePointDeductions(List<LeagueTableRow> table, List<PointDeduction> pointDeductions)
+        public static void IncludePointDeductions(List<LeagueTableRow> table, List<PointDeductionModel> pointDeductions)
         {
             foreach (var row in table)
             {
