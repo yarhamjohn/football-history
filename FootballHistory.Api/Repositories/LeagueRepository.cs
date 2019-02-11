@@ -2,6 +2,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using FootballHistory.Api.Domain;
 using FootballHistory.Api.Models.Controller;
+using FootballHistory.Api.Repositories.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballHistory.Api.Repositories
@@ -15,7 +16,7 @@ namespace FootballHistory.Api.Repositories
             Context = context;
         }
 
-        public LeagueDetail GetLeagueInfo(int tier, string season)
+        public LeagueDetailModel GetLeagueInfo(int tier, string season)
         {
             using (var conn = Context.Database.GetDbConnection())
             {
@@ -24,15 +25,15 @@ namespace FootballHistory.Api.Repositories
             }
         }
 
-        private static LeagueDetail CreateLeagueDetail(DbCommand cmd)
+        private static LeagueDetailModel CreateLeagueDetail(DbCommand cmd)
         {
-            var leagueDetails = new LeagueDetail();
+            var leagueDetails = new LeagueDetailModel();
             
             using (var reader = cmd.ExecuteReader())
             {
                 while (reader.Read())
                 {
-                    leagueDetails = new LeagueDetail
+                    leagueDetails = new LeagueDetailModel
                     {
                         Competition = reader.GetString(0),
                         TotalPlaces = reader.GetByte(1),

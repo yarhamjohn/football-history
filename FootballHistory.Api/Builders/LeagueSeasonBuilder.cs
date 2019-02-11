@@ -44,7 +44,7 @@ namespace FootballHistory.Api.Builders
             return table;
         }
 
-        private static void AddTeamStatus(IEnumerable<LeagueTableRow> leagueTable, LeagueDetail leagueDetail, IEnumerable<MatchDetailModel> playOffMatchDetails)
+        private static void AddTeamStatus(IEnumerable<LeagueTableRow> leagueTable, LeagueDetailModel leagueDetailModel, IEnumerable<MatchDetailModel> playOffMatchDetails)
         {
             var playOffFinal = playOffMatchDetails.Where(m => m.Round == "Final").ToList();
             
@@ -54,11 +54,11 @@ namespace FootballHistory.Api.Builders
                 {
                     row.Status = "C";
                 }
-                else if (row.Position <= leagueDetail.PromotionPlaces)
+                else if (row.Position <= leagueDetailModel.PromotionPlaces)
                 {
                     row.Status = "P";
                 }
-                else if (playOffFinal.Count == 1 && row.Position <= leagueDetail.PlayOffPlaces + leagueDetail.PromotionPlaces)
+                else if (playOffFinal.Count == 1 && row.Position <= leagueDetailModel.PlayOffPlaces + leagueDetailModel.PromotionPlaces)
                 {
                     var final = playOffFinal.Single();
                     var winner = final.PenaltyShootout 
@@ -76,7 +76,7 @@ namespace FootballHistory.Api.Builders
                         row.Status = "PO";
                     }
                 }
-                else if (row.Position > leagueDetail.TotalPlaces - leagueDetail.RelegationPlaces)
+                else if (row.Position > leagueDetailModel.TotalPlaces - leagueDetailModel.RelegationPlaces)
                 {
                     row.Status = "R";
                 }

@@ -1,6 +1,6 @@
 namespace FootballHistory.Api.Models.Controller
 {
-    public class LeagueDetail
+    public class LeagueDetailModel
     {
         public string Competition { get; set; }
         public int TotalPlaces { get; set; }
