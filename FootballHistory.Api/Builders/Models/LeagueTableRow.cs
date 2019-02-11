@@ -1,4 +1,4 @@
-namespace FootballHistory.Api.Models.Controller
+namespace FootballHistory.Api.Builders.Models
 {
     public class LeagueTableRow
     {

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
-using FootballHistory.Api.Models.Controller;
+using FootballHistory.Api.Builders.Models;
 using FootballHistory.Api.Repositories.Models;
 
 namespace FootballHistory.Api.Repositories

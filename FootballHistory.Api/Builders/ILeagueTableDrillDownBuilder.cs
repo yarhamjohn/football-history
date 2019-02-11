@@ -1,4 +1,4 @@
-using FootballHistory.Api.Models.Controller;
+using FootballHistory.Api.Builders.Models;
 
 namespace FootballHistory.Api.Builders
 {

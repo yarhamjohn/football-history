@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using FootballHistory.Api.Models.Controller;
+using FootballHistory.Api.Builders.Models;
 using FootballHistory.Api.Repositories;
 using Microsoft.EntityFrameworkCore;
 

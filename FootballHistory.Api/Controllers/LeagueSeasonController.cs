@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using FootballHistory.Api.Builders;
 using FootballHistory.Api.Builders.Models;
-using FootballHistory.Api.Models.Controller;
 using FootballHistory.Api.Repositories;
 using Microsoft.AspNetCore.Mvc;
 

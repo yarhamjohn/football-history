@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using FootballHistory.Api.Repositories.Models;
 
-namespace FootballHistory.Api.Models.Controller
+namespace FootballHistory.Api.Builders.Models
 {
     public class LeagueRowDrillDown
     {
