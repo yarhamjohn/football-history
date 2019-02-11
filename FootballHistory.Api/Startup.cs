@@ -31,13 +31,14 @@ namespace FootballHistory.Api
             });
             
             services.AddTransient<ILeagueSeasonBuilder, LeagueSeasonBuilder>();
-            services.AddTransient<IDivisionRepository, DivisionRepository>();
-            services.AddTransient<ILeagueMatchesRepository, LeagueMatchesRepository>();
             services.AddTransient<ILeagueSeasonFilterBuilder, LeagueSeasonFilterBuilder>();
             services.AddTransient<IResultMatrixBuilder, ResultMatrixBuilder>();
-            services.AddTransient<IPlayOffMatchesRepository, PlayOffMatchesRepository>();
             services.AddTransient<IPlayOffMatchesBuilder, PlayOffMatchesBuilder>();
             services.AddTransient<ILeagueTableDrillDownBuilder, LeagueTableDrillDownBuilder>();
+
+            services.AddTransient<IDivisionRepository, DivisionRepository>();
+            services.AddTransient<IPlayOffMatchesRepository, PlayOffMatchesRepository>();
+            services.AddTransient<ILeagueMatchesRepository, LeagueMatchesRepository>();
             services.AddTransient<ILeagueRepository, LeagueRepository>();
             services.AddTransient<ILeagueFormRepository, LeagueFormRepository>();
             services.AddTransient<IPointDeductionsRepository, PointDeductionsRepository>();
@@ -46,7 +47,6 @@ namespace FootballHistory.Api
             services.AddDbContext<LeagueRepositoryContext>(options => options.UseSqlServer(connString));
             services.AddDbContext<PlayOffMatchesContext>(options => options.UseSqlServer(connString));
             services.AddDbContext<LeagueMatchesContext>(options => options.UseSqlServer(connString));
-            services.AddDbContext<LeagueSeasonContext>(options => options.UseSqlServer(connString));
             services.AddDbContext<PointDeductionsContext>(options => options.UseSqlServer(connString));
         }
 

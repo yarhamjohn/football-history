@@ -25,7 +25,7 @@ namespace FootballHistory.Api.Repositories
             }
         }
 
-        private List<MatchDetailModel> GetPlayOffMatchDetails(DbCommand cmd)
+        private static List<MatchDetailModel> GetPlayOffMatchDetails(DbCommand cmd)
         {
             var matchDetails = new List<MatchDetailModel>();
 

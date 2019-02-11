@@ -1,10 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
-using FootballHistory.Api.Domain;
 using FootballHistory.Api.Models.Controller;
 using FootballHistory.Api.Repositories;
 using FootballHistory.Api.Repositories.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace FootballHistory.Api.Builders
 {
@@ -14,11 +12,8 @@ namespace FootballHistory.Api.Builders
         private readonly ILeagueMatchesRepository _leagueMatchesRepository;
         private readonly ILeagueRepository _leagueRepository;
         private readonly IPointDeductionsRepository _pointDeductionsRepository;
-        private LeagueSeasonContext Context { get; }
 
-        public LeagueSeasonBuilder(
-            LeagueSeasonContext context, 
-            IPlayOffMatchesRepository playOffMatchesRepository, 
+        public LeagueSeasonBuilder(IPlayOffMatchesRepository playOffMatchesRepository, 
             ILeagueMatchesRepository leagueMatchesRepository,
             ILeagueRepository leagueRepository,
             IPointDeductionsRepository pointDeductionsRepository)
@@ -27,34 +22,30 @@ namespace FootballHistory.Api.Builders
             _leagueMatchesRepository = leagueMatchesRepository;
             _leagueRepository = leagueRepository;
             _pointDeductionsRepository = pointDeductionsRepository;
-            Context = context;
         }
 
         public List<LeagueTableRow> GetLeagueTable(int tier, string season)
         {
             var table = new List<LeagueTableRow>();
 
-            using(var conn = Context.Database.GetDbConnection())
-            {
-                var leagueMatchDetails = _leagueMatchesRepository.GetLeagueMatches(tier, season);
+            var leagueMatchDetails = _leagueMatchesRepository.GetLeagueMatches(tier, season);
 
-                var leagueDetail = _leagueRepository.GetLeagueInfo(tier, season);
-                var pointDeductions = _pointDeductionsRepository.GetPointDeductions(tier, season);
-                var playOffMatches = _playOffMatchesRepository.GetPlayOffMatches(tier, season);
+            var leagueDetail = _leagueRepository.GetLeagueInfo(tier, season);
+            var pointDeductions = _pointDeductionsRepository.GetPointDeductions(tier, season);
+            var playOffMatches = _playOffMatchesRepository.GetPlayOffMatches(tier, season);
 
-                CommonStuff.AddLeagueRows(table, leagueMatchDetails);
-                CommonStuff.IncludePointDeductions(table, pointDeductions);
+            CommonStuff.AddLeagueRows(table, leagueMatchDetails);
+            CommonStuff.IncludePointDeductions(table, pointDeductions);
 
-                table = CommonStuff.SortLeagueTable(table);
+            table = CommonStuff.SortLeagueTable(table);
 
-                CommonStuff.SetLeaguePosition(table);
-                AddTeamStatus(table, leagueDetail, playOffMatches);            
-            }
+            CommonStuff.SetLeaguePosition(table);
+            AddTeamStatus(table, leagueDetail, playOffMatches);            
 
             return table;
         }
 
-        private void AddTeamStatus(List<LeagueTableRow> leagueTable, LeagueDetail leagueDetail, List<MatchDetailModel> playOffMatchDetails)
+        private static void AddTeamStatus(IEnumerable<LeagueTableRow> leagueTable, LeagueDetail leagueDetail, IEnumerable<MatchDetailModel> playOffMatchDetails)
         {
             var playOffFinal = playOffMatchDetails.Where(m => m.Round == "Final").ToList();
             

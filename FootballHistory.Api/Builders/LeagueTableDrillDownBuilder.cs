@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using FootballHistory.Api.Domain;
 using FootballHistory.Api.Models.Controller;
 using FootballHistory.Api.Repositories;
 using Microsoft.EntityFrameworkCore;
@@ -13,38 +12,27 @@ namespace FootballHistory.Api.Builders
         private readonly ILeagueMatchesRepository _leagueMatchesRepository;
         private readonly ILeagueFormRepository _leagueFormRepository;
         private readonly IPointDeductionsRepository _pointDeductionsRepository;
-        private LeagueRepositoryContext Context { get; }
 
-        public LeagueTableDrillDownBuilder(
-            LeagueRepositoryContext context, 
-            ILeagueMatchesRepository leagueMatchesRepository,
+        public LeagueTableDrillDownBuilder(ILeagueMatchesRepository leagueMatchesRepository,
             ILeagueFormRepository leagueFormRepository,
             IPointDeductionsRepository pointDeductionsRepository)
         {
             _leagueMatchesRepository = leagueMatchesRepository;
             _leagueFormRepository = leagueFormRepository;
             _pointDeductionsRepository = pointDeductionsRepository;
-            Context = context;
         }
 
         public LeagueRowDrillDown GetDrillDown(int tier, string season, string team)
         {
-            var result = new LeagueRowDrillDown();
-
-            using(var conn = Context.Database.GetDbConnection())
+            return new LeagueRowDrillDown
             {
-                result.Form = _leagueFormRepository.GetLeagueForm(tier, season, team);
-                result.Positions = GetIncrementalLeaguePositions(conn, tier, season, team);
-            }
-
-            return result;
+                Form = _leagueFormRepository.GetLeagueForm(tier, season, team),
+                Positions = GetIncrementalLeaguePositions(tier, season, team)
+            };
         }
 
-        private List<LeaguePosition> GetIncrementalLeaguePositions(DbConnection conn, int tier, string season, string team)
+        private List<LeaguePosition> GetIncrementalLeaguePositions(int tier, string season, string team)
         {
-            var seasonStartYear = season.Substring(0, 4);
-            var seasonEndYear = season.Substring(7, 4);
-
             var matchDetails = _leagueMatchesRepository.GetLeagueMatches(tier, season);
             var pointDeductions = _pointDeductionsRepository.GetPointDeductions(tier, season);
 
