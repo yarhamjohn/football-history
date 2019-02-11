@@ -9,16 +9,16 @@ namespace FootballHistory.Api.Repositories
 {
     public class PlayOffMatchesRepository : IPlayOffMatchesRepository
     {
-        private PlayOffMatchesContext Context { get; }
+        private PlayOffMatchesRepositoryContext RepositoryContext { get; }
 
-        public PlayOffMatchesRepository(PlayOffMatchesContext context)
+        public PlayOffMatchesRepository(PlayOffMatchesRepositoryContext repositoryContext)
         {
-            Context = context;
+            RepositoryContext = repositoryContext;
         }
 
         public List<MatchDetailModel> GetPlayOffMatches(int tier, string season)
         {
-            using(var conn = Context.Database.GetDbConnection())
+            using(var conn = RepositoryContext.Database.GetDbConnection())
             {
                 var cmd = GetDbCommand(conn, tier, season);
                 return GetPlayOffMatchDetails(cmd);

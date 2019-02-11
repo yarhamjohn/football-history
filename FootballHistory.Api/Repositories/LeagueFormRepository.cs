@@ -9,9 +9,9 @@ namespace FootballHistory.Api.Repositories
 {
     public class LeagueFormRepository : ILeagueFormRepository
     {
-        private LeagueRepositoryContext Context { get; }
+        private LeagueFormRepositoryContext Context { get; }
 
-        public LeagueFormRepository(LeagueRepositoryContext context)
+        public LeagueFormRepository(LeagueFormRepositoryContext context)
         {
             Context = context;
         }

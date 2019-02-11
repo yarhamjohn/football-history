@@ -9,16 +9,16 @@ namespace FootballHistory.Api.Repositories
 {
     public class PointDeductionsRepository : IPointDeductionsRepository
     {
-        private PointDeductionsContext Context { get; }
+        private PointDeductionsRepositoryContext RepositoryContext { get; }
 
-        public PointDeductionsRepository(PointDeductionsContext context)
+        public PointDeductionsRepository(PointDeductionsRepositoryContext repositoryContext)
         {
-            Context = context;
+            RepositoryContext = repositoryContext;
         }
 
         public List<PointDeduction>  GetPointDeductions(int tier, string season)
         {
-            using(var conn = Context.Database.GetDbConnection())
+            using(var conn = RepositoryContext.Database.GetDbConnection())
             {
                 var cmd = GetDbCommand(conn, tier, season);
                 return CalculatePointDeductions(cmd);

@@ -9,23 +9,37 @@ namespace FootballHistory.Api.Domain
         }
     }
     
-    public class PlayOffMatchesContext : DbContext
+    public class PlayOffMatchesRepositoryContext : DbContext
     {
-        public PlayOffMatchesContext(DbContextOptions<PlayOffMatchesContext> options) : base(options)
+        public PlayOffMatchesRepositoryContext(DbContextOptions<PlayOffMatchesRepositoryContext> options) : base(options)
         {
         }
     }
         
-    public class LeagueMatchesContext : DbContext
+    public class LeagueMatchesRepositoryContext : DbContext
     {
-        public LeagueMatchesContext(DbContextOptions<LeagueMatchesContext> options) : base(options)
+        public LeagueMatchesRepositoryContext(DbContextOptions<LeagueMatchesRepositoryContext> options) : base(options)
         {
         }
     }
                 
-    public class PointDeductionsContext : DbContext
+    public class PointDeductionsRepositoryContext : DbContext
     {
-        public PointDeductionsContext(DbContextOptions<PointDeductionsContext> options) : base(options)
+        public PointDeductionsRepositoryContext(DbContextOptions<PointDeductionsRepositoryContext> options) : base(options)
+        {
+        }
+    }            
+    
+    public class LeagueFormRepositoryContext : DbContext
+    {
+        public LeagueFormRepositoryContext(DbContextOptions<LeagueFormRepositoryContext> options) : base(options)
+        {
+        }
+    }    
+    
+    public class DivisionRepositoryContext : DbContext
+    {
+        public DivisionRepositoryContext(DbContextOptions<DivisionRepositoryContext> options) : base(options)
         {
         }
     }

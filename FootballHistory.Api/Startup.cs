@@ -45,9 +45,11 @@ namespace FootballHistory.Api
 
             var connString = Configuration.GetConnectionString("FootballHistory");
             services.AddDbContext<LeagueRepositoryContext>(options => options.UseSqlServer(connString));
-            services.AddDbContext<PlayOffMatchesContext>(options => options.UseSqlServer(connString));
-            services.AddDbContext<LeagueMatchesContext>(options => options.UseSqlServer(connString));
-            services.AddDbContext<PointDeductionsContext>(options => options.UseSqlServer(connString));
+            services.AddDbContext<DivisionRepositoryContext>(options => options.UseSqlServer(connString));
+            services.AddDbContext<PlayOffMatchesRepositoryContext>(options => options.UseSqlServer(connString));
+            services.AddDbContext<LeagueFormRepositoryContext>(options => options.UseSqlServer(connString));
+            services.AddDbContext<LeagueMatchesRepositoryContext>(options => options.UseSqlServer(connString));
+            services.AddDbContext<PointDeductionsRepositoryContext>(options => options.UseSqlServer(connString));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
