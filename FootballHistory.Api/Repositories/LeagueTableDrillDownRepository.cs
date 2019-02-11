@@ -12,11 +12,16 @@ namespace FootballHistory.Api.Repositories
     public class LeagueTableDrillDownRepository : ILeagueTableDrillDownRepository
     {
         private readonly ILeagueMatchesRepository _leagueMatchesRepository;
+        private readonly ILeagueFormRepository _leagueFormRepository;
         private LeagueRepositoryContext Context { get; }
 
-        public LeagueTableDrillDownRepository(LeagueRepositoryContext context, ILeagueMatchesRepository leagueMatchesRepository)
+        public LeagueTableDrillDownRepository(
+            LeagueRepositoryContext context, 
+            ILeagueMatchesRepository leagueMatchesRepository,
+            ILeagueFormRepository leagueFormRepository)
         {
             _leagueMatchesRepository = leagueMatchesRepository;
+            _leagueFormRepository = leagueFormRepository;
             Context = context;
         }
 
@@ -26,78 +31,11 @@ namespace FootballHistory.Api.Repositories
 
             using(var conn = Context.Database.GetDbConnection())
             {
-                result.Form = GetLeagueForm(conn, tier, season, team);
+                result.Form = _leagueFormRepository.GetLeagueForm(tier, season, team);
                 result.Positions = GetIncrementalLeaguePositions(conn, tier, season, team);
             }
 
             return result;
-        }
-
-        private List<MatchResultOld> GetLeagueForm(DbConnection conn, int tier, string season, string team)
-        {
-            var seasonStartYear = season.Substring(0, 4);
-            var seasonEndYear = season.Substring(7, 4);
-
-            var sql = @"
-SELECT lm.MatchDate
-	,CASE WHEN lm.HomeGoals > lm.AwayGoals THEN 'W'
-		  WHEN lm.AwayGoals > lm.HomeGoals THEN 'L' 
-		  ELSE 'D' END AS Result
-FROM dbo.LeagueMatches AS lm
-INNER JOIN dbo.Divisions d ON d.Id = lm.DivisionId
-INNER JOIN dbo.Clubs AS hc ON hc.Id = lm.HomeClubId
-WHERE d.Tier = @Tier
-    AND (hc.Name = @Team)
-    AND lm.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
-
-UNION ALL
-
-SELECT lm.MatchDate
-	,CASE WHEN lm.HomeGoals < lm.AwayGoals THEN 'W'
-		  WHEN lm.AwayGoals < lm.HomeGoals THEN 'L' 
-		  ELSE 'D' END AS Result
-FROM dbo.LeagueMatches AS lm
-INNER JOIN dbo.Divisions d ON d.Id = lm.DivisionId
-INNER JOIN dbo.Clubs AS ac ON ac.Id = lm.AwayClubId
-WHERE d.Tier = @Tier
-    AND (ac.Name = @Team)
-    AND lm.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
-
-ORDER BY MatchDate
-";
-            
-            var form = new List<MatchResultOld>();
-
-            conn.Open();
-            var cmd = conn.CreateCommand();
-            cmd.CommandText = sql;
-            cmd.Parameters.Add(new SqlParameter("@Tier", tier));
-            cmd.Parameters.Add(new SqlParameter("@SeasonStartYear", seasonStartYear));
-            cmd.Parameters.Add(new SqlParameter("@SeasonEndYear", seasonEndYear));
-            cmd.Parameters.Add(new SqlParameter("@Team", team));
-
-            var reader = cmd.ExecuteReader();
-            if (reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    form.Add(
-                        new MatchResultOld
-                        {
-                            MatchDate = reader.GetDateTime(0),
-                            Result = reader.GetString(1)
-                        }
-                    );
-                }
-            } 
-            else 
-            {
-                System.Console.WriteLine("No rows found");
-            }
-            reader.Close();
-            conn.Close();
-
-            return form;
         }
 
         private List<LeaguePosition> GetIncrementalLeaguePositions(DbConnection conn, int tier, string season, string team)

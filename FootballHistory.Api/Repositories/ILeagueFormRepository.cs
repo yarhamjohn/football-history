@@ -5,6 +5,6 @@ namespace FootballHistory.Api.Repositories
 {
     public interface ILeagueFormRepository
     {
-        LeagueRowDrillDown GetDrillDown(int tier, string season, string team);
+        List<MatchResultOld> GetLeagueForm(int tier, string season, string team);
     }
 }
