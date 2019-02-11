@@ -13,12 +13,18 @@ namespace FootballHistory.Api.Repositories
     {
         private readonly IPlayOffMatchesRepository _playOffMatchesRepository;
         private readonly ILeagueMatchesRepository _leagueMatchesRepository;
+        private readonly ILeagueRepository _leagueRepository;
         private LeagueSeasonContext Context { get; }
 
-        public LeagueSeasonRepository(LeagueSeasonContext context, IPlayOffMatchesRepository playOffMatchesRepository, ILeagueMatchesRepository leagueMatchesRepository)
+        public LeagueSeasonRepository(
+            LeagueSeasonContext context, 
+            IPlayOffMatchesRepository playOffMatchesRepository, 
+            ILeagueMatchesRepository leagueMatchesRepository,
+            ILeagueRepository leagueRepository)
         {
             _playOffMatchesRepository = playOffMatchesRepository;
             _leagueMatchesRepository = leagueMatchesRepository;
+            _leagueRepository = leagueRepository;
             Context = context;
         }
 
@@ -30,7 +36,7 @@ namespace FootballHistory.Api.Repositories
             {
                 var leagueMatchDetails = _leagueMatchesRepository.GetLeagueMatches(tier, season);
 
-                var leagueDetail = GetLeagueDetail(conn, tier, season);
+                var leagueDetail = _leagueRepository.GetLeagueInfo(tier, season);
                 var pointDeductions = CommonStuff.GetPointDeductions(conn, tier, season);
                 var playOffMatches = _playOffMatchesRepository.GetPlayOffMatches(tier, season);
 
@@ -87,52 +93,6 @@ namespace FootballHistory.Api.Repositories
                     row.Status = string.Empty;
                 }
             }
-        }
-
-        private LeagueDetail GetLeagueDetail(DbConnection conn, int tier, string season)
-        {
-            var sql = @"
-SELECT d.Name AS CompetitionName
-    ,ls.TotalPlaces
-    ,ls.PromotionPlaces
-    ,ls.PlayOffPlaces
-    ,ls.RelegationPlaces
-FROM dbo.LeagueStatuses AS ls
-INNER JOIN dbo.Divisions d ON d.Id = ls.DivisionId
-WHERE d.Tier = @Tier AND ls.Season = @Season
-";
-
-            var leagueDetails = new LeagueDetail();
-
-            conn.Open();
-            var cmd = conn.CreateCommand();
-            cmd.CommandText = sql;
-            cmd.Parameters.Add(new SqlParameter("@Tier", tier));
-            cmd.Parameters.Add(new SqlParameter("@Season", season));
-
-            var reader = cmd.ExecuteReader();
-            if (reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    leagueDetails = new LeagueDetail
-                    {
-                        Competition = reader.GetString(0),
-                        TotalPlaces = reader.GetByte(1),
-                        PromotionPlaces = reader.GetByte(2),
-                        PlayOffPlaces = reader.GetByte(3),
-                        RelegationPlaces = reader.GetByte(4)
-                    };
-                }
-            }
-            else 
-            {
-                System.Console.WriteLine("No rows found");
-            }
-            reader.Close();
-            conn.Close();
-
-            return leagueDetails;
         }
     }
 }
