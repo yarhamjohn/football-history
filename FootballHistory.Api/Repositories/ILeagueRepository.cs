@@ -5,6 +5,6 @@ namespace FootballHistory.Api.Repositories
 {
     public interface ILeagueRepository
     {
-        List<LeagueTableRow> GetLeagueTable(int tier, string season);
+        LeagueDetail GetLeagueInfo(int tier, string season);
     }
 }
