@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
 using FootballHistory.Api.Domain;
@@ -9,9 +8,9 @@ namespace FootballHistory.Api.Repositories
 {
     public class LeagueRepository : ILeagueRepository
     {
-        private LeagueSeasonContext Context { get; }
+        private LeagueRepositoryContext Context { get; }
 
-        public LeagueRepository(LeagueSeasonContext context)
+        public LeagueRepository(LeagueRepositoryContext context)
         {
             Context = context;
         }

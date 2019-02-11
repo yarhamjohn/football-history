@@ -12,9 +12,9 @@ namespace FootballHistory.Api.Repositories
     public class LeagueTableDrillDownRepository : ILeagueTableDrillDownRepository
     {
         private readonly ILeagueMatchesRepository _leagueMatchesRepository;
-        private LeagueSeasonContext Context { get; }
+        private LeagueRepositoryContext Context { get; }
 
-        public LeagueTableDrillDownRepository(LeagueSeasonContext context, ILeagueMatchesRepository leagueMatchesRepository)
+        public LeagueTableDrillDownRepository(LeagueRepositoryContext context, ILeagueMatchesRepository leagueMatchesRepository)
         {
             _leagueMatchesRepository = leagueMatchesRepository;
             Context = context;

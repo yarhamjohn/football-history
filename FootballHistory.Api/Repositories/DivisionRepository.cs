@@ -9,9 +9,9 @@ namespace FootballHistory.Api.Repositories
 {
     public class DivisionRepository : IDivisionRepository
     {
-        private LeagueSeasonContext Context { get; }
+        private LeagueRepositoryContext Context { get; }
 
-        public DivisionRepository(LeagueSeasonContext context)
+        public DivisionRepository(LeagueRepositoryContext context)
         {
             Context = context;
         }

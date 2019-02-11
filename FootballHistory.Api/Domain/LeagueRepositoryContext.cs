@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FootballHistory.Api.Domain
 {
-    public class LeagueSeasonContext : DbContext
+    public class LeagueRepositoryContext : DbContext
     {
-        public LeagueSeasonContext(DbContextOptions<LeagueSeasonContext> options) : base(options)
+        public LeagueRepositoryContext(DbContextOptions<LeagueRepositoryContext> options) : base(options)
         {
         }
     }
@@ -19,6 +19,13 @@ namespace FootballHistory.Api.Domain
     public class LeagueMatchesContext : DbContext
     {
         public LeagueMatchesContext(DbContextOptions<LeagueMatchesContext> options) : base(options)
+        {
+        }
+    }
+            
+    public class LeagueSeasonContext : DbContext
+    {
+        public LeagueSeasonContext(DbContextOptions<LeagueSeasonContext> options) : base(options)
         {
         }
     }
