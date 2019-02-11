@@ -3,6 +3,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using FootballHistory.Api.Domain;
 using FootballHistory.Api.Models.Controller;
+using FootballHistory.Api.Repositories.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballHistory.Api.Repositories
@@ -16,7 +17,7 @@ namespace FootballHistory.Api.Repositories
             Context = context;
         }
 
-        public List<MatchResultOld> GetLeagueForm(int tier, string season, string team)
+        public List<MatchModel> GetLeagueForm(int tier, string season, string team)
         {
             using(var conn = Context.Database.GetDbConnection())
             {
@@ -66,16 +67,16 @@ ORDER BY MatchDate
 
             return cmd;
         }
-        private static List<MatchResultOld> GetLeagueForm(DbCommand cmd)
+        private static List<MatchModel> GetLeagueForm(DbCommand cmd)
         {
-            var form = new List<MatchResultOld>();
+            var form = new List<MatchModel>();
             
             using(var reader = cmd.ExecuteReader())
             {
                 while (reader.Read())
                 {
                     form.Add(
-                        new MatchResultOld
+                        new MatchModel
                         {
                             MatchDate = reader.GetDateTime(0),
                             Result = reader.GetString(1)
