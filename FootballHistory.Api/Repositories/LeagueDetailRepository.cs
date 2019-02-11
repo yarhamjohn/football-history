@@ -48,7 +48,7 @@ namespace FootballHistory.Api.Repositories
 
         private static DbCommand GetDbCommand(DbConnection conn, int tier, string season)
         {
-            var sql = @"
+            const string sql = @"
 SELECT d.Name AS CompetitionName
     ,ls.TotalPlaces
     ,ls.PromotionPlaces
