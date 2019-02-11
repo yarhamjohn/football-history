@@ -27,7 +27,7 @@ namespace FootballHistory.Api
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Football  History API", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Football History API", Version = "v1" });
             });
             
             services.AddTransient<ILeagueSeasonBuilder, LeagueSeasonBuilder>();
