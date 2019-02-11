@@ -8,14 +8,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FootballHistory.Api.Builders
 {
-    public class LeagueSeasonRepository : ILeagueSeasonRepository
+    public class LeagueSeasonBuilder : ILeagueSeasonBuilder
     {
         private readonly IPlayOffMatchesRepository _playOffMatchesRepository;
         private readonly ILeagueMatchesRepository _leagueMatchesRepository;
         private readonly ILeagueRepository _leagueRepository;
         private LeagueSeasonContext Context { get; }
 
-        public LeagueSeasonRepository(
+        public LeagueSeasonBuilder(
             LeagueSeasonContext context, 
             IPlayOffMatchesRepository playOffMatchesRepository, 
             ILeagueMatchesRepository leagueMatchesRepository,

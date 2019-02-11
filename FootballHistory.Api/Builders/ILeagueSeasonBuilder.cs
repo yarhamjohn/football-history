@@ -3,7 +3,7 @@ using FootballHistory.Api.Models.Controller;
 
 namespace FootballHistory.Api.Builders
 {
-    public interface ILeagueSeasonRepository
+    public interface ILeagueSeasonBuilder
     {
         List<LeagueTableRow> GetLeagueTable(int tier, string season);
     }

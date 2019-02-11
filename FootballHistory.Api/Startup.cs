@@ -30,14 +30,14 @@ namespace FootballHistory.Api
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Football  History API", Version = "v1" });
             });
             
-            services.AddTransient<ILeagueSeasonRepository, LeagueSeasonRepository>();
+            services.AddTransient<ILeagueSeasonBuilder, LeagueSeasonBuilder>();
             services.AddTransient<IDivisionRepository, DivisionRepository>();
             services.AddTransient<ILeagueMatchesRepository, LeagueMatchesRepository>();
             services.AddTransient<ILeagueSeasonFilterBuilder, LeagueSeasonFilterBuilder>();
             services.AddTransient<IResultMatrixBuilder, ResultMatrixBuilder>();
             services.AddTransient<IPlayOffMatchesRepository, PlayOffMatchesRepository>();
             services.AddTransient<IPlayOffMatchesBuilder, PlayOffMatchesBuilder>();
-            services.AddTransient<ILeagueTableDrillDownRepository, LeagueTableDrillDownRepository>();
+            services.AddTransient<ILeagueTableDrillDownBuilder, LeagueTableDrillDownBuilder>();
             services.AddTransient<ILeagueRepository, LeagueRepository>();
             services.AddTransient<ILeagueFormRepository, LeagueFormRepository>();
 

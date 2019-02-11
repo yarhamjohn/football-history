@@ -8,13 +8,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FootballHistory.Api.Builders
 {
-    public class LeagueTableDrillDownRepository : ILeagueTableDrillDownRepository
+    public class LeagueTableDrillDownBuilder : ILeagueTableDrillDownBuilder
     {
         private readonly ILeagueMatchesRepository _leagueMatchesRepository;
         private readonly ILeagueFormRepository _leagueFormRepository;
         private LeagueRepositoryContext Context { get; }
 
-        public LeagueTableDrillDownRepository(
+        public LeagueTableDrillDownBuilder(
             LeagueRepositoryContext context, 
             ILeagueMatchesRepository leagueMatchesRepository,
             ILeagueFormRepository leagueFormRepository)

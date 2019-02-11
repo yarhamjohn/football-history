@@ -15,28 +15,28 @@ namespace FootballHistory.Api.Controllers
         private readonly ILeagueMatchesRepository _leagueMatchesRepository;
         private readonly IPlayOffMatchesRepository _playOffMatchesRepository;
         private readonly IPlayOffMatchesBuilder _playOffMatchesBuilder;
-        private readonly ILeagueSeasonRepository _leagueSeasonRepository;
-        private readonly ILeagueTableDrillDownRepository _leagueTableDrillDownRepository;
+        private readonly ILeagueSeasonBuilder _leagueSeasonBuilder;
+        private readonly ILeagueTableDrillDownBuilder _leagueTableDrillDownBuilder;
         private readonly IResultMatrixBuilder _resultMatrixBuilder;
         private readonly ILeagueSeasonFilterBuilder _leagueSeasonFilterBuilder;
 
         public LeagueSeasonController(
-            ILeagueSeasonRepository leagueSeasonRepository, 
+            ILeagueSeasonBuilder leagueSeasonBuilder, 
             IDivisionRepository divisionRepository, 
             ILeagueSeasonFilterBuilder leagueSeasonFilterBuilder, 
             ILeagueMatchesRepository leagueMatchesRepository, 
             IResultMatrixBuilder resultMatrixBuilder,
             IPlayOffMatchesRepository playOffMatchesRepository,
-            ILeagueTableDrillDownRepository leagueTableDrillDownRepository,
+            ILeagueTableDrillDownBuilder leagueTableDrillDownBuilder,
             IPlayOffMatchesBuilder playOffMatchesBuilder)
         {
             _divisionRepository = divisionRepository;
             _leagueSeasonFilterBuilder = leagueSeasonFilterBuilder;
             _leagueMatchesRepository = leagueMatchesRepository;
             _resultMatrixBuilder = resultMatrixBuilder;
-            _leagueSeasonRepository = leagueSeasonRepository;
+            _leagueSeasonBuilder = leagueSeasonBuilder;
             _playOffMatchesRepository = playOffMatchesRepository;
-            _leagueTableDrillDownRepository = leagueTableDrillDownRepository;
+            _leagueTableDrillDownBuilder = leagueTableDrillDownBuilder;
             _playOffMatchesBuilder = playOffMatchesBuilder;
         }
 
@@ -64,13 +64,13 @@ namespace FootballHistory.Api.Controllers
         [HttpGet("[action]")]
         public List<LeagueTableRow> GetLeagueTable(string tier, string season)
         {
-            return _leagueSeasonRepository.GetLeagueTable(Convert.ToInt32(tier), season);
+            return _leagueSeasonBuilder.GetLeagueTable(Convert.ToInt32(tier), season);
         }
                 
         [HttpGet("[action]")]
         public LeagueRowDrillDown GetDrillDown(string tier, string season, string team)
         {
-            return _leagueTableDrillDownRepository.GetDrillDown(Convert.ToInt32(tier), season, team);
+            return _leagueTableDrillDownBuilder.GetDrillDown(Convert.ToInt32(tier), season, team);
         }
     }
 }
