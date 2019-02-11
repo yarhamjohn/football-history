@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using FootballHistory.Api.Builders.Models;
+using FootballHistory.Api.Models.Controller;
 using FootballHistory.Api.Repositories;
 using FootballHistory.Api.Repositories.Models;
 
@@ -10,17 +11,17 @@ namespace FootballHistory.Api.Builders
     {
         private readonly IPlayOffMatchesRepository _playOffMatchesRepository;
         private readonly ILeagueMatchesRepository _leagueMatchesRepository;
-        private readonly ILeagueRepository _leagueRepository;
+        private readonly ILeagueDetailRepository _leagueDetailRepository;
         private readonly IPointDeductionsRepository _pointDeductionsRepository;
 
         public LeagueSeasonBuilder(IPlayOffMatchesRepository playOffMatchesRepository, 
             ILeagueMatchesRepository leagueMatchesRepository,
-            ILeagueRepository leagueRepository,
+            ILeagueDetailRepository leagueDetailRepository,
             IPointDeductionsRepository pointDeductionsRepository)
         {
             _playOffMatchesRepository = playOffMatchesRepository;
             _leagueMatchesRepository = leagueMatchesRepository;
-            _leagueRepository = leagueRepository;
+            _leagueDetailRepository = leagueDetailRepository;
             _pointDeductionsRepository = pointDeductionsRepository;
         }
 
@@ -29,7 +30,7 @@ namespace FootballHistory.Api.Builders
             var table = new List<LeagueTableRow>();
 
             var leagueMatchDetails = _leagueMatchesRepository.GetLeagueMatches(tier, season);
-            var leagueDetail = _leagueRepository.GetLeagueInfo(tier, season);
+            var leagueDetail = _leagueDetailRepository.GetLeagueInfo(tier, season);
             var pointDeductions = _pointDeductionsRepository.GetPointDeductions(tier, season);
             var playOffMatches = _playOffMatchesRepository.GetPlayOffMatches(tier, season);
 

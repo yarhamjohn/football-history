@@ -1,9 +1,8 @@
-using System.Collections.Generic;
-using FootballHistory.Api.Repositories.Models;
+using FootballHistory.Api.Models.Controller;
 
 namespace FootballHistory.Api.Repositories
 {
-    public interface ILeagueRepository
+    public interface ILeagueDetailRepository
     {
         LeagueDetailModel GetLeagueInfo(int tier, string season);
     }

@@ -2,9 +2,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FootballHistory.Api.Domain
 {
-    public class LeagueRepositoryContext : DbContext
+    public class LeagueDetailRepositoryContext : DbContext
     {
-        public LeagueRepositoryContext(DbContextOptions<LeagueRepositoryContext> options) : base(options)
+        public LeagueDetailRepositoryContext(DbContextOptions<LeagueDetailRepositoryContext> options) : base(options)
         {
         }
     }

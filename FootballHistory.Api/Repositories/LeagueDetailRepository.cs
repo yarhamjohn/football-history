@@ -1,16 +1,16 @@
 using System.Data.Common;
 using System.Data.SqlClient;
 using FootballHistory.Api.Domain;
-using FootballHistory.Api.Repositories.Models;
+using FootballHistory.Api.Models.Controller;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballHistory.Api.Repositories
 {
-    public class LeagueRepository : ILeagueRepository
+    public class LeagueDetailRepository : ILeagueDetailRepository
     {
-        private LeagueRepositoryContext Context { get; }
+        private LeagueDetailRepositoryContext Context { get; }
 
-        public LeagueRepository(LeagueRepositoryContext context)
+        public LeagueDetailRepository(LeagueDetailRepositoryContext context)
         {
             Context = context;
         }
