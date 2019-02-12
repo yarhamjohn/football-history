@@ -38,25 +38,8 @@ INNER JOIN dbo.Divisions d ON d.Id = lm.DivisionId
 INNER JOIN dbo.Clubs AS hc ON hc.Id = lm.HomeClubId
 INNER JOIN dbo.Clubs AS ac ON ac.Id = lm.AwayClubId
 WHERE d.Tier = @Tier
-    AND (hc.Name = @Team)
+    AND (hc.Name = @Team OR ac.Name = @Team)
     AND lm.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
-
-UNION ALL
-
-SELECT lm.MatchDate
-    ,hc.Name AS HomeTeam
-    ,ac.Name AS AwayTeam
-	,lm.HomeGoals
-	,lm.AwayGoals
-FROM dbo.LeagueMatches AS lm
-INNER JOIN dbo.Divisions d ON d.Id = lm.DivisionId
-INNER JOIN dbo.Clubs AS hc ON hc.Id = lm.HomeClubId
-INNER JOIN dbo.Clubs AS ac ON ac.Id = lm.AwayClubId
-WHERE d.Tier = @Tier
-    AND (ac.Name = @Team)
-    AND lm.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
-
-ORDER BY MatchDate
 ";
             
             conn.Open();
