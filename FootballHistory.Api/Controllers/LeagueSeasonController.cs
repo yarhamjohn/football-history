@@ -15,6 +15,7 @@ namespace FootballHistory.Api.Controllers
         private readonly IPlayOffMatchesRepository _playOffMatchesRepository;
         private readonly IPlayOffMatchesBuilder _playOffMatchesBuilder;
         private readonly IPointDeductionsRepository _pointDeductionsRepository;
+        private readonly ILeagueDetailRepository _leagueDetailRepository;
         private readonly ILeagueSeasonBuilder _leagueSeasonBuilder;
         private readonly ILeagueTableDrillDownBuilder _leagueTableDrillDownBuilder;
         private readonly IResultMatrixBuilder _resultMatrixBuilder;
@@ -29,7 +30,8 @@ namespace FootballHistory.Api.Controllers
             IPlayOffMatchesRepository playOffMatchesRepository,
             ILeagueTableDrillDownBuilder leagueTableDrillDownBuilder,
             IPlayOffMatchesBuilder playOffMatchesBuilder,
-            IPointDeductionsRepository pointDeductionsRepository)
+            IPointDeductionsRepository pointDeductionsRepository,
+            ILeagueDetailRepository leagueDetailRepository)
         {
             _divisionRepository = divisionRepository;
             _leagueSeasonFilterBuilder = leagueSeasonFilterBuilder;
@@ -40,6 +42,7 @@ namespace FootballHistory.Api.Controllers
             _leagueTableDrillDownBuilder = leagueTableDrillDownBuilder;
             _playOffMatchesBuilder = playOffMatchesBuilder;
             _pointDeductionsRepository = pointDeductionsRepository;
+            _leagueDetailRepository = leagueDetailRepository;
         }
 
         [HttpGet("[action]")]
@@ -66,7 +69,13 @@ namespace FootballHistory.Api.Controllers
         [HttpGet("[action]")]
         public List<LeagueTableRow> GetLeagueTable(string tier, string season)
         {
-            return _leagueSeasonBuilder.GetLeagueTable(Convert.ToInt32(tier), season);
+            var divisionTier = Convert.ToInt32(tier);
+            var leagueMatchDetails = _leagueMatchesRepository.GetLeagueMatches(divisionTier, season);
+            var leagueDetail = _leagueDetailRepository.GetLeagueInfo(divisionTier, season);
+            var pointDeductions = _pointDeductionsRepository.GetPointDeductions(divisionTier, season);
+            var playOffMatches = _playOffMatchesRepository.GetPlayOffMatches(divisionTier, season);
+
+            return _leagueSeasonBuilder.Build(leagueMatchDetails, leagueDetail, pointDeductions, playOffMatches);
         }
                 
         [HttpGet("[action]")]
