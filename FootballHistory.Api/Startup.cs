@@ -30,7 +30,7 @@ namespace FootballHistory.Api
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Football History API", Version = "v1" });
             });
             
-            services.AddTransient<ILeagueSeasonBuilder, LeagueSeasonBuilder>();
+            services.AddTransient<ILeagueTableBuilder, LeagueTableBuilder>();
             services.AddTransient<ILeagueSeasonFilterBuilder, LeagueSeasonFilterBuilder>();
             services.AddTransient<IResultMatrixBuilder, ResultMatrixBuilder>();
             services.AddTransient<IPlayOffMatchesBuilder, PlayOffMatchesBuilder>();

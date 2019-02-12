@@ -7,7 +7,7 @@ using FootballHistory.Api.Repositories.Models;
 
 namespace FootballHistory.Api.Builders
 {
-    public class LeagueSeasonBuilder : ILeagueSeasonBuilder
+    public class LeagueTableBuilder : ILeagueTableBuilder
     {
         public List<LeagueTableRow> Build(List<MatchDetailModel> leagueMatchDetails, LeagueDetailModel leagueDetail, List<PointDeductionModel> pointDeductions, List<MatchDetailModel> playOffMatches)
         {

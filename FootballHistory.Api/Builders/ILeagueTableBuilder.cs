@@ -5,7 +5,7 @@ using FootballHistory.Api.Repositories.Models;
 
 namespace FootballHistory.Api.Builders
 {
-    public interface ILeagueSeasonBuilder
+    public interface ILeagueTableBuilder
     {
         List<LeagueTableRow> Build(List<MatchDetailModel> leagueMatchDetails, LeagueDetailModel leagueDetail,
             List<PointDeductionModel> pointDeductions, List<MatchDetailModel> playOffMatches);

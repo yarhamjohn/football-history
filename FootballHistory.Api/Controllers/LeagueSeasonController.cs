@@ -16,13 +16,13 @@ namespace FootballHistory.Api.Controllers
         private readonly IPlayOffMatchesBuilder _playOffMatchesBuilder;
         private readonly IPointDeductionsRepository _pointDeductionsRepository;
         private readonly ILeagueDetailRepository _leagueDetailRepository;
-        private readonly ILeagueSeasonBuilder _leagueSeasonBuilder;
+        private readonly ILeagueTableBuilder _leagueTableBuilder;
         private readonly ILeagueTableDrillDownBuilder _leagueTableDrillDownBuilder;
         private readonly IResultMatrixBuilder _resultMatrixBuilder;
         private readonly ILeagueSeasonFilterBuilder _leagueSeasonFilterBuilder;
 
         public LeagueSeasonController(
-            ILeagueSeasonBuilder leagueSeasonBuilder, 
+            ILeagueTableBuilder leagueTableBuilder, 
             IDivisionRepository divisionRepository, 
             ILeagueSeasonFilterBuilder leagueSeasonFilterBuilder, 
             ILeagueMatchesRepository leagueMatchesRepository, 
@@ -37,7 +37,7 @@ namespace FootballHistory.Api.Controllers
             _leagueSeasonFilterBuilder = leagueSeasonFilterBuilder;
             _leagueMatchesRepository = leagueMatchesRepository;
             _resultMatrixBuilder = resultMatrixBuilder;
-            _leagueSeasonBuilder = leagueSeasonBuilder;
+            _leagueTableBuilder = leagueTableBuilder;
             _playOffMatchesRepository = playOffMatchesRepository;
             _leagueTableDrillDownBuilder = leagueTableDrillDownBuilder;
             _playOffMatchesBuilder = playOffMatchesBuilder;
@@ -75,7 +75,7 @@ namespace FootballHistory.Api.Controllers
             var pointDeductions = _pointDeductionsRepository.GetPointDeductions(divisionTier, season);
             var playOffMatches = _playOffMatchesRepository.GetPlayOffMatches(divisionTier, season);
 
-            return _leagueSeasonBuilder.Build(leagueMatchDetails, leagueDetail, pointDeductions, playOffMatches);
+            return _leagueTableBuilder.Build(leagueMatchDetails, leagueDetail, pointDeductions, playOffMatches);
         }
                 
         [HttpGet("[action]")]
