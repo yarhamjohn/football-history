@@ -13,15 +13,10 @@ namespace FootballHistory.Api.Builders
     {
         public LeagueRowDrillDown Build(string team, List<MatchDetailModel> matchDetails, List<PointDeductionModel> pointDeductions)
         {
-            return CreateDrillDown(team, matchDetails, pointDeductions);
-        }
-
-        private LeagueRowDrillDown CreateDrillDown(string team, List<MatchDetailModel> matchDetails, List<PointDeductionModel> pointDeductions)
-        {
             return new LeagueRowDrillDown
             {
                 Form = GenerateForm(matchDetails, team),
-                Positions = GetIncrementalLeaguePositions(team, matchDetails, pointDeductions)
+                Positions = GetIncrementalLeaguePositions(matchDetails, pointDeductions, team)
             };
         }
 
@@ -39,16 +34,26 @@ namespace FootballHistory.Api.Builders
 
         private static string GetResult(MatchDetailModel match, string team)
         {
-            if (match.HomeTeam == team)
+            if (match.HomeGoals == match.AwayGoals)
             {
-                return match.HomeGoals > match.AwayGoals ? "W" : match.HomeGoals < match.AwayGoals ? "L" : "D";
+                return "D";
             }
             
-            return match.HomeGoals < match.AwayGoals ? "W" : match.HomeGoals > match.AwayGoals ? "L" : "D";
+            if (match.HomeTeam == team && match.HomeGoals > match.AwayGoals)
+            {
+                return "W";
+            }
+                        
+            if (match.AwayTeam == team && match.HomeGoals < match.AwayGoals)
+            {
+                return "W";
+            }
+
+            return "L";
         }
 
 
-        private List<LeaguePosition> GetIncrementalLeaguePositions(string team, List<MatchDetailModel> matchDetails, List<PointDeductionModel> pointDeductions)
+        private List<LeaguePosition> GetIncrementalLeaguePositions(List<MatchDetailModel> matchDetails, List<PointDeductionModel> pointDeductions, string team)
         {
             var teams = matchDetails.Select(m => m.HomeTeam).Distinct().ToList();
 
