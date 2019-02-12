@@ -1,4 +1,5 @@
 ﻿using FootballHistory.Api.Builders;
+using FootballHistory.Api.Builders.Models;
 using FootballHistory.Api.Domain;
 using FootballHistory.Api.Repositories;
 using Microsoft.AspNetCore.Builder;
@@ -29,6 +30,8 @@ namespace FootballHistory.Api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Football History API", Version = "v1" });
             });
+            
+            services.AddTransient<ILeagueTable, LeagueTable>();
             
             services.AddTransient<ILeagueTableBuilder, LeagueTableBuilder>();
             services.AddTransient<ILeagueSeasonFilterBuilder, LeagueSeasonFilterBuilder>();

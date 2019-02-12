@@ -9,17 +9,26 @@ namespace FootballHistory.Api.Builders
 {
     public class LeagueTableBuilder : ILeagueTableBuilder
     {
-        public List<LeagueTableRow> Build(List<MatchDetailModel> leagueMatchDetails, LeagueDetailModel leagueDetail, List<PointDeductionModel> pointDeductions, List<MatchDetailModel> playOffMatches)
+        private readonly ILeagueTable _leagueTable;
+
+        public LeagueTableBuilder(ILeagueTable leagueTable)
         {
-            var leagueTable = new LeagueTable();
+            _leagueTable = leagueTable;
+        }
+        
+        public List<LeagueTableRow> Build(
+            List<MatchDetailModel> leagueMatchDetails, 
+            LeagueDetailModel leagueDetail, 
+            List<PointDeductionModel> pointDeductions, 
+            List<MatchDetailModel> playOffMatches)
+        {
+            _leagueTable.AddLeagueRows(leagueMatchDetails);
+            _leagueTable.IncludePointDeductions(pointDeductions);
+            _leagueTable.SortLeagueTable();
+            _leagueTable.SetLeaguePosition();
+            _leagueTable.AddTeamStatus(leagueDetail, playOffMatches);            
 
-            leagueTable.AddLeagueRows(leagueMatchDetails);
-            leagueTable.IncludePointDeductions(pointDeductions);
-            leagueTable.SortLeagueTable();
-            leagueTable.SetLeaguePosition();
-            leagueTable.AddTeamStatus(leagueDetail, playOffMatches);            
-
-            return leagueTable.GetTable();
+            return _leagueTable.GetTable();
         }
     }
 }

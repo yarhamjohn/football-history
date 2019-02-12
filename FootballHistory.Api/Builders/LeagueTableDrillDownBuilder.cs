@@ -11,6 +11,13 @@ namespace FootballHistory.Api.Builders
 {
     public class LeagueTableDrillDownBuilder : ILeagueTableDrillDownBuilder
     {
+        private readonly ILeagueTable _leagueTable;
+
+        public LeagueTableDrillDownBuilder(ILeagueTable leagueTable)
+        {
+            _leagueTable = leagueTable;
+        }
+        
         public LeagueRowDrillDown Build(string team, List<MatchDetailModel> matchDetails, List<PointDeductionModel> pointDeductions)
         {
             return new LeagueRowDrillDown
@@ -65,8 +72,6 @@ namespace FootballHistory.Api.Builders
 
             for (var dt = firstDate; dt <= lastDate; dt = dt.AddDays(1))
             {
-                var leagueTable = new LeagueTable();
-
                 var filteredMatchDetails = matchDetails.Where(m => m.Date < dt).ToList();
                 var filteredHomeTeams = filteredMatchDetails.Select(m => m.HomeTeam).ToList();
                 var filteredAwayTeams = filteredMatchDetails.Select(m => m.AwayTeam).ToList();
@@ -74,17 +79,18 @@ namespace FootballHistory.Api.Builders
 
                 var missingTeams = teams.Where(p => filteredTeams.All(p2 => p2 != p)).ToList();
 
-                leagueTable.AddMissingTeams(missingTeams);
-                leagueTable.AddLeagueRows(filteredMatchDetails);
-                leagueTable.IncludePointDeductions(pointDeductions);
-                leagueTable.SortLeagueTable();
-                leagueTable.SetLeaguePosition();
+                _leagueTable.RemoveRows();
+                _leagueTable.AddMissingTeams(missingTeams);
+                _leagueTable.AddLeagueRows(filteredMatchDetails);
+                _leagueTable.IncludePointDeductions(pointDeductions);
+                _leagueTable.SortLeagueTable();
+                _leagueTable.SetLeaguePosition();
 
                 positions.Add(
                     new LeaguePosition
                     {
                         Date = dt,
-                        Position = leagueTable.GetTable().Where(l => l.Team == team).Select(r => r.Position).Single()
+                        Position = _leagueTable.GetTable().Where(l => l.Team == team).Select(r => r.Position).Single()
                     }
                 );
             }

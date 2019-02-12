@@ -1,15 +1,11 @@
 using System.Collections.Generic;
-using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
-using FootballHistory.Api.Builders.Models;
 using FootballHistory.Api.Models.Controller;
 using FootballHistory.Api.Repositories.Models;
-using Microsoft.AspNetCore.JsonPatch.Helpers;
 
-namespace FootballHistory.Api.Repositories
+namespace FootballHistory.Api.Builders.Models
 {
-    public class LeagueTable
+    public class LeagueTable : ILeagueTable
     {
         private List<LeagueTableRow> _leagueTable;
         
@@ -153,6 +149,11 @@ namespace FootballHistory.Api.Repositories
                     GoalsAgainst = 0
                 });
             }
+        }
+
+        public void RemoveRows()
+        {
+            _leagueTable = new List<LeagueTableRow>();
         }
     }
 }
