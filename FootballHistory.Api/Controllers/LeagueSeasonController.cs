@@ -14,6 +14,7 @@ namespace FootballHistory.Api.Controllers
         private readonly ILeagueMatchesRepository _leagueMatchesRepository;
         private readonly IPlayOffMatchesRepository _playOffMatchesRepository;
         private readonly IPlayOffMatchesBuilder _playOffMatchesBuilder;
+        private readonly IPointDeductionsRepository _pointDeductionsRepository;
         private readonly ILeagueSeasonBuilder _leagueSeasonBuilder;
         private readonly ILeagueTableDrillDownBuilder _leagueTableDrillDownBuilder;
         private readonly IResultMatrixBuilder _resultMatrixBuilder;
@@ -27,7 +28,8 @@ namespace FootballHistory.Api.Controllers
             IResultMatrixBuilder resultMatrixBuilder,
             IPlayOffMatchesRepository playOffMatchesRepository,
             ILeagueTableDrillDownBuilder leagueTableDrillDownBuilder,
-            IPlayOffMatchesBuilder playOffMatchesBuilder)
+            IPlayOffMatchesBuilder playOffMatchesBuilder,
+            IPointDeductionsRepository pointDeductionsRepository)
         {
             _divisionRepository = divisionRepository;
             _leagueSeasonFilterBuilder = leagueSeasonFilterBuilder;
@@ -37,6 +39,7 @@ namespace FootballHistory.Api.Controllers
             _playOffMatchesRepository = playOffMatchesRepository;
             _leagueTableDrillDownBuilder = leagueTableDrillDownBuilder;
             _playOffMatchesBuilder = playOffMatchesBuilder;
+            _pointDeductionsRepository = pointDeductionsRepository;
         }
 
         [HttpGet("[action]")]
@@ -69,7 +72,11 @@ namespace FootballHistory.Api.Controllers
         [HttpGet("[action]")]
         public LeagueRowDrillDown GetDrillDown(string tier, string season, string team)
         {
-            return _leagueTableDrillDownBuilder.GetDrillDown(Convert.ToInt32(tier), season, team);
+            var divisionTier = Convert.ToInt32(tier);
+            var matchDetails = _leagueMatchesRepository.GetLeagueMatches(divisionTier, season);
+            var pointDeductions = _pointDeductionsRepository.GetPointDeductions(divisionTier, season);
+
+            return _leagueTableDrillDownBuilder.Build(team, matchDetails, pointDeductions);
         }
     }
 }

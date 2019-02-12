@@ -1,9 +1,11 @@
+using System.Collections.Generic;
 using FootballHistory.Api.Builders.Models;
+using FootballHistory.Api.Repositories.Models;
 
 namespace FootballHistory.Api.Builders
 {
     public interface ILeagueTableDrillDownBuilder
     {
-        LeagueRowDrillDown GetDrillDown(int tier, string season, string team);
+        LeagueRowDrillDown Build(string team, List<MatchDetailModel> matchDetails, List<PointDeductionModel> pointDeductions);
     }
 }

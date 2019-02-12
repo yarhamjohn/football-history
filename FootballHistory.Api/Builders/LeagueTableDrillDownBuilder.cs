@@ -11,24 +11,17 @@ namespace FootballHistory.Api.Builders
 {
     public class LeagueTableDrillDownBuilder : ILeagueTableDrillDownBuilder
     {
-        private readonly ILeagueMatchesRepository _leagueMatchesRepository;
-        private readonly IPointDeductionsRepository _pointDeductionsRepository;
-
-        public LeagueTableDrillDownBuilder(
-            ILeagueMatchesRepository leagueMatchesRepository,
-            IPointDeductionsRepository pointDeductionsRepository)
+        public LeagueRowDrillDown Build(string team, List<MatchDetailModel> matchDetails, List<PointDeductionModel> pointDeductions)
         {
-            _leagueMatchesRepository = leagueMatchesRepository;
-            _pointDeductionsRepository = pointDeductionsRepository;
+            return CreateDrillDown(team, matchDetails, pointDeductions);
         }
 
-        public LeagueRowDrillDown GetDrillDown(int tier, string season, string team)
+        private LeagueRowDrillDown CreateDrillDown(string team, List<MatchDetailModel> matchDetails, List<PointDeductionModel> pointDeductions)
         {
-            var leagueMatches = _leagueMatchesRepository.GetLeagueMatches(tier, season);
             return new LeagueRowDrillDown
             {
-                Form = GenerateForm(leagueMatches, team),
-                Positions = GetIncrementalLeaguePositions(tier, season, team, leagueMatches)
+                Form = GenerateForm(matchDetails, team),
+                Positions = GetIncrementalLeaguePositions(team, matchDetails, pointDeductions)
             };
         }
 
@@ -55,11 +48,8 @@ namespace FootballHistory.Api.Builders
         }
 
 
-        private List<LeaguePosition> GetIncrementalLeaguePositions(int tier, string season, string team,
-            IReadOnlyCollection<MatchDetailModel> matchDetails)
+        private List<LeaguePosition> GetIncrementalLeaguePositions(string team, List<MatchDetailModel> matchDetails, List<PointDeductionModel> pointDeductions)
         {
-            var pointDeductions = _pointDeductionsRepository.GetPointDeductions(tier, season);
-
             var teams = matchDetails.Select(m => m.HomeTeam).Distinct().ToList();
 
             var positions = new List<LeaguePosition>();
