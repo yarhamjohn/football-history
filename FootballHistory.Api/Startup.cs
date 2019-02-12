@@ -62,6 +62,7 @@ namespace FootballHistory.Api
                 {
                     builder.WithOrigins(Configuration.GetSection("WhitelistedUrls").Get<string[]>());
                 });
+                app.UseMiddleware<MiddlewareExtensions>();
                 app.UseDeveloperExceptionPage();
                 
             }
