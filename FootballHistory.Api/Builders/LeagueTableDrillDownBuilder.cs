@@ -12,31 +12,30 @@ namespace FootballHistory.Api.Builders
     public class LeagueTableDrillDownBuilder : ILeagueTableDrillDownBuilder
     {
         private readonly ILeagueMatchesRepository _leagueMatchesRepository;
-        private readonly ILeagueFormRepository _leagueFormRepository;
         private readonly IPointDeductionsRepository _pointDeductionsRepository;
 
-        public LeagueTableDrillDownBuilder(ILeagueMatchesRepository leagueMatchesRepository,
-            ILeagueFormRepository leagueFormRepository,
+        public LeagueTableDrillDownBuilder(
+            ILeagueMatchesRepository leagueMatchesRepository,
             IPointDeductionsRepository pointDeductionsRepository)
         {
             _leagueMatchesRepository = leagueMatchesRepository;
-            _leagueFormRepository = leagueFormRepository;
             _pointDeductionsRepository = pointDeductionsRepository;
         }
 
         public LeagueRowDrillDown GetDrillDown(int tier, string season, string team)
         {
-            var teamLeagueMatches = _leagueFormRepository.GetLeagueMatches(tier, season, team);
+            var leagueMatches = _leagueMatchesRepository.GetLeagueMatches(tier, season);
             return new LeagueRowDrillDown
             {
-                Form = GenerateForm(teamLeagueMatches, team),
-                Positions = GetIncrementalLeaguePositions(tier, season, team)
+                Form = GenerateForm(leagueMatches, team),
+                Positions = GetIncrementalLeaguePositions(tier, season, team, leagueMatches)
             };
         }
 
-        private static List<Match> GenerateForm(IEnumerable<MatchDetailModel> leagueForm, string team)
+        private static List<Match> GenerateForm(IEnumerable<MatchDetailModel> leagueMatches, string team)
         {
-            return leagueForm.OrderBy(m => m.Date)
+            return leagueMatches.Where(m => m.HomeTeam == team || m.AwayTeam == team)
+                .OrderBy(m => m.Date)
                 .Select(match => new Match
                 {
                     MatchDate = match.Date, 
@@ -56,9 +55,9 @@ namespace FootballHistory.Api.Builders
         }
 
 
-        private List<LeaguePosition> GetIncrementalLeaguePositions(int tier, string season, string team)
+        private List<LeaguePosition> GetIncrementalLeaguePositions(int tier, string season, string team,
+            IReadOnlyCollection<MatchDetailModel> matchDetails)
         {
-            var matchDetails = _leagueMatchesRepository.GetLeagueMatches(tier, season);
             var pointDeductions = _pointDeductionsRepository.GetPointDeductions(tier, season);
 
             var teams = matchDetails.Select(m => m.HomeTeam).Distinct().ToList();
@@ -66,7 +65,7 @@ namespace FootballHistory.Api.Builders
             var positions = new List<LeaguePosition>();
 
             var dates = matchDetails.Select(m => m.Date).Distinct().OrderBy(m => m.Date).ToList();
-            var lastDate = dates.Last().AddDays(1);
+            var lastDate = dates.Last().AddDays(1); // what if there are no matches??
             var firstDate = dates.First();
 
             for (var dt = firstDate; dt <= lastDate; dt = dt.AddDays(1))

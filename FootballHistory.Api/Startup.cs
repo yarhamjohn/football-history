@@ -40,14 +40,12 @@ namespace FootballHistory.Api
             services.AddTransient<IPlayOffMatchesRepository, PlayOffMatchesRepository>();
             services.AddTransient<ILeagueMatchesRepository, LeagueMatchesRepository>();
             services.AddTransient<ILeagueDetailRepository, LeagueDetailRepository>();
-            services.AddTransient<ILeagueFormRepository, LeagueFormRepository>();
             services.AddTransient<IPointDeductionsRepository, PointDeductionsRepository>();
 
             var connString = Configuration.GetConnectionString("FootballHistory");
             services.AddDbContext<LeagueDetailRepositoryContext>(options => options.UseSqlServer(connString));
             services.AddDbContext<DivisionRepositoryContext>(options => options.UseSqlServer(connString));
             services.AddDbContext<PlayOffMatchesRepositoryContext>(options => options.UseSqlServer(connString));
-            services.AddDbContext<LeagueFormRepositoryContext>(options => options.UseSqlServer(connString));
             services.AddDbContext<LeagueMatchesRepositoryContext>(options => options.UseSqlServer(connString));
             services.AddDbContext<PointDeductionsRepositoryContext>(options => options.UseSqlServer(connString));
         }

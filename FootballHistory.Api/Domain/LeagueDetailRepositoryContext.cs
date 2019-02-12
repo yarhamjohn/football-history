@@ -28,14 +28,7 @@ namespace FootballHistory.Api.Domain
         public PointDeductionsRepositoryContext(DbContextOptions<PointDeductionsRepositoryContext> options) : base(options)
         {
         }
-    }            
-    
-    public class LeagueFormRepositoryContext : DbContext
-    {
-        public LeagueFormRepositoryContext(DbContextOptions<LeagueFormRepositoryContext> options) : base(options)
-        {
-        }
-    }    
+    }  
     
     public class DivisionRepositoryContext : DbContext
     {

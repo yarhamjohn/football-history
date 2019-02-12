@@ -9,22 +9,27 @@ namespace FootballHistory.Api.Repositories
 {
     public class LeagueMatchesRepository : ILeagueMatchesRepository
     {
-        private LeagueMatchesRepositoryContext RepositoryContext { get; }
+        private LeagueMatchesRepositoryContext Context { get; }
 
-        public LeagueMatchesRepository(LeagueMatchesRepositoryContext repositoryContext)
+        public LeagueMatchesRepository(LeagueMatchesRepositoryContext context)
         {
-            RepositoryContext = repositoryContext;
+            Context = context;
         }
 
         public List<MatchDetailModel> GetLeagueMatches(int tier, string season)
         {
-            using(var conn = RepositoryContext.Database.GetDbConnection())
+            return GetLeagueMatches(tier, season, null);
+        }
+        
+        public List<MatchDetailModel> GetLeagueMatches(int tier, string season, string team)
+        {
+            using(var conn = Context.Database.GetDbConnection())
             {
-                var cmd = GetDbCommand(conn, tier, season);
+                var cmd = GetDbCommand(conn, tier, season, team);
                 return GetMatchDetails(cmd);
             }
         }
-
+        
         private static List<MatchDetailModel> GetMatchDetails(DbCommand cmd)
         {
             var matchDetails = new List<MatchDetailModel>();
@@ -52,9 +57,11 @@ namespace FootballHistory.Api.Repositories
             return matchDetails;
         }
 
-        private static DbCommand GetDbCommand(DbConnection conn, int tier, string season)
+        private static DbCommand GetDbCommand(DbConnection conn, int tier, string season, string team)
         {
-            const string sql = @"
+            var teamFilter = team == null ? "" : " AND (hc.Name = @Team OR ac.Name = @Team)";
+            
+            var sql = $@"
 SELECT lm.matchDate
     ,hc.Name AS HomeTeam
     ,hc.Abbreviation AS HomeAbbreviation
@@ -68,6 +75,7 @@ INNER JOIN dbo.Clubs AS hc ON hc.Id = lm.HomeClubId
 INNER JOIN dbo.Clubs AS ac ON ac.Id = lm.AwayClubId
 WHERE d.Tier = @Tier
     AND lm.MatchDate BETWEEN DATEFROMPARTS(@StartYear, 7, 1) AND DATEFROMPARTS(@EndYear, 6, 30)
+    {teamFilter}
 ";
 
             conn.Open();
@@ -77,6 +85,7 @@ WHERE d.Tier = @Tier
             cmd.Parameters.Add(new SqlParameter("@Tier", tier));
             cmd.Parameters.Add(new SqlParameter("@StartYear", season.Substring(0, 4)));
             cmd.Parameters.Add(new SqlParameter("@EndYear", season.Substring(7, 4)));
+            cmd.Parameters.Add(new SqlParameter("@Team", team ?? ""));
             
             return cmd;
         }
