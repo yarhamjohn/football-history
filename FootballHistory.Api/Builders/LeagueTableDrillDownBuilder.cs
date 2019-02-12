@@ -65,7 +65,7 @@ namespace FootballHistory.Api.Builders
 
             for (var dt = firstDate; dt <= lastDate; dt = dt.AddDays(1))
             {
-                var leagueTable = new List<LeagueTableRow>();
+                var leagueTable = new LeagueTable();
 
                 var filteredMatchDetails = matchDetails.Where(m => m.Date < dt).ToList();
                 var filteredHomeTeams = filteredMatchDetails.Select(m => m.HomeTeam).ToList();
@@ -74,31 +74,17 @@ namespace FootballHistory.Api.Builders
 
                 var missingTeams = teams.Where(p => filteredTeams.All(p2 => p2 != p)).ToList();
 
-                foreach (var t in missingTeams)
-                {
-                    leagueTable.Add(new LeagueTableRow
-                    {
-                        Team = t,
-                        Won = 0,
-                        Drawn = 0,
-                        Lost = 0,
-                        GoalsFor = 0,
-                        GoalsAgainst = 0
-                    });
-                }
-                
-                CommonStuff.AddLeagueRows(leagueTable, filteredMatchDetails);
-                CommonStuff.IncludePointDeductions(leagueTable, pointDeductions);
-
-                leagueTable = CommonStuff.SortLeagueTable(leagueTable);
-
-                CommonStuff.SetLeaguePosition(leagueTable);
+                leagueTable.AddMissingTeams(missingTeams);
+                leagueTable.AddLeagueRows(filteredMatchDetails);
+                leagueTable.IncludePointDeductions(pointDeductions);
+                leagueTable.SortLeagueTable();
+                leagueTable.SetLeaguePosition();
 
                 positions.Add(
                     new LeaguePosition
                     {
                         Date = dt,
-                        Position = leagueTable.Where(l => l.Team == team).Select(r => r.Position).Single()
+                        Position = leagueTable.GetTable().Where(l => l.Team == team).Select(r => r.Position).Single()
                     }
                 );
             }
