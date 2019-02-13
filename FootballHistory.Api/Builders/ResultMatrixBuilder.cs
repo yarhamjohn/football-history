@@ -9,11 +9,6 @@ namespace FootballHistory.Api.Builders
     {
         public ResultMatrix Build(List<MatchDetailModel> matchDetails)
         {
-            return CreateResultMatrix(matchDetails);
-        }
-
-        private static ResultMatrix CreateResultMatrix(IReadOnlyCollection<MatchDetailModel> matchDetails)
-        {
             var teams = matchDetails
                 .Select(m => (HomeTeam: m.HomeTeam, HomeTeamAbbreviation: m.HomeTeamAbbreviation))
                 .Distinct()

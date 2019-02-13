@@ -9,15 +9,9 @@ namespace FootballHistory.Api.Builders
     {
         public PlayOffs Build(List<MatchDetailModel> matchDetails)
         {
-            var playOffMatches = matchDetails.OrderBy(m => m.Date).ToList();
-            
-            return PopulatePlayOffs(playOffMatches);
-        }
-
-        private static PlayOffs PopulatePlayOffs(IEnumerable<MatchDetailModel> playOffMatches)
-        {
             var playOffs = new PlayOffs();
 
+            var playOffMatches = matchDetails.OrderBy(m => m.Date).ToList();
             foreach (var match in playOffMatches)
             {
                 if (match.Round == "Final")

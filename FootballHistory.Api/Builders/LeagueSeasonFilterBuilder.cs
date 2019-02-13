@@ -7,19 +7,23 @@ namespace FootballHistory.Api.Builders
 {
     public class LeagueSeasonFilterBuilder : ILeagueSeasonFilterBuilder
     {
-        public LeagueSeasonFilter Build(List<DivisionModel> divisions)
+        private List<DivisionModel> _divisionModels;
+        
+        public LeagueSeasonFilter Build(List<DivisionModel> divisionModels)
         {
+            _divisionModels = divisionModels;
+            
             return new LeagueSeasonFilter
             {
-                AllSeasons = GetSeasons(divisions),
-                AllTiers = GetTiers(divisions)
+                AllSeasons = GetSeasons(),
+                AllTiers = GetTiers()
             };
         }
 
-        private static List<string> GetSeasons(IEnumerable<DivisionModel> divisionModels)
+        private List<string> GetSeasons()
         {
             var seasons = new HashSet<string>();
-            foreach (var divisionModel in divisionModels)
+            foreach (var divisionModel in _divisionModels)
             {
                 for (var year = divisionModel.From; year < divisionModel.To; year++)
                 {
@@ -30,9 +34,9 @@ namespace FootballHistory.Api.Builders
             return seasons.ToList();
         }
 
-        private static List<Tier> GetTiers(IEnumerable<DivisionModel> divisionModels)
+        private List<Tier> GetTiers()
         {
-            return divisionModels.GroupBy(model => model.Tier).Select(group => new Tier
+            return _divisionModels.GroupBy(model => model.Tier).Select(group => new Tier
                 {
                     Divisions = group.Select(d => new Division
                         {
