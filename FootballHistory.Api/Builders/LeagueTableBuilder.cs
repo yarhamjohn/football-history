@@ -16,16 +16,45 @@ namespace FootballHistory.Api.Builders
             foreach (var team in teams)
             {
                 var matches = GetGames(leagueMatches, team);
+                if (LeagueMatchesAreInvalid(matches))
+                {
+                    throw new Exception("An invalid set of league matches were provided.");
+                }
+                
                 leagueTable.Rows.Add(
                     new LeagueTableRow
                     {
                         Team = team,
                         Played = matches.Count,
+                        Won = CountWins(matches, team),
+                        Lost = CountDefeats(matches, team),
+                        Drawn = CountDraws(matches, team)
                     }
                 );
             }
             
             return leagueTable;
+        }
+
+        private int CountWins(List<MatchDetailModel> matches, string team)
+        {
+            var homeWins = GetHomeGames(matches, team).Count(g => g.HomeGoals > g.AwayGoals);
+            var awayWins = GetAwayGames(matches, team).Count(g => g.HomeGoals < g.AwayGoals);
+            return homeWins + awayWins;
+        }
+        
+        private int CountDraws(List<MatchDetailModel> matches, string team)
+        {
+            var homeDraws = GetHomeGames(matches, team).Count(g => g.HomeGoals == g.AwayGoals);
+            var awayDraws = GetAwayGames(matches, team).Count(g => g.HomeGoals == g.AwayGoals);
+            return homeDraws + awayDraws;
+        }
+        
+        private int CountDefeats(List<MatchDetailModel> matches, string team)
+        {
+            var homeDefeats = GetHomeGames(matches, team).Count(g => g.HomeGoals < g.AwayGoals);
+            var awayDefeats = GetAwayGames(matches, team).Count(g => g.HomeGoals > g.AwayGoals);
+            return homeDefeats + awayDefeats;
         }
 
         private static bool LeagueMatchesAreInvalid(List<MatchDetailModel> games)
@@ -36,13 +65,20 @@ namespace FootballHistory.Api.Builders
         private static List<MatchDetailModel> GetGames(List<MatchDetailModel> leagueMatches, string team)
         {
             var games = new List<MatchDetailModel>();
-            var homeGames = leagueMatches.Where(m => m.HomeTeam == team).ToList();
-            var awayGames = leagueMatches.Where(m => m.AwayTeam == team).ToList();
-            
-            games.AddRange(homeGames);
-            games.AddRange(awayGames);
-            
+            games.AddRange(GetHomeGames(leagueMatches, team));
+            games.AddRange(GetAwayGames(leagueMatches, team));
+
             return games;
+        }
+
+        private static List<MatchDetailModel> GetHomeGames(List<MatchDetailModel> matches, string team)
+        {
+            return matches.Where(m => m.HomeTeam == team).ToList();
+        }
+        
+        private static List<MatchDetailModel> GetAwayGames(List<MatchDetailModel> matches, string team)
+        {
+            return matches.Where(m => m.AwayTeam == team).ToList();
         }
 
         private List<string> GetTeams(List<MatchDetailModel> leagueMatches)
@@ -52,5 +88,6 @@ namespace FootballHistory.Api.Builders
             
             return homeTeams.Union(awayTeams).ToList();
         }
+        
     }
 }
