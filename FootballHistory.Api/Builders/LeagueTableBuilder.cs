@@ -31,7 +31,8 @@ namespace FootballHistory.Api.Builders
                         Drawn = matches.CountDraws(),
                         GoalsFor = matches.CountGoalsFor(),
                         GoalsAgainst = matches.CountGoalsAgainst(),
-                        GoalDifference = matches.CalculateGoalDifference()
+                        GoalDifference = matches.CalculateGoalDifference(),
+                        Points = matches.CalculatePoints()
                     }
                 );
             }

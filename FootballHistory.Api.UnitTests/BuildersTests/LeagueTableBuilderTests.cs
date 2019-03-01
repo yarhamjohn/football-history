@@ -69,7 +69,7 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
             
             Assert.That(leagueTable.Rows.Count, Is.EqualTo(3));
         }
-        
+
         [Test]
         public void Build_ShouldThrowAnException_GivenTwoMatchesWithTheSameHomeAndAwayTeams()
         {

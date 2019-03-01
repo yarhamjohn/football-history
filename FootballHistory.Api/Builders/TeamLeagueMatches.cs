@@ -73,5 +73,10 @@ namespace FootballHistory.Api.Builders
                    || sameTeamsOne.Count > 0
                    || sameTeamsTwo.Count > 0;
         }
+
+        public int CalculatePoints()
+        {
+            return (CountWins() * 3) + CountDraws();
+        }
     }
 }

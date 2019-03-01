@@ -83,13 +83,14 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                     Assert.That(teamLeagueMatches.CountGoalsFor(), Is.EqualTo(7));
                     Assert.That(teamLeagueMatches.CountGoalsAgainst(), Is.EqualTo(6));
                     Assert.That(teamLeagueMatches.CalculateGoalDifference(), Is.EqualTo(1));
+                    Assert.That(teamLeagueMatches.CalculatePoints(), Is.EqualTo(8));
                     Assert.That(teamLeagueMatches.AreInvalid, Is.False);
                 }
             );
         }
         
         [Test]
-        public void Build_ShouldThrowAnException_GivenTwoMatchesWithTheSameHomeAndAwayTeams()
+        public void AreInvalid_ShouldReturnTrue_GivenTwoMatchesBetweenTheSameHomeAndAwayTeams()
         {
             var leagueMatches = new List<MatchDetailModel>
             {
@@ -103,7 +104,7 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
         }
                 
         [Test]
-        public void Build_ShouldThrowAnException_GivenOneMatchWithTheSameHomeAndAwayTeam()
+        public void AreInvalid_ShouldReturnTrue_GivenAMatchWithTheSameHomeAndAwayTeams()
         {
             var leagueMatches = new List<MatchDetailModel>
             {
