@@ -8,11 +8,13 @@ namespace FootballHistory.Api.Builders
     {
         private readonly List<MatchDetailModel> _homeMatches;
         private readonly List<MatchDetailModel> _awayMatches;
+        private readonly string _team;
 
         public TeamLeagueMatches(List<MatchDetailModel> leagueMatches, string team)
         {
             _homeMatches = leagueMatches.Where(m => m.HomeTeam == team).ToList();
             _awayMatches = leagueMatches.Where(m => m.AwayTeam == team).ToList();
+            _team = team;
         }
 
         public int CountGamesPlayed()
@@ -76,7 +78,7 @@ namespace FootballHistory.Api.Builders
 
         public int CalculatePoints()
         {
-            return (CountWins() * 3) + CountDraws();
+            return CountWins() * 3 + CountDraws();
         }
     }
 }

@@ -83,7 +83,6 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                     Assert.That(teamLeagueMatches.CountGoalsFor(), Is.EqualTo(7));
                     Assert.That(teamLeagueMatches.CountGoalsAgainst(), Is.EqualTo(6));
                     Assert.That(teamLeagueMatches.CalculateGoalDifference(), Is.EqualTo(1));
-                    Assert.That(teamLeagueMatches.CalculatePoints(), Is.EqualTo(8));
                     Assert.That(teamLeagueMatches.AreInvalid, Is.False);
                 }
             );

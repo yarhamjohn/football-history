@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using FootballHistory.Api.Builders.Models;
 using FootballHistory.Api.Repositories.Models;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace FootballHistory.Api.Builders
 {
     public class LeagueTableBuilder : ILeagueTableBuilder
     {
-        public LeagueTab Build(List<MatchDetailModel> leagueMatches)
+        public LeagueTab Build(List<MatchDetailModel> leagueMatches, List<PointDeductionModel> pointDeductions)
         {
             var leagueTable = new LeagueTab();
 
@@ -21,6 +22,7 @@ namespace FootballHistory.Api.Builders
                     throw new Exception("An invalid set of league matches were provided.");
                 }
 
+                var pointsDeducted = pointDeductions.Where(d => d.Team == team).Sum(d => d.PointsDeducted);
                 leagueTable.Rows.Add(
                     new LeagueTableRow
                     {
@@ -32,7 +34,9 @@ namespace FootballHistory.Api.Builders
                         GoalsFor = matches.CountGoalsFor(),
                         GoalsAgainst = matches.CountGoalsAgainst(),
                         GoalDifference = matches.CalculateGoalDifference(),
-                        Points = matches.CalculatePoints()
+                        Points = matches.CalculatePoints() - pointsDeducted,
+                        PointsDeducted = pointsDeducted,
+                        PointsDeductionReason = string.Join(", ", pointDeductions.Where(d=> d.Team == team).Select(d => d.Reason))
                     }
                 );
             }
