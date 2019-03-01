@@ -28,7 +28,10 @@ namespace FootballHistory.Api.Builders
                         Played = matches.Count,
                         Won = CountWins(matches, team),
                         Lost = CountDefeats(matches, team),
-                        Drawn = CountDraws(matches, team)
+                        Drawn = CountDraws(matches, team),
+                        GoalsFor = CountGoalsFor(matches, team),
+                        GoalsAgainst = CountGoalsAgainst(matches, team),
+                        GoalDifference = CalculateGoalDifference(matches, team)
                     }
                 );
             }
@@ -36,6 +39,25 @@ namespace FootballHistory.Api.Builders
             return leagueTable;
         }
 
+        private int CalculateGoalDifference(List<MatchDetailModel> matches, string team)
+        {
+            return CountGoalsFor(matches, team) - CountGoalsAgainst(matches, team);
+        }
+
+        private int CountGoalsFor(List<MatchDetailModel> matches, string team)
+        {
+            var homeGoalsFor = GetHomeGames(matches, team).Sum(g => g.HomeGoals);
+            var awayGoalsFor = GetAwayGames(matches, team).Sum(g => g.AwayGoals);
+            return homeGoalsFor + awayGoalsFor;
+        }
+        
+        private int CountGoalsAgainst(List<MatchDetailModel> matches, string team)
+        {
+            var homeGoalsAgainst = GetHomeGames(matches, team).Sum(g => g.AwayGoals);
+            var awayGoalsAgainst = GetAwayGames(matches, team).Sum(g => g.HomeGoals);
+            return homeGoalsAgainst + awayGoalsAgainst;
+        }
+        
         private int CountWins(List<MatchDetailModel> matches, string team)
         {
             var homeWins = GetHomeGames(matches, team).Count(g => g.HomeGoals > g.AwayGoals);

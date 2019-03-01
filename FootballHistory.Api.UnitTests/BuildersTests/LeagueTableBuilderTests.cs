@@ -104,8 +104,8 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                 {
                     HomeTeam = "Team1",
                     AwayTeam = "Team2",
-                    HomeGoals = 0,
-                    AwayGoals = 0
+                    HomeGoals = 1,
+                    AwayGoals = 1
                 }
             };
             
@@ -120,7 +120,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                         Played = 1,
                         Won = 0,
                         Lost = 0,
-                        Drawn = 1
+                        Drawn = 1,
+                        GoalsFor = 1,
+                        GoalsAgainst = 1,
+                        GoalDifference = 0
                     },
                     new LeagueTableRow
                     {
@@ -128,7 +131,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                         Played = 1,
                         Won = 0,
                         Lost = 0,
-                        Drawn = 1
+                        Drawn = 1,
+                        GoalsFor = 1,
+                        GoalsAgainst = 1,
+                        GoalDifference = 0
                     }
                 }
             };
@@ -161,7 +167,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                         Played = 1,
                         Won = 1,
                         Lost = 0,
-                        Drawn = 0
+                        Drawn = 0,
+                        GoalsFor = 1,
+                        GoalsAgainst = 0,
+                        GoalDifference = 1
                     },
                     new LeagueTableRow
                     {
@@ -169,7 +178,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                         Played = 1,
                         Won = 0,
                         Lost = 1,
-                        Drawn = 0
+                        Drawn = 0,
+                        GoalsFor = 0,
+                        GoalsAgainst = 1,
+                        GoalDifference = -1
                     }
                 }
             };
@@ -202,7 +214,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                         Played = 1,
                         Won = 0,
                         Lost = 1,
-                        Drawn = 0
+                        Drawn = 0,
+                        GoalsFor = 0,
+                        GoalsAgainst = 1,
+                        GoalDifference = -1
                     },
                     new LeagueTableRow
                     {
@@ -210,7 +225,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                         Played = 1,
                         Won = 1,
                         Lost = 0,
-                        Drawn = 0
+                        Drawn = 0,
+                        GoalsFor = 1,
+                        GoalsAgainst = 0,
+                        GoalDifference = 1
                     }
                 }
             };
@@ -250,7 +268,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                         Played = 2,
                         Won = 0,
                         Lost = 0,
-                        Drawn = 2
+                        Drawn = 2,
+                        GoalsFor = 1,
+                        GoalsAgainst = 1,
+                        GoalDifference = 0
                     },
                     new LeagueTableRow
                     {
@@ -258,7 +279,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                         Played = 1,
                         Won = 0,
                         Lost = 0,
-                        Drawn = 1
+                        Drawn = 1,
+                        GoalsFor = 0,
+                        GoalsAgainst = 0,
+                        GoalDifference = 0
                     },
                     new LeagueTableRow
                     {
@@ -266,7 +290,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                         Played = 1,
                         Won = 0,
                         Lost = 0,
-                        Drawn = 1
+                        Drawn = 1,
+                        GoalsFor = 1,
+                        GoalsAgainst = 1,
+                        GoalDifference = 0
                     }
                 }
             };
@@ -306,7 +333,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                         Played = 2,
                         Won = 2,
                         Lost = 0,
-                        Drawn = 0
+                        Drawn = 0,
+                        GoalsFor = 2,
+                        GoalsAgainst = 0,
+                        GoalDifference = 2
                     },
                     new LeagueTableRow
                     {
@@ -314,7 +344,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                         Played = 1,
                         Won = 0,
                         Lost = 1,
-                        Drawn = 0
+                        Drawn = 0,
+                        GoalsFor = 0,
+                        GoalsAgainst = 1,
+                        GoalDifference = -1
                     },
                     new LeagueTableRow
                     {
@@ -322,7 +355,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                         Played = 1,
                         Won = 0,
                         Lost = 1,
-                        Drawn = 0
+                        Drawn = 0,
+                        GoalsFor = 0,
+                        GoalsAgainst = 1,
+                        GoalDifference = -1
                     }
                 }
             };
@@ -362,7 +398,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                         Played = 2,
                         Won = 0,
                         Lost = 2,
-                        Drawn = 0
+                        Drawn = 0,
+                        GoalsFor = 0,
+                        GoalsAgainst = 2,
+                        GoalDifference = -2
                     },
                     new LeagueTableRow
                     {
@@ -370,7 +409,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                         Played = 1,
                         Won = 1,
                         Lost = 0,
-                        Drawn = 0
+                        Drawn = 0,
+                        GoalsFor = 1,
+                        GoalsAgainst = 0,
+                        GoalDifference = 1
                     },
                     new LeagueTableRow
                     {
@@ -378,7 +420,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                         Played = 1,
                         Won = 1,
                         Lost = 0,
-                        Drawn = 0
+                        Drawn = 0,
+                        GoalsFor = 1,
+                        GoalsAgainst = 0,
+                        GoalDifference = 1
                     }
                 }
             };
@@ -418,7 +463,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                         Played = 2,
                         Won = 1,
                         Lost = 1,
-                        Drawn = 0
+                        Drawn = 0,
+                        GoalsFor = 1,
+                        GoalsAgainst = 1,
+                        GoalDifference = 0
                     },
                     new LeagueTableRow
                     {
@@ -426,7 +474,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                         Played = 1,
                         Won = 0,
                         Lost = 1,
-                        Drawn = 0
+                        Drawn = 0,
+                        GoalsFor = 0,
+                        GoalsAgainst = 1,
+                        GoalDifference = -1
                     },
                     new LeagueTableRow
                     {
@@ -434,7 +485,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                         Played = 1,
                         Won = 1,
                         Lost = 0,
-                        Drawn = 0
+                        Drawn = 0,
+                        GoalsFor = 1,
+                        GoalsAgainst = 0,
+                        GoalDifference = 1
                     }
                 }
             };
@@ -474,7 +528,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                         Played = 2,
                         Won = 1,
                         Lost = 0,
-                        Drawn = 1
+                        Drawn = 1,
+                        GoalsFor = 2,
+                        GoalsAgainst = 1,
+                        GoalDifference = 1
                     },
                     new LeagueTableRow
                     {
@@ -482,7 +539,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                         Played = 1,
                         Won = 0,
                         Lost = 1,
-                        Drawn = 0
+                        Drawn = 0,
+                        GoalsFor = 0,
+                        GoalsAgainst = 1,
+                        GoalDifference = -1
                     },
                     new LeagueTableRow
                     {
@@ -490,7 +550,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                         Played = 1,
                         Won = 0,
                         Lost = 0,
-                        Drawn = 1
+                        Drawn = 1,
+                        GoalsFor = 1,
+                        GoalsAgainst = 1,
+                        GoalDifference = 0
                     }
                 }
             };
@@ -530,7 +593,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                         Played = 2,
                         Won = 0,
                         Lost = 1,
-                        Drawn = 1
+                        Drawn = 1,
+                        GoalsFor = 1,
+                        GoalsAgainst = 2,
+                        GoalDifference = -1
                     },
                     new LeagueTableRow
                     {
@@ -538,7 +604,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                         Played = 1,
                         Won = 1,
                         Lost = 0,
-                        Drawn = 0
+                        Drawn = 0,
+                        GoalsFor = 1,
+                        GoalsAgainst = 0,
+                        GoalDifference = 1
                     },
                     new LeagueTableRow
                     {
@@ -546,7 +615,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                         Played = 1,
                         Won = 0,
                         Lost = 0,
-                        Drawn = 1
+                        Drawn = 1,
+                        GoalsFor = 1,
+                        GoalsAgainst = 1,
+                        GoalDifference = 0
                     }
                 }
             };
@@ -572,7 +644,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                     || actual.Played != expected.Played 
                     || actual.Won != expected.Won 
                     || actual.Lost != expected.Lost 
-                    || actual.Drawn != expected.Drawn)
+                    || actual.Drawn != expected.Drawn
+                    || actual.GoalsFor != expected.GoalsFor
+                    || actual.GoalsAgainst != expected.GoalsAgainst
+                    || actual.GoalDifference != expected.GoalDifference)
                 {
                     return false;
                 }
