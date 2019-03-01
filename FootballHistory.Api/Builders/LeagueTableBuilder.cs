@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using FootballHistory.Api.Builders.Models;
 using FootballHistory.Api.Repositories.Models;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace FootballHistory.Api.Builders
 {
@@ -16,27 +15,27 @@ namespace FootballHistory.Api.Builders
             var teams = GetTeams(leagueMatches);
             foreach (var team in teams)
             {
-                var matches = new TeamLeagueMatches(leagueMatches, team);
-                if (matches.AreInvalid())
+                var (homeGames, awayGames) = FilterLeagueMatches(leagueMatches, team);
+                if (LeagueMatchesAreInvalid(homeGames, awayGames))
                 {
                     throw new Exception("An invalid set of league matches were provided.");
                 }
 
-                var pointsDeducted = pointDeductions.Where(d => d.Team == team).Sum(d => d.PointsDeducted);
+                var (pointsDeducted, pointDeductionReasons) = CalculatePointDeductions(pointDeductions, team);
                 leagueTable.Rows.Add(
                     new LeagueTableRow
                     {
                         Team = team,
-                        Played = matches.CountGamesPlayed(),
-                        Won = matches.CountWins(),
-                        Lost = matches.CountDefeats(),
-                        Drawn = matches.CountDraws(),
-                        GoalsFor = matches.CountGoalsFor(),
-                        GoalsAgainst = matches.CountGoalsAgainst(),
-                        GoalDifference = matches.CalculateGoalDifference(),
-                        Points = matches.CalculatePoints() - pointsDeducted,
+                        Played = LeagueTableCalculator.CountGamesPlayed(homeGames, awayGames),
+                        Won = LeagueTableCalculator.CountWins(homeGames, awayGames),
+                        Lost = LeagueTableCalculator.CountDefeats(homeGames, awayGames),
+                        Drawn = LeagueTableCalculator.CountDraws(homeGames, awayGames),
+                        GoalsFor = LeagueTableCalculator.CountGoalsFor(homeGames, awayGames),
+                        GoalsAgainst = LeagueTableCalculator.CountGoalsAgainst(homeGames, awayGames),
+                        GoalDifference = LeagueTableCalculator.CalculateGoalDifference(homeGames, awayGames),
+                        Points = LeagueTableCalculator.CalculatePoints(homeGames, awayGames) - pointsDeducted,
                         PointsDeducted = pointsDeducted,
-                        PointsDeductionReason = string.Join(", ", pointDeductions.Where(d=> d.Team == team).Select(d => d.Reason))
+                        PointsDeductionReason = pointDeductionReasons
                     }
                 );
             }
@@ -44,12 +43,40 @@ namespace FootballHistory.Api.Builders
             return leagueTable;
         }
 
+        private (int PointsDeducted, string PointsDeductionReason) CalculatePointDeductions(List<PointDeductionModel> pointDeductions, string team)
+        {
+            var pointsDeducted = pointDeductions.Where(d => d.Team == team).Sum(d => d.PointsDeducted);
+            var reasons = string.Join(", ", pointDeductions.Where(d => d.Team == team).Select(d => d.Reason));
+            return (pointsDeducted, reasons);
+        }
+
+        private (List<MatchDetailModel> HomeGames, List<MatchDetailModel> AwayGames) FilterLeagueMatches(List<MatchDetailModel> leagueMatches, string team)
+        {
+            var homeGames = leagueMatches.Where(m => m.HomeTeam == team).ToList();
+            var awayGames = leagueMatches.Where(m => m.AwayTeam == team).ToList();
+            return (HomeGames: homeGames, AwayGames: awayGames);
+        }
+        
         private List<string> GetTeams(List<MatchDetailModel> leagueMatches)
         {
             var homeTeams = leagueMatches.Select(m => m.HomeTeam).ToList();
             var awayTeams = leagueMatches.Select(m => m.AwayTeam).ToList();
 
             return homeTeams.Union(awayTeams).ToList();
+        }
+        
+        private bool LeagueMatchesAreInvalid(List<MatchDetailModel> homeGames, List<MatchDetailModel> awayGames)
+        {
+            var opponentPairsOne = homeGames.Select(g => (g.HomeTeam, g.AwayTeam)).ToList();
+            var opponentPairsTwo = awayGames.Select(g => (g.HomeTeam, g.AwayTeam)).ToList();
+                
+            var sameTeamsOne = opponentPairsOne.Where(p => p.Item1 == p.Item2).ToList();
+            var sameTeamsTwo = opponentPairsTwo.Where(p => p.Item1 == p.Item2).ToList();
+                
+            return opponentPairsOne.Distinct().Count() != homeGames.Count
+                   || opponentPairsTwo.Distinct().Count() != awayGames.Count
+                   || sameTeamsOne.Count > 0
+                   || sameTeamsTwo.Count > 0;
         }
     }
 }
