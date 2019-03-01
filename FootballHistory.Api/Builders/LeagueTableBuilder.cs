@@ -2,15 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FootballHistory.Api.Builders.Models;
-using FootballHistory.Api.Models.Controller;
-using FootballHistory.Api.Repositories;
 using FootballHistory.Api.Repositories.Models;
 
 namespace FootballHistory.Api.Builders
 {
     public class LeagueTableBuilder : ILeagueTableBuilder
     {
-        private readonly ILeagueTable _leagueTable;
         public LeagueTab Build(List<MatchDetailModel> leagueMatches)
         {
             var leagueTable = new LeagueTab();
@@ -31,9 +28,9 @@ namespace FootballHistory.Api.Builders
             return leagueTable;
         }
 
-        public LeagueTableBuilder(ILeagueTable leagueTable)
+        private static bool LeagueMatchesAreInvalid(List<MatchDetailModel> games)
         {
-            _leagueTable = leagueTable;
+            return games.Select(g => (g.HomeTeam, g.AwayTeam)).Distinct().Count() != games.Count;
         }
 
         private static List<MatchDetailModel> GetGames(List<MatchDetailModel> leagueMatches, string team)
