@@ -42,12 +42,15 @@ namespace FootballHistory.Api.Builders
                         Points = calculator.CalculatePoints(),
                         PointsDeducted = calculator.CalculatePointsDeducted(),
                         PointsDeductionReason = calculator.GetPointDeductionReasons()
-                        //TODO: Add Position and Status
                     }
                 );
             }
 
-            return leagueTable;
+            var leagueTableWithPositions = leagueTable.AddPositions();
+            
+            // Add Status data
+            
+            return leagueTableWithPositions;
         }
         
         private bool LeagueMatchesAreInvalid(List<MatchDetailModel> leagueMatches)
