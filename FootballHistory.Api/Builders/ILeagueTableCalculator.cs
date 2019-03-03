@@ -10,5 +10,7 @@ namespace FootballHistory.Api.Builders
         int CountDraws();
         int CountDefeats();
         int CalculatePoints();
+        int CalculatePointsDeducted();
+        string GetPointDeductionReasons();
     }
 }

@@ -13,7 +13,7 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
         {
             var factory = new LeagueTableCalculatorFactory();
 
-            var calculator = factory.Create(new List<MatchDetailModel>(), "");
+            var calculator = factory.Create(new List<MatchDetailModel>(), new List<PointDeductionModel>(), "");
             
             Assert.That(calculator, Is.InstanceOf<LeagueTableCalculator>());
         }

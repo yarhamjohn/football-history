@@ -6,54 +6,76 @@ namespace FootballHistory.Api.Builders
 {
     public class LeagueTableCalculator : ILeagueTableCalculator
     {
-        public static int CountGamesPlayed(List<MatchDetailModel> homeGames, List<MatchDetailModel> awayGames)
+        private readonly List<PointDeductionModel> _pointDeductions;
+        private readonly List<MatchDetailModel> _homeGames;
+        private readonly List<MatchDetailModel> _awayGames;
+
+        public LeagueTableCalculator(List<MatchDetailModel> leagueMatches, List<PointDeductionModel> pointDeductions, string team)
         {
-            return homeGames.Count + awayGames.Count;
+            _pointDeductions = pointDeductions.Where(d => d.Team == team).ToList();
+            _homeGames = leagueMatches.Where(m => m.HomeTeam == team).ToList();
+            _awayGames = leagueMatches.Where(m => m.AwayTeam == team).ToList();
+        }
+        
+        public int CountGamesPlayed()
+        {
+            return _homeGames.Count + _awayGames.Count;
         }
             
-        public static int CalculateGoalDifference(List<MatchDetailModel> homeGames, List<MatchDetailModel> awayGames)
+        public int CalculateGoalDifference()
         {
-            return CountGoalsFor(homeGames, awayGames) - CountGoalsAgainst(homeGames, awayGames);
+            return CountGoalsFor() - CountGoalsAgainst();
         }
 
-        public static int CountGoalsFor(List<MatchDetailModel> homeGames, List<MatchDetailModel> awayGames)
+        public int CountGoalsFor()
         {
-            var homeGoalsFor = homeGames.Sum(g => g.HomeGoals);
-            var awayGoalsFor = awayGames.Sum(g => g.AwayGoals);
+            var homeGoalsFor = _homeGames.Sum(g => g.HomeGoals);
+            var awayGoalsFor = _awayGames.Sum(g => g.AwayGoals);
             return homeGoalsFor + awayGoalsFor;
         }
         
-        public static int CountGoalsAgainst(List<MatchDetailModel> homeGames, List<MatchDetailModel> awayGames)
+        public int CountGoalsAgainst()
         {
-            var homeGoalsAgainst = homeGames.Sum(g => g.AwayGoals);
-            var awayGoalsAgainst = awayGames.Sum(g => g.HomeGoals);
+            var homeGoalsAgainst = _homeGames.Sum(g => g.AwayGoals);
+            var awayGoalsAgainst = _awayGames.Sum(g => g.HomeGoals);
             return homeGoalsAgainst + awayGoalsAgainst;
         }
         
-        public static int CountWins(List<MatchDetailModel> homeGames, List<MatchDetailModel> awayGames)
+        public int CountWins()
         {
-            var homeWins = homeGames.Count(g => g.HomeGoals > g.AwayGoals);
-            var awayWins = awayGames.Count(g => g.HomeGoals < g.AwayGoals);
+            var homeWins = _homeGames.Count(g => g.HomeGoals > g.AwayGoals);
+            var awayWins = _awayGames.Count(g => g.HomeGoals < g.AwayGoals);
             return homeWins + awayWins;
         }
         
-        public static int CountDraws(List<MatchDetailModel> homeGames, List<MatchDetailModel> awayGames)
+        public int CountDraws()
         {
-            var homeDraws = homeGames.Count(g => g.HomeGoals == g.AwayGoals);
-            var awayDraws = awayGames.Count(g => g.HomeGoals == g.AwayGoals);
+            var homeDraws = _homeGames.Count(g => g.HomeGoals == g.AwayGoals);
+            var awayDraws = _awayGames.Count(g => g.HomeGoals == g.AwayGoals);
             return homeDraws + awayDraws;
         }
         
-        public static int CountDefeats(List<MatchDetailModel> homeGames, List<MatchDetailModel> awayGames)
+        public int CountDefeats()
         {
-            var homeDefeats = homeGames.Count(g => g.HomeGoals < g.AwayGoals);
-            var awayDefeats = awayGames.Count(g => g.HomeGoals > g.AwayGoals);
+            var homeDefeats = _homeGames.Count(g => g.HomeGoals < g.AwayGoals);
+            var awayDefeats = _awayGames.Count(g => g.HomeGoals > g.AwayGoals);
             return homeDefeats + awayDefeats;
         }
 
-        public static int CalculatePoints(List<MatchDetailModel> homeGames, List<MatchDetailModel> awayGames)
+        public int CalculatePoints()
         {
-            return CountWins(homeGames, awayGames) * 3 + CountDraws(homeGames, awayGames);
+            return CountWins() * 3 + CountDraws() - CalculatePointsDeducted();
+        }
+
+        public int CalculatePointsDeducted()
+        {
+           return _pointDeductions.Sum(d => d.PointsDeducted);
+
+        }
+        
+        public string GetPointDeductionReasons()
+        {
+            return string.Join(", ", _pointDeductions.Select(d => d.Reason));
         }
     }
 }
