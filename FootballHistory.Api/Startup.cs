@@ -33,6 +33,7 @@ namespace FootballHistory.Api
             
             services.AddTransient<ILeagueTable, LeagueTable>();
             services.AddTransient<ILeagueTableCalculatorFactory, LeagueTableCalculatorFactory>();
+            services.AddTransient<ILeagueTableCalculator, LeagueTableCalculator>();
             
             services.AddTransient<ILeagueTableBuilder, LeagueTableBuilder>();
             services.AddTransient<ILeagueSeasonFilterBuilder, LeagueSeasonFilterBuilder>();

@@ -4,7 +4,7 @@ using FootballHistory.Api.Repositories.Models;
 
 namespace FootballHistory.Api.Builders
 {
-    public static class LeagueTableCalculator
+    public class LeagueTableCalculator : ILeagueTableCalculator
     {
         public static int CountGamesPlayed(List<MatchDetailModel> homeGames, List<MatchDetailModel> awayGames)
         {
