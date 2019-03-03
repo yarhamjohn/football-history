@@ -25,385 +25,383 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
         [Test]
         public void CountGamesPlayed_ShouldReturnZero_GivenNoGames()
         {
-            var matches = new List<MatchDetailModel>();
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithNoMatchesAndNoPointsDeduction();
 
-            Assert.That(calculator.CountGamesPlayed(), Is.EqualTo(0)); 
+            var gamesPlayed = calculator.CountGamesPlayed();
+            
+            Assert.That(gamesPlayed, Is.EqualTo(0)); 
         }
                 
         [Test]
         public void CountGamesPlayed_ShouldReturnZero_GivenNoMatchingTeam()
         {
-            var matches = new List<MatchDetailModel> { OtherWinDefeat, OtherDraw };
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithNoMatchingTeamAndNoPointsDeduction();
 
-            Assert.That(calculator.CountGamesPlayed(), Is.EqualTo(0)); 
+            var gamesPlayed = calculator.CountGamesPlayed();
+            
+            Assert.That(gamesPlayed, Is.EqualTo(0));
         }
-                        
+
         [Test]
         public void CountGamesPlayed_ShouldReturnCorrectCount_GivenAMatchingTeam()
         {
-            var matches = new List<MatchDetailModel> { HomeWin, HomeDraw, HomeDefeat, AwayDefeat, AwayDraw, AwayWin, OtherWinDefeat, OtherDraw };
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithMatchingTeamAndNoPointsDeduction();
 
-            Assert.That(calculator.CountGamesPlayed(), Is.EqualTo(6)); 
+            var gamesPlayed = calculator.CountGamesPlayed();
+            
+            Assert.That(gamesPlayed, Is.EqualTo(6));
         }
-        
+
         [Test]
         public void CountWins_ShouldReturnZero_GivenNoGames()
         {
-            var matches = new List<MatchDetailModel>();
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithNoMatchesAndNoPointsDeduction();
 
-            Assert.That(calculator.CountWins(), Is.EqualTo(0)); 
+            var wins = calculator.CountWins();
+            
+            Assert.That(wins, Is.EqualTo(0)); 
         }
                 
         [Test]
         public void CountWins_ShouldReturnZero_GivenNoMatchingTeam()
         {
-            var matches = new List<MatchDetailModel> { OtherWinDefeat, OtherDraw };
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithNoMatchingTeamAndNoPointsDeduction();
 
-            Assert.That(calculator.CountWins(), Is.EqualTo(0)); 
+            var wins = calculator.CountWins();
+            
+            Assert.That(wins, Is.EqualTo(0)); 
         }
                         
         [Test]
         public void CountWins_ShouldReturnCorrectCount_GivenMatchingTeam()
         {
-            var matches = new List<MatchDetailModel> { HomeWin, HomeDraw, HomeDefeat, AwayDefeat, AwayDraw, AwayWin, OtherWinDefeat, OtherDraw };
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithMatchingTeamAndNoPointsDeduction();
 
-            Assert.That(calculator.CountWins(), Is.EqualTo(2)); 
+            var wins = calculator.CountWins();
+            
+            Assert.That(wins, Is.EqualTo(2)); 
         }
         
         [Test]
         public void CountDraws_ShouldReturnZero_GivenNoGames()
         {
-            var matches = new List<MatchDetailModel>();
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithNoMatchesAndNoPointsDeduction();
 
-            Assert.That(calculator.CountDraws(), Is.EqualTo(0)); 
+            var draws = calculator.CountDraws();
+            
+            Assert.That(draws, Is.EqualTo(0)); 
         }
                 
         [Test]
         public void CountDraws_ShouldReturnZero_GivenNoMatchingTeam()
         {
-            var matches = new List<MatchDetailModel> { OtherWinDefeat, OtherDraw };
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithNoMatchingTeamAndNoPointsDeduction();
 
-            Assert.That(calculator.CountDraws(), Is.EqualTo(0)); 
+            var draws = calculator.CountDraws();
+            
+            Assert.That(draws, Is.EqualTo(0)); 
         }
                         
         [Test]
         public void CountDraws_ShouldReturnCorrectCount_GivenMatchingTeam()
         {
-            var matches = new List<MatchDetailModel> { HomeWin, HomeDraw, HomeDefeat, AwayDefeat, AwayDraw, AwayWin, OtherWinDefeat, OtherDraw };
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithMatchingTeamAndNoPointsDeduction();
 
-            Assert.That(calculator.CountDraws(), Is.EqualTo(2)); 
+            var draws = calculator.CountDraws();
+            
+            Assert.That(draws, Is.EqualTo(2)); 
         }
                 
         [Test]
         public void CountDefeats_ShouldReturnZero_GivenNoGames()
         {
-            var matches = new List<MatchDetailModel>();
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithNoMatchesAndNoPointsDeduction();
 
-            Assert.That(calculator.CountDefeats(), Is.EqualTo(0)); 
+            var defeats = calculator.CountDefeats();
+            
+            Assert.That(defeats, Is.EqualTo(0)); 
         }
                 
         [Test]
         public void CountDefeats_ShouldReturnZero_GivenNoMatchingTeam()
         {
-            var matches = new List<MatchDetailModel> { OtherWinDefeat, OtherDraw };
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithNoMatchingTeamAndNoPointsDeduction();
 
-            Assert.That(calculator.CountDefeats(), Is.EqualTo(0)); 
+            var defeats = calculator.CountDefeats();
+            
+            Assert.That(defeats, Is.EqualTo(0)); 
         }
                         
         [Test]
         public void CountDefeats_ShouldReturnCorrectCount_GivenMatchingTeam()
         {
-            var matches = new List<MatchDetailModel> { HomeWin, HomeDraw, HomeDefeat, AwayDefeat, AwayDraw, AwayWin, OtherWinDefeat, OtherDraw };
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithMatchingTeamAndNoPointsDeduction();
 
-            Assert.That(calculator.CountDefeats(), Is.EqualTo(2)); 
+            var defeats = calculator.CountDefeats();
+            
+            Assert.That(defeats, Is.EqualTo(2)); 
         }
         
         [Test]
         public void CountGoalsFor_ShouldReturnZero_GivenNoGames()
         {
-            var matches = new List<MatchDetailModel>();
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithNoMatchesAndNoPointsDeduction();
 
-            Assert.That(calculator.CountGoalsFor(), Is.EqualTo(0)); 
+            var goalsFor = calculator.CountGoalsFor();
+            
+            Assert.That(goalsFor, Is.EqualTo(0)); 
         }
                 
         [Test]
         public void CountGoalsFor_ShouldReturnZero_GivenNoMatchingTeam()
         {
-            var matches = new List<MatchDetailModel> { OtherWinDefeat, OtherDraw };
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithNoMatchingTeamAndNoPointsDeduction();
 
-            Assert.That(calculator.CountGoalsFor(), Is.EqualTo(0)); 
+            var goalsFor = calculator.CountGoalsFor();
+            
+            Assert.That(goalsFor, Is.EqualTo(0)); 
         }
                         
         [Test]
         public void CountGoalsFor_ShouldReturnCorrectCount_GivenMatchingTeam()
         {
-            var matches = new List<MatchDetailModel> { HomeWin, HomeDraw, HomeDefeat, AwayDefeat, AwayDraw, AwayWin, OtherWinDefeat, OtherDraw };
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithMatchingTeamAndNoPointsDeduction();
 
-            Assert.That(calculator.CountGoalsFor(), Is.EqualTo(10)); 
+            var goalsFor = calculator.CountGoalsFor();
+            
+            Assert.That(goalsFor, Is.EqualTo(10)); 
         }
         
         [Test]
         public void CountGoalsAgainst_ShouldReturnZero_GivenNoGames()
         {
-            var matches = new List<MatchDetailModel>();
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithNoMatchesAndNoPointsDeduction();
 
-            Assert.That(calculator.CountGoalsAgainst(), Is.EqualTo(0)); 
+            var goalsAgainst = calculator.CountGoalsAgainst();
+            
+            Assert.That(goalsAgainst, Is.EqualTo(0)); 
         }
                 
         [Test]
         public void CountGoalsAgainst_ShouldReturnZero_GivenNoMatchingTeam()
         {
-            var matches = new List<MatchDetailModel> { OtherWinDefeat, OtherDraw };
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithNoMatchingTeamAndNoPointsDeduction();
 
-            Assert.That(calculator.CountGoalsAgainst(), Is.EqualTo(0)); 
+            var goalsAgainst = calculator.CountGoalsAgainst();
+            
+            Assert.That(goalsAgainst, Is.EqualTo(0)); 
         }
                         
         [Test]
         public void CountGoalsAgainst_ShouldReturnCorrectCount_GivenMatchingTeam()
         {
-            var matches = new List<MatchDetailModel> { HomeWin, HomeDraw, HomeDefeat, AwayDefeat, AwayDraw, AwayWin, OtherWinDefeat, OtherDraw };
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithMatchingTeamAndNoPointsDeduction();
 
-            Assert.That(calculator.CountGoalsAgainst(), Is.EqualTo(9)); 
+            var goalsAgainst = calculator.CountGoalsAgainst();
+            
+            Assert.That(goalsAgainst, Is.EqualTo(9)); 
         }
         
         [Test]
         public void CalculateGoalDifference_ShouldReturnZero_GivenNoGames()
         {
-            var matches = new List<MatchDetailModel>();
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithNoMatchesAndNoPointsDeduction();
 
-            Assert.That(calculator.CalculateGoalDifference(), Is.EqualTo(0)); 
+            var goalDifference = calculator.CalculateGoalDifference();
+            
+            Assert.That(goalDifference, Is.EqualTo(0)); 
         }
                 
         [Test]
         public void CalculateGoalDifference_ShouldReturnZero_GivenNoMatchingTeam()
         {
-            var matches = new List<MatchDetailModel> { OtherWinDefeat, OtherDraw };
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithNoMatchingTeamAndNoPointsDeduction();
 
-            Assert.That(calculator.CalculateGoalDifference(), Is.EqualTo(0)); 
+            var goalsDifference = calculator.CalculateGoalDifference();
+            
+            Assert.That(goalsDifference, Is.EqualTo(0)); 
         }
                         
         [Test]
         public void CalculateGoalDifference_ShouldReturnCorrectCount_GivenMatchingTeam()
         {
-            var matches = new List<MatchDetailModel> { HomeWin, HomeDraw, HomeDefeat, AwayDefeat, AwayDraw, AwayWin, OtherWinDefeat, OtherDraw };
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithMatchingTeamAndNoPointsDeduction();
 
-            Assert.That(calculator.CalculateGoalDifference(), Is.EqualTo(1)); 
+            var goalDifference = calculator.CalculateGoalDifference();
+            
+            Assert.That(goalDifference, Is.EqualTo(1)); 
         }
                 
         [Test]
         public void CalculatePoints_ShouldReturnZero_GivenNoGamesAndNoPointDeductions()
         {
-            var matches = new List<MatchDetailModel>();
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithNoMatchesAndNoPointsDeduction();
 
-            Assert.That(calculator.CalculatePoints(), Is.EqualTo(0)); 
+            var points = calculator.CalculatePoints();
+            
+            Assert.That(points, Is.EqualTo(0)); 
         }
                               
         [Test]
-        public void CalculatePoints_ShouldReturnCorrectTotal_GivenNoGamesAndAPointDeduction()
+        public void CalculatePoints_ShouldReturnCorrectTotal_GivenNoGamesAndPointDeductions()
         {
-            var matches = new List<MatchDetailModel>();
-            var pointDeductions = new List<PointDeductionModel>
-            {
-                new PointDeductionModel { Team = SelectedTeam, PointsDeducted = 1 }, 
-                new PointDeductionModel { Team = OtherTeam, PointsDeducted = 2}
-            };
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithNoMatchesAndPointDeductions();
 
-            Assert.That(calculator.CalculatePoints(), Is.EqualTo(-1)); 
+            var points = calculator.CalculatePoints();
+            
+            Assert.That(points, Is.EqualTo(-4));
         }
-        
+
         [Test]
         public void CalculatePoints_ShouldReturnZero_GivenNoMatchingTeamAndNoPointDeductions()
         {
-            var matches = new List<MatchDetailModel> { OtherWinDefeat, OtherDraw };
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithNoMatchingTeamAndNoPointsDeduction();
 
-            Assert.That(calculator.CalculatePoints(), Is.EqualTo(0)); 
+            var points = calculator.CalculatePoints();
+            
+            Assert.That(points, Is.EqualTo(0)); 
         }
                       
         [Test]
-        public void CalculatePoints_ShouldReturnCorrectTotal_GivenNoMatchingTeamAndAPointDeduction()
+        public void CalculatePoints_ShouldReturnCorrectTotal_GivenNoMatchingTeamAndPointDeductions()
         {
-            var matches = new List<MatchDetailModel> { OtherWinDefeat, OtherDraw };
-            var pointDeductions = new List<PointDeductionModel>
-            {
-                new PointDeductionModel { Team = SelectedTeam, PointsDeducted = 1 }, 
-                new PointDeductionModel { Team = OtherTeam, PointsDeducted = 2}
-            };
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithNoMatchingTeamAndPointDeductions();
 
-            Assert.That(calculator.CalculatePoints(), Is.EqualTo(-1)); 
+            var points = calculator.CalculatePoints();
+            
+            Assert.That(points, Is.EqualTo(-4)); 
         }
 
         [Test]
         public void CalculatePoints_ShouldReturnCorrectTotal_GivenMatchingTeamAndNoPointDeductions()
         {
-            var matches = new List<MatchDetailModel> { HomeWin, HomeDraw, HomeDefeat, AwayDefeat, AwayDraw, AwayWin, OtherWinDefeat, OtherDraw };
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithMatchingTeamAndNoPointsDeduction();
 
-            Assert.That(calculator.CalculatePoints(), Is.EqualTo(8)); 
+            var points = calculator.CalculatePoints();
+            
+            Assert.That(points, Is.EqualTo(8)); 
         }
         
         [Test]
-        public void CalculatePoints_ShouldReturnCorrectTotal_GivenMatchingTeamAndAPointDeduction()
+        public void CalculatePoints_ShouldReturnCorrectTotal_GivenMatchingTeamAndPointDeductions()
         {
-            var matches = new List<MatchDetailModel> { HomeWin, HomeDraw, HomeDefeat, AwayDefeat, AwayDraw, AwayWin, OtherWinDefeat, OtherDraw };
-            var pointDeductions = new List<PointDeductionModel>
-            {
-                new PointDeductionModel { Team = SelectedTeam, PointsDeducted = 1 }, 
-                new PointDeductionModel { Team = OtherTeam, PointsDeducted = 2}
-            };
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithMatchingTeamAndPointDeductions();
 
-            Assert.That(calculator.CalculatePoints(), Is.EqualTo(7)); 
-        }
-                
-        [Test]
-        public void CalculatePoints_ShouldReturnCorrectTotal_GivenMatchingTeamAndMultiplePointDeductions()
-        {
-            var matches = new List<MatchDetailModel> { HomeWin, HomeDraw, HomeDefeat, AwayDefeat, AwayDraw, AwayWin, OtherWinDefeat, OtherDraw };
-            var pointDeductions = new List<PointDeductionModel>
-            {
-                new PointDeductionModel { Team = SelectedTeam, PointsDeducted = 1 }, 
-                new PointDeductionModel { Team = OtherTeam, PointsDeducted = 2},
-                new PointDeductionModel { Team = SelectedTeam, PointsDeducted = 3 }, 
-            };
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
-
-            Assert.That(calculator.CalculatePoints(), Is.EqualTo(4)); 
+            var points = calculator.CalculatePoints();
+            
+            Assert.That(points, Is.EqualTo(4));
         }
 
         [Test]
         public void GetPointDeductionReasons_ShouldReturnEmptyString_GivenNoGamesAndNoPointDeductions()
         {
-            var matches = new List<MatchDetailModel>();
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithNoMatchesAndNoPointsDeduction();
 
-            Assert.That(calculator.GetPointDeductionReasons(), Is.EqualTo(string.Empty)); 
+            var reasons = calculator.GetPointDeductionReasons();
+            
+            Assert.That(reasons, Is.EqualTo(string.Empty)); 
         }
         
         [Test]
-        public void GetPointDeductionReasons_ShouldReturnEmptyString_GivenNoGamesAndAPointDeductions()
+        public void GetPointDeductionReasons_ShouldReturnCorrectString_GivenNoGamesAndPointDeductions()
         {
-            var matches = new List<MatchDetailModel>();
-            var pointDeductions = new List<PointDeductionModel>
-            {
-                new PointDeductionModel { Team = SelectedTeam, PointsDeducted = 1, Reason = "Reason1" }, 
-                new PointDeductionModel { Team = OtherTeam, PointsDeducted = 2, Reason = "Reason2" }
-            };
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithNoMatchesAndPointDeductions();
 
-            Assert.That(calculator.GetPointDeductionReasons(), Is.EqualTo("Reason1")); 
+            var reasons = calculator.GetPointDeductionReasons();
+            
+            Assert.That(reasons, Is.EqualTo("Reason1, Reason3")); 
         }
         [Test]
         
         public void GetPointDeductionReasons_ShouldReturnEmptyString_GivenNoMatchingTeamAndNoPointDeductions()
         {
-            var matches = new List<MatchDetailModel> { OtherWinDefeat, OtherDraw };
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithNoMatchingTeamAndNoPointsDeduction();
 
-            Assert.That(calculator.GetPointDeductionReasons(), Is.EqualTo(string.Empty)); 
+            var reasons = calculator.GetPointDeductionReasons();
+            
+            Assert.That(reasons, Is.EqualTo(string.Empty)); 
         }
                       
         [Test]
-        public void GetPointDeductionReasons_ShouldReturnEmptyString_GivenNoMatchingTeamAndAPointDeduction()
+        public void GetPointDeductionReasons_ShouldReturnCorrectString_GivenNoMatchingTeamAndPointDeductions()
         {
-            var matches = new List<MatchDetailModel> { OtherWinDefeat, OtherDraw };
-            var pointDeductions = new List<PointDeductionModel>
-            {
-                new PointDeductionModel { Team = SelectedTeam, PointsDeducted = 1, Reason = "Reason1" }, 
-                new PointDeductionModel { Team = OtherTeam, PointsDeducted = 2, Reason = "Reason2" }
-            };
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithNoMatchingTeamAndPointDeductions();
 
-            Assert.That(calculator.GetPointDeductionReasons(), Is.EqualTo("Reason1")); 
+            var reasons = calculator.GetPointDeductionReasons();
+            
+            Assert.That(reasons, Is.EqualTo("Reason1, Reason3"));
         }
-        
+
         [Test]
         public void GetPointDeductionReasons_ShouldReturnEmptyString_GivenAMatchingTeamAndNoPointDeduction()
         {
-            var matches = new List<MatchDetailModel> { HomeWin, HomeDraw, HomeDefeat, AwayDefeat, AwayDraw, AwayWin, OtherWinDefeat, OtherDraw };
-            var pointDeductions = new List<PointDeductionModel>();
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithMatchingTeamAndNoPointsDeduction();
 
-            Assert.That(calculator.GetPointDeductionReasons(), Is.EqualTo(string.Empty)); 
+            var reasons = calculator.GetPointDeductionReasons();
+            
+            Assert.That(reasons, Is.EqualTo(string.Empty)); 
         }
 
         [Test]
-        public void GetPointDeductionReasons_ShouldReturnReason_GivenMatchingTeamAndAPointDeduction()
+        public void GetPointDeductionReasons_ShouldReturnCorrectString_GivenMatchingTeamAndPointDeductions()
         {
-            var matches = new List<MatchDetailModel> { HomeWin, HomeDraw, HomeDefeat, AwayDefeat, AwayDraw, AwayWin, OtherWinDefeat, OtherDraw };
-            var pointDeductions = new List<PointDeductionModel>
-            {
-                new PointDeductionModel { Team = SelectedTeam, PointsDeducted = 1, Reason = "Reason1" }, 
-                new PointDeductionModel { Team = OtherTeam, PointsDeducted = 2, Reason = "Reason2" }
-            };
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var calculator = BuildCalculatorWithMatchingTeamAndPointDeductions();
 
-            Assert.That(calculator.GetPointDeductionReasons(), Is.EqualTo("Reason1")); 
+            var reasons = calculator.GetPointDeductionReasons();
+            
+            Assert.That(reasons, Is.EqualTo("Reason1, Reason3")); 
         }
         
-        [Test]
-        public void GetPointDeductionReasons_ShouldReturnReasons_GivenMatchingTeamAndMultiplePointDeductions()
+        private static LeagueTableCalculator BuildCalculatorWithNoMatchesAndNoPointsDeduction()
+        {
+            var matches = new List<MatchDetailModel>();
+            var pointDeductions = new List<PointDeductionModel>();
+            return new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+        }
+
+        private static LeagueTableCalculator BuildCalculatorWithNoMatchingTeamAndNoPointsDeduction()
+        {
+            var matches = new List<MatchDetailModel> {OtherWinDefeat, OtherDraw};
+            var pointDeductions = new List<PointDeductionModel>();
+            return new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);
+        }
+        
+        private static LeagueTableCalculator BuildCalculatorWithMatchingTeamAndNoPointsDeduction()
         {
             var matches = new List<MatchDetailModel> { HomeWin, HomeDraw, HomeDefeat, AwayDefeat, AwayDraw, AwayWin, OtherWinDefeat, OtherDraw };
-            var pointDeductions = new List<PointDeductionModel>
-            {
-                new PointDeductionModel { Team = SelectedTeam, PointsDeducted = 1, Reason = "Reason1" }, 
-                new PointDeductionModel { Team = OtherTeam, PointsDeducted = 2, Reason = "Reason2" },
-                new PointDeductionModel { Team = SelectedTeam, PointsDeducted = 1, Reason = "Reason3" } 
-            };
-            var calculator = new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);    
+            var pointDeductions = new List<PointDeductionModel>();
+            return new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);
+        }
+        
+        private static LeagueTableCalculator BuildCalculatorWithNoMatchesAndPointDeductions()
+        {
+            var matches = new List<MatchDetailModel>();
+            var pointDeductions = BuildPointDeductions();
+            return new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);
+        }
+        
+        private static LeagueTableCalculator BuildCalculatorWithNoMatchingTeamAndPointDeductions()
+        {
+            var matches = new List<MatchDetailModel> {OtherWinDefeat, OtherDraw};
+            var pointDeductions = BuildPointDeductions();
+            return new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);
+        }
+        
+        private static LeagueTableCalculator BuildCalculatorWithMatchingTeamAndPointDeductions()
+        {
+            var matches = new List<MatchDetailModel> { HomeWin, HomeDraw, HomeDefeat, AwayDefeat, AwayDraw, AwayWin, OtherWinDefeat, OtherDraw };
+            var pointDeductions = BuildPointDeductions();
+            return new LeagueTableCalculator(matches, pointDeductions, SelectedTeam);
+        }
 
-            Assert.That(calculator.GetPointDeductionReasons(), Is.EqualTo("Reason1, Reason3")); 
+        private static List<PointDeductionModel> BuildPointDeductions()
+        {
+            return new List<PointDeductionModel>
+            {
+                new PointDeductionModel {Team = SelectedTeam, PointsDeducted = 1, Reason = "Reason1"},
+                new PointDeductionModel {Team = OtherTeam, PointsDeducted = 2, Reason = "Reason2"},
+                new PointDeductionModel {Team = SelectedTeam, PointsDeducted = 3, Reason = "Reason3"}
+            };
         }
     }
 }
