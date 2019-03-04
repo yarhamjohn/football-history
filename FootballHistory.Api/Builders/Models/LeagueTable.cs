@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using FootballHistory.Api.Models.Controller;
@@ -7,153 +8,96 @@ namespace FootballHistory.Api.Builders.Models
 {
     public class LeagueTable : ILeagueTable
     {
-        private List<LeagueTableRow> _leagueTable;
-        
+        public List<LeagueTableRow> Rows { get; set; }
+
         public LeagueTable()
         {
-            _leagueTable = new List<LeagueTableRow>();    
+            Rows = new List<LeagueTableRow>();
         }
 
-        public List<LeagueTableRow> GetTable()
+        public LeagueTable AddPositionsAndStatuses(LeagueDetailModel leagueDetailModel, List<MatchDetailModel> playOffMatches)
         {
-            return _leagueTable;
+            var positionedLeagueTable = AddPositions();
+            return positionedLeagueTable.AddStatuses(leagueDetailModel, playOffMatches);
+
         }
-        
-        public void AddLeagueRows(List<MatchDetailModel> leagueMatchDetails)
+
+        private LeagueTable AddStatuses(LeagueDetailModel leagueDetailModel, List<MatchDetailModel> playOffMatches)
         {
-            var filteredHomeTeams = leagueMatchDetails.Select(m => m.HomeTeam).ToList();
-            var filteredAwayTeams = leagueMatchDetails.Select(m => m.AwayTeam).ToList();
-            var teams = filteredHomeTeams.Union(filteredAwayTeams).ToList();
+            if (leagueDetailModel.TotalPlaces != Rows.Count)
+            {
+                throw new Exception($"The League Detail Model ({leagueDetailModel.TotalPlaces} places) does not match the League Table ({Rows.Count} rows)");
+            }
+
+            if (leagueDetailModel.PlayOffPlaces > 0 && !playOffMatches.Exists(m => m.Round == "Final"))
+            {
+                throw new Exception(
+                    $"The League Detail Model contains {leagueDetailModel.PlayOffPlaces} playoff places but the playoff matches provided contain no Final");
+            }
             
-            foreach (var team in teams)
+            return new LeagueTable
             {
-                var homeGames = leagueMatchDetails.Where(m => m.HomeTeam == team).ToList();
-                var awayGames = leagueMatchDetails.Where(m => m.AwayTeam == team).ToList();
-
-                _leagueTable.Add(
-                    new LeagueTableRow
+                Rows = Rows.Select(r =>
+                {
+                    if (r.Position == 1)
                     {
-                        Team = team,
-                        Won = homeGames.Count(g => g.HomeGoals > g.AwayGoals) + awayGames.Count(g => g.AwayGoals > g.HomeGoals),
-                        Drawn = homeGames.Count(g => g.HomeGoals == g.AwayGoals) + awayGames.Count(g => g.AwayGoals == g.HomeGoals),
-                        Lost = homeGames.Count(g => g.HomeGoals < g.AwayGoals) + awayGames.Count(g => g.AwayGoals < g.HomeGoals),
-                        GoalsFor = homeGames.Sum(g => g.HomeGoals) + awayGames.Sum(g => g.AwayGoals),
-                        GoalsAgainst = homeGames.Sum(g => g.AwayGoals) + awayGames.Sum(g => g.HomeGoals),
+                        r.Status = "C";
                     }
-                );
-            }
+                    else if (r.Position <= leagueDetailModel.PromotionPlaces)
+                    {
+                        r.Status = "P";
+                    }
+                    else
+                    {
+                        var placesAbovePlayOffs = leagueDetailModel.PromotionPlaces == 0 ? 1 : leagueDetailModel.PromotionPlaces;
+                        if (r.Position <= placesAbovePlayOffs + leagueDetailModel.PlayOffPlaces)
+                        {
+                            var final = playOffMatches.Single(m => m.Round == "Final");
+                            var winner = final.PenaltyShootout 
+                                ? (final.HomePenaltiesScored > final.AwayPenaltiesScored ? final.HomeTeam : final.AwayTeam) 
+                                : final.ExtraTime
+                                    ? (final.HomeGoalsET > final.AwayGoalsET ? final.HomeTeam : final.AwayTeam) 
+                                    : (final.HomeGoals > final.AwayGoals ? final.HomeTeam : final.AwayTeam);
 
-            foreach (var row in _leagueTable)
+                            r.Status = r.Team == winner ? "PO (P)" : "PO";
+                        }
+                        else if (r.Position > leagueDetailModel.TotalPlaces - leagueDetailModel.RelegationPlaces)
+                        {
+                            r.Status = "R";
+                        }
+                        else
+                        {
+                            r.Status = string.Empty;
+                        }
+                    }
+
+                    return r;
+                }).ToList()
+            };
+        }
+
+        private LeagueTable AddPositions()
+        {
+            var sortedRows = SortTableRows();
+            return new LeagueTable
             {
-                row.Played = row.Won + row.Drawn + row.Lost;
-                row.GoalDifference = row.GoalsFor - row.GoalsAgainst;
-                row.Points = (row.Won * 3) + row.Drawn;
-            }
-        }
-
-        public void IncludePointDeductions(List<PointDeductionModel> pointDeductions)
-        {
-            foreach (var row in _leagueTable)
-            {
-                var deduction = pointDeductions.Where(d => d.Team == row.Team).ToList();
-
-                if (deduction.Count == 0)
+                Rows = sortedRows.Select((t, i) =>
                 {
-                    row.PointsDeducted = 0;
-                    row.PointsDeductionReason = string.Empty;
-                } 
-                else 
-                {
-                    var d = deduction.Single();
+                    t.Position = i + 1;
+                    return t;
+                }).ToList()
+            };
+        }
 
-                    row.PointsDeducted = d.PointsDeducted;
-                    row.PointsDeductionReason = d.Reason;
-                    row.Points -= d.PointsDeducted;
-                }
-            }
-        }
-        
-        public void SetLeaguePosition()
+        private List<LeagueTableRow> SortTableRows()
         {
-            _leagueTable = _leagueTable.Select((t, i) => { 
-                t.Position = i + 1; 
-                return t; 
-            }).ToList();
-        }
-        
-        public void SortLeagueTable()
-        {
-            _leagueTable = _leagueTable
+            return Rows
                 .OrderByDescending(t => t.Points)
                 .ThenByDescending(t => t.GoalDifference) // Goal ratio was used prior to 1976-77
                 .ThenByDescending(t => t.GoalsFor)
                 // head to head
                 .ThenBy(t => t.Team) // unless it affects a promotion/relegation spot at the end of the season in which case a play-off occurs (this has never happened)
                 .ToList(); 
-        }
-        
-        public void AddTeamStatus(LeagueDetailModel leagueDetailModel, IEnumerable<MatchDetailModel> playOffMatchDetails)
-        {
-            var playOffFinal = playOffMatchDetails.Where(m => m.Round == "Final").ToList();
-            
-            foreach (var row in _leagueTable)
-            {
-                if (row.Position == 1)
-                {
-                    row.Status = "C";
-                }
-                else if (row.Position <= leagueDetailModel.PromotionPlaces)
-                {
-                    row.Status = "P";
-                }
-                else if (playOffFinal.Count == 1 && row.Position <= leagueDetailModel.PlayOffPlaces + leagueDetailModel.PromotionPlaces)
-                {
-                    var final = playOffFinal.Single();
-                    var winner = final.PenaltyShootout 
-                        ? (final.HomePenaltiesScored > final.AwayPenaltiesScored ? final.HomeTeam : final.AwayTeam) 
-                        : final.ExtraTime
-                            ? (final.HomeGoalsET > final.AwayGoalsET ? final.HomeTeam : final.AwayTeam) 
-                            : (final.HomeGoals > final.AwayGoals ? final.HomeTeam : final.AwayTeam);
-                    
-                    if (row.Team == winner)
-                    {
-                        row.Status = "PO (P)";
-                    }
-                    else
-                    {
-                        row.Status = "PO";
-                    }
-                }
-                else if (row.Position > leagueDetailModel.TotalPlaces - leagueDetailModel.RelegationPlaces)
-                {
-                    row.Status = "R";
-                }
-                else
-                {
-                    row.Status = string.Empty;
-                }
-            }
-        }
-
-        public void AddMissingTeams(List<string> missingTeams)
-        {
-            foreach (var t in missingTeams)
-            {
-                _leagueTable.Add(new LeagueTableRow
-                {
-                    Team = t,
-                    Won = 0,
-                    Drawn = 0,
-                    Lost = 0,
-                    GoalsFor = 0,
-                    GoalsAgainst = 0
-                });
-            }
-        }
-
-        public void RemoveRows()
-        {
-            _leagueTable = new List<LeagueTableRow>();
         }
     }
 }

@@ -16,14 +16,14 @@ namespace FootballHistory.Api.Builders
             _leagueTableCalculatorFactory = leagueTableCalculatorFactory;
         }
         
-        public LeagueTab Build(List<MatchDetailModel> leagueMatches, List<PointDeductionModel> pointDeductions, LeagueDetailModel leagueDetailModel, List<MatchDetailModel> playOffMatches)
+        public LeagueTable Build(List<MatchDetailModel> leagueMatches, List<PointDeductionModel> pointDeductions, LeagueDetailModel leagueDetailModel, List<MatchDetailModel> playOffMatches)
         {
             if (LeagueMatchesAreInvalid(leagueMatches))
             {
                 throw new Exception("An invalid set of league matches were provided.");
             }
 
-            var leagueTable = new LeagueTab();
+            var leagueTable = new LeagueTable();
             var teams = GetTeams(leagueMatches);
             foreach (var team in teams)
             {

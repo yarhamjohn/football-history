@@ -14,7 +14,7 @@ namespace FootballHistory.Api.UnitTests.ModelsTests
         [Test]
         public void AddPositionsAndStatuses_AddsPositionToEachRow_BasedOnPoints()
         {
-            var leagueTable = new LeagueTab
+            var leagueTable = new LeagueTable
             {
                 Rows = new List<LeagueTableRow>
                 {
@@ -37,7 +37,7 @@ namespace FootballHistory.Api.UnitTests.ModelsTests
         [Test]
         public void AddPositionsAndStatuses_AddsPositionToEachRow_BasedOnPointsThenGoalDifference()
         {
-            var leagueTable = new LeagueTab
+            var leagueTable = new LeagueTable
             {
                 Rows = new List<LeagueTableRow>
                 {
@@ -60,7 +60,7 @@ namespace FootballHistory.Api.UnitTests.ModelsTests
         [Test]
         public void AddPositionsAndStatuses_AddsPositionToEachRow_BasedOnPointsThenGoalDifferenceThenGoalsFor()
         {
-            var leagueTable = new LeagueTab
+            var leagueTable = new LeagueTable
             {
                 Rows = new List<LeagueTableRow>
                 {
@@ -83,7 +83,7 @@ namespace FootballHistory.Api.UnitTests.ModelsTests
         [Test]
         public void AddPositionsAndStatuses_AddsEmptyStatusToTeamsThatFinishedInAStandardPosition()
         {
-            var leagueTable = new LeagueTab
+            var leagueTable = new LeagueTable
             {
                 Rows = new List<LeagueTableRow>
                 {
@@ -105,7 +105,7 @@ namespace FootballHistory.Api.UnitTests.ModelsTests
         [Test]
         public void AddPositionsAndStatuses_AddsPositionToEachRow_BasedOnPointsThenGoalDifferenceThenGoalsForThenTeamName()
         {
-            var leagueTable = new LeagueTab
+            var leagueTable = new LeagueTable
             {
                 Rows = new List<LeagueTableRow>
                 {
@@ -128,7 +128,7 @@ namespace FootballHistory.Api.UnitTests.ModelsTests
         [Test]
         public void AddPositionsAndStatuses_AddsCorrectStatusToTeamThatWonTheLeague()
         {
-            var leagueTable = new LeagueTab
+            var leagueTable = new LeagueTable
             {
                 Rows = new List<LeagueTableRow>
                 {
@@ -150,7 +150,7 @@ namespace FootballHistory.Api.UnitTests.ModelsTests
         [Test]
         public void AddPositionsAndStatuses_DoesNotAddPromotionStatusToChampion()
         {
-            var leagueTable = new LeagueTab
+            var leagueTable = new LeagueTable
             {
                 Rows = new List<LeagueTableRow>
                 {
@@ -172,7 +172,7 @@ namespace FootballHistory.Api.UnitTests.ModelsTests
         [Test]
         public void AddPositionsAndStatuses_AddsCorrectStatusToTeamsThatFinishedInThePromotionPlaces()
         {
-            var leagueTable = new LeagueTab
+            var leagueTable = new LeagueTable
             {
                 Rows = new List<LeagueTableRow>
                 {
@@ -194,7 +194,7 @@ namespace FootballHistory.Api.UnitTests.ModelsTests
         [Test]
         public void AddPositionsAndStatuses_AddsCorrectStatusToTeamsThatFinishedInTheRelegationPlaces()
         {
-            var leagueTable = new LeagueTab
+            var leagueTable = new LeagueTable
             {
                 Rows = new List<LeagueTableRow>
                 {
@@ -216,7 +216,7 @@ namespace FootballHistory.Api.UnitTests.ModelsTests
         [Test]
         public void AddPositionsAndStatuses_AddsCorrectStatusToTeamsThatFinishedInThePlayOffPlacesButDidNotWin()
         {
-            var leagueTable = new LeagueTab
+            var leagueTable = new LeagueTable
             {
                 Rows = new List<LeagueTableRow>
                 {
@@ -240,7 +240,7 @@ namespace FootballHistory.Api.UnitTests.ModelsTests
         [Test]
         public void AddPositionsAndStatuses_AddsCorrectStatusToTeamsThatFinishedInThePlayOffPlacesAndWon()
         {
-            var leagueTable = new LeagueTab
+            var leagueTable = new LeagueTable
             {
                 Rows = new List<LeagueTableRow>
                 {
@@ -263,7 +263,7 @@ namespace FootballHistory.Api.UnitTests.ModelsTests
         [Test]
         public void AddPositionsAndStatuses_ThrowsAnException_GivenALeagueDetailModelThatDoesNotMatchTheLeagueTable()
         {
-            var leagueTable = new LeagueTab
+            var leagueTable = new LeagueTable
             {
                 Rows = new List<LeagueTableRow>
                 {
@@ -282,7 +282,7 @@ namespace FootballHistory.Api.UnitTests.ModelsTests
         [Test]
         public void AddPositionsAndStatuses_ThrowsAnException_GivenALeagueDetailModelThatContainsPlayOffPlaces_AndPlayOffMatchesThatContainNoFinal()
         {
-            var leagueTable = new LeagueTab
+            var leagueTable = new LeagueTable
             {
                 Rows = new List<LeagueTableRow>
                 {

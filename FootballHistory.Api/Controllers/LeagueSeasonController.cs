@@ -67,7 +67,7 @@ namespace FootballHistory.Api.Controllers
         }
                 
         [HttpGet("[action]")]
-        public List<LeagueTableRow> GetLeagueTable(string tier, string season)
+        public LeagueTable GetLeagueTable(string tier, string season)
         {
             var divisionTier = Convert.ToInt32(tier);
             var leagueMatchDetails = _leagueMatchesRepository.GetLeagueMatches(divisionTier, season);
@@ -75,7 +75,7 @@ namespace FootballHistory.Api.Controllers
             var pointDeductions = _pointDeductionsRepository.GetPointDeductions(divisionTier, season);
             var playOffMatches = _playOffMatchesRepository.GetPlayOffMatches(divisionTier, season);
 
-            return _leagueTableBuilder.Build(leagueMatchDetails, leagueDetail, pointDeductions, playOffMatches);
+            return _leagueTableBuilder.Build(leagueMatchDetails, pointDeductions, leagueDetail, playOffMatches);
         }
                 
         [HttpGet("[action]")]
