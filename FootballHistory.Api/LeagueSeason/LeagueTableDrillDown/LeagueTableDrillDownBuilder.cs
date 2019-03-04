@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using FootballHistory.Api.LeagueSeason.LeagueTable;
@@ -8,25 +9,26 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTableDrillDown
 {
     public class LeagueTableDrillDownBuilder : ILeagueTableDrillDownBuilder
     {
-        private readonly ILeagueTable _leagueTable;
-
-        public LeagueTableDrillDownBuilder(ILeagueTable leagueTable)
+        public LeagueTableDrillDown Build(string team, List<MatchDetailModel> matchDetails, List<PointDeductionModel> pointDeductions)
         {
-            _leagueTable = leagueTable;
-        }
-        
-        public LeagueRowDrillDown Build(string team, List<MatchDetailModel> matchDetails, List<PointDeductionModel> pointDeductions)
-        {
-            return new LeagueRowDrillDown
+            return new LeagueTableDrillDown
             {
                 Form = GenerateForm(matchDetails, team),
-                Positions = GetIncrementalLeaguePositions(matchDetails, pointDeductions, team)
+                Positions = new List<LeaguePosition>()//GetIncrementalLeaguePositions(matchDetails, pointDeductions, team)
             };
         }
 
-        private static List<Match> GenerateForm(IEnumerable<MatchDetailModel> leagueMatches, string team)
+        private static List<Match> GenerateForm(List<MatchDetailModel> leagueMatches, string team)
         {
-            return leagueMatches.Where(m => m.HomeTeam == team || m.AwayTeam == team)
+            var matches = leagueMatches.Where(m => m.HomeTeam == team || m.AwayTeam == team).ToList();
+            
+            var numMatchDates = matches.Select(m => m.Date).Distinct().Count();
+            if (numMatchDates < matches.Count)
+            {
+                throw new Exception($"Multiple matches involving {team} were found with the same match date.");
+            }
+            
+            return matches
                 .OrderBy(m => m.Date)
                 .Select(match => new Match
                 {
@@ -38,26 +40,23 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTableDrillDown
 
         private static string GetResult(MatchDetailModel match, string team)
         {
-            if (match.HomeGoals == match.AwayGoals)
+            var homeWin = match.HomeTeam == team && match.HomeGoals > match.AwayGoals;
+            var awayWin = match.AwayTeam == team && match.HomeGoals < match.AwayGoals;
+            if (homeWin || awayWin)
+            {
+                return "W";
+            }
+
+            var draw = match.HomeGoals == match.AwayGoals;
+            if (draw)
             {
                 return "D";
-            }
-            
-            if (match.HomeTeam == team && match.HomeGoals > match.AwayGoals)
-            {
-                return "W";
-            }
-                        
-            if (match.AwayTeam == team && match.HomeGoals < match.AwayGoals)
-            {
-                return "W";
             }
 
             return "L";
         }
 
-
-        private List<LeaguePosition> GetIncrementalLeaguePositions(List<MatchDetailModel> matchDetails, List<PointDeductionModel> pointDeductions, string team)
+        private static List<LeaguePosition> GetIncrementalLeaguePositions(List<MatchDetailModel> matchDetails, List<PointDeductionModel> pointDeductions, string team)
         {
             var teams = matchDetails.Select(m => m.HomeTeam).Distinct().ToList();
 

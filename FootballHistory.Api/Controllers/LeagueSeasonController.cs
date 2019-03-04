@@ -86,7 +86,7 @@ namespace FootballHistory.Api.Controllers
         }
                 
         [HttpGet("[action]")]
-        public LeagueRowDrillDown GetDrillDown(string tier, string season, string team)
+        public LeagueTableDrillDown GetDrillDown(string tier, string season, string team)
         {
             var divisionTier = Convert.ToInt32(tier);
             var matchDetails = _leagueMatchesRepository.GetLeagueMatches(divisionTier, season);
