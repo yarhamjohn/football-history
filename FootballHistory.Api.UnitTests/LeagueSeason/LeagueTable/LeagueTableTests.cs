@@ -238,7 +238,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
         }
         
         [Test]
-        public void AddPositionsAndStatuses_AddsCorrectStatusToTeamsThatFinishedInThePlayOffPlacesAndWon()
+        public void AddPositionsAndStatuses_AddsCorrectStatusToTeamsThatFinishedInThePlayOffPlacesAndWonInNormalTime()
         {
             var leagueTable = new Api.LeagueSeason.LeagueTable.LeagueTable
             {
@@ -252,7 +252,95 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
             };
 
             var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 4, PlayOffPlaces = 2};
-            var playOffMatches = new List<MatchDetailModel> { new MatchDetailModel {Round = "Final", HomeTeam = "Team2", AwayTeam = "Team3", HomeGoals = 1, AwayGoals = 2}};
+            var playOffMatches = new List<MatchDetailModel>
+            {
+                new MatchDetailModel
+                {
+                    Round = "Final", 
+                    HomeTeam = "Team2", 
+                    AwayTeam = "Team3", 
+                    HomeGoals = 1, 
+                    AwayGoals = 2, 
+                    ExtraTime = false, 
+                    PenaltyShootout = false
+                }
+            };
+            var leagueTableWithPositions = leagueTable.AddPositionsAndStatuses(leagueDetailModel, playOffMatches);
+
+            var actual = leagueTableWithPositions.Rows.Where(r => r.Status == "PO (P)").Select(r => (r.Team, r.Position)).ToList();
+            var expected = new List<(string, int)> { ("Team3", 3) };
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+        
+        [Test]
+        public void AddPositionsAndStatuses_AddsCorrectStatusToTeamsThatFinishedInThePlayOffPlacesAndWonInExtraTime()
+        {
+            var leagueTable = new Api.LeagueSeason.LeagueTable.LeagueTable
+            {
+                Rows = new List<LeagueTableRow>
+                {
+                    new LeagueTableRow {Team = "Team1", Points = 4},
+                    new LeagueTableRow {Team = "Team2", Points = 3},
+                    new LeagueTableRow {Team = "Team3", Points = 2},
+                    new LeagueTableRow {Team = "Team4", Points = 1}
+                }
+            };
+
+            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 4, PlayOffPlaces = 2};
+            var playOffMatches = new List<MatchDetailModel>
+            {
+                new MatchDetailModel
+                {
+                    Round = "Final", 
+                    HomeTeam = "Team2", 
+                    AwayTeam = "Team3", 
+                    HomeGoals = 1, 
+                    AwayGoals = 1, 
+                    ExtraTime = true, 
+                    HomeGoalsET = 0, 
+                    AwayGoalsET = 1, 
+                    PenaltyShootout = false
+                }
+            };
+            var leagueTableWithPositions = leagueTable.AddPositionsAndStatuses(leagueDetailModel, playOffMatches);
+
+            var actual = leagueTableWithPositions.Rows.Where(r => r.Status == "PO (P)").Select(r => (r.Team, r.Position)).ToList();
+            var expected = new List<(string, int)> { ("Team3", 3) };
+            Assert.That(actual, Is.EqualTo(expected));
+        }
+
+        [Test]
+        public void AddPositionsAndStatuses_AddsCorrectStatusToTeamsThatFinishedInThePlayOffPlacesAndWonOnPenalties()
+        {
+            var leagueTable = new Api.LeagueSeason.LeagueTable.LeagueTable
+            {
+                Rows = new List<LeagueTableRow>
+                {
+                    new LeagueTableRow {Team = "Team1", Points = 4},
+                    new LeagueTableRow {Team = "Team2", Points = 3},
+                    new LeagueTableRow {Team = "Team3", Points = 2},
+                    new LeagueTableRow {Team = "Team4", Points = 1}
+                }
+            };
+
+            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 4, PlayOffPlaces = 2};
+            var playOffMatches = new List<MatchDetailModel>
+            {
+                new MatchDetailModel
+                {
+                    Round = "Final", 
+                    HomeTeam = "Team2", 
+                    AwayTeam = "Team3", 
+                    HomeGoals = 1, 
+                    AwayGoals = 1, 
+                    ExtraTime = true, 
+                    HomeGoalsET = 1, 
+                    AwayGoalsET = 1, 
+                    PenaltyShootout = true, 
+                    HomePenaltiesScored = 3, 
+                    AwayPenaltiesScored = 4
+                }
+            };
             var leagueTableWithPositions = leagueTable.AddPositionsAndStatuses(leagueDetailModel, playOffMatches);
 
             var actual = leagueTableWithPositions.Rows.Where(r => r.Status == "PO (P)").Select(r => (r.Team, r.Position)).ToList();
