@@ -19,7 +19,7 @@ class LeagueTable extends Component {
       .then(response => response.json())
       .then(data => {
         this.setState({ 
-          table: data,
+          table: data.rows,
           isLoading: false 
         });
       });

@@ -1,8 +1,15 @@
 using System;
 using System.Collections.Generic;
-using FootballHistory.Api.Builders;
-using FootballHistory.Api.Builders.Models;
+using FootballHistory.Api.LeagueSeason.LeagueSeasonFilter;
+using FootballHistory.Api.LeagueSeason.LeagueTable;
+using FootballHistory.Api.LeagueSeason.LeagueTableDrillDown;
+using FootballHistory.Api.LeagueSeason.PlayOffs;
+using FootballHistory.Api.LeagueSeason.ResultMatrix;
 using FootballHistory.Api.Repositories;
+using FootballHistory.Api.Repositories.DivisionRepository;
+using FootballHistory.Api.Repositories.LeagueDetailRepository;
+using FootballHistory.Api.Repositories.MatchDetailRepository;
+using FootballHistory.Api.Repositories.PointDeductionRepository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FootballHistory.Api.Controllers
@@ -67,7 +74,7 @@ namespace FootballHistory.Api.Controllers
         }
                 
         [HttpGet("[action]")]
-        public List<LeagueTableRow> GetLeagueTable(string tier, string season)
+        public ILeagueTable GetLeagueTable(string tier, string season)
         {
             var divisionTier = Convert.ToInt32(tier);
             var leagueMatchDetails = _leagueMatchesRepository.GetLeagueMatches(divisionTier, season);
@@ -75,11 +82,11 @@ namespace FootballHistory.Api.Controllers
             var pointDeductions = _pointDeductionsRepository.GetPointDeductions(divisionTier, season);
             var playOffMatches = _playOffMatchesRepository.GetPlayOffMatches(divisionTier, season);
 
-            return _leagueTableBuilder.Build(leagueMatchDetails, leagueDetail, pointDeductions, playOffMatches);
+            return _leagueTableBuilder.BuildWithStatuses(leagueMatchDetails, pointDeductions, leagueDetail, playOffMatches);
         }
                 
         [HttpGet("[action]")]
-        public LeagueRowDrillDown GetDrillDown(string tier, string season, string team)
+        public LeagueTableDrillDown GetDrillDown(string tier, string season, string team)
         {
             var divisionTier = Convert.ToInt32(tier);
             var matchDetails = _leagueMatchesRepository.GetLeagueMatches(divisionTier, season);

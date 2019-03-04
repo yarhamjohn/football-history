@@ -1,7 +1,13 @@
-﻿using FootballHistory.Api.Builders;
-using FootballHistory.Api.Builders.Models;
-using FootballHistory.Api.Domain;
-using FootballHistory.Api.Repositories;
+﻿using FootballHistory.Api.Domain;
+using FootballHistory.Api.LeagueSeason.LeagueSeasonFilter;
+using FootballHistory.Api.LeagueSeason.LeagueTable;
+using FootballHistory.Api.LeagueSeason.LeagueTableDrillDown;
+using FootballHistory.Api.LeagueSeason.PlayOffs;
+using FootballHistory.Api.LeagueSeason.ResultMatrix;
+using FootballHistory.Api.Repositories.DivisionRepository;
+using FootballHistory.Api.Repositories.LeagueDetailRepository;
+using FootballHistory.Api.Repositories.MatchDetailRepository;
+using FootballHistory.Api.Repositories.PointDeductionRepository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -32,6 +38,8 @@ namespace FootballHistory.Api
             });
             
             services.AddTransient<ILeagueTable, LeagueTable>();
+            services.AddTransient<ILeagueTableCalculatorFactory, LeagueTableCalculatorFactory>();
+            services.AddTransient<ILeagueTableCalculator, LeagueTableCalculator>();
             
             services.AddTransient<ILeagueTableBuilder, LeagueTableBuilder>();
             services.AddTransient<ILeagueSeasonFilterBuilder, LeagueSeasonFilterBuilder>();
