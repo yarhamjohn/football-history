@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FootballHistory.Api.Builders.Models;
+using FootballHistory.Api.Models.Controller;
 using FootballHistory.Api.Repositories.Models;
 
 namespace FootballHistory.Api.Builders
@@ -15,7 +16,7 @@ namespace FootballHistory.Api.Builders
             _leagueTableCalculatorFactory = leagueTableCalculatorFactory;
         }
         
-        public LeagueTab Build(List<MatchDetailModel> leagueMatches, List<PointDeductionModel> pointDeductions)
+        public LeagueTab Build(List<MatchDetailModel> leagueMatches, List<PointDeductionModel> pointDeductions, LeagueDetailModel leagueDetailModel, List<MatchDetailModel> playOffMatches)
         {
             if (LeagueMatchesAreInvalid(leagueMatches))
             {
@@ -46,11 +47,7 @@ namespace FootballHistory.Api.Builders
                 );
             }
 
-            var leagueTableWithPositions = leagueTable.AddPositions();
-            
-            // Add Status data
-            
-            return leagueTableWithPositions;
+            return leagueTable.AddPositionsAndStatuses(leagueDetailModel, playOffMatches);
         }
         
         private bool LeagueMatchesAreInvalid(List<MatchDetailModel> leagueMatches)

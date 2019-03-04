@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FootballHistory.Api.Builders;
+using FootballHistory.Api.Models.Controller;
 using FootballHistory.Api.Repositories.Models;
 using Moq;
 using NUnit.Framework;
@@ -28,8 +29,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
         {
             var leagueMatches = new List<MatchDetailModel>();
             var pointDeductions = new List<PointDeductionModel>();
+            var leagueDetailModel = new LeagueDetailModel();
+            var playOffMatches = new List<MatchDetailModel>();
             
-            var leagueTable = _leagueTableBuilder.Build(leagueMatches, pointDeductions);
+            var leagueTable = _leagueTableBuilder.Build(leagueMatches, pointDeductions, leagueDetailModel, playOffMatches);
             
             Assert.That(leagueTable.Rows.Count, Is.EqualTo(0));
         }
@@ -39,8 +42,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
         {
             var leagueMatches = new List<MatchDetailModel> { new MatchDetailModel { HomeTeam = "Team1", AwayTeam = "Team2" } };
             var pointDeductions = new List<PointDeductionModel>();
+            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 2 };
+            var playOffMatches = new List<MatchDetailModel>();
             
-            var leagueTable = _leagueTableBuilder.Build(leagueMatches, pointDeductions);
+            var leagueTable = _leagueTableBuilder.Build(leagueMatches, pointDeductions, leagueDetailModel, playOffMatches);
             
             Assert.That(leagueTable.Rows.Count, Is.EqualTo(2));
         }
@@ -54,8 +59,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                 new MatchDetailModel { HomeTeam = "Team2", AwayTeam = "Team1" }
             };
             var pointDeductions = new List<PointDeductionModel>();
-
-            var leagueTable = _leagueTableBuilder.Build(leagueMatches, pointDeductions);
+            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 2 };
+            var playOffMatches = new List<MatchDetailModel>();
+            
+            var leagueTable = _leagueTableBuilder.Build(leagueMatches, pointDeductions, leagueDetailModel, playOffMatches);
             
             Assert.That(leagueTable.Rows.Count, Is.EqualTo(2));
         }
@@ -69,8 +76,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                 new MatchDetailModel { HomeTeam = "Team1", AwayTeam = "Team3" }
             };
             var pointDeductions = new List<PointDeductionModel>();
-
-            var leagueTable = _leagueTableBuilder.Build(leagueMatches, pointDeductions);
+            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 3 };
+            var playOffMatches = new List<MatchDetailModel>();
+            
+            var leagueTable = _leagueTableBuilder.Build(leagueMatches, pointDeductions, leagueDetailModel, playOffMatches);
             
             Assert.That(leagueTable.Rows.Count, Is.EqualTo(3));
         }
@@ -84,8 +93,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
                 new MatchDetailModel { HomeTeam = "Team1", AwayTeam = "Team2" }
             };
             var pointDeductions = new List<PointDeductionModel>();
-
-            var ex = Assert.Throws<Exception>(() => _leagueTableBuilder.Build(leagueMatches, pointDeductions));
+            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 2 };
+            var playOffMatches = new List<MatchDetailModel>();
+            
+            var ex = Assert.Throws<Exception>(() => _leagueTableBuilder.Build(leagueMatches, pointDeductions, leagueDetailModel, playOffMatches));
             Assert.That(ex.Message, Is.EqualTo("An invalid set of league matches were provided."));
         }
                 
@@ -94,8 +105,10 @@ namespace FootballHistory.Api.UnitTests.BuildersTests
         {
             var leagueMatches = new List<MatchDetailModel> { new MatchDetailModel { HomeTeam = "Team1", AwayTeam = "Team1" } };
             var pointDeductions = new List<PointDeductionModel>();
-
-            var ex = Assert.Throws<Exception>(() => _leagueTableBuilder.Build(leagueMatches, pointDeductions));
+            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 1 };
+            var playOffMatches = new List<MatchDetailModel>();
+                        
+            var ex = Assert.Throws<Exception>(() => _leagueTableBuilder.Build(leagueMatches, pointDeductions, leagueDetailModel, playOffMatches));
             Assert.That(ex.Message, Is.EqualTo("An invalid set of league matches were provided."));
         }
     }
