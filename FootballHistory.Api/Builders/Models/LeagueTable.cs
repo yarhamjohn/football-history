@@ -19,7 +19,6 @@ namespace FootballHistory.Api.Builders.Models
         {
             var positionedLeagueTable = AddPositions();
             return positionedLeagueTable.AddStatuses(leagueDetailModel, playOffMatches);
-
         }
 
         private LeagueTable AddStatuses(LeagueDetailModel leagueDetailModel, List<MatchDetailModel> playOffMatches)
@@ -43,37 +42,74 @@ namespace FootballHistory.Api.Builders.Models
                     {
                         r.Status = "C";
                     }
-                    else if (r.Position <= leagueDetailModel.PromotionPlaces)
+                    else if (InPromotionPlaces(r, leagueDetailModel))
                     {
                         r.Status = "P";
                     }
+                    else if (InPlayOffPosition(r, leagueDetailModel))
+                    {
+                        r.Status = IsPlayOffWinner(r, playOffMatches) ? "PO (P)" : "PO";
+                    }
+                    else if (InRelegationPlaces(r, leagueDetailModel))
+                    {
+                        r.Status = "R";
+                    }
                     else
                     {
-                        var placesAbovePlayOffs = leagueDetailModel.PromotionPlaces == 0 ? 1 : leagueDetailModel.PromotionPlaces;
-                        if (r.Position <= placesAbovePlayOffs + leagueDetailModel.PlayOffPlaces)
-                        {
-                            var final = playOffMatches.Single(m => m.Round == "Final");
-                            var winner = final.PenaltyShootout 
-                                ? (final.HomePenaltiesScored > final.AwayPenaltiesScored ? final.HomeTeam : final.AwayTeam) 
-                                : final.ExtraTime
-                                    ? (final.HomeGoalsET > final.AwayGoalsET ? final.HomeTeam : final.AwayTeam) 
-                                    : (final.HomeGoals > final.AwayGoals ? final.HomeTeam : final.AwayTeam);
-
-                            r.Status = r.Team == winner ? "PO (P)" : "PO";
-                        }
-                        else if (r.Position > leagueDetailModel.TotalPlaces - leagueDetailModel.RelegationPlaces)
-                        {
-                            r.Status = "R";
-                        }
-                        else
-                        {
-                            r.Status = string.Empty;
-                        }
+                        r.Status = string.Empty;
                     }
 
                     return r;
                 }).ToList()
             };
+        }
+
+        private static bool IsPlayOffWinner(LeagueTableRow row, List<MatchDetailModel> playOffMatches)
+        {
+            var final = playOffMatches.Single(m => m.Round == "Final");
+            
+            string winner;
+            if (final.PenaltyShootout)
+            {
+                winner = PenaltyShootoutWinner(final);
+            }
+            else
+            {
+                winner = final.ExtraTime ? ExtraTimeWinner(final) : NormalTimeWinner(final);
+            }
+
+            return row.Team == winner;
+        }
+
+        private static string NormalTimeWinner(MatchDetailModel final)
+        {
+            return final.HomeGoals > final.AwayGoals ? final.HomeTeam : final.AwayTeam;
+        }
+
+        private static string ExtraTimeWinner(MatchDetailModel final)
+        {
+            return final.HomeGoalsET > final.AwayGoalsET ? final.HomeTeam : final.AwayTeam;
+        }
+
+        private static string PenaltyShootoutWinner(MatchDetailModel final)
+        {
+            return final.HomePenaltiesScored > final.AwayPenaltiesScored ? final.HomeTeam : final.AwayTeam;
+        }
+
+        private static bool InRelegationPlaces(LeagueTableRow row, LeagueDetailModel leagueDetailModel)
+        {
+            return row.Position > leagueDetailModel.TotalPlaces - leagueDetailModel.RelegationPlaces;
+        }
+
+        private static bool InPromotionPlaces(LeagueTableRow row, LeagueDetailModel leagueDetailModel)
+        {
+            return row.Position <= leagueDetailModel.PromotionPlaces;
+        }
+
+        private static bool InPlayOffPosition(LeagueTableRow row, LeagueDetailModel leagueDetailModel)
+        {
+            var placesAbovePlayOffs = leagueDetailModel.PromotionPlaces == 0 ? 1 : leagueDetailModel.PromotionPlaces;
+            return row.Position > placesAbovePlayOffs && row.Position <= placesAbovePlayOffs + leagueDetailModel.PlayOffPlaces;
         }
 
         private LeagueTable AddPositions()
@@ -91,6 +127,7 @@ namespace FootballHistory.Api.Builders.Models
 
         private List<LeagueTableRow> SortTableRows()
         {
+            //TODO: Add extra ordering rules when required
             return Rows
                 .OrderByDescending(t => t.Points)
                 .ThenByDescending(t => t.GoalDifference) // Goal ratio was used prior to 1976-77
