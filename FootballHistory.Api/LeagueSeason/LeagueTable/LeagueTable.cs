@@ -21,6 +21,16 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTable
             return positionedLeagueTable.AddStatuses(leagueDetailModel, playOffMatches);
         }
 
+        public LeagueTable AddMissingTeams(List<string> teams)
+        {
+            foreach (var team in teams)
+            {
+                Rows.Add(new LeagueTableRow {Team = team});
+            };
+
+            return AddPositions();
+        }
+
         private LeagueTable AddStatuses(LeagueDetailModel leagueDetailModel, List<MatchDetailModel> playOffMatches)
         {
             if (leagueDetailModel.TotalPlaces != Rows.Count)
@@ -112,7 +122,7 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTable
             return row.Position > placesAbovePlayOffs && row.Position <= placesAbovePlayOffs + leagueDetailModel.PlayOffPlaces;
         }
 
-        private LeagueTable AddPositions()
+        public LeagueTable AddPositions()
         {
             var sortedRows = SortTableRows();
             return new LeagueTable

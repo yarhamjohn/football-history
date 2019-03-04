@@ -7,6 +7,7 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTable
 {
     public interface ILeagueTableBuilder
     {
-        LeagueTable Build(List<MatchDetailModel> leagueMatchDetails, List<PointDeductionModel> pointDeductions, LeagueDetailModel leagueDetailModel, List<MatchDetailModel> playOffMatches);
+        LeagueTable BuildWithStatuses(List<MatchDetailModel> leagueMatchDetails, List<PointDeductionModel> pointDeductions, LeagueDetailModel leagueDetailModel, List<MatchDetailModel> playOffMatches);
+        LeagueTable BuildWithoutStatuses(List<MatchDetailModel> leagueMatchDetails, List<PointDeductionModel> pointDeductions);
     }
 }

@@ -82,7 +82,7 @@ namespace FootballHistory.Api.Controllers
             var pointDeductions = _pointDeductionsRepository.GetPointDeductions(divisionTier, season);
             var playOffMatches = _playOffMatchesRepository.GetPlayOffMatches(divisionTier, season);
 
-            return _leagueTableBuilder.Build(leagueMatchDetails, pointDeductions, leagueDetail, playOffMatches);
+            return _leagueTableBuilder.BuildWithStatuses(leagueMatchDetails, pointDeductions, leagueDetail, playOffMatches);
         }
                 
         [HttpGet("[action]")]

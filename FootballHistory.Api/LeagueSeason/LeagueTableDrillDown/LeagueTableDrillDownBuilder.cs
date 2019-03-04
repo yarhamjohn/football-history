@@ -11,10 +11,15 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTableDrillDown
     {
         public LeagueTableDrillDown Build(string team, List<MatchDetailModel> matchDetails, List<PointDeductionModel> pointDeductions)
         {
+            if (matchDetails.Count == 0 || !matchDetails.Any(m => m.HomeTeam == team || m.AwayTeam == team))
+            {
+                return new LeagueTableDrillDown {Form = new List<Match>(), Positions = new List<LeaguePosition>()};
+            }
+            
             return new LeagueTableDrillDown
             {
                 Form = GenerateForm(matchDetails, team),
-                Positions = new List<LeaguePosition>()//GetIncrementalLeaguePositions(matchDetails, pointDeductions, team)
+                Positions = GetDailyLeaguePositions(matchDetails, pointDeductions, team)
             };
         }
 
@@ -56,42 +61,46 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTableDrillDown
             return "L";
         }
 
-        private static List<LeaguePosition> GetIncrementalLeaguePositions(List<MatchDetailModel> matchDetails, List<PointDeductionModel> pointDeductions, string team)
+        private static List<LeaguePosition> GetDailyLeaguePositions(List<MatchDetailModel> matches, List<PointDeductionModel> pointDeductions, string team)
         {
-            var teams = matchDetails.Select(m => m.HomeTeam).Distinct().ToList();
+            var dates = matches.Select(m => m.Date).Distinct().OrderBy(m => m.Date).ToList();
+            var startDate = dates.First();
+            var endDate = dates.Last().AddDays(1);
 
             var positions = new List<LeaguePosition>();
-
-            var dates = matchDetails.Select(m => m.Date).Distinct().OrderBy(m => m.Date).ToList();
-            var lastDate = dates.Last().AddDays(1); // what if there are no matches??
-            var firstDate = dates.First();
-
-            for (var dt = firstDate; dt <= lastDate; dt = dt.AddDays(1))
+            for (var date = startDate; date <= endDate; date = date.AddDays(1))
             {
-                var filteredMatchDetails = matchDetails.Where(m => m.Date < dt).ToList();
-                var filteredHomeTeams = filteredMatchDetails.Select(m => m.HomeTeam).ToList();
-                var filteredAwayTeams = filteredMatchDetails.Select(m => m.AwayTeam).ToList();
-                var filteredTeams = filteredHomeTeams.Union(filteredAwayTeams).ToList();
+                var matchesToDate = matches.Where(m => m.Date < date).ToList();
+                var leagueTableCalculatorFactory = new LeagueTableCalculatorFactory();
+                var leagueTableBuilder = new LeagueTableBuilder(leagueTableCalculatorFactory);
+                var leagueTable = leagueTableBuilder.BuildWithoutStatuses(matchesToDate, pointDeductions);
 
-                var missingTeams = teams.Where(p => filteredTeams.All(p2 => p2 != p)).ToList();
-
-//                _leagueTable.RemoveRows();
-//                _leagueTable.AddMissingTeams(missingTeams);
-//                _leagueTable.AddLeagueRows(filteredMatchDetails);
-//                _leagueTable.IncludePointDeductions(pointDeductions);
-//                _leagueTable.SortLeagueTable();
-//                _leagueTable.SetLeaguePosition();
-//
-//                positions.Add(
-//                    new LeaguePosition
-//                    {
-//                        Date = dt,
-//                        Position = _leagueTable.GetTable().Where(l => l.Team == team).Select(r => r.Position).Single()
-//                    }
-//                );
+                var missingTeams = GetMissingTeams(matches, matchesToDate, date);
+                var completeLeagueTable = leagueTable.AddMissingTeams(missingTeams);
+                
+                var position = completeLeagueTable.Rows.Where(r => r.Team == team).Select(r => r.Position).Single();
+                
+                positions.Add(new LeaguePosition {Date = date, Position = position});
             }
 
             return positions;
+        }
+
+        private static List<string> GetMissingTeams(List<MatchDetailModel> matches, List<MatchDetailModel> matchesToDate, DateTime date)
+        {
+            var allTeams = matches
+                .Select(m => new List<string> {m.HomeTeam, m.AwayTeam})
+                .SelectMany(teams => teams)
+                .Distinct()
+                .ToList();
+            
+            var includedTeams = matchesToDate
+                .Select(m => new List<string> {m.HomeTeam, m.AwayTeam})
+                .SelectMany(teams => teams)
+                .Distinct()
+                .ToList();
+            
+            return allTeams.Where(all => includedTeams.All(inc => inc != all)).ToList();
         }
     }
 }

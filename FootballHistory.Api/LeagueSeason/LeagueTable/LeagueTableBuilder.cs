@@ -16,7 +16,19 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTable
             _leagueTableCalculatorFactory = leagueTableCalculatorFactory;
         }
         
-        public LeagueTable Build(List<MatchDetailModel> leagueMatches, List<PointDeductionModel> pointDeductions, LeagueDetailModel leagueDetailModel, List<MatchDetailModel> playOffMatches)
+        public LeagueTable BuildWithStatuses(List<MatchDetailModel> leagueMatches, List<PointDeductionModel> pointDeductions, LeagueDetailModel leagueDetailModel, List<MatchDetailModel> playOffMatches)
+        {
+            var leagueTable = Build(leagueMatches, pointDeductions);
+            return leagueTable.AddPositionsAndStatuses(leagueDetailModel, playOffMatches);
+        }
+        
+        public LeagueTable BuildWithoutStatuses(List<MatchDetailModel> leagueMatches, List<PointDeductionModel> pointDeductions)
+        {
+            var leagueTable = Build(leagueMatches, pointDeductions);
+            return leagueTable.AddPositions();
+        }
+        
+        private LeagueTable Build(List<MatchDetailModel> leagueMatches, List<PointDeductionModel> pointDeductions)
         {
             if (LeagueMatchesAreInvalid(leagueMatches))
             {
@@ -47,10 +59,10 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTable
                 );
             }
 
-            return leagueTable.AddPositionsAndStatuses(leagueDetailModel, playOffMatches);
+            return leagueTable;
         }
         
-        private bool LeagueMatchesAreInvalid(List<MatchDetailModel> leagueMatches)
+        private static bool LeagueMatchesAreInvalid(List<MatchDetailModel> leagueMatches)
         {
             var opponentPairs = leagueMatches.Select(g => (g.HomeTeam, g.AwayTeam)).ToList();
             var sameTeams = opponentPairs.Where(p => p.Item1 == p.Item2).ToList();
@@ -59,7 +71,7 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTable
                    || sameTeams.Count > 0;
         }
 
-        private List<string> GetTeams(List<MatchDetailModel> leagueMatches)
+        private static List<string> GetTeams(List<MatchDetailModel> leagueMatches)
         {
             var homeTeams = leagueMatches.Select(m => m.HomeTeam).ToList();
             var awayTeams = leagueMatches.Select(m => m.AwayTeam).ToList();
