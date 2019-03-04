@@ -112,13 +112,13 @@ function PlayOffFinal(props) {
         <tr>
           <td>{final.homeTeam}</td>
           <td>{final.homeGoals}</td>
-          <td>{final.awayGoalsET}</td>
+          <td>{final.homeGoalsET}</td>
           <td>{final.penaltyShootout === true && `${final.awayPenaltiesScored} (${final.awayPenaltiesTaken})`}</td>
         </tr>
         <tr>
           <td>{final.awayTeam}</td>
           <td>{final.awayGoals}</td>
-          <td>{final.homeGoalsET}</td>
+          <td>{final.awayGoalsET}</td>
           <td>{final.penaltyShootout === true && `${final.homePenaltiesScored} (${final.homePenaltiesTaken})`}</td>
         </tr>
       </tbody>
