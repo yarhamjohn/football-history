@@ -6,6 +6,6 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTable
 {
     public interface ILeagueTableCalculatorFactory
     {
-        ILeagueTableCalculator Create(List<MatchDetailModel> leagueMatches, List<PointDeductionModel> pointDeductions, string team);
+        LeagueTableCalculator Create(List<MatchDetailModel> leagueMatches, List<PointDeductionModel> pointDeductions, string team);
     }
 }

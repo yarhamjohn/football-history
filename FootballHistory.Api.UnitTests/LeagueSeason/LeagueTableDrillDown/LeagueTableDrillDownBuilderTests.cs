@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FootballHistory.Api.LeagueSeason.LeagueTable;
 using FootballHistory.Api.LeagueSeason.LeagueTableDrillDown;
 using FootballHistory.Api.Repositories.MatchDetailRepository;
 using FootballHistory.Api.Repositories.PointDeductionRepository;
+using Moq;
 using NUnit.Framework;
 
 namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTableDrillDown
@@ -17,7 +19,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTableDrillDown
         [SetUp]
         public void Setup()
         {
-            _builder = new LeagueTableDrillDownBuilder();
+            _builder = new LeagueTableDrillDownBuilder(new LeagueTableBuilder(new LeagueTableCalculatorFactory()));
         }
         
         [Test]

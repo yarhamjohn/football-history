@@ -20,7 +20,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
             var mockFactory = new Mock<ILeagueTableCalculatorFactory>();
             mockFactory
                 .Setup(x => x.Create(It.IsAny<List<MatchDetailModel>>(), It.IsAny<List<PointDeductionModel>>(), It.IsAny<string>()))
-                .Returns(() => new Mock<ILeagueTableCalculator>().Object);
+                .Returns(() => new LeagueTableCalculator(new List<MatchDetailModel>(), new List<PointDeductionModel>(), ""));
             _leagueTableBuilder = new LeagueTableBuilder(mockFactory.Object);
         }
 

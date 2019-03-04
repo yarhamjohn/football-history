@@ -74,7 +74,7 @@ namespace FootballHistory.Api.Controllers
         }
                 
         [HttpGet("[action]")]
-        public LeagueTable GetLeagueTable(string tier, string season)
+        public ILeagueTable GetLeagueTable(string tier, string season)
         {
             var divisionTier = Convert.ToInt32(tier);
             var leagueMatchDetails = _leagueMatchesRepository.GetLeagueMatches(divisionTier, season);

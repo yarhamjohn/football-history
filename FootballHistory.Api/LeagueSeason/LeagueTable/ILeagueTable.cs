@@ -8,5 +8,6 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTable
     {
         LeagueTable AddPositionsAndStatuses(LeagueDetailModel leagueDetailModel, List<MatchDetailModel> playOffMatches);
         LeagueTable AddPositions();
+        LeagueTable AddMissingTeams(List<string> teams);
     }
 }

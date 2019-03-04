@@ -9,6 +9,13 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTableDrillDown
 {
     public class LeagueTableDrillDownBuilder : ILeagueTableDrillDownBuilder
     {
+        private readonly ILeagueTableBuilder _leagueTableBuilder;
+
+        public LeagueTableDrillDownBuilder(ILeagueTableBuilder leagueTableBuilder)
+        {
+            _leagueTableBuilder = leagueTableBuilder;
+        }
+        
         public LeagueTableDrillDown Build(string team, List<MatchDetailModel> matchDetails, List<PointDeductionModel> pointDeductions)
         {
             if (matchDetails.Count == 0 || !matchDetails.Any(m => m.HomeTeam == team || m.AwayTeam == team))
@@ -61,7 +68,7 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTableDrillDown
             return "L";
         }
 
-        private static List<LeaguePosition> GetDailyLeaguePositions(List<MatchDetailModel> matches, List<PointDeductionModel> pointDeductions, string team)
+        private List<LeaguePosition> GetDailyLeaguePositions(List<MatchDetailModel> matches, List<PointDeductionModel> pointDeductions, string team)
         {
             var dates = matches.Select(m => m.Date).Distinct().OrderBy(m => m.Date).ToList();
             var startDate = dates.First();
@@ -71,9 +78,7 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTableDrillDown
             for (var date = startDate; date <= endDate; date = date.AddDays(1))
             {
                 var matchesToDate = matches.Where(m => m.Date < date).ToList();
-                var leagueTableCalculatorFactory = new LeagueTableCalculatorFactory();
-                var leagueTableBuilder = new LeagueTableBuilder(leagueTableCalculatorFactory);
-                var leagueTable = leagueTableBuilder.BuildWithoutStatuses(matchesToDate, pointDeductions);
+                var leagueTable = _leagueTableBuilder.BuildWithoutStatuses(matchesToDate, pointDeductions);
 
                 var missingTeams = GetMissingTeams(matches, matchesToDate, date);
                 var completeLeagueTable = leagueTable.AddMissingTeams(missingTeams);
