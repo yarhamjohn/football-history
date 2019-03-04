@@ -1,8 +1,15 @@
 using System;
 using System.Collections.Generic;
-using FootballHistory.Api.Builders;
-using FootballHistory.Api.Builders.Models;
+using FootballHistory.Api.LeagueSeason.LeagueSeasonFilter;
+using FootballHistory.Api.LeagueSeason.LeagueTable;
+using FootballHistory.Api.LeagueSeason.LeagueTableDrillDown;
+using FootballHistory.Api.LeagueSeason.PlayOffs;
+using FootballHistory.Api.LeagueSeason.ResultMatrix;
 using FootballHistory.Api.Repositories;
+using FootballHistory.Api.Repositories.DivisionRepository;
+using FootballHistory.Api.Repositories.LeagueDetailRepository;
+using FootballHistory.Api.Repositories.MatchDetailRepository;
+using FootballHistory.Api.Repositories.PointDeductionRepository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FootballHistory.Api.Controllers
