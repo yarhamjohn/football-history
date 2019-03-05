@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Filter from "./Filter";
 
 function Page() {
-  const [selectedTeam, setSelectedTeam] = useState('Test Team');
+  const [selectedTeam, setSelectedTeam] = useState("");
 
   return (
       <div>
