@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import baseUrl from "../../api/LeagueSeasonApi";
 
 function Page() {
+  const [selectedTeam, setSelectedTeam] = useState('Test Team');
+
   return (
-      <div><h1>Here are some teams</h1></div>
+      <div>
+        <h1>{selectedTeam}</h1>
+      </div>
   );
 }
 
