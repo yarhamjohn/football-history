@@ -8,7 +8,7 @@ function Filter(props) {
     useEffect(() => {
         setAllTeams(props.allTeams);
         setSelectedTeam(props.selectedTeam);
-    }, []);
+    });
     
     const updateSelectedTeam = (team) => {
         setSelectedTeam(team);

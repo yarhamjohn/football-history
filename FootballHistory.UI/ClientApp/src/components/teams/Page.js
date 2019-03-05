@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import Filter from "./Filter";
 import baseUrl from "../../api/LeagueSeasonApi";
 
@@ -6,14 +6,18 @@ function Page() {
     const [selectedTeam, setSelectedTeam] = useState("");
     const [allTeams, setAllTeams] = useState([]);
 
+    function firstTeamAlphabetically(data) {
+        let sorted = data.sort();
+        return sorted.length > 0 ? sorted[0] : "";
+    }
+
     useEffect(() => {
         fetch(`${baseUrl}/api/Team/GetTeamFilters`)
             .then(response => response.json())
             .then(data => {
                 setAllTeams(data);
-    
-                let sorted = data.sort((a, b) => a > b);
-                let team = sorted.length > 0 ? sorted[0] : "";
+                
+                let team = firstTeamAlphabetically(data);
                 setSelectedTeam(team);
             });
     }, []);

@@ -9,7 +9,7 @@ namespace FootballHistory.Api.Controllers
         [HttpGet("[action]")]
         public List<string> GetTeamFilters()
         {
-            return new List<string> {"Arsenal", "Norwich"};
+            return new List<string> {"Brighton", "Arsenal", "Norwich"};
         }
     }
 }
