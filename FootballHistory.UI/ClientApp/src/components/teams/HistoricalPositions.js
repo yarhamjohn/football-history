@@ -3,8 +3,12 @@ import baseUrl from "../../api/LeagueSeasonApi";
 import {LineChart} from "react-chartkick";
 
 function HistoricalPositions(props) {
-    const [selectedTeam, setSelectedTeam] = useState(props.selectedState);
+    const [selectedTeam, setSelectedTeam] = useState("");
     const [historicalPositions, setHistoricalPositions] = useState([]);
+
+    useEffect(() => {
+        setSelectedTeam(props.selectedTeam);
+    });
     
     useEffect(() => {
         fetch(`${baseUrl}/api/Team/GetHistoricalPositions?team=${selectedTeam}`)
@@ -12,22 +16,22 @@ function HistoricalPositions(props) {
             .then(data => {
                 setHistoricalPositions(data);
             });
-    }, []);
-    
+    }, [selectedTeam]);
+  
     
     let data = historicalPositions.reduce(function(map, pos) {
-        map[pos.season] = pos.absolutePosition;
+        map[`${pos.season.substring(2, 4)} - ${pos.season.substring(9, 11)}`] = pos.absolutePosition;
         return map;
     }, {});
     let promotionData = historicalPositions.reduce(function(map, pos) {
         if (pos.status === "P") {
-            map[pos.season] = pos.absolutePosition;
+            map[`${pos.season.substring(2, 4)} - ${pos.season.substring(9, 11)}`] = pos.absolutePosition;
         }
         return map;
     }, {});
     let relegationData = historicalPositions.reduce(function(map, pos) {
         if (pos.status === "R") {
-            map[pos.season] = pos.absolutePosition;
+            map[`${pos.season.substring(2, 4)} - ${pos.season.substring(9, 11)}`] = pos.absolutePosition;
         }
         return map;
     }, {});
@@ -53,10 +57,13 @@ function HistoricalPositions(props) {
                 library={{
                     chartArea: {
                         width: '90%',
-                        height: '90%'
+                        height: '75%'
                     },
                     series: { 
                         2: { targetAxisIndex: 1}
+                    },
+                    hAxis: {
+                        slantedText: true
                     },
                     vAxes: {
                         0: {

@@ -42,5 +42,12 @@ namespace FootballHistory.Api.Domain
         public TeamRepositoryContext(DbContextOptions<TeamRepositoryContext> options) : base(options)
         {
         }
+    }    
+    
+    public class TierRepositoryContext : DbContext
+    {
+        public TierRepositoryContext(DbContextOptions<TierRepositoryContext> options) : base(options)
+        {
+        }
     }
 }
