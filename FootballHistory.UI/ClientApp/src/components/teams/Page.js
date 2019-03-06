@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import Filter from "./Filter";
+import HistoricalPositions from "./HistoricalPositions";
 import baseUrl from "../../api/LeagueSeasonApi";
 
 function Page() {
@@ -24,8 +25,9 @@ function Page() {
     
   return (
       <div>
-        <h1>{selectedTeam}</h1>
+          <h1>{selectedTeam}</h1>
           <Filter updateSelectedTeam={(team) => setSelectedTeam(team)} selectedTeam={selectedTeam} allTeams={allTeams}/>
+          <HistoricalPositions selectedTeam={selectedTeam} />
       </div>
   );
 }
