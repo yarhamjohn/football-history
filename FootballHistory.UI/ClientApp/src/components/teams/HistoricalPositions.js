@@ -43,18 +43,22 @@ function HistoricalPositions(props) {
                 colors={["#0000FF", "#00FF00", "#FF0000"]}
                 min={1}
                 max={92}
+                legend={false}
                 library={{
                     chartArea: {
                         width: '90%',
                         height: '90%'
                     },
-                    vAxis: {
+                    series: { 2: { targetAxisIndex: 1}},
+                    vAxes: {0: {
                         ticks: [4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92],
-                        baseline: [20, 44, 68, 92],
-                        baselineColor: 'red',
                         direction: -1
-                    }
-                }}
+                    }, 1: {
+                            ticks: [20, 44, 68, 92],
+                            direction: -1,
+                        gridlines: { color: "#FF0000"},
+                        textPosition: 'none'}
+                }}}
                 />
         </div>
     );
