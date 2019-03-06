@@ -33,7 +33,13 @@ function HistoricalPositions(props) {
     }, {});
 
     return (
-        <div>
+        <div style={{display: 'flex'}}>
+            <div style={{minWidth: '120px', display: 'flex', flexDirection: 'column', justifyContent: 'space-around'}}>
+                <strong>Premier League</strong>
+                <strong>Championship</strong>
+                <strong>League One</strong>
+                <strong>League Two</strong>
+            </div>
             <LineChart
                 data={
                     [{name: "Positions", data: data},
@@ -49,16 +55,26 @@ function HistoricalPositions(props) {
                         width: '90%',
                         height: '90%'
                     },
-                    series: { 2: { targetAxisIndex: 1}},
-                    vAxes: {0: {
-                        ticks: [4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92],
-                        direction: -1
-                    }, 1: {
+                    series: { 
+                        2: { targetAxisIndex: 1}
+                    },
+                    vAxes: {
+                        0: {
+                            ticks: [
+                                4, 8, 12, 16, 20, 
+                                {v: 24, f:"4"}, {v: 28, f:"8"}, {v: 32, f:"12"}, {v: 36, f:"16"}, {v: 40, f:"20"}, {v: 44, f:"24"}, 
+                                {v: 48, f:"4"}, {v: 52, f:"8"}, {v: 56, f:"12"}, {v: 60, f:"16"}, {v: 64, f:"20"}, {v: 68, f:"24"}, 
+                                {v: 72, f:"4"}, {v: 76, f:"8"}, {v: 80, f:"12"}, {v: 84, f:"16"}, {v: 88, f:"20"}, {v: 92, f:"24"}],
+                            direction: -1
+                        }, 
+                        1: {
                             ticks: [20, 44, 68, 92],
                             direction: -1,
-                        gridlines: { color: "#FF0000"},
-                        textPosition: 'none'}
-                }}}
+                            gridlines: { color: "#000000"},
+                            textPosition: 'none'
+                        }
+                    }
+                }}
                 />
         </div>
     );

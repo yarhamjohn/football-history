@@ -16,19 +16,21 @@ function Filter(props) {
     };
 
     return (
-        <ButtonToolbar className='filter-buttons'>
-            <DropdownButton title="Teams" id="TeamSelect">
-                {
-                    allTeams.map(t =>
-                        <MenuItem key={t} eventKey={t}
-                                  className={t === selectedTeam ? "active" : ""}
-                                  onSelect={(t) => updateSelectedTeam(t)}
-                        >
-                            {t}
-                        </MenuItem>)
-                }
-            </DropdownButton>
-        </ButtonToolbar>
+        <div style={{marginBottom:'1rem'}}>
+            <ButtonToolbar className='filter-buttons'>
+                <DropdownButton title="Teams" id="TeamSelect">
+                    {
+                        allTeams.map(t =>
+                            <MenuItem key={t} eventKey={t}
+                                      className={t === selectedTeam ? "active" : ""}
+                                      onSelect={(t) => updateSelectedTeam(t)}
+                            >
+                                {t}
+                            </MenuItem>)
+                    }
+                </DropdownButton>
+            </ButtonToolbar>
+        </div>
     );
 }
 
