@@ -1,7 +1,9 @@
+using System.Collections.Generic;
+
 namespace FootballHistory.Api.Repositories.TierRepository
 {
     public interface ITierRepository
     {
-        int GetTier(string season, string team);
+        List<(int, string)> GetTier(string team);
     }
 }
