@@ -38,7 +38,7 @@ namespace FootballHistory.Api.Repositories.TierRepository
                     result.Add(
                         new SeasonTierFilter
                         {
-                            Tier = reader.GetInt32(0),
+                            Tier = reader.GetByte(0),
                             Season = reader.GetString(1)
                         }
                     );

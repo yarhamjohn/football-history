@@ -1,12 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FootballHistory.Api.LeagueSeason.LeagueSeasonFilter;
 using FootballHistory.Api.LeagueSeason.LeagueTable;
-using FootballHistory.Api.LeagueSeason.LeagueTableDrillDown;
-using FootballHistory.Api.LeagueSeason.PlayOffs;
-using FootballHistory.Api.LeagueSeason.ResultMatrix;
-using FootballHistory.Api.Repositories.DivisionRepository;
 using FootballHistory.Api.Repositories.LeagueDetailRepository;
 using FootballHistory.Api.Repositories.MatchDetailRepository;
 using FootballHistory.Api.Repositories.PointDeductionRepository;
@@ -61,26 +56,28 @@ namespace FootballHistory.Api.Controllers
             
             var historicalPositions = new List<HistoricalPosition>();
             
-            // Get tier for each season
-            // get leaguematchdetails, leaguedetail, pointdeductions and playoffmatches for all tier/season combinations
+            var filters = _tierRepository.GetTier(team);
+
+            var leagueMatchDetails = _leagueMatchesRepository.GetLeagueMatches(filters.ToArray());
+            var leagueDetails = _leagueDetailRepository.GetLeagueInfos(filters.ToArray());
+            var pointDeductions = _pointDeductionsRepository.GetPointDeductions(filters.ToArray());
+            var playOffMatches = _playOffMatchesRepository.GetPlayOffMatches(filters.ToArray());
             
-            // loop over each season, building a league table with relvant data
-            for (var year = 1992; year <= 1992; year++)
+            //TODO - think about the singles...
+            for (var year = 1992; year <= 2017; year++)
             {
                 var season = $"{year} - {year + 1}";
-                var tier = _tierRepository.GetTier(season, team);
+                var filteredLeagueMatchDetails = leagueMatchDetails.Where(m => m.Date > new DateTime(year, 7, 1) && m.Date < new DateTime(year + 1, 6, 30)).ToList();
+                var filteredPlayOffMatches = playOffMatches.Where(m => m.Date > new DateTime(year, 7, 1) && m.Date < new DateTime(year + 1, 6, 30)).ToList();
+                var filteredPointDeductions = pointDeductions.Where(pd => pd.Season == season).ToList();
+                var filteredLeagueDetail = leagueDetails.Where(ld => ld.Season == season).ToList();
                 
-                var leagueMatchDetails = _leagueMatchesRepository.GetLeagueMatches(tier, season);
-                var leagueDetail = _leagueDetailRepository.GetLeagueInfo(tier, season);
-                var pointDeductions = _pointDeductionsRepository.GetPointDeductions(tier, season);
-                var playOffMatches = _playOffMatchesRepository.GetPlayOffMatches(tier, season);
-
-                var leagueTable = _leagueTableBuilder.BuildWithStatuses(leagueMatchDetails, pointDeductions, leagueDetail, playOffMatches);
+                var leagueTable = _leagueTableBuilder.BuildWithStatuses(filteredLeagueMatchDetails, filteredPointDeductions, filteredLeagueDetail.Single(d => d.Season == season), filteredPlayOffMatches);
                 historicalPositions.Add(new HistoricalPosition
                 {
-                    AbsolutePosition = tier == 1
+                    AbsolutePosition = filters.Where(st => st.Season == season).Select(st => st.Tier).Single() == 1
                         ? leagueTable.Rows.Single(r => r.Team == team).Position
-                        : leagueTable.Rows.Single(r => r.Team == team).Position + ((tier - 1) * 24),
+                        : leagueTable.Rows.Single(r => r.Team == team).Position + ((filters.Where(st => st.Season == season).Select(st => st.Tier).Single() - 1) * 24),
                     Season = season,
                     Status = leagueTable.Rows.Single(r => r.Team == team).Status
                 });
