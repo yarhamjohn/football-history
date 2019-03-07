@@ -70,14 +70,14 @@ namespace FootballHistory.Api.Controllers
                 var filteredLeagueMatchDetails = leagueMatchDetails.Where(m => m.Date > new DateTime(year, 7, 1) && m.Date < new DateTime(year + 1, 6, 30)).ToList();
                 var filteredPlayOffMatches = playOffMatches.Where(m => m.Date > new DateTime(year, 7, 1) && m.Date < new DateTime(year + 1, 6, 30)).ToList();
                 var filteredPointDeductions = pointDeductions.Where(pd => pd.Season == season).ToList();
-                var filteredLeagueDetail = leagueDetails.Where(ld => ld.Season == season).ToList();
-                
-                var leagueTable = _leagueTableBuilder.BuildWithStatuses(filteredLeagueMatchDetails, filteredPointDeductions, filteredLeagueDetail.Single(d => d.Season == season), filteredPlayOffMatches);
+                var filteredLeagueDetail = leagueDetails.Single(ld => ld.Season == season);
+
+                var leagueTable = _leagueTableBuilder.BuildWithStatuses(filteredLeagueMatchDetails, filteredPointDeductions, filteredLeagueDetail, filteredPlayOffMatches);
                 historicalPositions.Add(new HistoricalPosition
                 {
                     AbsolutePosition = filters.Where(st => st.Season == season).Select(st => st.Tier).Single() == 1
                         ? leagueTable.Rows.Single(r => r.Team == team).Position
-                        : leagueTable.Rows.Single(r => r.Team == team).Position + ((filters.Where(st => st.Season == season).Select(st => st.Tier).Single() - 1) * 24),
+                        : leagueTable.Rows.Single(r => r.Team == team).Position + 20 + ((filters.Where(st => st.Season == season).Select(st => st.Tier).Single() - 2) * 24),
                     Season = season,
                     Status = leagueTable.Rows.Single(r => r.Team == team).Status
                 });

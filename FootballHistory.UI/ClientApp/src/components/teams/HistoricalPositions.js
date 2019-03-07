@@ -24,7 +24,7 @@ function HistoricalPositions(props) {
         return map;
     }, {});
     let promotionData = historicalPositions.reduce(function(map, pos) {
-        if (pos.status === "P") {
+        if (pos.status === "P" || pos.status === "C" || pos.status === "PO (P)") {
             map[`${pos.season.substring(2, 4)} - ${pos.season.substring(9, 11)}`] = pos.absolutePosition;
         }
         return map;
@@ -38,7 +38,7 @@ function HistoricalPositions(props) {
 
     return (
         <div style={{display: 'flex'}}>
-            <div style={{minWidth: '120px', display: 'flex', flexDirection: 'column', justifyContent: 'space-around'}}>
+            <div style={{minWidth: '120px', display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly'}}>
                 <strong>Premier League</strong>
                 <strong>Championship</strong>
                 <strong>League One</strong>
