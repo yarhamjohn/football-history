@@ -18,17 +18,11 @@ namespace FootballHistory.Api.Repositories.PointDeductionRepository
             RepositoryContext = repositoryContext;
         }
 
-        public List<PointDeductionModel> GetPointDeductions(SeasonTierFilter filter)
-        {
-            var filters = new List<SeasonTierFilter> {filter};
-            return GetPointDeductions(filters);
-        }
-
-        public List<PointDeductionModel> GetPointDeductions(List<SeasonTierFilter> filters)
+        public List<PointDeductionModel> GetPointDeductions(params SeasonTierFilter[] filters)
         {
             using(var conn = RepositoryContext.Database.GetDbConnection())
             {
-                var cmd = GetDbCommand(conn, filters);
+                var cmd = GetDbCommand(conn, filters.ToList());
                 return CalculatePointDeductions(cmd);
             }
         }

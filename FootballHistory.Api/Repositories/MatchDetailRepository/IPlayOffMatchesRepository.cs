@@ -5,7 +5,6 @@ namespace FootballHistory.Api.Repositories.MatchDetailRepository
 {
     public interface IPlayOffMatchesRepository
     {
-        List<MatchDetailModel> GetPlayOffMatches(SeasonTierFilter filter);
-        List<MatchDetailModel> GetPlayOffMatches(List<SeasonTierFilter> filters);
+        List<MatchDetailModel> GetPlayOffMatches(params SeasonTierFilter[] filter);
     }
 }

@@ -20,16 +20,15 @@ namespace FootballHistory.Api.Repositories.LeagueDetailRepository
 
         public LeagueDetailModel GetLeagueInfo(SeasonTierFilter filter)
         {
-            var filters = new List<SeasonTierFilter> {filter};
-            var leagueDetails = GetLeagueInfos(filters);
+            var leagueDetails = GetLeagueInfos(filter);
             return leagueDetails.FirstOrDefault();
         }
         
-        public List<LeagueDetailModel> GetLeagueInfos(List<SeasonTierFilter> filters)
+        public List<LeagueDetailModel> GetLeagueInfos(params SeasonTierFilter[] filters)
         {
             using (var conn = Context.Database.GetDbConnection())
             {
-                var cmd = GetDbCommand(conn, filters);
+                var cmd = GetDbCommand(conn, filters.ToList());
                 return CreateLeagueDetails(cmd);
             }
         }

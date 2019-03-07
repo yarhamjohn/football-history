@@ -17,18 +17,11 @@ namespace FootballHistory.Api.Repositories.MatchDetailRepository
         {
             RepositoryContext = repositoryContext;
         }
-
-        public List<MatchDetailModel> GetPlayOffMatches(SeasonTierFilter filter)
-        {
-            var filters = new List<SeasonTierFilter> {filter};
-            return GetPlayOffMatches(filters);
-        }
-        
-        public List<MatchDetailModel> GetPlayOffMatches(List<SeasonTierFilter> filters)
+        public List<MatchDetailModel> GetPlayOffMatches(params SeasonTierFilter[] filters)
         {
             using(var conn = RepositoryContext.Database.GetDbConnection())
             {
-                var cmd = GetDbCommand(conn, filters);
+                var cmd = GetDbCommand(conn, filters.ToList());
                 return GetPlayOffMatchDetails(cmd);
             }
         }

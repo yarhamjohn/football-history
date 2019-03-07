@@ -18,7 +18,7 @@ namespace FootballHistory.Api.Repositories.TierRepository
             Context = context;
         }
         
-        public List<SeasonTierFilter> GetTier(string team)
+        public SeasonTierFilter[] GetTier(string team)
         {
             using (var conn = Context.Database.GetDbConnection())
             {
@@ -27,7 +27,7 @@ namespace FootballHistory.Api.Repositories.TierRepository
             }
         }
         
-        private static List<SeasonTierFilter> GetTierBySeason(DbCommand cmd)
+        private static SeasonTierFilter[] GetTierBySeason(DbCommand cmd)
         {
             var result = new List<SeasonTierFilter>();
             
@@ -45,7 +45,7 @@ namespace FootballHistory.Api.Repositories.TierRepository
                 }
             }
 
-            return result;
+            return result.ToArray();
         }
 
         private static DbCommand GetDbCommand(DbConnection conn, string team)

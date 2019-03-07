@@ -5,6 +5,6 @@ namespace FootballHistory.Api.Repositories.TierRepository
 {
     public interface ITierRepository
     {
-        List<SeasonTierFilter> GetTier(string team);
+        SeasonTierFilter[] GetTier(string team);
     }
 }

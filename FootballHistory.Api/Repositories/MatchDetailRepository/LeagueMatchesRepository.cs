@@ -17,18 +17,12 @@ namespace FootballHistory.Api.Repositories.MatchDetailRepository
         {
             Context = context;
         }
-
-        public List<MatchDetailModel> GetLeagueMatches(SeasonTierFilter filter)
-        {
-            var filters = new List<SeasonTierFilter> {filter};
-            return GetLeagueMatches(filters);
-        }
         
-        public List<MatchDetailModel> GetLeagueMatches(List<SeasonTierFilter> filters)
+        public List<MatchDetailModel> GetLeagueMatches(params SeasonTierFilter[] filters)
         {
             using(var conn = Context.Database.GetDbConnection())
             {
-                var cmd = GetDbCommand(conn, filters);
+                var cmd = GetDbCommand(conn, filters.ToList());
                 return GetMatchDetails(cmd);
             }
         }

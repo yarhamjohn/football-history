@@ -6,6 +6,6 @@ namespace FootballHistory.Api.Repositories.LeagueDetailRepository
     public interface ILeagueDetailRepository
     {
         LeagueDetailModel GetLeagueInfo(SeasonTierFilter filter);
-        List<LeagueDetailModel> GetLeagueInfos(List<SeasonTierFilter> filters);
+        List<LeagueDetailModel> GetLeagueInfos(params SeasonTierFilter[] filters);
     }
 }
