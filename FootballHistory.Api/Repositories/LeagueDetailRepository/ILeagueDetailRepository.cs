@@ -1,10 +1,11 @@
 using System.Collections.Generic;
+using FootballHistory.Api.Controllers;
 
 namespace FootballHistory.Api.Repositories.LeagueDetailRepository
 {
     public interface ILeagueDetailRepository
     {
-        LeagueDetailModel GetLeagueInfo(int tier, string season);
-        List<LeagueDetailModel> GetLeagueInfos(List<(int, string)> seasonTier);
+        LeagueDetailModel GetLeagueInfo(SeasonTierFilter filter);
+        List<LeagueDetailModel> GetLeagueInfos(List<SeasonTierFilter> filters);
     }
 }

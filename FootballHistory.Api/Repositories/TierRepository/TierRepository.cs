@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
+using FootballHistory.Api.Controllers;
 using FootballHistory.Api.Domain;
 using FootballHistory.Api.Repositories.DivisionRepository;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +18,7 @@ namespace FootballHistory.Api.Repositories.TierRepository
             Context = context;
         }
         
-        public List<(int, string)> GetTier(string team)
+        public List<SeasonTierFilter> GetTier(string team)
         {
             using (var conn = Context.Database.GetDbConnection())
             {
@@ -26,15 +27,21 @@ namespace FootballHistory.Api.Repositories.TierRepository
             }
         }
         
-        private static List<(int, string)> GetTierBySeason(DbCommand cmd)
+        private static List<SeasonTierFilter> GetTierBySeason(DbCommand cmd)
         {
-            var result = new List<(int, string)>();
+            var result = new List<SeasonTierFilter>();
             
             using (var reader = cmd.ExecuteReader())
             {
                 while (reader.Read())
                 {
-                    result.Add((reader.GetInt32(0), reader.GetString(1)));
+                    result.Add(
+                        new SeasonTierFilter
+                        {
+                            Tier = reader.GetInt32(0),
+                            Season = reader.GetString(1)
+                        }
+                    );
                 }
             }
 

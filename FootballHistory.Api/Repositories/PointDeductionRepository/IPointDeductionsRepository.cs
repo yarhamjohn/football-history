@@ -1,10 +1,11 @@
 using System.Collections.Generic;
+using FootballHistory.Api.Controllers;
 
 namespace FootballHistory.Api.Repositories.PointDeductionRepository
 {
     public interface IPointDeductionsRepository
     {
-        List<PointDeductionModel> GetPointDeductions(int tier, string season);
-        List<PointDeductionModel> GetPointDeductions(List<(int, string)> seasonTier);
+        List<PointDeductionModel> GetPointDeductions(SeasonTierFilter filter);
+        List<PointDeductionModel> GetPointDeductions(List<SeasonTierFilter> filters);
     }
 }

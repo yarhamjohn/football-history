@@ -3,6 +3,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using FootballHistory.Api.Controllers;
 using FootballHistory.Api.Domain;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,17 +18,17 @@ namespace FootballHistory.Api.Repositories.PointDeductionRepository
             RepositoryContext = repositoryContext;
         }
 
-        public List<PointDeductionModel> GetPointDeductions(int tier, string season)
+        public List<PointDeductionModel> GetPointDeductions(SeasonTierFilter filter)
         {
-            var seasonTier = new List<(int, string)> {(tier, season)};
-            return GetPointDeductions(seasonTier);
+            var filters = new List<SeasonTierFilter> {filter};
+            return GetPointDeductions(filters);
         }
 
-        public List<PointDeductionModel> GetPointDeductions(List<(int, string)> seasonTier)
+        public List<PointDeductionModel> GetPointDeductions(List<SeasonTierFilter> filters)
         {
             using(var conn = RepositoryContext.Database.GetDbConnection())
             {
-                var cmd = GetDbCommand(conn, seasonTier);
+                var cmd = GetDbCommand(conn, filters);
                 return CalculatePointDeductions(cmd);
             }
         }
@@ -56,24 +57,24 @@ namespace FootballHistory.Api.Repositories.PointDeductionRepository
             return pointDeductions;
         }
 
-        private static DbCommand GetDbCommand(DbConnection conn, List<(int, string)> seasonTier)
+        private static DbCommand GetDbCommand(DbConnection conn, List<SeasonTierFilter> filters)
         {
             conn.Open();
             
             var cmd = conn.CreateCommand();
             var fullSql = new StringBuilder();
 
-            for (var i = 0; i < seasonTier.Count; i++)
+            for (var i = 0; i < filters.Count; i++)
             {
                 fullSql.Append(BuildSql(i));
 
-                if (i < seasonTier.Count - 1)
+                if (i < filters.Count - 1)
                 {
                     fullSql.Append("\n UNION ALL \n");
                 }
 
-                cmd.Parameters.Add(new SqlParameter($"@Tier{i}", seasonTier[i].Item1));
-                cmd.Parameters.Add(new SqlParameter($"@Season{i}", seasonTier[i].Item2));
+                cmd.Parameters.Add(new SqlParameter($"@Tier{i}", filters[i].Tier));
+                cmd.Parameters.Add(new SqlParameter($"@Season{i}", filters[i].Season));
             }
 
             cmd.CommandText = fullSql.ToString();
