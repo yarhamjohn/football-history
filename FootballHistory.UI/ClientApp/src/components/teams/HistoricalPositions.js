@@ -18,7 +18,7 @@ function HistoricalPositions(props) {
             });
     }, [selectedTeam]);
   
-    
+    //TODO: need a new series for each relegation/promotion place to avoid lines between
     let data = historicalPositions.reduce(function(map, pos) {
         map[`${pos.season.substring(2, 4)} - ${pos.season.substring(9, 11)}`] = pos.absolutePosition;
         return map;
@@ -60,7 +60,7 @@ function HistoricalPositions(props) {
                         height: '75%'
                     },
                     series: { 
-                        2: { targetAxisIndex: 1}
+                        0: { targetAxisIndex: 1}
                     },
                     hAxis: {
                         slantedText: true
