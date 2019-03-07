@@ -72,8 +72,8 @@ namespace FootballHistory.Api.Repositories.PointDeductionRepository
                     fullSql.Append("\n UNION ALL \n");
                 }
 
-                cmd.Parameters.Add(new SqlParameter($"@Tier{i}", seasonTier.Single().Item1));
-                cmd.Parameters.Add(new SqlParameter($"@Season{i}", seasonTier.Single().Item2));
+                cmd.Parameters.Add(new SqlParameter($"@Tier{i}", seasonTier[i].Item1));
+                cmd.Parameters.Add(new SqlParameter($"@Season{i}", seasonTier[i].Item2));
             }
 
             cmd.CommandText = fullSql.ToString();
