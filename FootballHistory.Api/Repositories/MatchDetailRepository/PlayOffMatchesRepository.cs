@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Linq;
+using System.Text;
 using FootballHistory.Api.Domain;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,9 +19,15 @@ namespace FootballHistory.Api.Repositories.MatchDetailRepository
 
         public List<MatchDetailModel> GetPlayOffMatches(int tier, string season)
         {
+            var seasonTier = new List<(int, string)> {(tier, season)};
+            return GetPlayOffMatches(seasonTier);
+        }
+        
+        public List<MatchDetailModel> GetPlayOffMatches(List<(int, string)> seasonTier)
+        {
             using(var conn = RepositoryContext.Database.GetDbConnection())
             {
-                var cmd = GetDbCommand(conn, tier, season);
+                var cmd = GetDbCommand(conn, seasonTier);
                 return GetPlayOffMatchDetails(cmd);
             }
         }
@@ -62,9 +70,35 @@ namespace FootballHistory.Api.Repositories.MatchDetailRepository
             return matchDetails;
         }
 
-        private static DbCommand GetDbCommand(DbConnection conn, int tier, string season)
+        private static DbCommand GetDbCommand(DbConnection conn, List<(int, string)> seasonTier)
         {
-            const string sql = @"
+            conn.Open();
+            
+            var cmd = conn.CreateCommand();
+            var fullSql = new StringBuilder();
+
+            for (var i = 0; i < seasonTier.Count; i++)
+            {
+                fullSql.Append(BuildSql(i));
+
+                if (i < seasonTier.Count - 1)
+                {
+                    fullSql.Append("\n UNION ALL \n");
+                }
+
+                cmd.Parameters.Add(new SqlParameter($"@Tier{i}", seasonTier.Single().Item1));
+                cmd.Parameters.Add(new SqlParameter($"@SeasonStartYear{i}", seasonTier.Single().Item2.Substring(0, 4)));
+                cmd.Parameters.Add(new SqlParameter($"@SeasonEndYear{i}", seasonTier.Single().Item2.Substring(7, 4)));
+
+            }
+
+            cmd.CommandText = fullSql.ToString();
+            return cmd;
+        }
+
+        private static string BuildSql(int num)
+        {
+            return $@"
 SELECT pom.Round
     ,pom.matchDate
     ,hc.Name AS HomeTeam
@@ -85,19 +119,9 @@ FROM dbo.PlayOffMatches AS pom
 INNER JOIN dbo.Divisions d ON d.Id = pom.DivisionId
 INNER JOIN dbo.Clubs AS hc ON hc.Id = pom.HomeClubId
 INNER JOIN dbo.Clubs AS ac ON ac.Id = pom.AwayClubId
-WHERE d.Tier = @Tier
-    AND pom.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
+WHERE d.Tier = @Tier{num}
+    AND pom.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear{num}, 7, 1) AND DATEFROMPARTS(@SeasonEndYear{num}, 6, 30)
 ";
-
-            conn.Open();
-            
-            var cmd = conn.CreateCommand();
-            cmd.CommandText = sql;
-            cmd.Parameters.Add(new SqlParameter("@Tier", tier));
-            cmd.Parameters.Add(new SqlParameter("@SeasonStartYear", season.Substring(0, 4)));
-            cmd.Parameters.Add(new SqlParameter("@SeasonEndYear", season.Substring(7, 4)));
-            
-            return cmd;
         }
     }
 }
