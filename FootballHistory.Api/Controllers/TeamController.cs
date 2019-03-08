@@ -58,13 +58,18 @@ namespace FootballHistory.Api.Controllers
             
             var filters = _tierRepository.GetTier(team);
 
+            if (!filters.Any())
+            {
+                return new List<HistoricalPosition>();
+            }
+            
             var leagueMatchDetails = _leagueMatchesRepository.GetLeagueMatches(filters.ToArray());
             var leagueDetails = _leagueDetailRepository.GetLeagueInfos(filters.ToArray());
             var pointDeductions = _pointDeductionsRepository.GetPointDeductions(filters.ToArray());
             var playOffMatches = _playOffMatchesRepository.GetPlayOffMatches(filters.ToArray());
             
-            //TODO - think about the singles...
-            for (var year = 1992; year <= 2017; year++)
+            var seasonStartYear = filters.OrderBy(f => f.Season).Select(f => Convert.ToInt32(f.Season.Substring(0, 4))).ToList();
+            foreach (var year in seasonStartYear)
             {
                 var season = $"{year} - {year + 1}";
                 var filteredLeagueMatchDetails = leagueMatchDetails.Where(m => m.Date > new DateTime(year, 7, 1) && m.Date < new DateTime(year + 1, 6, 30)).ToList();
