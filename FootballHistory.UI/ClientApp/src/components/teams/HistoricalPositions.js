@@ -17,24 +17,45 @@ function HistoricalPositions(props) {
                 setHistoricalPositions(data);
             });
     }, [selectedTeam]);
-  
-    //TODO: need a new series for each relegation/promotion place to avoid lines between
-    let data = historicalPositions.reduce(function(map, pos) {
-        map[`${pos.season.substring(2, 4)} - ${pos.season.substring(9, 11)}`] = pos.absolutePosition;
-        return map;
-    }, {});
-    let promotionData = historicalPositions.reduce(function(map, pos) {
-        if (pos.status === "P" || pos.status === "C" || pos.status === "PO (P)") {
+
+    function GetAllPositions() {
+        return historicalPositions.reduce(function (map, pos) {
             map[`${pos.season.substring(2, 4)} - ${pos.season.substring(9, 11)}`] = pos.absolutePosition;
-        }
-        return map;
-    }, {});
-    let relegationData = historicalPositions.reduce(function(map, pos) {
-        if (pos.status === "R") {
-            map[`${pos.season.substring(2, 4)} - ${pos.season.substring(9, 11)}`] = pos.absolutePosition;
-        }
-        return map;
-    }, {});
+            return map;
+        }, {});
+    }
+
+    let seriesData = [{name: "Positions", data: GetAllPositions()}];
+    let colors = ["#0000FF"];
+
+    let promotionPositions = historicalPositions.filter(pos => pos.status === "P" || pos.status === "C" || pos.status === "PO (P)");
+    for (let i = 0; i < promotionPositions.length; i++)
+    {
+        let test = {};
+        test[`${promotionPositions[i].season.substring(2, 4)} - ${promotionPositions[i].season.substring(9, 11)}`] = promotionPositions[i].absolutePosition; 
+        seriesData.push(
+            {
+                name: `Promotion${i}`,
+                data: test
+            });
+        
+        colors.push("#00FF00");
+    }
+
+    let relegationPositions = historicalPositions.filter(pos => pos.status === "R");
+    for (let i = 0; i < relegationPositions.length; i++)
+    {
+        let test = {};
+        test[`${relegationPositions[i].season.substring(2, 4)} - ${relegationPositions[i].season.substring(9, 11)}`] = relegationPositions[i].absolutePosition;
+
+        seriesData.push(
+            {
+                name: `Relegation${i}`,
+                data: test
+            });
+        
+        colors.push("#FF0000");
+    }
 
     return (
         <div style={{display: 'flex'}}>
@@ -45,12 +66,8 @@ function HistoricalPositions(props) {
                 <strong>League Two</strong>
             </div>
             <LineChart
-                data={
-                    [{name: "Positions", data: data},
-                     {name: "Promotion", data: promotionData},
-                     {name: "Relegation", data: relegationData}]
-                }
-                colors={["#0000FF", "#00FF00", "#FF0000"]}
+                data={seriesData}
+                colors={colors}
                 min={1}
                 max={92}
                 legend={false}
