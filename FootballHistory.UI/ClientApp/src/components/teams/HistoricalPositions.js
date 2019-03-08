@@ -18,44 +18,11 @@ function HistoricalPositions(props) {
             });
     }, [selectedTeam]);
 
-    function GetAllPositions() {
-        return historicalPositions.reduce(function (map, pos) {
-            map[`${pos.season.substring(2, 4)} - ${pos.season.substring(9, 11)}`] = pos.absolutePosition;
-            return map;
-        }, {});
-    }
-
-    let seriesData = [{name: "Positions", data: GetAllPositions()}];
+    let seriesData = [{name: "Positions", data: AddAllPositionsSeriesData()}];
     let colors = ["#0000FF"];
 
-    let promotionPositions = historicalPositions.filter(pos => pos.status === "P" || pos.status === "C" || pos.status === "PO (P)");
-    for (let i = 0; i < promotionPositions.length; i++)
-    {
-        let test = {};
-        test[`${promotionPositions[i].season.substring(2, 4)} - ${promotionPositions[i].season.substring(9, 11)}`] = promotionPositions[i].absolutePosition; 
-        seriesData.push(
-            {
-                name: `Promotion${i}`,
-                data: test
-            });
-        
-        colors.push("#00FF00");
-    }
-
-    let relegationPositions = historicalPositions.filter(pos => pos.status === "R");
-    for (let i = 0; i < relegationPositions.length; i++)
-    {
-        let test = {};
-        test[`${relegationPositions[i].season.substring(2, 4)} - ${relegationPositions[i].season.substring(9, 11)}`] = relegationPositions[i].absolutePosition;
-
-        seriesData.push(
-            {
-                name: `Relegation${i}`,
-                data: test
-            });
-        
-        colors.push("#FF0000");
-    }
+    AddPromotionPositions();
+    AddRelegationPositions();
 
     return (
         <div style={{display: 'flex'}}>
@@ -102,6 +69,49 @@ function HistoricalPositions(props) {
                 />
         </div>
     );
+
+    function GetSeasonAbbreviation(season) {
+        return `${season.substring(2, 4)} - ${season.substring(9, 11)}`;
+    }
+
+    function AddAllPositionsSeriesData() {
+        return historicalPositions.reduce(function (map, pos) {
+            map[GetSeasonAbbreviation(pos.season)] = pos.absolutePosition;
+            return map;
+        }, {});
+    }
+    
+    function AddPromotionPositions() {
+        let promotionPositions = historicalPositions.filter(pos => pos.status === "P" || pos.status === "C" || pos.status === "PO (P)");
+        for (let i = 0; i < promotionPositions.length; i++) {
+            let data = {};
+            data[GetSeasonAbbreviation(promotionPositions[i].season)] = promotionPositions[i].absolutePosition;
+            
+            seriesData.push(
+                {
+                    name: `Promotion${i}`,
+                    data: data
+                });
+
+            colors.push("#00FF00");
+        }
+    }
+
+    function AddRelegationPositions() {
+        let relegationPositions = historicalPositions.filter(pos => pos.status === "R");
+        for (let i = 0; i < relegationPositions.length; i++) {
+            let data = {};
+            data[GetSeasonAbbreviation(relegationPositions[i].season)] = relegationPositions[i].absolutePosition;
+
+            seriesData.push(
+                {
+                    name: `Relegation${i}`,
+                    data: data
+                });
+
+            colors.push("#FF0000");
+        }
+    }
 }
 
 export default HistoricalPositions;
