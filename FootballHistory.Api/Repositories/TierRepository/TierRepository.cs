@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
+using System.Linq;
 using FootballHistory.Api.Controllers;
 using FootballHistory.Api.Domain;
 using FootballHistory.Api.Repositories.DivisionRepository;
@@ -18,16 +19,16 @@ namespace FootballHistory.Api.Repositories.TierRepository
             Context = context;
         }
         
-        public SeasonTierFilter[] GetTier(string team)
+        public SeasonTierFilter[] GetSeasonTierFilters(string team, int seasonStartYear, int seasonEndYear)
         {
             using (var conn = Context.Database.GetDbConnection())
             {
                 var cmd = GetDbCommand(conn, team);
-                return GetTierBySeason(cmd);
+                return GetTierBySeason(cmd, seasonStartYear, seasonEndYear);
             }
         }
         
-        private static SeasonTierFilter[] GetTierBySeason(DbCommand cmd)
+        private static SeasonTierFilter[] GetTierBySeason(DbCommand cmd, int seasonStartYear, int seasonEndYear)
         {
             var result = new List<SeasonTierFilter>();
             
@@ -40,6 +41,20 @@ namespace FootballHistory.Api.Repositories.TierRepository
                         {
                             Tier = reader.GetByte(0),
                             Season = reader.GetString(1)
+                        }
+                    );
+                }
+            }
+            
+            for (var year = seasonStartYear; year <= seasonEndYear; year++)
+            {
+                if (result.All(r => r.Season.Substring(0, 4) != year.ToString()))
+                {
+                    result.Add(
+                        new SeasonTierFilter
+                        {
+                            Tier = 0,
+                            Season = $"{year} - {year + 1}"
                         }
                     );
                 }

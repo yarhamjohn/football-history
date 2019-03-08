@@ -86,7 +86,6 @@ namespace FootballHistory.Api
                 app.UseHsts();
             }
 
-
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {

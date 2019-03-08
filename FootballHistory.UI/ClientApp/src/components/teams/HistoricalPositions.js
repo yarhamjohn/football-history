@@ -11,7 +11,7 @@ function HistoricalPositions(props) {
     });
     
     useEffect(() => {
-        fetch(`${baseUrl}/api/Team/GetHistoricalPositions?team=${selectedTeam}`)
+        fetch(`${baseUrl}/api/Team/GetHistoricalPositions?team=${selectedTeam}&seasonStartYear=${1992}&seasonEndYear=${2017}`)
             .then(response => response.json())
             .then(data => {
                 setHistoricalPositions(data);
@@ -24,6 +24,7 @@ function HistoricalPositions(props) {
     AddPromotionPositions();
     AddRelegationPositions();
 
+    //TODO: fix tooltip text
     return (
         <div style={{display: 'flex'}}>
             <div style={{minWidth: '120px', display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly'}}>
@@ -76,7 +77,12 @@ function HistoricalPositions(props) {
 
     function AddAllPositionsSeriesData() {
         return historicalPositions.reduce(function (map, pos) {
-            map[GetSeasonAbbreviation(pos.season)] = pos.absolutePosition;
+            if (pos.absolutePosition === 0) {
+                map[GetSeasonAbbreviation(pos.season)] = null;
+            }
+            else {
+                map[GetSeasonAbbreviation(pos.season)] = pos.absolutePosition;
+            }
             return map;
         }, {});
     }

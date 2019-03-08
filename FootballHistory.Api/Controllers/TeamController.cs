@@ -47,7 +47,7 @@ namespace FootballHistory.Api.Controllers
         }
                 
         [HttpGet("[action]")]
-        public List<HistoricalPosition> GetHistoricalPositions(string team)
+        public List<HistoricalPosition> GetHistoricalPositions(string team, string seasonStartYear, string seasonEndYear)
         {
             if (team == null)
             {
@@ -56,7 +56,7 @@ namespace FootballHistory.Api.Controllers
             
             var historicalPositions = new List<HistoricalPosition>();
             
-            var filters = _tierRepository.GetTier(team);
+            var filters = _tierRepository.GetSeasonTierFilters(team, Convert.ToInt32(seasonStartYear), Convert.ToInt32(seasonEndYear));
 
             if (!filters.Any())
             {
@@ -68,24 +68,37 @@ namespace FootballHistory.Api.Controllers
             var pointDeductions = _pointDeductionsRepository.GetPointDeductions(filters.ToArray());
             var playOffMatches = _playOffMatchesRepository.GetPlayOffMatches(filters.ToArray());
             
-            var seasonStartYear = filters.OrderBy(f => f.Season).Select(f => Convert.ToInt32(f.Season.Substring(0, 4))).ToList();
-            foreach (var year in seasonStartYear)
+            var years = filters.OrderBy(f => f.Season).Select(f => Convert.ToInt32(f.Season.Substring(0, 4))).ToList();
+            foreach (var year in years)
             {
                 var season = $"{year} - {year + 1}";
-                var filteredLeagueMatchDetails = leagueMatchDetails.Where(m => m.Date > new DateTime(year, 7, 1) && m.Date < new DateTime(year + 1, 6, 30)).ToList();
-                var filteredPlayOffMatches = playOffMatches.Where(m => m.Date > new DateTime(year, 7, 1) && m.Date < new DateTime(year + 1, 6, 30)).ToList();
-                var filteredPointDeductions = pointDeductions.Where(pd => pd.Season == season).ToList();
-                var filteredLeagueDetail = leagueDetails.Single(ld => ld.Season == season);
-
-                var leagueTable = _leagueTableBuilder.BuildWithStatuses(filteredLeagueMatchDetails, filteredPointDeductions, filteredLeagueDetail, filteredPlayOffMatches);
-                historicalPositions.Add(new HistoricalPosition
+                if (filters.Where(f => f.Season == season).Select(f => f.Tier).Single() == 0)
                 {
-                    AbsolutePosition = filters.Where(st => st.Season == season).Select(st => st.Tier).Single() == 1
-                        ? leagueTable.Rows.Single(r => r.Team == team).Position
-                        : leagueTable.Rows.Single(r => r.Team == team).Position + 20 + ((filters.Where(st => st.Season == season).Select(st => st.Tier).Single() - 2) * 24),
-                    Season = season,
-                    Status = leagueTable.Rows.Single(r => r.Team == team).Status
-                });
+                    historicalPositions.Add(new HistoricalPosition
+                        {AbsolutePosition = 0, Season = season, Status = ""});
+                }
+                else
+                {
+                    var filteredLeagueMatchDetails = leagueMatchDetails.Where(m =>
+                        m.Date > new DateTime(year, 7, 1) && m.Date < new DateTime(year + 1, 6, 30)).ToList();
+                    var filteredPlayOffMatches = playOffMatches.Where(m =>
+                        m.Date > new DateTime(year, 7, 1) && m.Date < new DateTime(year + 1, 6, 30)).ToList();
+                    var filteredPointDeductions = pointDeductions.Where(pd => pd.Season == season).ToList();
+                    var filteredLeagueDetail = leagueDetails.Single(ld => ld.Season == season);
+
+                    var leagueTable = _leagueTableBuilder.BuildWithStatuses(filteredLeagueMatchDetails,
+                        filteredPointDeductions, filteredLeagueDetail, filteredPlayOffMatches);
+                    var tier = filters.Where(st => st.Season == season).Select(st => st.Tier).Single();
+                    var position = leagueTable.Rows.Single(r => r.Team == team).Position;
+                    historicalPositions.Add(new HistoricalPosition
+                    {
+                        AbsolutePosition = tier == 1
+                            ? position
+                            : position + 20 + ((tier - 2) * 24),
+                        Season = season,
+                        Status = leagueTable.Rows.Single(r => r.Team == team).Status
+                    });
+                }
             }
 
             return historicalPositions;
