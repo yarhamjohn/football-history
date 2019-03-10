@@ -47,7 +47,7 @@ namespace FootballHistory.Api.Controllers
         }
                 
         [HttpGet("[action]")]
-        public List<HistoricalPosition> GetHistoricalPositions(string team, string seasonStartYear, string seasonEndYear)
+        public List<HistoricalPosition> GetHistoricalPositions(string team, string firstSeasonStartYear, string lastSeasonStartYear)
         {
             if (team == null)
             {
@@ -56,17 +56,16 @@ namespace FootballHistory.Api.Controllers
             
             var historicalPositions = new List<HistoricalPosition>();
             
-            var filters = _tierRepository.GetSeasonTierFilters(team, Convert.ToInt32(seasonStartYear), Convert.ToInt32(seasonEndYear));
-
+            var filters = _tierRepository.GetSeasonTierFilters(team, Convert.ToInt32(firstSeasonStartYear), Convert.ToInt32(lastSeasonStartYear)).ToArray();
             if (!filters.Any())
             {
                 return new List<HistoricalPosition>();
             }
             
-            var leagueMatchDetails = _leagueMatchesRepository.GetLeagueMatches(filters.ToArray());
-            var leagueDetails = _leagueDetailRepository.GetLeagueInfos(filters.ToArray());
-            var pointDeductions = _pointDeductionsRepository.GetPointDeductions(filters.ToArray());
-            var playOffMatches = _playOffMatchesRepository.GetPlayOffMatches(filters.ToArray());
+            var leagueMatchDetails = _leagueMatchesRepository.GetLeagueMatches(filters);
+            var leagueDetails = _leagueDetailRepository.GetLeagueInfos(filters);
+            var pointDeductions = _pointDeductionsRepository.GetPointDeductions(filters);
+            var playOffMatches = _playOffMatchesRepository.GetPlayOffMatches(filters);
             
             return BuildHistoricalPositions(team, filters, leagueMatchDetails, playOffMatches, pointDeductions, leagueDetails);
         }
