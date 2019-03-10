@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using FootballHistory.Api.Controllers;
 using FootballHistory.Api.Domain;
+using FootballHistory.Api.Repositories.TierRepository;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballHistory.Api.Repositories.PointDeductionRepository

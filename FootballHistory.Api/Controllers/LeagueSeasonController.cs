@@ -10,6 +10,7 @@ using FootballHistory.Api.Repositories.DivisionRepository;
 using FootballHistory.Api.Repositories.LeagueDetailRepository;
 using FootballHistory.Api.Repositories.MatchDetailRepository;
 using FootballHistory.Api.Repositories.PointDeductionRepository;
+using FootballHistory.Api.Repositories.TierRepository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FootballHistory.Api.Controllers

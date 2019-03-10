@@ -1,4 +1,4 @@
-namespace FootballHistory.Api.Controllers
+namespace FootballHistory.Api.Repositories.TierRepository
 {
     public class SeasonTierFilter
     {
