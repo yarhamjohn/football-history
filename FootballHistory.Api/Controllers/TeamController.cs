@@ -22,6 +22,7 @@ namespace FootballHistory.Api.Controllers
         private readonly IPointDeductionsRepository _pointDeductionsRepository;
         private readonly ILeagueDetailRepository _leagueDetailRepository;
         private readonly ITierRepository _tierRepository;
+        private readonly IHistoricalPositionBuilder _historicalPositionBuilder;
 
         public TeamController(ITeamRepository teamRepository,
             ILeagueTableBuilder leagueTableBuilder, 
@@ -29,7 +30,8 @@ namespace FootballHistory.Api.Controllers
             IPlayOffMatchesRepository playOffMatchesRepository,
             IPointDeductionsRepository pointDeductionsRepository,
             ILeagueDetailRepository leagueDetailRepository,
-            ITierRepository tierRepository)
+            ITierRepository tierRepository,
+            IHistoricalPositionBuilder historicalPositionBuilder)
         {
             _teamRepository = teamRepository;
             _leagueTableBuilder = leagueTableBuilder;
@@ -38,6 +40,7 @@ namespace FootballHistory.Api.Controllers
             _pointDeductionsRepository = pointDeductionsRepository;
             _leagueDetailRepository = leagueDetailRepository;
             _tierRepository = tierRepository;
+            _historicalPositionBuilder = historicalPositionBuilder;
         }
         
         [HttpGet("[action]")]
@@ -65,46 +68,7 @@ namespace FootballHistory.Api.Controllers
             var pointDeductions = _pointDeductionsRepository.GetPointDeductions(filters);
             var playOffMatches = _playOffMatchesRepository.GetPlayOffMatches(filters);
             
-            return BuildHistoricalPositions(team, filters, leagueMatchDetails, playOffMatches, pointDeductions, leagueDetails);
-        }
-
-        private List<HistoricalPosition> BuildHistoricalPositions(string team, SeasonTierFilter[] filters, List<MatchDetailModel> leagueMatchDetails, List<MatchDetailModel> playOffMatches, List<PointDeductionModel> pointDeductions, List<LeagueDetailModel> leagueDetails)
-        {
-            var historicalPositions = new List<HistoricalPosition>();
-            var years = filters.OrderBy(f => f.Season).Select(f => Convert.ToInt32(f.Season.Substring(0, 4))).ToList();
-            foreach (var year in years)
-            {
-                var season = $"{year} - {year + 1}";
-                if (filters.Where(f => f.Season == season).Select(f => f.Tier).Single() == 0)
-                {
-                    historicalPositions.Add(new HistoricalPosition
-                        {AbsolutePosition = 0, Season = season, Status = ""});
-                }
-                else
-                {
-                    var filteredLeagueMatchDetails = leagueMatchDetails.Where(m =>
-                        m.Date > new DateTime(year, 7, 1) && m.Date < new DateTime(year + 1, 6, 30)).ToList();
-                    var filteredPlayOffMatches = playOffMatches.Where(m =>
-                        m.Date > new DateTime(year, 7, 1) && m.Date < new DateTime(year + 1, 6, 30)).ToList();
-                    var filteredPointDeductions = pointDeductions.Where(pd => pd.Season == season).ToList();
-                    var filteredLeagueDetail = leagueDetails.Single(ld => ld.Season == season);
-
-                    var leagueTable = _leagueTableBuilder.BuildWithStatuses(filteredLeagueMatchDetails,
-                        filteredPointDeductions, filteredLeagueDetail, filteredPlayOffMatches);
-                    var tier = filters.Where(st => st.Season == season).Select(st => st.Tier).Single();
-                    var position = leagueTable.Rows.Single(r => r.Team == team).Position;
-                    historicalPositions.Add(new HistoricalPosition
-                    {
-                        AbsolutePosition = tier == 1
-                            ? position
-                            : position + 20 + ((tier - 2) * 24),
-                        Season = season,
-                        Status = leagueTable.Rows.Single(r => r.Team == team).Status
-                    });
-                }
-            }
-
-            return historicalPositions;
+            return _historicalPositionBuilder.Build(team, filters, leagueMatchDetails, playOffMatches, pointDeductions, leagueDetails);
         }
     }
 }

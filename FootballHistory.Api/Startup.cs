@@ -10,6 +10,7 @@ using FootballHistory.Api.Repositories.MatchDetailRepository;
 using FootballHistory.Api.Repositories.PointDeductionRepository;
 using FootballHistory.Api.Repositories.TeamRepository;
 using FootballHistory.Api.Repositories.TierRepository;
+using FootballHistory.Api.Team.HistoricalPosition;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -48,6 +49,7 @@ namespace FootballHistory.Api
             services.AddTransient<IResultMatrixBuilder, ResultMatrixBuilder>();
             services.AddTransient<IPlayOffMatchesBuilder, PlayOffMatchesBuilder>();
             services.AddTransient<ILeagueTableDrillDownBuilder, LeagueTableDrillDownBuilder>();
+            services.AddTransient<IHistoricalPositionBuilder, HistoricalPositionBuilder>();
 
             services.AddTransient<IDivisionRepository, DivisionRepository>();
             services.AddTransient<IPlayOffMatchesRepository, PlayOffMatchesRepository>();
