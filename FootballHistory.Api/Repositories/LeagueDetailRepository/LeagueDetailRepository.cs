@@ -3,7 +3,6 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
-using FootballHistory.Api.Controllers;
 using FootballHistory.Api.Domain;
 using FootballHistory.Api.Repositories.TierRepository;
 using Microsoft.EntityFrameworkCore;
@@ -73,7 +72,7 @@ namespace FootballHistory.Api.Repositories.LeagueDetailRepository
                     fullSql.Append("\n UNION ALL \n");
                 }
 
-                cmd.Parameters.Add(new SqlParameter($"@Tier{i}", filters[i].Tier));
+                cmd.Parameters.Add(new SqlParameter($"@Tier{i}", (int) filters[i].Tier));
                 cmd.Parameters.Add(new SqlParameter($"@Season{i}", filters[i].Season));
             }
 

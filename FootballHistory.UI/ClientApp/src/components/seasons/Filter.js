@@ -26,11 +26,11 @@ class Filter extends Component {
         <DropdownButton title="Division" id="DivisionSelect">
         {
           allTiers.map(t => 
-            <MenuItem key={t.level} eventKey={t} 
-              className={t.level === selectedTier ? "active" : ""}
+            <MenuItem key={t.tier} eventKey={t} 
+              className={t.tier === selectedTier ? "active" : ""}
               onSelect={(t) => this.updateTier(t)}
             >
-              {`Tier ${t.level}: ${this.getDivisionInfo(t)}`}
+              {`Tier ${t.tier}: ${this.getDivisionInfo(t)}`}
             </MenuItem>)
         }
         </DropdownButton>

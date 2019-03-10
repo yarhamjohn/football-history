@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using FootballHistory.Api.LeagueSeason.LeagueTable;
 using FootballHistory.Api.Repositories.LeagueDetailRepository;
 using FootballHistory.Api.Repositories.MatchDetailRepository;
 using FootballHistory.Api.Repositories.PointDeductionRepository;
@@ -16,7 +14,6 @@ namespace FootballHistory.Api.Controllers
     public class TeamController : Controller
     {
         private readonly ITeamRepository _teamRepository;
-        private readonly ILeagueTableBuilder _leagueTableBuilder;
         private readonly ILeagueMatchesRepository _leagueMatchesRepository;
         private readonly IPlayOffMatchesRepository _playOffMatchesRepository;
         private readonly IPointDeductionsRepository _pointDeductionsRepository;
@@ -25,7 +22,6 @@ namespace FootballHistory.Api.Controllers
         private readonly IHistoricalPositionBuilder _historicalPositionBuilder;
 
         public TeamController(ITeamRepository teamRepository,
-            ILeagueTableBuilder leagueTableBuilder, 
             ILeagueMatchesRepository leagueMatchesRepository, 
             IPlayOffMatchesRepository playOffMatchesRepository,
             IPointDeductionsRepository pointDeductionsRepository,
@@ -34,7 +30,6 @@ namespace FootballHistory.Api.Controllers
             IHistoricalPositionBuilder historicalPositionBuilder)
         {
             _teamRepository = teamRepository;
-            _leagueTableBuilder = leagueTableBuilder;
             _leagueMatchesRepository = leagueMatchesRepository;
             _playOffMatchesRepository = playOffMatchesRepository;
             _pointDeductionsRepository = pointDeductionsRepository;

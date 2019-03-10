@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using FootballHistory.Api.Controllers;
 using FootballHistory.Api.Domain;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,7 +36,7 @@ namespace FootballHistory.Api.Repositories.DivisionRepository
                         new DivisionModel
                         {
                             Name = reader.GetString(0),
-                            Tier = reader.GetByte(1),
+                            Tier = (Tier) reader.GetByte(1),
                             From = reader.GetInt16(2),
                             To = reader.IsDBNull(3) ? DateTime.UtcNow.Year : reader.GetInt16(3)
                         }

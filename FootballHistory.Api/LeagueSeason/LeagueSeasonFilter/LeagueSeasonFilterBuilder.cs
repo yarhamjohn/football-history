@@ -33,9 +33,9 @@ namespace FootballHistory.Api.LeagueSeason.LeagueSeasonFilter
             return seasons.ToList();
         }
 
-        private List<Tier> GetTiers()
+        private List<DivisionTier> GetTiers()
         {
-            return _divisionModels.GroupBy(model => model.Tier).Select(group => new Tier
+            return _divisionModels.GroupBy(model => model.Tier).Select(group => new DivisionTier
                 {
                     Divisions = group.Select(d => new Division
                         {
@@ -44,7 +44,7 @@ namespace FootballHistory.Api.LeagueSeason.LeagueSeasonFilter
                             ActiveTo = d.To
                         }
                     ).ToList(),
-                    Level = group.Key
+                    Tier = group.Key
                 }
             ).ToList();
         }

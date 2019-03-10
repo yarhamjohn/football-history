@@ -44,7 +44,7 @@ class Page extends Component {
   
   getDefaultTier(tiers)
   {
-    return tiers.filter(t => t.level === 1)[0];
+    return tiers.filter(t => t.tier === 1)[0];
   }
   
   getDefaultSeason(seasons)
@@ -82,7 +82,7 @@ class Page extends Component {
 
         <div className='table-container'>
           <LeagueTable tier={selectedTier} seasonStartYear={selectedSeason.substring(0, 4)} />
-          {selectedTier.level !== 1 && <PlayOffMatches tier={selectedTier} seasonStartYear={selectedSeason.substring(0, 4)} />}
+          {selectedTier.tier !== 1 && <PlayOffMatches tier={selectedTier} seasonStartYear={selectedSeason.substring(0, 4)} />}
         </div>
 
         <ResultMatrix tier={selectedTier} seasonStartYear={selectedSeason.substring(0, 4)} />

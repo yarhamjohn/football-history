@@ -15,7 +15,7 @@ class PlayOffMatches extends Component {
   fetchPlayOffMatches() {
     const { tier, seasonStartYear } = this.props;
 
-      fetch(`${baseUrl}/api/LeagueSeason/GetPlayOffMatches?tier=${tier.level}&seasonStartYear=${seasonStartYear}`)
+      fetch(`${baseUrl}/api/LeagueSeason/GetPlayOffMatches?tier=${tier.tier}&seasonStartYear=${seasonStartYear}`)
       .then(response => response.json())
       .then(data => {
         this.setState({ 

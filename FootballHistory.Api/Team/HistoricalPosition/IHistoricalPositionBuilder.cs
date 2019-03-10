@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using FootballHistory.Api.Controllers;
 using FootballHistory.Api.Repositories.LeagueDetailRepository;
 using FootballHistory.Api.Repositories.MatchDetailRepository;
 using FootballHistory.Api.Repositories.PointDeductionRepository;

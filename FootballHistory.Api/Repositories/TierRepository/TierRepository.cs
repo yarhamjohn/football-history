@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using FootballHistory.Api.Controllers;
 using FootballHistory.Api.Domain;
 using Microsoft.EntityFrameworkCore;
 
@@ -36,7 +37,7 @@ namespace FootballHistory.Api.Repositories.TierRepository
                     result.Add(
                         new SeasonTierFilter
                         {
-                            Tier = reader.GetByte(0),
+                            Tier = (Tier) reader.GetByte(0),
                             SeasonStartYear = reader.GetInt32(1)
                         }
                     );
@@ -50,7 +51,7 @@ namespace FootballHistory.Api.Repositories.TierRepository
                     result.Add(
                         new SeasonTierFilter
                         {
-                            Tier = 0,
+                            Tier = Tier.UnknownTier,
                             SeasonStartYear = year
                         }
                     );

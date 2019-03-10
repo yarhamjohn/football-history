@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
+using FootballHistory.Api.Controllers;
+using FootballHistory.Api.Domain;
 using FootballHistory.Api.LeagueSeason.LeagueSeasonFilter;
 using FootballHistory.Api.Repositories.DivisionRepository;
 using NUnit.Framework;
@@ -81,38 +83,38 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueSeasonFilter
         }
 
         [Test]
-        public void GetCorrectLevels_GivenOneDivisionModel()
+        public void GetCorrectTiers_GivenOneDivisionModel()
         {
-            var divisionModel = new DivisionModel {Tier = 1};
+            var divisionModel = new DivisionModel {Tier = Tier.TopTier};
 
             var leagueSeasonFilter = _leagueSeasonFilterBuilder.Build(new List<DivisionModel> {divisionModel});
-            var levels = leagueSeasonFilter.AllTiers.Select(t => t.Level).ToArray();
+            var tiers = leagueSeasonFilter.AllTiers.Select(t => t.Tier).ToArray();
             
-            Assert.AreEqual(new[] { 1 }, levels);
+            Assert.AreEqual(new[] { Tier.TopTier }, tiers);
         }
 
         [Test]
-        public void GetCorrectLevels_GivenTwoDivisionModels_WithNonMatchingTiers()
+        public void GetCorrectTiers_GivenTwoDivisionModels_WithNonMatchingTiers()
         {
-            var divisionModelOne = new DivisionModel {Tier = 1};
-            var divisionModelTwo = new DivisionModel {Tier = 2};
+            var divisionModelOne = new DivisionModel {Tier = Tier.TopTier};
+            var divisionModelTwo = new DivisionModel {Tier = Tier.SecondTier};
 
             var leagueSeasonFilter = _leagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModelOne, divisionModelTwo });
-            var levels = leagueSeasonFilter.AllTiers.Select(t => t.Level).ToArray();
+            var tiers = leagueSeasonFilter.AllTiers.Select(t => t.Tier).ToArray();
             
-            Assert.AreEqual(new[] { 1, 2 }, levels);
+            Assert.AreEqual(new[] { Tier.TopTier, Tier.SecondTier }, tiers);
         }
 
         [Test]
-        public void GetCorrectLevels_GivenTwoDivisionModels_WithMatchingTiers()
+        public void GetCorrectTiers_GivenTwoDivisionModels_WithMatchingTiers()
         {
-            var divisionModelOne = new DivisionModel {Tier = 1};
-            var divisionModelTwo = new DivisionModel {Tier = 1};
+            var divisionModelOne = new DivisionModel {Tier = Tier.TopTier};
+            var divisionModelTwo = new DivisionModel {Tier = Tier.TopTier};
 
             var leagueSeasonFilter = _leagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModelOne, divisionModelTwo });
-            var levels = leagueSeasonFilter.AllTiers.Select(t => t.Level).ToArray();
+            var tiers = leagueSeasonFilter.AllTiers.Select(t => t.Tier).ToArray();
             
-            Assert.AreEqual(new[] { 1 }, levels);
+            Assert.AreEqual(new[] { Tier.TopTier }, tiers);
         }
         
         [Test]
@@ -133,8 +135,8 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueSeasonFilter
         [Test]
         public void GetCorrectDivisions_GivenTwoDivisionModels_WithMatchingTiers()
         {
-            var divisionModelOne = new DivisionModel {Name = "DivisionName", Tier = 1, From = 2012, To = 2014};
-            var divisionModelTwo = new DivisionModel {Name = "AnotherDivisionName", Tier = 1, From = 2014, To = 2016};
+            var divisionModelOne = new DivisionModel {Name = "DivisionName", Tier = Tier.TopTier, From = 2012, To = 2014};
+            var divisionModelTwo = new DivisionModel {Name = "AnotherDivisionName", Tier = Tier.TopTier, From = 2014, To = 2016};
 
             var leagueSeasonFilter = _leagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModelOne, divisionModelTwo });
 
@@ -149,8 +151,8 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueSeasonFilter
         [Test]
         public void GetCorrectDivisions_GivenTwoDivisionModels_WithNonMatchingTiers()
         {
-            var divisionModelOne = new DivisionModel {Name = "DivisionName", Tier = 1, From = 2012, To = 2014};
-            var divisionModelTwo = new DivisionModel {Name = "AnotherDivisionName", Tier = 2, From = 2013, To = 2015};
+            var divisionModelOne = new DivisionModel {Name = "DivisionName", Tier = Tier.TopTier, From = 2012, To = 2014};
+            var divisionModelTwo = new DivisionModel {Name = "AnotherDivisionName", Tier = Tier.SecondTier, From = 2013, To = 2015};
 
             var leagueSeasonFilter = _leagueSeasonFilterBuilder.Build(new List<DivisionModel> { divisionModelOne, divisionModelTwo });
 

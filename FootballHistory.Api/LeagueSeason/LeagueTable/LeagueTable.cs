@@ -141,7 +141,7 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTable
             return Rows
                 .OrderByDescending(t => t.Points)
                 .ThenByDescending(t => t.GoalDifference) // Goal ratio was used prior to 1976-77
-                .ThenByDescending(t => t.GoalsFor)
+                .ThenByDescending(t => t.GoalsFor) //TODO: review this as apparently goals for was ahead of goal difference in the football league in 96/97 (see Brighton in Division 3)
                 // head to head
                 .ThenBy(t => t.Team) // unless it affects a promotion/relegation spot at the end of the season in which case a play-off occurs (this has never happened)
                 .ToList(); 
