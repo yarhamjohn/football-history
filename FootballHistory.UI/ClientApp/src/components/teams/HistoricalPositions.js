@@ -11,7 +11,7 @@ function HistoricalPositions(props) {
     });
     
     useEffect(() => {
-        fetch(`${baseUrl}/api/Team/GetHistoricalPositions?team=${selectedTeam}&seasonStartYear=${1992}&seasonEndYear=${2017}`)
+        fetch(`${baseUrl}/api/Team/GetHistoricalPositions?team=${selectedTeam}&firstSeasonStartYear=${1992}&lastSeasonStartYear=${2017}`)
             .then(response => response.json())
             .then(data => {
                 setHistoricalPositions(data);
