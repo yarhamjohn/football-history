@@ -54,8 +54,6 @@ namespace FootballHistory.Api.Controllers
                 return new List<HistoricalPosition>();
             }
             
-            var historicalPositions = new List<HistoricalPosition>();
-            
             var filters = _tierRepository.GetSeasonTierFilters(team, Convert.ToInt32(firstSeasonStartYear), Convert.ToInt32(lastSeasonStartYear)).ToArray();
             if (!filters.Any())
             {
