@@ -50,14 +50,14 @@ namespace FootballHistory.Api.Controllers
         }
                 
         [HttpGet("[action]")]
-        public List<HistoricalPosition> GetHistoricalPositions(string team, string firstSeasonStartYear, string lastSeasonStartYear)
+        public List<HistoricalPosition> GetHistoricalPositions(string team, int firstSeasonStartYear, int lastSeasonStartYear)
         {
             if (team == null)
             {
                 return new List<HistoricalPosition>();
             }
             
-            var filters = _tierRepository.GetSeasonTierFilters(team, Convert.ToInt32(firstSeasonStartYear), Convert.ToInt32(lastSeasonStartYear)).ToArray();
+            var filters = _tierRepository.GetSeasonTierFilters(team, firstSeasonStartYear, lastSeasonStartYear).ToArray();
             if (!filters.Any())
             {
                 return new List<HistoricalPosition>();
