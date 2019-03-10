@@ -68,6 +68,12 @@ namespace FootballHistory.Api.Controllers
             var pointDeductions = _pointDeductionsRepository.GetPointDeductions(filters.ToArray());
             var playOffMatches = _playOffMatchesRepository.GetPlayOffMatches(filters.ToArray());
             
+            return BuildHistoricalPositions(team, filters, leagueMatchDetails, playOffMatches, pointDeductions, leagueDetails);
+        }
+
+        private List<HistoricalPosition> BuildHistoricalPositions(string team, SeasonTierFilter[] filters, List<MatchDetailModel> leagueMatchDetails, List<MatchDetailModel> playOffMatches, List<PointDeductionModel> pointDeductions, List<LeagueDetailModel> leagueDetails)
+        {
+            var historicalPositions = new List<HistoricalPosition>();
             var years = filters.OrderBy(f => f.Season).Select(f => Convert.ToInt32(f.Season.Substring(0, 4))).ToList();
             foreach (var year in years)
             {
