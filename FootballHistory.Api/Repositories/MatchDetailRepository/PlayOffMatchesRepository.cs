@@ -82,8 +82,8 @@ namespace FootballHistory.Api.Repositories.MatchDetailRepository
                 }
 
                 cmd.Parameters.Add(new SqlParameter($"@Tier{i}", filters[i].Tier));
-                cmd.Parameters.Add(new SqlParameter($"@SeasonStartYear{i}", filters[i].Season.Substring(0, 4)));
-                cmd.Parameters.Add(new SqlParameter($"@SeasonEndYear{i}", filters[i].Season.Substring(7, 4)));
+                cmd.Parameters.Add(new SqlParameter($"@SeasonStartYear{i}", filters[i].SeasonStartYear));
+                cmd.Parameters.Add(new SqlParameter($"@SeasonEndYear{i}", filters[i].SeasonEndYear));
 
             }
 

@@ -13,9 +13,9 @@ class LeagueTable extends Component {
   };
 
   fetchLeagueTable() {
-    const { tier, season } = this.props;
+    const { tier, seasonStartYear } = this.props;
 
-    fetch(`${baseUrl}/api/LeagueSeason/GetLeagueTable?tier=${tier.level}&season=${season}`)
+    fetch(`${baseUrl}/api/LeagueSeason/GetLeagueTable?tier=${tier.level}&seasonStartYear=${seasonStartYear}`)
       .then(response => response.json())
       .then(data => {
         this.setState({ 
@@ -30,14 +30,14 @@ class LeagueTable extends Component {
   };
 
   componentDidUpdate(prevProps) {
-    if (prevProps.tier !== this.props.tier || prevProps.season !== this.props.season) {
+    if (prevProps.tier !== this.props.tier || prevProps.seasonStartYear !== this.props.seasonStartYear) {
       this.setState({ isLoading: true }, this.fetchLeagueTable());
     }
   };
 
   render() {
     const { table, isLoading } = this.state;
-    const { tier, season } = this.props;
+    const { tier, seasonStartYear } = this.props;
 
     if (isLoading) {
       return <p><em>Loading...</em></p>
@@ -68,8 +68,8 @@ class LeagueTable extends Component {
                 <TableRow 
                   row={row} 
                   numRows={table.length} 
-                  tier={tier} 
-                  season={season} 
+                  tier={tier}
+                  seasonStartYear={seasonStartYear} 
                   key={row.position} 
                   relegationPosition={GetRelegationPosition(table)}
                 />

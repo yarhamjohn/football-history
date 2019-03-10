@@ -1,11 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
-using FootballHistory.Api.Controllers;
 using FootballHistory.Api.Domain;
-using FootballHistory.Api.Repositories.DivisionRepository;
 using Microsoft.EntityFrameworkCore;
 
 namespace FootballHistory.Api.Repositories.TierRepository
@@ -40,7 +37,7 @@ namespace FootballHistory.Api.Repositories.TierRepository
                         new SeasonTierFilter
                         {
                             Tier = reader.GetByte(0),
-                            Season = reader.GetString(1)
+                            SeasonStartYear = reader.GetInt32(1)
                         }
                     );
                 }
@@ -48,13 +45,13 @@ namespace FootballHistory.Api.Repositories.TierRepository
             
             for (var year = seasonStartYear; year <= seasonEndYear; year++)
             {
-                if (result.All(r => r.Season.Substring(0, 4) != year.ToString()))
+                if (result.All(r => r.SeasonStartYear != year))
                 {
                     result.Add(
                         new SeasonTierFilter
                         {
                             Tier = 0,
-                            Season = $"{year} - {year + 1}"
+                            SeasonStartYear = year
                         }
                     );
                 }
@@ -66,19 +63,19 @@ namespace FootballHistory.Api.Repositories.TierRepository
         private static DbCommand GetDbCommand(DbConnection conn, string team)
         {
             const string sql = @"
-SELECT tier, season
+SELECT Tier, SeasonStartYear
 FROM (
     SELECT d.Tier
       ,CASE WHEN MONTH(lm.MatchDate) >= 7 
-            THEN CONCAT(YEAR(lm.MatchDate), ' - ', (YEAR(lm.MatchDate) + 1)) 
-            ELSE CONCAT((YEAR(lm.MatchDate) - 1), ' - ', YEAR(lm.MatchDate)) 
-            END AS Season
+            THEN YEAR(lm.MatchDate)
+            ELSE YEAR(lm.MatchDate) - 1 
+            END AS SeasonStartYear
     FROM [dbo].[LeagueMatches] lm
     INNER JOIN dbo.Divisions d ON d.Id = lm.DivisionId
     INNER JOIN dbo.Clubs c ON c.Id = lm.HomeClubId
     WHERE c.Name = @TeamName
 ) AS a
-GROUP BY a.Tier, a.Season
+GROUP BY a.Tier, a.SeasonStartYear
 ";
             conn.Open();
             

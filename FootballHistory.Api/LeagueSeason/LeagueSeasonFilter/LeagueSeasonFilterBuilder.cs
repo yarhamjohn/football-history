@@ -26,7 +26,7 @@ namespace FootballHistory.Api.LeagueSeason.LeagueSeasonFilter
             {
                 for (var year = divisionModel.From; year < divisionModel.To; year++)
                 {
-                    seasons.Add($"{year} - {year+1}");
+                    seasons.Add($"{year} - {year + 1}");
                 }
             }
 

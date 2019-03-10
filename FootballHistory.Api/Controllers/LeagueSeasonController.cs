@@ -62,27 +62,27 @@ namespace FootballHistory.Api.Controllers
         }
         
         [HttpGet("[action]")]
-        public ResultMatrix GetResultMatrix(int tier, string season)
+        public ResultMatrix GetResultMatrix(int tier, int seasonStartYear)
         {
-            var filter = new SeasonTierFilter { Season = season, Tier = tier };
+            var filter = new SeasonTierFilter { SeasonStartYear = seasonStartYear, Tier = tier };
             var matchDetails = _leagueMatchesRepository.GetLeagueMatches(filter);
             
             return _resultMatrixBuilder.Build(matchDetails);
         }
                                 
         [HttpGet("[action]")]
-        public PlayOffs GetPlayOffMatches(int tier, string season)
+        public PlayOffs GetPlayOffMatches(int tier, int seasonStartYear)
         {
-            var filter = new SeasonTierFilter { Season = season, Tier = tier };
+            var filter = new SeasonTierFilter { SeasonStartYear = seasonStartYear, Tier = tier };
             var matchDetails = _playOffMatchesRepository.GetPlayOffMatches(filter);
             
             return _playOffMatchesBuilder.Build(matchDetails);
         }
                 
         [HttpGet("[action]")]
-        public ILeagueTable GetLeagueTable(int tier, string season)
+        public ILeagueTable GetLeagueTable(int tier, int seasonStartYear)
         {
-            var filter = new SeasonTierFilter { Season = season, Tier = tier };
+            var filter = new SeasonTierFilter { SeasonStartYear = seasonStartYear, Tier = tier };
             var leagueMatchDetails = _leagueMatchesRepository.GetLeagueMatches(filter);
             var leagueDetail = _leagueDetailRepository.GetLeagueInfo(filter);
             var pointDeductions = _pointDeductionsRepository.GetPointDeductions(filter);
@@ -92,9 +92,9 @@ namespace FootballHistory.Api.Controllers
         }
                 
         [HttpGet("[action]")]
-        public LeagueTableDrillDown GetDrillDown(int tier, string season, string team)
+        public LeagueTableDrillDown GetDrillDown(int tier, int seasonStartYear, string team)
         {
-            var filter = new SeasonTierFilter { Season = season, Tier = tier };
+            var filter = new SeasonTierFilter { SeasonStartYear = seasonStartYear, Tier = tier };
             var matchDetails = _leagueMatchesRepository.GetLeagueMatches(filter);
             var pointDeductions = _pointDeductionsRepository.GetPointDeductions(filter);
 

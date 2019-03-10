@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using FootballHistory.Api.Controllers;
 using FootballHistory.Api.LeagueSeason.LeagueTable;
 using FootballHistory.Api.Repositories.LeagueDetailRepository;
 using FootballHistory.Api.Repositories.MatchDetailRepository;
@@ -22,11 +21,11 @@ namespace FootballHistory.Api.Team.HistoricalPosition
         public List<HistoricalPosition> Build(string team, SeasonTierFilter[] filters, List<MatchDetailModel> leagueMatchDetails, List<MatchDetailModel> playOffMatches, List<PointDeductionModel> pointDeductions, List<LeagueDetailModel> leagueDetails)
         {
             var historicalPositions = new List<HistoricalPosition>();
-            var years = filters.OrderBy(f => f.Season).Select(f => Convert.ToInt32(f.Season.Substring(0, 4))).ToList();
+            var years = filters.OrderBy(f => f.SeasonStartYear).Select(f => f.SeasonStartYear).ToList();
             foreach (var year in years)
             {
                 var season = $"{year} - {year + 1}";
-                if (filters.Where(f => f.Season == season).Select(f => f.Tier).Single() == 0)
+                if (filters.Where(f => f.SeasonStartYear == year).Select(f => f.Tier).Single() == 0)
                 {
                     historicalPositions.Add(new HistoricalPosition
                         {AbsolutePosition = 0, Season = season, Status = ""});
@@ -42,7 +41,7 @@ namespace FootballHistory.Api.Team.HistoricalPosition
 
                     var leagueTable = _leagueTableBuilder.BuildWithStatuses(filteredLeagueMatchDetails,
                         filteredPointDeductions, filteredLeagueDetail, filteredPlayOffMatches);
-                    var tier = filters.Where(st => st.Season == season).Select(st => st.Tier).Single();
+                    var tier = filters.Where(st => st.SeasonStartYear == year).Select(st => st.Tier).Single();
                     var position = leagueTable.Rows.Single(r => r.Team == team).Position;
                     historicalPositions.Add(new HistoricalPosition
                     {

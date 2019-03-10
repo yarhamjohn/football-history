@@ -13,9 +13,9 @@ class PlayOffMatches extends Component {
   };
 
   fetchPlayOffMatches() {
-    const { tier, season } = this.props;
+    const { tier, seasonStartYear } = this.props;
 
-      fetch(`${baseUrl}/api/LeagueSeason/GetPlayOffMatches?tier=${tier.level}&season=${season}`)
+      fetch(`${baseUrl}/api/LeagueSeason/GetPlayOffMatches?tier=${tier.level}&seasonStartYear=${seasonStartYear}`)
       .then(response => response.json())
       .then(data => {
         this.setState({ 
@@ -30,7 +30,7 @@ class PlayOffMatches extends Component {
   };
 
   componentDidUpdate(prevProps) {
-    if (prevProps.tier !== this.props.tier || prevProps.season !== this.props.season) {
+    if (prevProps.tier !== this.props.tier || prevProps.seasonStartYear !== this.props.seasonStartYear) {
       this.setState({ isLoading: true }, this.fetchPlayOffMatches());
     }
   };

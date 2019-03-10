@@ -11,9 +11,9 @@ class DrillDownTableRow extends Component {
   }
 
   componentDidMount() {
-    const { tier, season, team } = this.props;
+    const { tier, seasonStartYear, team } = this.props;
 
-    fetch(`${baseUrl}/api/LeagueSeason/GetDrillDown?tier=${tier.level}&season=${season}&team=${team}`)
+    fetch(`${baseUrl}/api/LeagueSeason/GetDrillDown?tier=${tier.level}&seasonStartYear=${seasonStartYear}&team=${team}`)
       .then(response => response.json())
       .then(data => {
         this.setState({ 

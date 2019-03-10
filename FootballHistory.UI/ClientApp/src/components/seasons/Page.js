@@ -81,11 +81,11 @@ class Page extends Component {
         />
 
         <div className='table-container'>
-          <LeagueTable tier={selectedTier} season={selectedSeason} />
-          {selectedTier.level !== 1 && <PlayOffMatches tier={selectedTier} season={selectedSeason} />}
+          <LeagueTable tier={selectedTier} seasonStartYear={selectedSeason.substring(0, 4)} />
+          {selectedTier.level !== 1 && <PlayOffMatches tier={selectedTier} seasonStartYear={selectedSeason.substring(0, 4)} />}
         </div>
 
-        <ResultMatrix tier={selectedTier} season={selectedSeason} />
+        <ResultMatrix tier={selectedTier} seasonStartYear={selectedSeason.substring(0, 4)} />
       </React.Fragment>
     );
   };
