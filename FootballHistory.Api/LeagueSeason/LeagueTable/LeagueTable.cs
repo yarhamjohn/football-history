@@ -15,13 +15,7 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTable
             Rows = new List<LeagueTableRow>();
         }
 
-        public LeagueTable AddPositionsAndStatuses(LeagueDetailModel leagueDetailModel, List<MatchDetailModel> playOffMatches)
-        {
-            var positionedLeagueTable = AddPositions(leagueDetailModel);
-            return positionedLeagueTable.AddStatuses(leagueDetailModel, playOffMatches);
-        }
-
-        private LeagueTable AddStatuses(LeagueDetailModel leagueDetailModel, List<MatchDetailModel> playOffMatches)
+        public LeagueTable AddStatuses(LeagueDetailModel leagueDetailModel, List<MatchDetailModel> playOffMatches)
         {
             if (leagueDetailModel.TotalPlaces != Rows.Count)
             {
@@ -110,42 +104,6 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTable
         {
             var placesAbovePlayOffs = leagueDetailModel.PromotionPlaces == 0 ? 1 : leagueDetailModel.PromotionPlaces;
             return row.Position > placesAbovePlayOffs && row.Position <= placesAbovePlayOffs + leagueDetailModel.PlayOffPlaces;
-        }
-
-        public LeagueTable AddPositions(LeagueDetailModel leagueDetailModel)
-        {
-            var sortedRows = SortTableRows(leagueDetailModel);
-            return new LeagueTable
-            {
-                Rows = sortedRows.Select((t, i) =>
-                {
-                    t.Position = i + 1;
-                    return t;
-                }).ToList()
-            };
-        }
-
-        private List<LeagueTableRow> SortTableRows(LeagueDetailModel leagueDetailModel)
-        {
-            var seasonStartYear = Convert.ToInt32(leagueDetailModel.Season.Substring(0, 4));
-            if (seasonStartYear >= 1999 || leagueDetailModel.Competition == "Premier League")
-            {
-                return Rows
-                    .OrderByDescending(t => t.Points)
-                    .ThenByDescending(t => t.GoalDifference) // Goal ratio was used prior to 1976-77
-                    .ThenByDescending(t => t.GoalsFor)
-                    // head to head
-                    .ThenBy(t => t.Team) // unless it affects a promotion/relegation spot at the end of the season in which case a play-off occurs (this has never happened)
-                    .ToList();
-            }
-            
-            return Rows
-                .OrderByDescending(t => t.Points)
-                .ThenByDescending(t => t.GoalsFor)
-                .ThenByDescending(t => t.GoalDifference) // Goal ratio was used prior to 1976-77
-                // head to head
-                .ThenBy(t => t.Team) // unless it affects a promotion/relegation spot at the end of the season in which case a play-off occurs (this has never happened)
-                .ToList();
         }
     }
 }

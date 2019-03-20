@@ -22,7 +22,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
             mockFactory
                 .Setup(x => x.Create(It.IsAny<List<MatchDetailModel>>(), It.IsAny<List<PointDeductionModel>>(), It.IsAny<string>()))
                 .Returns(() => new LeagueTableCalculator(new List<MatchDetailModel>(), new List<PointDeductionModel>(), ""));
-            _leagueTableBuilder = new LeagueTableBuilder(mockFactory.Object);
+            _leagueTableBuilder = new LeagueTableBuilder(mockFactory.Object, new Mock<ILeagueTableSorter>().Object);
         }
 
         [Test]

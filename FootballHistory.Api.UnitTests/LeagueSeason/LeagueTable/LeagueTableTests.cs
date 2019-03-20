@@ -45,7 +45,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
             var season = $"{seasonStartYear} - {seasonStartYear + 1}";
             var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 5, Competition = "Premier League", Season = season};
             
-            var leagueTableWithPositions = _leagueTable.AddPositionsAndStatuses(leagueDetailModel, _noPlayOffMatches);
+            var leagueTableWithPositions = _leagueTable.AddStatuses(leagueDetailModel, _noPlayOffMatches);
             var actual = leagueTableWithPositions.Rows.Select(r => (r.Position, r.Team)).ToList();
 
             Assert.That(actual, Is.EqualTo(_sortedByPointsThenGoalDifferenceThenGoalsForThenTeamName));
@@ -57,7 +57,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
             var season = $"{seasonStartYear} - {seasonStartYear + 1}";
             var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 5, Competition = "First Division", Season = season};
 
-            var leagueTableWithPositions = _leagueTable.AddPositionsAndStatuses(leagueDetailModel, _noPlayOffMatches);
+            var leagueTableWithPositions = _leagueTable.AddStatuses(leagueDetailModel, _noPlayOffMatches);
             var actual = leagueTableWithPositions.Rows.Select(r => (r.Position, r.Team)).ToList();
 
             Assert.That(actual, Is.EqualTo(_sortedByPointsThenGoalsForThenGoalDifferenceThenTeamName));
@@ -69,7 +69,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
             var season = $"{seasonStartYear} - {seasonStartYear + 1}";
             var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 5, Competition = "Second Division", Season = season};
             
-            var leagueTableWithPositions = _leagueTable.AddPositionsAndStatuses(leagueDetailModel, _noPlayOffMatches);
+            var leagueTableWithPositions = _leagueTable.AddStatuses(leagueDetailModel, _noPlayOffMatches);
             var actual = leagueTableWithPositions.Rows.Select(r => (r.Position, r.Team)).ToList();
 
             Assert.That(actual, Is.EqualTo(_sortedByPointsThenGoalsForThenGoalDifferenceThenTeamName));
@@ -81,7 +81,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
             var season = $"{seasonStartYear} - {seasonStartYear + 1}";
             var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 5, Competition = "Third Division", Season = season};
             
-            var leagueTableWithPositions = _leagueTable.AddPositionsAndStatuses(leagueDetailModel, _noPlayOffMatches);
+            var leagueTableWithPositions = _leagueTable.AddStatuses(leagueDetailModel, _noPlayOffMatches);
             var actual = leagueTableWithPositions.Rows.Select(r => (r.Position, r.Team)).ToList();
 
             Assert.That(actual, Is.EqualTo(_sortedByPointsThenGoalsForThenGoalDifferenceThenTeamName));
@@ -93,7 +93,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
             var competition = seasonStartYear < 2004 ? "First Division" : "Championship";
             var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 5, Competition = competition, Season = season};
             
-            var leagueTableWithPositions = _leagueTable.AddPositionsAndStatuses(leagueDetailModel, _noPlayOffMatches);
+            var leagueTableWithPositions = _leagueTable.AddStatuses(leagueDetailModel, _noPlayOffMatches);
             var actual = leagueTableWithPositions.Rows.Select(r => (r.Position, r.Team)).ToList();
 
             Assert.That(actual, Is.EqualTo(_sortedByPointsThenGoalDifferenceThenGoalsForThenTeamName));
@@ -106,7 +106,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
             var competition = seasonStartYear < 2004 ? "Second Division" : "League One";
             var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 5, Competition = competition, Season = season};
 
-            var leagueTableWithPositions = _leagueTable.AddPositionsAndStatuses(leagueDetailModel, _noPlayOffMatches);
+            var leagueTableWithPositions = _leagueTable.AddStatuses(leagueDetailModel, _noPlayOffMatches);
             var actual = leagueTableWithPositions.Rows.Select(r => (r.Position, r.Team)).ToList();
 
             Assert.That(actual, Is.EqualTo(_sortedByPointsThenGoalDifferenceThenGoalsForThenTeamName));
@@ -119,7 +119,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
             var competition = seasonStartYear < 2004 ? "Third Division" : "League Two";
             var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 5, Competition = competition, Season = season};
             
-            var leagueTableWithPositions = _leagueTable.AddPositionsAndStatuses(leagueDetailModel, _noPlayOffMatches);
+            var leagueTableWithPositions = _leagueTable.AddStatuses(leagueDetailModel, _noPlayOffMatches);
             var actual = leagueTableWithPositions.Rows.Select(r => (r.Position, r.Team)).ToList();
 
             Assert.That(actual, Is.EqualTo(_sortedByPointsThenGoalDifferenceThenGoalsForThenTeamName));
@@ -139,7 +139,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
             };
 
             var leagueDetailModel = new LeagueDetailModel {TotalPlaces = 3, Competition = "Test", Season = "0000 - 0000"};
-            var leagueTableWithPositions = leagueTable.AddPositionsAndStatuses(leagueDetailModel, _noPlayOffMatches);
+            var leagueTableWithPositions = leagueTable.AddStatuses(leagueDetailModel, _noPlayOffMatches);
 
             var actual = leagueTableWithPositions.Rows.Where(r => r.Status == string.Empty).Select(r => (r.Team, r.Position)).ToList();
             var expected = new List<(string, int)> { ("Team2", 2), ("Team3", 3) };
@@ -160,7 +160,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
             };
             
             var leagueDetailModel = new LeagueDetailModel {TotalPlaces = 3, Competition = "Test", Season = "0000 - 0000"};
-            var leagueTableWithPositions = leagueTable.AddPositionsAndStatuses(leagueDetailModel, _noPlayOffMatches);
+            var leagueTableWithPositions = leagueTable.AddStatuses(leagueDetailModel, _noPlayOffMatches);
 
             var actual = leagueTableWithPositions.Rows.Where(r => r.Status == "C").Select(r => (r.Team, r.Position)).ToList();
             var expected = new List<(string, int)> { ("Team1", 1) };
@@ -181,7 +181,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
             };
 
             var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 3, PromotionPlaces = 1, Competition = "Test", Season = "0000 - 0000"};
-            var leagueTableWithPositions = leagueTable.AddPositionsAndStatuses(leagueDetailModel, _noPlayOffMatches);
+            var leagueTableWithPositions = leagueTable.AddStatuses(leagueDetailModel, _noPlayOffMatches);
 
             var actual = leagueTableWithPositions.Rows.Where(r => r.Status == "P").Select(r => (r.Team, r.Position)).ToList();
             var expected = new List<(string, int)>();
@@ -202,7 +202,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
             };
 
             var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 3, PromotionPlaces = 2, Competition = "Test", Season = "0000 - 0000"};
-            var leagueTableWithPositions = leagueTable.AddPositionsAndStatuses(leagueDetailModel, _noPlayOffMatches);
+            var leagueTableWithPositions = leagueTable.AddStatuses(leagueDetailModel, _noPlayOffMatches);
 
             var actual = leagueTableWithPositions.Rows.Where(r => r.Status == "P").Select(r => (r.Team, r.Position)).ToList();
             var expected = new List<(string, int)> { ("Team2", 2) };
@@ -223,7 +223,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
             };
 
             var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 3, RelegationPlaces = 1, Competition = "Test", Season = "0000 - 0000"};
-            var leagueTableWithPositions = leagueTable.AddPositionsAndStatuses(leagueDetailModel, _noPlayOffMatches);
+            var leagueTableWithPositions = leagueTable.AddStatuses(leagueDetailModel, _noPlayOffMatches);
 
             var actual = leagueTableWithPositions.Rows.Where(r => r.Status == "R").Select(r => (r.Team, r.Position)).ToList();
             var expected = new List<(string, int)> { ("Team3", 3) };
@@ -247,7 +247,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
 
             var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 5, PlayOffPlaces = 3, Competition = "Test", Season = "0000 - 0000"};
             var playOffMatches = new List<MatchDetailModel> { new MatchDetailModel { Round = "Final", HomeTeam = "Team2", AwayTeam = "Team3", HomeGoals = 0, AwayGoals = 1}};
-            var leagueTableWithPositions = leagueTable.AddPositionsAndStatuses(leagueDetailModel, playOffMatches);
+            var leagueTableWithPositions = leagueTable.AddStatuses(leagueDetailModel, playOffMatches);
 
             var actual = leagueTableWithPositions.Rows.Where(r => r.Status == "PO").Select(r => (r.Team, r.Position)).ToList();
             var expected = new List<(string, int)> { ("Team2", 2), ("Team4", 4) };
@@ -282,7 +282,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
                     PenaltyShootout = false
                 }
             };
-            var leagueTableWithPositions = leagueTable.AddPositionsAndStatuses(leagueDetailModel, playOffMatches);
+            var leagueTableWithPositions = leagueTable.AddStatuses(leagueDetailModel, playOffMatches);
 
             var actual = leagueTableWithPositions.Rows.Where(r => r.Status == "PO (P)").Select(r => (r.Team, r.Position)).ToList();
             var expected = new List<(string, int)> { ("Team3", 3) };
@@ -319,7 +319,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
                     PenaltyShootout = false
                 }
             };
-            var leagueTableWithPositions = leagueTable.AddPositionsAndStatuses(leagueDetailModel, playOffMatches);
+            var leagueTableWithPositions = leagueTable.AddStatuses(leagueDetailModel, playOffMatches);
 
             var actual = leagueTableWithPositions.Rows.Where(r => r.Status == "PO (P)").Select(r => (r.Team, r.Position)).ToList();
             var expected = new List<(string, int)> { ("Team3", 3) };
@@ -358,7 +358,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
                     AwayPenaltiesScored = 4
                 }
             };
-            var leagueTableWithPositions = leagueTable.AddPositionsAndStatuses(leagueDetailModel, playOffMatches);
+            var leagueTableWithPositions = leagueTable.AddStatuses(leagueDetailModel, playOffMatches);
 
             var actual = leagueTableWithPositions.Rows.Where(r => r.Status == "PO (P)").Select(r => (r.Team, r.Position)).ToList();
             var expected = new List<(string, int)> { ("Team3", 3) };
@@ -380,7 +380,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
             var leagueDetailModel = new LeagueDetailModel {TotalPlaces = 1, Competition = "Test", Season = "0000 - 0000"};
             var playOffMatches = new List<MatchDetailModel>();
             
-            var ex = Assert.Throws<Exception>(() => leagueTable.AddPositionsAndStatuses(leagueDetailModel, playOffMatches));
+            var ex = Assert.Throws<Exception>(() => leagueTable.AddStatuses(leagueDetailModel, playOffMatches));
             Assert.That(ex.Message, Is.EqualTo("The League Detail Model (1 places) does not match the League Table (3 rows)"));
         }
         
@@ -399,7 +399,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
             var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 3, PlayOffPlaces = 1, Competition = "Test", Season = "0000 - 0000" };
             var playOffMatches = new List<MatchDetailModel>();
             
-            var ex = Assert.Throws<Exception>(() => leagueTable.AddPositionsAndStatuses(leagueDetailModel, playOffMatches));
+            var ex = Assert.Throws<Exception>(() => leagueTable.AddStatuses(leagueDetailModel, playOffMatches));
             Assert.That(ex.Message, Is.EqualTo("The League Detail Model contains 1 playoff places but the playoff matches provided contain no Final"));
         }
     }
