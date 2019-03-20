@@ -159,9 +159,8 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
                 }
             };
             
-            var leagueDetailModel = new LeagueDetailModel {TotalPlaces = 3};
-            var playOffMatches = new List<MatchDetailModel>();
-            var leagueTableWithPositions = leagueTable.AddPositionsAndStatuses(leagueDetailModel, playOffMatches);
+            var leagueDetailModel = new LeagueDetailModel {TotalPlaces = 3, Competition = "Test", Season = "0000 - 0000"};
+            var leagueTableWithPositions = leagueTable.AddPositionsAndStatuses(leagueDetailModel, _noPlayOffMatches);
 
             var actual = leagueTableWithPositions.Rows.Where(r => r.Status == "C").Select(r => (r.Team, r.Position)).ToList();
             var expected = new List<(string, int)> { ("Team1", 1) };
@@ -181,9 +180,8 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
                 }
             };
 
-            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 3, PromotionPlaces = 1};
-            var playOffMatches = new List<MatchDetailModel>();
-            var leagueTableWithPositions = leagueTable.AddPositionsAndStatuses(leagueDetailModel, playOffMatches);
+            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 3, PromotionPlaces = 1, Competition = "Test", Season = "0000 - 0000"};
+            var leagueTableWithPositions = leagueTable.AddPositionsAndStatuses(leagueDetailModel, _noPlayOffMatches);
 
             var actual = leagueTableWithPositions.Rows.Where(r => r.Status == "P").Select(r => (r.Team, r.Position)).ToList();
             var expected = new List<(string, int)>();
@@ -247,7 +245,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
                 }
             };
 
-            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 5, PlayOffPlaces = 3};
+            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 5, PlayOffPlaces = 3, Competition = "Test", Season = "0000 - 0000"};
             var playOffMatches = new List<MatchDetailModel> { new MatchDetailModel { Round = "Final", HomeTeam = "Team2", AwayTeam = "Team3", HomeGoals = 0, AwayGoals = 1}};
             var leagueTableWithPositions = leagueTable.AddPositionsAndStatuses(leagueDetailModel, playOffMatches);
 
@@ -270,7 +268,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
                 }
             };
 
-            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 4, PlayOffPlaces = 2};
+            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 4, PlayOffPlaces = 2, Competition = "Test", Season = "0000 - 0000"};
             var playOffMatches = new List<MatchDetailModel>
             {
                 new MatchDetailModel
@@ -305,7 +303,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
                 }
             };
 
-            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 4, PlayOffPlaces = 2};
+            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 4, PlayOffPlaces = 2, Competition = "Test", Season = "0000 - 0000"};
             var playOffMatches = new List<MatchDetailModel>
             {
                 new MatchDetailModel
@@ -342,7 +340,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
                 }
             };
 
-            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 4, PlayOffPlaces = 2};
+            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 4, PlayOffPlaces = 2, Competition = "Test", Season = "0000 - 0000"};
             var playOffMatches = new List<MatchDetailModel>
             {
                 new MatchDetailModel
@@ -379,7 +377,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
                     new LeagueTableRow {Team = "Team3", Points = 1}
                 }
             };
-            var leagueDetailModel = new LeagueDetailModel {TotalPlaces = 1};
+            var leagueDetailModel = new LeagueDetailModel {TotalPlaces = 1, Competition = "Test", Season = "0000 - 0000"};
             var playOffMatches = new List<MatchDetailModel>();
             
             var ex = Assert.Throws<Exception>(() => leagueTable.AddPositionsAndStatuses(leagueDetailModel, playOffMatches));
@@ -398,7 +396,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
                     new LeagueTableRow {Team = "Team3", Points = 1}
                 }
             };
-            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 3, PlayOffPlaces = 1 };
+            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 3, PlayOffPlaces = 1, Competition = "Test", Season = "0000 - 0000" };
             var playOffMatches = new List<MatchDetailModel>();
             
             var ex = Assert.Throws<Exception>(() => leagueTable.AddPositionsAndStatuses(leagueDetailModel, playOffMatches));

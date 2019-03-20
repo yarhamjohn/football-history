@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FootballHistory.Api.LeagueSeason.LeagueTable;
 using FootballHistory.Api.LeagueSeason.LeagueTableDrillDown;
+using FootballHistory.Api.Repositories.LeagueDetailRepository;
 using FootballHistory.Api.Repositories.MatchDetailRepository;
 using FootballHistory.Api.Repositories.PointDeductionRepository;
 using Moq;
@@ -27,7 +28,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTableDrillDown
         {
             var matches = new List<MatchDetailModel>();
             
-            var drillDown = _builder.Build("Team1", matches, new List<PointDeductionModel>());
+            var drillDown = _builder.Build("Team1", matches, new List<PointDeductionModel>(), new LeagueDetailModel());
             
             Assert.That(drillDown.Form.Count, Is.EqualTo(0));
         }
@@ -40,7 +41,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTableDrillDown
                 new MatchDetailModel { HomeTeam = "Team2", AwayTeam = "Team3", HomeGoals = 1, AwayGoals = 1 }
             };
 
-            var drillDown = _builder.Build("Team1", matches, new List<PointDeductionModel>());
+            var drillDown = _builder.Build("Team1", matches, new List<PointDeductionModel>(), new LeagueDetailModel());
             
             Assert.That(drillDown.Form.Count, Is.EqualTo(0));
         }
@@ -54,7 +55,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTableDrillDown
                 new MatchDetailModel { Date = _dayOne.AddDays(1), HomeTeam = "Team2", AwayTeam = "Team3", HomeGoals = 2, AwayGoals = 1 }
             };
 
-            var drillDown = _builder.Build("Team1", matches, new List<PointDeductionModel>());
+            var drillDown = _builder.Build("Team1", matches, new List<PointDeductionModel>(), new LeagueDetailModel { Competition = "Test", Season = "0000 - 0000"});
             
             var actual = drillDown.Form.Select(f => (f.MatchDate, f.Result)).ToList();
             var expected = new List<(DateTime, string)> { (_dayOne, "D") };
@@ -73,7 +74,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTableDrillDown
                 new MatchDetailModel { Date = _dayOne.AddDays(3), HomeTeam = "Team1", AwayTeam = "Team4", HomeGoals = 1, AwayGoals = 2 }
             };
 
-            var drillDown = _builder.Build("Team1", matches, new List<PointDeductionModel>());
+            var drillDown = _builder.Build("Team1", matches, new List<PointDeductionModel>(), new LeagueDetailModel { Competition = "Test", Season = "0000 - 0000"});
             var actual = drillDown.Form.Select(f => (f.MatchDate, f.Result)).ToList();
             var expected = new List<(DateTime, string)>
             {
@@ -92,7 +93,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTableDrillDown
                 new MatchDetailModel { Date = _dayOne, HomeTeam = "Team2", AwayTeam = "Team1", HomeGoals = 2, AwayGoals = 1 }
             };
 
-            var ex = Assert.Throws<Exception>(() => _builder.Build("Team1", matches, new List<PointDeductionModel>()));
+            var ex = Assert.Throws<Exception>(() => _builder.Build("Team1", matches, new List<PointDeductionModel>(), new LeagueDetailModel()));
             Assert.That(ex.Message, Is.EqualTo("Multiple matches involving Team1 were found with the same match date."));
         }
 
@@ -101,7 +102,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTableDrillDown
         {
             var matches = new List<MatchDetailModel>();
             
-            var drillDown = _builder.Build("Team1", matches, new List<PointDeductionModel>());
+            var drillDown = _builder.Build("Team1", matches, new List<PointDeductionModel>(), new LeagueDetailModel());
             
             Assert.That(drillDown.Positions.Count, Is.EqualTo(0));
         }
@@ -114,7 +115,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTableDrillDown
                 new MatchDetailModel { Date = _dayOne, HomeTeam = "Team1", AwayTeam = "Team2", HomeGoals = 2, AwayGoals = 1 }
             };
 
-            var drillDown = _builder.Build("Team1", matches, new List<PointDeductionModel>());
+            var drillDown = _builder.Build("Team1", matches, new List<PointDeductionModel>(), new LeagueDetailModel { Competition = "Test", Season = "0000 - 0000"});
 
             var actual = drillDown.Positions.Select(p => p.Date).ToList();
             var expected = new List<DateTime> { _dayOne, _dayOne.AddDays(1) };
@@ -130,7 +131,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTableDrillDown
                 new MatchDetailModel { Date = _dayOne.AddDays(1), HomeTeam = "Team1", AwayTeam = "Team3", HomeGoals = 2, AwayGoals = 1 }
             };
 
-            var drillDown = _builder.Build("Team1", matches, new List<PointDeductionModel>());
+            var drillDown = _builder.Build("Team1", matches, new List<PointDeductionModel>(), new LeagueDetailModel { Competition = "Premier League", Season = "0000 - 0000"});
 
             var actual = drillDown.Positions.Select(p => (p.Date, p.Position)).ToList();
             var expected = new List<(DateTime, int)> { (_dayOne, 1), (_dayOne.AddDays(1), 3), (_dayOne.AddDays(2), 2) };
