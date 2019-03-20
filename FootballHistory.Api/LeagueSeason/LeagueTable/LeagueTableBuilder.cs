@@ -22,12 +22,22 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTable
             return leagueTable.AddPositionsAndStatuses(leagueDetailModel, playOffMatches);
         }
         
-        public LeagueTable BuildWithoutStatuses(List<MatchDetailModel> leagueMatches, List<PointDeductionModel> pointDeductions, LeagueDetailModel leagueDetailModel)
+        public LeagueTable BuildWithoutStatuses(List<MatchDetailModel> leagueMatches, List<PointDeductionModel> pointDeductions, LeagueDetailModel leagueDetailModel, List<string> missingTeams)
         {
             var leagueTable = Build(leagueMatches, pointDeductions);
+            AddMissingTeams(missingTeams, leagueTable);
+
             return leagueTable.AddPositions(leagueDetailModel);
         }
-        
+
+        private static void AddMissingTeams(List<string> missingTeams, LeagueTable leagueTable)
+        {
+            foreach (var team in missingTeams)
+            {
+                leagueTable.Rows.Add(new LeagueTableRow {Team = team});
+            }
+        }
+
         private LeagueTable Build(List<MatchDetailModel> leagueMatches, List<PointDeductionModel> pointDeductions)
         {
             if (LeagueMatchesAreInvalid(leagueMatches))

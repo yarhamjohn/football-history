@@ -79,12 +79,10 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTableDrillDown
             for (var date = startDate; date <= endDate; date = date.AddDays(1))
             {
                 var matchesToDate = matches.Where(m => m.Date < date).ToList();
-                var leagueTable = _leagueTableBuilder.BuildWithoutStatuses(matchesToDate, pointDeductions, leagueDetailModel);
-
                 var missingTeams = GetMissingTeams(matches, matchesToDate, date);
-                var completeLeagueTable = leagueTable.AddMissingTeams(missingTeams, leagueDetailModel);
-                
-                var position = completeLeagueTable.Rows.Where(r => r.Team == team).Select(r => r.Position).Single();
+                var leagueTable = _leagueTableBuilder.BuildWithoutStatuses(matchesToDate, pointDeductions, leagueDetailModel, missingTeams);
+
+                var position = leagueTable.Rows.Where(r => r.Team == team).Select(r => r.Position).Single();
                 
                 positions.Add(new LeaguePosition {Date = date, Position = position});
             }

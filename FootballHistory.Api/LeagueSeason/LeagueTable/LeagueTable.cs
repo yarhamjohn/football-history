@@ -21,16 +21,6 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTable
             return positionedLeagueTable.AddStatuses(leagueDetailModel, playOffMatches);
         }
 
-        public LeagueTable AddMissingTeams(List<string> teams, LeagueDetailModel leagueDetailModel)
-        {
-            foreach (var team in teams)
-            {
-                Rows.Add(new LeagueTableRow {Team = team});
-            };
-
-            return AddPositions(leagueDetailModel);
-        }
-
         private LeagueTable AddStatuses(LeagueDetailModel leagueDetailModel, List<MatchDetailModel> playOffMatches)
         {
             if (leagueDetailModel.TotalPlaces != Rows.Count)
