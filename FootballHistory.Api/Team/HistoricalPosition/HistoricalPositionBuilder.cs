@@ -23,7 +23,7 @@ namespace FootballHistory.Api.Team.HistoricalPosition
         public List<HistoricalPosition> Build(string team, SeasonTierFilter[] filters, List<MatchDetailModel> leagueMatchDetails, List<MatchDetailModel> playOffMatches, List<PointDeductionModel> pointDeductions, List<LeagueDetailModel> leagueDetails)
         {
             var historicalPositions = new List<HistoricalPosition>();
-            var years = filters.OrderBy(f => f.SeasonStartYear).Select(f => f.SeasonStartYear).ToList();
+            var years = filters.OrderBy(f => f.SeasonStartYear).Select(f => f.SeasonStartYear).Distinct().ToList();
             foreach (var year in years)
             {
                 var season = $"{year} - {year + 1}";
@@ -39,6 +39,10 @@ namespace FootballHistory.Api.Team.HistoricalPosition
                 }
                 else
                 {
+                    if (leagueMatchDetails.Count == 0 || leagueDetails.Count == 0)
+                    {
+                        throw new Exception($"No league matches or no league detail was found for the season ({season}).");
+                    }
                     var filteredLeagueMatchDetails = FilterMatches(leagueMatchDetails, year);
                     var filteredPlayOffMatches = FilterMatches(playOffMatches, year);
                     var filteredPointDeductions = FilterPointDeductions(pointDeductions, season);
@@ -50,10 +54,11 @@ namespace FootballHistory.Api.Team.HistoricalPosition
                         filteredLeagueDetail, 
                         filteredPlayOffMatches);
                     
-                    var position = leagueTable.Rows.Single(r => r.Team == team).Position;
+                    var position = leagueTable.GetPosition(team);
+
                     historicalPositions.Add(new HistoricalPosition
                     {
-                        AbsolutePosition = CalculateAbsolutePosition(tier, position),
+                        AbsolutePosition = CalculateAbsolutePosition(tier, year, position),
                         Season = season,
                         Status = leagueTable.Rows.Single(r => r.Team == team).Status
                     });
@@ -63,23 +68,38 @@ namespace FootballHistory.Api.Team.HistoricalPosition
             return historicalPositions;
         }
 
-        private static int CalculateAbsolutePosition(Tier tier, int position)
+        private static int CalculateAbsolutePosition(Tier tier, int seasonStartYear, int position)
         {
-            const int topTierPositions = 20;
-            const int lowerTierPositions = 24;
-
-            if (tier == Tier.TopTier)
+            const int topTierPositionsFrom1995 = 20;
+            const int topTierPositionsBefore1995 = 22;
+            const int secondTierPositions = 24;
+            const int thirdTierPositions = 24;
+            
+            var topTierPositions = seasonStartYear >= 1995 ? topTierPositionsFrom1995 : topTierPositionsBefore1995;
+            switch (tier)
             {
-                return position;
+                case Tier.TopTier:
+                    return position;
+                case Tier.SecondTier:
+                    return position + topTierPositions;
+                case Tier.ThirdTier:
+                    return position + topTierPositions + secondTierPositions;
+                case Tier.FourthTier:
+                    return position + topTierPositions + secondTierPositions + thirdTierPositions;
+                default:
+                    return 0;
             }
-
-            var numLowerTiersToSkip = (int) tier - 2;
-            return position + topTierPositions + lowerTierPositions * numLowerTiersToSkip;
         }
 
         private static LeagueDetailModel FilterLeagueDetails(List<LeagueDetailModel> leagueDetails, string season)
         {
-            return leagueDetails.Single(ld => ld.Season == season);
+            var details = leagueDetails.Where(ld => ld.Season == season).ToList();
+            if (details.Count != 1)
+            {
+                throw new Exception($"The incorrect number of league details ({details.Count}) were found for the given season.");
+            }
+
+            return details.Single();
         }
 
         private static List<PointDeductionModel> FilterPointDeductions(List<PointDeductionModel> pointDeductions, string season)

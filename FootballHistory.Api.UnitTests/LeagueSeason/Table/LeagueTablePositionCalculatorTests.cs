@@ -17,8 +17,8 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.Table
         {
             var mockSorter = new Mock<ILeagueTableSorter>();
             mockSorter
-                .Setup(x => x.Sort(It.IsAny<Api.LeagueSeason.Table.LeagueTable>(), It.IsAny<LeagueDetailModel>()))
-                .Returns((Api.LeagueSeason.Table.LeagueTable t, LeagueDetailModel m) => t);
+                .Setup(x => x.Sort(It.IsAny<LeagueTable>(), It.IsAny<LeagueDetailModel>()))
+                .Returns((LeagueTable t, LeagueDetailModel m) => t);
             
             _leagueTablePositionCalculator = new LeagueTablePositionCalculator(mockSorter.Object);
         }
@@ -26,7 +26,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.Table
         [Test]
         public void AddPositions_CorrectlyCalculatesPositions()
         {
-            var leagueTable = new Api.LeagueSeason.Table.LeagueTable
+            var leagueTable = new LeagueTable
             {
                 Rows = new List<LeagueTableRow>
                 {
