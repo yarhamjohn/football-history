@@ -14,96 +14,16 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTable
         {
             Rows = new List<LeagueTableRow>();
         }
-
-        public LeagueTable AddStatuses(LeagueDetailModel leagueDetailModel, List<MatchDetailModel> playOffMatches)
+        
+        public int GetPosition(string team)
         {
-            if (leagueDetailModel.TotalPlaces != Rows.Count)
+            var positions = Rows.Where(r => r.Team == team).Select(r => r.Position).ToList();
+            if (positions.Count == 0)
             {
-                throw new Exception($"The League Detail Model ({leagueDetailModel.TotalPlaces} places) does not match the League Table ({Rows.Count} rows)");
+                throw new Exception($"The requested team ({team}) was not found in the league table.");
             }
 
-            if (leagueDetailModel.PlayOffPlaces > 0 && !playOffMatches.Exists(m => m.Round == "Final"))
-            {
-                throw new Exception(
-                    $"The League Detail Model contains {leagueDetailModel.PlayOffPlaces} playoff places but the playoff matches provided contain no Final");
-            }
-            
-            return new LeagueTable
-            {
-                Rows = Rows.Select(r =>
-                {
-                    if (r.Position == 1)
-                    {
-                        r.Status = "C";
-                    }
-                    else if (InPromotionPlaces(r, leagueDetailModel))
-                    {
-                        r.Status = "P";
-                    }
-                    else if (InPlayOffPosition(r, leagueDetailModel))
-                    {
-                        r.Status = IsPlayOffWinner(r, playOffMatches) ? "PO (P)" : "PO";
-                    }
-                    else if (InRelegationPlaces(r, leagueDetailModel))
-                    {
-                        r.Status = "R";
-                    }
-                    else
-                    {
-                        r.Status = string.Empty;
-                    }
-
-                    return r;
-                }).ToList()
-            };
-        }
-
-        private static bool IsPlayOffWinner(LeagueTableRow row, List<MatchDetailModel> playOffMatches)
-        {
-            var final = playOffMatches.Single(m => m.Round == "Final");
-            
-            string winner;
-            if (final.PenaltyShootout)
-            {
-                winner = PenaltyShootoutWinner(final);
-            }
-            else
-            {
-                winner = final.ExtraTime ? ExtraTimeWinner(final) : NormalTimeWinner(final);
-            }
-
-            return row.Team == winner;
-        }
-
-        private static string NormalTimeWinner(MatchDetailModel final)
-        {
-            return final.HomeGoals > final.AwayGoals ? final.HomeTeam : final.AwayTeam;
-        }
-
-        private static string ExtraTimeWinner(MatchDetailModel final)
-        {
-            return final.HomeGoalsET > final.AwayGoalsET ? final.HomeTeam : final.AwayTeam;
-        }
-
-        private static string PenaltyShootoutWinner(MatchDetailModel final)
-        {
-            return final.HomePenaltiesScored > final.AwayPenaltiesScored ? final.HomeTeam : final.AwayTeam;
-        }
-
-        private static bool InRelegationPlaces(LeagueTableRow row, LeagueDetailModel leagueDetailModel)
-        {
-            return row.Position > leagueDetailModel.TotalPlaces - leagueDetailModel.RelegationPlaces;
-        }
-
-        private static bool InPromotionPlaces(LeagueTableRow row, LeagueDetailModel leagueDetailModel)
-        {
-            return row.Position <= leagueDetailModel.PromotionPlaces;
-        }
-
-        private static bool InPlayOffPosition(LeagueTableRow row, LeagueDetailModel leagueDetailModel)
-        {
-            var placesAbovePlayOffs = leagueDetailModel.PromotionPlaces == 0 ? 1 : leagueDetailModel.PromotionPlaces;
-            return row.Position > placesAbovePlayOffs && row.Position <= placesAbovePlayOffs + leagueDetailModel.PlayOffPlaces;
+            return positions.Single();
         }
     }
 }
