@@ -20,23 +20,19 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTable
         
         public LeagueTable BuildWithStatuses(List<MatchDetailModel> leagueMatches, List<PointDeductionModel> pointDeductions, LeagueDetailModel leagueDetailModel, List<MatchDetailModel> playOffMatches)
         {
-            var leagueTable = Build(leagueMatches, pointDeductions);
+            var leagueTable = BuildBasicTable(leagueMatches, pointDeductions);
+            AddPositions(leagueTable, leagueDetailModel);
             
-            var sortedLeagueTable = _leagueTableSorter.Sort(leagueTable, leagueDetailModel);
-            AddPositions(sortedLeagueTable);
-            
-            return sortedLeagueTable.AddStatuses(leagueDetailModel, playOffMatches);
+            return leagueTable.AddStatuses(leagueDetailModel, playOffMatches);
         }
 
         public LeagueTable BuildWithoutStatuses(List<MatchDetailModel> leagueMatches, List<PointDeductionModel> pointDeductions, LeagueDetailModel leagueDetailModel, List<string> missingTeams)
         {
-            var leagueTable = Build(leagueMatches, pointDeductions);
+            var leagueTable = BuildBasicTable(leagueMatches, pointDeductions);
             AddMissingTeams(missingTeams, leagueTable);
-            
-            var sortedLeagueTable = _leagueTableSorter.Sort(leagueTable, leagueDetailModel);
-            AddPositions(sortedLeagueTable);
+            AddPositions(leagueTable, leagueDetailModel);
 
-            return sortedLeagueTable;
+            return leagueTable;
         }
 
         private static void AddMissingTeams(List<string> missingTeams, LeagueTable leagueTable)
@@ -47,15 +43,17 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTable
             }
         }
 
-        private static void AddPositions(LeagueTable sortedLeagueTable)
+        private void AddPositions(LeagueTable leagueTable, LeagueDetailModel leagueDetailModel)
         {
+            var sortedLeagueTable = _leagueTableSorter.Sort(leagueTable, leagueDetailModel);
+
             for (var i = 0; i < sortedLeagueTable.Rows.Count; i++)
             {
                 sortedLeagueTable.Rows[i].Position = i + 1;
             }
         }
         
-        private LeagueTable Build(List<MatchDetailModel> leagueMatches, List<PointDeductionModel> pointDeductions)
+        private LeagueTable BuildBasicTable(List<MatchDetailModel> leagueMatches, List<PointDeductionModel> pointDeductions)
         {
             if (LeagueMatchesAreInvalid(leagueMatches))
             {
