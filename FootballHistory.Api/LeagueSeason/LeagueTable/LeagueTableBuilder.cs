@@ -22,10 +22,10 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTable
             return leagueTable.AddPositionsAndStatuses(leagueDetailModel, playOffMatches);
         }
         
-        public LeagueTable BuildWithoutStatuses(List<MatchDetailModel> leagueMatches, List<PointDeductionModel> pointDeductions)
+        public LeagueTable BuildWithoutStatuses(List<MatchDetailModel> leagueMatches, List<PointDeductionModel> pointDeductions, LeagueDetailModel leagueDetailModel)
         {
             var leagueTable = Build(leagueMatches, pointDeductions);
-            return leagueTable.AddPositions();
+            return leagueTable.AddPositions(leagueDetailModel);
         }
         
         private LeagueTable Build(List<MatchDetailModel> leagueMatches, List<PointDeductionModel> pointDeductions)

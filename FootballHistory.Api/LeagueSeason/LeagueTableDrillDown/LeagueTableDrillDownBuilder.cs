@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FootballHistory.Api.LeagueSeason.LeagueTable;
+using FootballHistory.Api.Repositories.LeagueDetailRepository;
 using FootballHistory.Api.Repositories.MatchDetailRepository;
 using FootballHistory.Api.Repositories.PointDeductionRepository;
 
@@ -16,7 +17,7 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTableDrillDown
             _leagueTableBuilder = leagueTableBuilder;
         }
         
-        public LeagueTableDrillDown Build(string team, List<MatchDetailModel> matchDetails, List<PointDeductionModel> pointDeductions)
+        public LeagueTableDrillDown Build(string team, List<MatchDetailModel> matchDetails, List<PointDeductionModel> pointDeductions, LeagueDetailModel leagueDetailModel)
         {
             if (matchDetails.Count == 0 || !matchDetails.Any(m => m.HomeTeam == team || m.AwayTeam == team))
             {
@@ -26,7 +27,7 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTableDrillDown
             return new LeagueTableDrillDown
             {
                 Form = GenerateForm(matchDetails, team),
-                Positions = GetDailyLeaguePositions(matchDetails, pointDeductions, team)
+                Positions = GetDailyLeaguePositions(matchDetails, pointDeductions, team, leagueDetailModel)
             };
         }
 
@@ -68,7 +69,7 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTableDrillDown
             return "L";
         }
 
-        private List<LeaguePosition> GetDailyLeaguePositions(List<MatchDetailModel> matches, List<PointDeductionModel> pointDeductions, string team)
+        private List<LeaguePosition> GetDailyLeaguePositions(List<MatchDetailModel> matches, List<PointDeductionModel> pointDeductions, string team, LeagueDetailModel leagueDetailModel)
         {
             var dates = matches.Select(m => m.Date).Distinct().OrderBy(m => m.Date).ToList();
             var startDate = dates.First();
@@ -78,10 +79,10 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTableDrillDown
             for (var date = startDate; date <= endDate; date = date.AddDays(1))
             {
                 var matchesToDate = matches.Where(m => m.Date < date).ToList();
-                var leagueTable = _leagueTableBuilder.BuildWithoutStatuses(matchesToDate, pointDeductions);
+                var leagueTable = _leagueTableBuilder.BuildWithoutStatuses(matchesToDate, pointDeductions, leagueDetailModel);
 
                 var missingTeams = GetMissingTeams(matches, matchesToDate, date);
-                var completeLeagueTable = leagueTable.AddMissingTeams(missingTeams);
+                var completeLeagueTable = leagueTable.AddMissingTeams(missingTeams, leagueDetailModel);
                 
                 var position = completeLeagueTable.Rows.Where(r => r.Team == team).Select(r => r.Position).Single();
                 

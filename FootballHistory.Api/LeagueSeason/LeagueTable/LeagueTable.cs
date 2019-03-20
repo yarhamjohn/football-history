@@ -17,18 +17,18 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTable
 
         public LeagueTable AddPositionsAndStatuses(LeagueDetailModel leagueDetailModel, List<MatchDetailModel> playOffMatches)
         {
-            var positionedLeagueTable = AddPositions();
+            var positionedLeagueTable = AddPositions(leagueDetailModel);
             return positionedLeagueTable.AddStatuses(leagueDetailModel, playOffMatches);
         }
 
-        public LeagueTable AddMissingTeams(List<string> teams)
+        public LeagueTable AddMissingTeams(List<string> teams, LeagueDetailModel leagueDetailModel)
         {
             foreach (var team in teams)
             {
                 Rows.Add(new LeagueTableRow {Team = team});
             };
 
-            return AddPositions();
+            return AddPositions(leagueDetailModel);
         }
 
         private LeagueTable AddStatuses(LeagueDetailModel leagueDetailModel, List<MatchDetailModel> playOffMatches)
@@ -122,9 +122,9 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTable
             return row.Position > placesAbovePlayOffs && row.Position <= placesAbovePlayOffs + leagueDetailModel.PlayOffPlaces;
         }
 
-        public LeagueTable AddPositions()
+        public LeagueTable AddPositions(LeagueDetailModel leagueDetailModel)
         {
-            var sortedRows = SortTableRows();
+            var sortedRows = SortTableRows(leagueDetailModel);
             return new LeagueTable
             {
                 Rows = sortedRows.Select((t, i) =>
@@ -135,16 +135,27 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTable
             };
         }
 
-        private List<LeagueTableRow> SortTableRows()
+        private List<LeagueTableRow> SortTableRows(LeagueDetailModel leagueDetailModel)
         {
-            //TODO: Add extra ordering rules when required
+            var seasonStartYear = Convert.ToInt32(leagueDetailModel.Season.Substring(0, 4));
+            if (seasonStartYear >= 1999 || leagueDetailModel.Competition == "Premier League")
+            {
+                return Rows
+                    .OrderByDescending(t => t.Points)
+                    .ThenByDescending(t => t.GoalDifference) // Goal ratio was used prior to 1976-77
+                    .ThenByDescending(t => t.GoalsFor)
+                    // head to head
+                    .ThenBy(t => t.Team) // unless it affects a promotion/relegation spot at the end of the season in which case a play-off occurs (this has never happened)
+                    .ToList();
+            }
+            
             return Rows
                 .OrderByDescending(t => t.Points)
+                .ThenByDescending(t => t.GoalsFor)
                 .ThenByDescending(t => t.GoalDifference) // Goal ratio was used prior to 1976-77
-                .ThenByDescending(t => t.GoalsFor) //TODO: review this as goals for was ahead of goal difference in the football league between 1992/1993 and 1998/1999
                 // head to head
                 .ThenBy(t => t.Team) // unless it affects a promotion/relegation spot at the end of the season in which case a play-off occurs (this has never happened)
-                .ToList(); 
+                .ToList();
         }
     }
 }

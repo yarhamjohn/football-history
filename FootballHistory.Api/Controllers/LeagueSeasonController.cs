@@ -96,9 +96,10 @@ namespace FootballHistory.Api.Controllers
         {
             var filter = new SeasonTierFilter { SeasonStartYear = seasonStartYear, Tier = (Tier) tier };
             var matchDetails = _leagueMatchesRepository.GetLeagueMatches(filter);
+            var leagueDetail = _leagueDetailRepository.GetLeagueInfo(filter);
             var pointDeductions = _pointDeductionsRepository.GetPointDeductions(filter);
 
-            return _leagueTableDrillDownBuilder.Build(team, matchDetails, pointDeductions);
+            return _leagueTableDrillDownBuilder.Build(team, matchDetails, pointDeductions, leagueDetail);
         }
     }
 }

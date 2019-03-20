@@ -7,7 +7,7 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTable
     public interface ILeagueTable
     {
         LeagueTable AddPositionsAndStatuses(LeagueDetailModel leagueDetailModel, List<MatchDetailModel> playOffMatches);
-        LeagueTable AddPositions();
-        LeagueTable AddMissingTeams(List<string> teams);
+        LeagueTable AddPositions(LeagueDetailModel leagueDetailModel);
+        LeagueTable AddMissingTeams(List<string> teams, LeagueDetailModel leagueDetailModel);
     }
 }
