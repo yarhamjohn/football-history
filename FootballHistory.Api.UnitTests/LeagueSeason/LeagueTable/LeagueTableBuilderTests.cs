@@ -24,12 +24,17 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
                 .Setup(x => x.Create(It.IsAny<List<MatchDetailModel>>(), It.IsAny<List<PointDeductionModel>>(), It.IsAny<string>()))
                 .Returns(() => new LeagueTableCalculator(new List<MatchDetailModel>(), new List<PointDeductionModel>(), ""));
 
-            var mockSorter = new Mock<ILeagueTableSorter>();
-            mockSorter
-                .Setup(x => x.Sort(It.IsAny<Api.LeagueSeason.LeagueTable.LeagueTable>(), It.IsAny<LeagueDetailModel>()))
+            var mockPositionCalculator = new Mock<ILeagueTablePositionCalculator>();
+            mockPositionCalculator
+                .Setup(x => x.AddPositions(It.IsAny<Api.LeagueSeason.LeagueTable.LeagueTable>(), It.IsAny<LeagueDetailModel>()))
                 .Returns((Api.LeagueSeason.LeagueTable.LeagueTable t, LeagueDetailModel m) => t);
             
-            _leagueTableBuilder = new LeagueTableBuilder(mockFactory.Object, mockSorter.Object);
+            var mockStatusCalculator = new Mock<ILeagueTableStatusCalculator>();
+            mockStatusCalculator
+                .Setup(x => x.AddStatuses(It.IsAny<Api.LeagueSeason.LeagueTable.LeagueTable>(), It.IsAny<LeagueDetailModel>(), It.IsAny<List<MatchDetailModel>>()))
+                .Returns((Api.LeagueSeason.LeagueTable.LeagueTable t, LeagueDetailModel ldm, List<MatchDetailModel> m) => t);
+
+            _leagueTableBuilder = new LeagueTableBuilder(mockFactory.Object, mockPositionCalculator.Object, mockStatusCalculator.Object);
         }
 
         [Test]

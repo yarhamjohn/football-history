@@ -10,27 +10,30 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTable
     public class LeagueTableBuilder : ILeagueTableBuilder
     {
         private readonly ILeagueTableCalculatorFactory _leagueTableCalculatorFactory;
-        private readonly ILeagueTableSorter _leagueTableSorter;
+        private readonly ILeagueTablePositionCalculator _leagueTablePositionCalculator;
+        private readonly ILeagueTableStatusCalculator _leagueTableStatusCalculator;
 
-        public LeagueTableBuilder(ILeagueTableCalculatorFactory leagueTableCalculatorFactory, ILeagueTableSorter leagueTableSorter)
+        public LeagueTableBuilder(ILeagueTableCalculatorFactory leagueTableCalculatorFactory, ILeagueTablePositionCalculator leagueTablePositionCalculator, ILeagueTableStatusCalculator leagueTableStatusCalculator)
         {
             _leagueTableCalculatorFactory = leagueTableCalculatorFactory;
-            _leagueTableSorter = leagueTableSorter;
+            _leagueTablePositionCalculator = leagueTablePositionCalculator;
+            _leagueTableStatusCalculator = leagueTableStatusCalculator;
         }
         
         public LeagueTable BuildWithStatuses(List<MatchDetailModel> leagueMatches, List<PointDeductionModel> pointDeductions, LeagueDetailModel leagueDetailModel, List<MatchDetailModel> playOffMatches)
         {
             var leagueTable = BuildBasicTable(leagueMatches, pointDeductions);
-            AddPositions(leagueTable, leagueDetailModel);
+            leagueTable = _leagueTablePositionCalculator.AddPositions(leagueTable, leagueDetailModel);
+            leagueTable = _leagueTableStatusCalculator.AddStatuses(leagueTable, leagueDetailModel, playOffMatches);
             
-            return leagueTable.AddStatuses(leagueDetailModel, playOffMatches);
+            return leagueTable;
         }
 
         public LeagueTable BuildWithoutStatuses(List<MatchDetailModel> leagueMatches, List<PointDeductionModel> pointDeductions, LeagueDetailModel leagueDetailModel, List<string> missingTeams)
         {
             var leagueTable = BuildBasicTable(leagueMatches, pointDeductions);
             AddMissingTeams(missingTeams, leagueTable);
-            AddPositions(leagueTable, leagueDetailModel);
+            leagueTable = _leagueTablePositionCalculator.AddPositions(leagueTable, leagueDetailModel);
 
             return leagueTable;
         }
@@ -40,16 +43,6 @@ namespace FootballHistory.Api.LeagueSeason.LeagueTable
             foreach (var team in missingTeams)
             {
                 leagueTable.Rows.Add(new LeagueTableRow {Team = team});
-            }
-        }
-
-        private void AddPositions(LeagueTable leagueTable, LeagueDetailModel leagueDetailModel)
-        {
-            var sortedLeagueTable = _leagueTableSorter.Sort(leagueTable, leagueDetailModel);
-
-            for (var i = 0; i < sortedLeagueTable.Rows.Count; i++)
-            {
-                sortedLeagueTable.Rows[i].Position = i + 1;
             }
         }
         

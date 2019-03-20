@@ -44,6 +44,8 @@ namespace FootballHistory.Api
             services.AddTransient<ILeagueTableCalculatorFactory, LeagueTableCalculatorFactory>();
             services.AddTransient<ILeagueTableCalculator, LeagueTableCalculator>();
             services.AddTransient<ILeagueTableSorter, LeagueTableSorter>();
+            services.AddTransient<ILeagueTablePositionCalculator, LeagueTablePositionCalculator>();
+            services.AddTransient<ILeagueTableStatusCalculator, LeagueTableStatusCalculator>();
             
             services.AddTransient<ILeagueTableBuilder, LeagueTableBuilder>();
             services.AddTransient<ILeagueSeasonFilterBuilder, LeagueSeasonFilterBuilder>();

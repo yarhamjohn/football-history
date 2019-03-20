@@ -17,4 +17,8 @@
       <ProjectReference Include="..\FootballHistory.Api\FootballHistory.Api.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Team\HistoricalPosition" />
+    </ItemGroup>
+
 </Project>
