@@ -30,7 +30,8 @@ class Page extends Component {
         <h4><em>Rankings</em></h4>
         <ul>
           <li>Initially, 'Goal Average' (actually goal ratio - goals for / goals against) was used to separate teams level on points.</li>
-          <li>For the 1976-77 season, this was replaced with Goal Difference.</li>          
+          <li>For the 1976-77 season, this was replaced with Goal Difference.</li>
+          <li>After the formation of the Premier League in 1992-93, the Football League used Goals For before Goal difference up to the 1998-99 season before changing back from 1999-00</li>  
         </ul>
         <h4><em>Promotion and Relegation</em></h4>
         <ul>
