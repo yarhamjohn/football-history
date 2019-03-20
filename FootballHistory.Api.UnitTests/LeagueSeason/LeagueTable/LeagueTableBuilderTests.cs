@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text;
 using FootballHistory.Api.LeagueSeason.LeagueTable;
 using FootballHistory.Api.Repositories.LeagueDetailRepository;
 using FootballHistory.Api.Repositories.MatchDetailRepository;
@@ -22,7 +23,13 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
             mockFactory
                 .Setup(x => x.Create(It.IsAny<List<MatchDetailModel>>(), It.IsAny<List<PointDeductionModel>>(), It.IsAny<string>()))
                 .Returns(() => new LeagueTableCalculator(new List<MatchDetailModel>(), new List<PointDeductionModel>(), ""));
-            _leagueTableBuilder = new LeagueTableBuilder(mockFactory.Object, new Mock<ILeagueTableSorter>().Object);
+
+            var mockSorter = new Mock<ILeagueTableSorter>();
+            mockSorter
+                .Setup(x => x.Sort(It.IsAny<Api.LeagueSeason.LeagueTable.LeagueTable>(), It.IsAny<LeagueDetailModel>()))
+                .Returns((Api.LeagueSeason.LeagueTable.LeagueTable t, LeagueDetailModel m) => t);
+            
+            _leagueTableBuilder = new LeagueTableBuilder(mockFactory.Object, mockSorter.Object);
         }
 
         [Test]
@@ -30,7 +37,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
         {
             var leagueMatches = new List<MatchDetailModel>();
             var pointDeductions = new List<PointDeductionModel>();
-            var leagueDetailModel = new LeagueDetailModel { Competition = "Test", Season = "0000 - 0000"};
+            var leagueDetailModel = new LeagueDetailModel();
             var playOffMatches = new List<MatchDetailModel>();
             
             var leagueTable = _leagueTableBuilder.BuildWithStatuses(leagueMatches, pointDeductions, leagueDetailModel, playOffMatches);
@@ -43,7 +50,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
         {
             var leagueMatches = new List<MatchDetailModel> { new MatchDetailModel { HomeTeam = "Team1", AwayTeam = "Team2" } };
             var pointDeductions = new List<PointDeductionModel>();
-            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 2, Competition = "Test", Season = "0000 - 0000"};
+            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 2 };
             var playOffMatches = new List<MatchDetailModel>();
             
             var leagueTable = _leagueTableBuilder.BuildWithStatuses(leagueMatches, pointDeductions, leagueDetailModel, playOffMatches);
@@ -60,7 +67,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
                 new MatchDetailModel { HomeTeam = "Team2", AwayTeam = "Team1" }
             };
             var pointDeductions = new List<PointDeductionModel>();
-            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 2, Competition = "Test", Season = "0000 - 0000"};
+            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 2 };
             var playOffMatches = new List<MatchDetailModel>();
             
             var leagueTable = _leagueTableBuilder.BuildWithStatuses(leagueMatches, pointDeductions, leagueDetailModel, playOffMatches);
@@ -77,7 +84,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
                 new MatchDetailModel { HomeTeam = "Team1", AwayTeam = "Team3" }
             };
             var pointDeductions = new List<PointDeductionModel>();
-            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 3, Competition = "Test", Season = "0000 - 0000"};
+            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 3 };
             var playOffMatches = new List<MatchDetailModel>();
             
             var leagueTable = _leagueTableBuilder.BuildWithStatuses(leagueMatches, pointDeductions, leagueDetailModel, playOffMatches);
@@ -94,7 +101,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
                 new MatchDetailModel { HomeTeam = "Team1", AwayTeam = "Team2" }
             };
             var pointDeductions = new List<PointDeductionModel>();
-            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 2};
+            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 2 };
             var playOffMatches = new List<MatchDetailModel>();
             
             var ex = Assert.Throws<Exception>(() => _leagueTableBuilder.BuildWithStatuses(leagueMatches, pointDeductions, leagueDetailModel, playOffMatches));
@@ -118,7 +125,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
         {
             var leagueMatches = new List<MatchDetailModel>();
             var pointDeductions = new List<PointDeductionModel>();
-            var leagueDetailModel = new LeagueDetailModel { Competition = "Test", Season = "0000 - 0000"};
+            var leagueDetailModel = new LeagueDetailModel();
             var missingTeams = new List<string>();
             
             var leagueTable = _leagueTableBuilder.BuildWithoutStatuses(leagueMatches, pointDeductions, leagueDetailModel, missingTeams);
@@ -131,7 +138,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
         {
             var leagueMatches = new List<MatchDetailModel> { new MatchDetailModel { HomeTeam = "Team1", AwayTeam = "Team2" } };
             var pointDeductions = new List<PointDeductionModel>();
-            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 2, Competition = "Test", Season = "0000 - 0000"};
+            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 2 };
             var missingTeams = new List<string>();
 
             var leagueTable = _leagueTableBuilder.BuildWithoutStatuses(leagueMatches, pointDeductions, leagueDetailModel, missingTeams);
@@ -148,7 +155,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
                 new MatchDetailModel { HomeTeam = "Team2", AwayTeam = "Team1" }
             };
             var pointDeductions = new List<PointDeductionModel>();
-            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 2, Competition = "Test", Season = "0000 - 0000"};
+            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 2 };
             var missingTeams = new List<string>();
             
             var leagueTable = _leagueTableBuilder.BuildWithoutStatuses(leagueMatches, pointDeductions, leagueDetailModel, missingTeams);
@@ -165,7 +172,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
                 new MatchDetailModel { HomeTeam = "Team1", AwayTeam = "Team3" }
             };
             var pointDeductions = new List<PointDeductionModel>();
-            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 3, Competition = "Test", Season = "0000 - 0000"};
+            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 3 };
             var missingTeams = new List<string>();
             
             var leagueTable = _leagueTableBuilder.BuildWithoutStatuses(leagueMatches, pointDeductions, leagueDetailModel, missingTeams);
@@ -174,15 +181,14 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
         }
 
         [Test]
-        public void BuildWithoutStatuses_ShouldReturnLeagueTableWithThreeRows_GivenTwoMatchesBetweenTwoTeams_AndOneMissingTeam()
+        public void BuildWithoutStatuses_ShouldReturnLeagueTableWithThreeRows_GivenOneMatch_AndOneMissingTeam()
         {
             var leagueMatches = new List<MatchDetailModel>
             {
-                new MatchDetailModel { HomeTeam = "Team1", AwayTeam = "Team2" },
-                new MatchDetailModel { HomeTeam = "Team2", AwayTeam = "Team1" }
+                new MatchDetailModel { HomeTeam = "Team1", AwayTeam = "Team2" }
             };
             var pointDeductions = new List<PointDeductionModel>();
-            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 3, Competition = "Test", Season = "0000 - 0000"};
+            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 3 };
             var missingTeams = new List<string> { "Team3" };
             
             var leagueTable = _leagueTableBuilder.BuildWithoutStatuses(leagueMatches, pointDeductions, leagueDetailModel, missingTeams);
@@ -199,7 +205,7 @@ namespace FootballHistory.Api.UnitTests.LeagueSeason.LeagueTable
                 new MatchDetailModel { HomeTeam = "Team1", AwayTeam = "Team2" }
             };
             var pointDeductions = new List<PointDeductionModel>();
-            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 2};
+            var leagueDetailModel = new LeagueDetailModel { TotalPlaces = 2 };
             var missingTeams = new List<string>();
             
             var ex = Assert.Throws<Exception>(() => _leagueTableBuilder.BuildWithoutStatuses(leagueMatches, pointDeductions, leagueDetailModel, missingTeams));
