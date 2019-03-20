@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using FootballHistory.Api.Controllers;
 using FootballHistory.Api.Domain;
-using FootballHistory.Api.LeagueSeason.LeagueTable;
+using FootballHistory.Api.LeagueSeason.Table;
 using FootballHistory.Api.Repositories.LeagueDetailRepository;
 using FootballHistory.Api.Repositories.MatchDetailRepository;
 using FootballHistory.Api.Repositories.PointDeductionRepository;

@@ -1,9 +1,9 @@
 ﻿using FootballHistory.Api.Domain;
-using FootballHistory.Api.LeagueSeason.LeagueSeasonFilter;
-using FootballHistory.Api.LeagueSeason.LeagueTable;
-using FootballHistory.Api.LeagueSeason.LeagueTableDrillDown;
+using FootballHistory.Api.LeagueSeason.Filter;
 using FootballHistory.Api.LeagueSeason.PlayOffs;
 using FootballHistory.Api.LeagueSeason.ResultMatrix;
+using FootballHistory.Api.LeagueSeason.Table;
+using FootballHistory.Api.LeagueSeason.TableDrillDown;
 using FootballHistory.Api.Repositories.DivisionRepository;
 using FootballHistory.Api.Repositories.LeagueDetailRepository;
 using FootballHistory.Api.Repositories.MatchDetailRepository;
