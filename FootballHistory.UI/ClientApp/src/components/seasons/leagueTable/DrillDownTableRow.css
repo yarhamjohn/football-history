@@ -2,3 +2,12 @@
     display: flex;
     justify-content: space-around;
 }
+
+.drilldown-card-body {
+    background-color: #e8e8e8;
+}
+
+.drilldown-card-content {
+    background-color: white;
+    padding: 5px;
+}
