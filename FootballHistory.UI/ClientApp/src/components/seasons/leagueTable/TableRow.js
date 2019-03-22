@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-// import { Glyphicon } from 'react-bootstrap';
 import DrillDownTableRow from './DrillDownTableRow';
 
 class TableRow extends Component {
@@ -45,7 +44,7 @@ class TableRow extends Component {
           onClick={() => this.toggleDrillDown()}
         >
           <td>
-            {/*<Glyphicon glyph={this.state.DrillDownShowing ? 'chevron-down' : 'chevron-right'} />*/}
+            <i className={"fas " + (this.state.DrillDownShowing ? 'fa-angle-down' : 'fa-angle-right')}></i>
           </td>
           <td>{row.position}</td>
           <td>{row.team}</td>
