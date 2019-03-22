@@ -56,10 +56,11 @@ class ResultMatrix extends Component {
 
     return (
       <div>
-        <Table size='sm' responsive>
+        <Table size='sm' responsive className="test">
           <thead>
             <tr>
-              <th>Home / Away</th>
+              <th className='name-column--header'>Home / Away</th>
+              <th className='hidden-column--header'></th>
               {
                 teams.map(t => <th key={t.homeTeam}>{t.homeTeamAbbreviation}</th>)
               }
@@ -80,7 +81,8 @@ function MatrixRow(props) {
   const row = props.matrix.filter(r => r.homeTeam === props.team.homeTeam)[0];
   return (
     <tr>
-      <td style={{minWidth:200}}>{props.team.homeTeam}</td>
+      <td className='name-column--data'>{props.team.homeTeam}</td>
+      <td className='hidden-column--data'></td>
       {
         props.teams.map(t => <MatrixCell results={row.results} team={t} key={t.homeTeam} />)
       }

@@ -78,7 +78,7 @@ class LeagueTable extends Component {
             }
           </tbody>
         </Table>
-        <div>
+        <div className='point-deductions-container'>
           {table.map(row =>
             row.pointsDeducted > 0
               ? PointsDeductionMessage(row.team, row.pointsDeducted, row.pointsDeductionReason)

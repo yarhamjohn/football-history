@@ -1,5 +1,10 @@
 .point-deductions {
-    color: red
+    color: red;
+    margin: 0;
+}
+
+.point-deductions-container {
+    margin-bottom: 1rem;
 }
 
 .league-table {
