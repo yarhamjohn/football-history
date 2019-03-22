@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Well } from 'react-bootstrap';
+// import { Well } from 'react-bootstrap';
 import { LineChart } from 'react-chartkick'
 import baseUrl from "../../../api/LeagueSeasonApi";
 import './DrillDownTableRow.css';
@@ -37,7 +37,7 @@ class DrillDownTableRow extends Component {
     return (
       <tr>
         <td colSpan="12">
-          <Well>
+          {/*<Well>*/}
             <div style={{backgroundColor: 'white', padding: 5}}>
               <div className='drilldown-form'>
                 {form.map(f => <span key={f.matchDate} style={{fontWeight: 'bold', color: f.result === 'W' ? 'green' : f.result === 'D' ? 'darkorange' : 'red'}}>{f.result}</span>)}
@@ -67,7 +67,7 @@ class DrillDownTableRow extends Component {
                   }
                 }} />
             </div>
-          </Well>
+          {/*</Well>*/}
         </td>
       </tr>
     )

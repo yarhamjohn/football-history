@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ButtonToolbar, DropdownButton, MenuItem } from 'react-bootstrap';
+import { ButtonToolbar, DropdownButton, DropdownItem } from 'react-bootstrap';
 import './Filter.css';
 
 class Filter extends Component {
@@ -22,27 +22,27 @@ class Filter extends Component {
     const { allTiers, allSeasons, selectedTier, selectedSeason } = this.props;
 
     return (
-      <ButtonToolbar className='filter-buttons'>
-        <DropdownButton title="Division" id="DivisionSelect">
+      <ButtonToolbar>
+        <DropdownButton className='filter-button' variant='outline-dark' title="Division" id="DivisionSelect">
         {
           allTiers.map(t => 
-            <MenuItem key={t.tier} eventKey={t} 
+            <DropdownItem key={t.tier} eventKey={t} 
               className={t.tier === selectedTier ? "active" : ""}
               onSelect={(t) => this.updateTier(t)}
             >
               {`Tier ${t.tier}: ${this.getDivisionInfo(t)}`}
-            </MenuItem>)
+            </DropdownItem>)
         }
         </DropdownButton>
-        <DropdownButton title="Season" id="SeasonSelect">
+        <DropdownButton className='filter-button' variant='outline-dark' title="Season" id="SeasonSelect">
         {
           allSeasons.sort().reverse().map(s =>
-            <MenuItem key={s} eventKey={s}
+            <DropdownItem key={s} eventKey={s}
               className={s === selectedSeason ? "active" : ""}
               onSelect={(s) => this.updateSeason(s)}
             >
               {s}
-            </MenuItem>)
+            </DropdownItem>)
         }
         </DropdownButton>
       </ButtonToolbar>

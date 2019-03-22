@@ -72,13 +72,15 @@ class Page extends Component {
         <h1>{this.getDivisionName(selectedTier, selectedSeason)}</h1>
         <h2>{selectedSeason}</h2>
         
-        <Filter 
-          allTiers={allTiers}
-          allSeasons={allSeasons}
-          selectedTier={selectedTier} 
-          selectedSeason={selectedSeason}
-          updateFilter={(selectedTier, selectedSeason) => this.updateFilter(selectedTier, selectedSeason)}
-        />
+        <div className='filter-container'>
+          <Filter 
+            allTiers={allTiers}
+            allSeasons={allSeasons}
+            selectedTier={selectedTier} 
+            selectedSeason={selectedSeason}
+            updateFilter={(selectedTier, selectedSeason) => this.updateFilter(selectedTier, selectedSeason)}
+          />
+        </div>
 
         <div className='table-container'>
           <LeagueTable tier={selectedTier} seasonStartYear={selectedSeason.substring(0, 4)} />

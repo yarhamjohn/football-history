@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Glyphicon } from 'react-bootstrap';
+// import { Glyphicon } from 'react-bootstrap';
 import DrillDownTableRow from './DrillDownTableRow';
 
 class TableRow extends Component {
@@ -44,7 +44,9 @@ class TableRow extends Component {
           className='league-table--row'
           onClick={() => this.toggleDrillDown()}
         >
-          <td><Glyphicon glyph={this.state.DrillDownShowing ? 'chevron-down' : 'chevron-right'} /></td>
+          <td>
+            {/*<Glyphicon glyph={this.state.DrillDownShowing ? 'chevron-down' : 'chevron-right'} />*/}
+          </td>
           <td>{row.position}</td>
           <td>{row.team}</td>
           <td>{row.played}</td>
