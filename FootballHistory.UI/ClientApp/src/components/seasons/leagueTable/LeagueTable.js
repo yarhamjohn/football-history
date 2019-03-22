@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Table } from 'react-bootstrap';
 import TableRow from './TableRow';
 import baseUrl from "../../../api/LeagueSeasonApi";
 import './LeagueTable.css';
@@ -45,7 +46,7 @@ class LeagueTable extends Component {
 
     return (
       <div className='league-table'>
-        <table className='table'>
+        <Table size="sm">
           <thead>
             <tr>
               <th></th>
@@ -76,7 +77,7 @@ class LeagueTable extends Component {
               )
             }
           </tbody>
-        </table>
+        </Table>
         <div>
           {table.map(row =>
             row.pointsDeducted > 0

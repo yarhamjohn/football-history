@@ -61,7 +61,7 @@ function PlayOffSemiFinal(props) {
   const { semiFinal } = props;
 
   return (
-    <Table striped condensed>
+    <Table striped size="sm">
       <thead>
         <tr>
           <th>Team</th>
@@ -99,7 +99,7 @@ function PlayOffFinal(props) {
   const { final } = props;
 
   return (
-    <Table striped condensed>
+    <Table striped size="sm">
       <thead>
         <tr>
           <th>Team</th>

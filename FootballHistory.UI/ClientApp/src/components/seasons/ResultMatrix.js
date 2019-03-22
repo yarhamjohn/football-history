@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import { Table } from 'react-bootstrap';
 import * as moment from 'moment';
 import baseUrl from "../../api/LeagueSeasonApi";
 import './ResultMatrix.css';
@@ -55,7 +56,7 @@ class ResultMatrix extends Component {
 
     return (
       <div>
-        <table className='table'>
+        <Table size='sm' responsive>
           <thead>
             <tr>
               <th>Home / Away</th>
@@ -69,7 +70,7 @@ class ResultMatrix extends Component {
               teams.map(t => <MatrixRow className="matrix-cell" matrix={matrix} team={t} teams={teams} key={t.homeTeam} />)
             }
           </tbody>
-        </table>
+        </Table>
       </div>
     );
   }
@@ -79,7 +80,7 @@ function MatrixRow(props) {
   const row = props.matrix.filter(r => r.homeTeam === props.team.homeTeam)[0];
   return (
     <tr>
-      <td>{props.team.homeTeam}</td>
+      <td style={{minWidth:200}}>{props.team.homeTeam}</td>
       {
         props.teams.map(t => <MatrixCell results={row.results} team={t} key={t.homeTeam} />)
       }
@@ -91,7 +92,7 @@ function MatrixCell(props) {
   const result = props.results.filter(s => s.awayTeam === props.team.homeTeam)[0];
 
   return (
-      <td style={{backgroundColor: getBackgroundColor(result.homeScore, result.awayScore)}} 
+      <td style={{backgroundColor: getBackgroundColor(result.homeScore, result.awayScore), minWidth:40}} 
           title={moment(result.matchDate).format("ddd, Do MMM YYYY")}>
           {result.homeScore === null || result.awayScore === null ? "" : `${result.homeScore}-${result.awayScore}`}
       </td>
