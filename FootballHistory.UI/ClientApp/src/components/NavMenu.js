@@ -1,5 +1,7 @@
 ﻿import React, { Component } from 'react';
-import { Nav, Navbar } from 'react-bootstrap';
+import { Nav, Navbar, Image } from 'react-bootstrap';
+import soccerBall from '../images/Soccer-Ball-icon.png';
+import './NavMenu.css';
 
 export class NavMenu extends Component {
   displayName = NavMenu.name
@@ -7,6 +9,7 @@ export class NavMenu extends Component {
   render() {
     return (
       <Navbar bg='primary' variant='dark' sticky='top' collapseOnSelect>
+        <Image className='image' src={soccerBall}/>
         <Navbar.Brand href='/'>Football History</Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse>
