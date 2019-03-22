@@ -4,7 +4,7 @@ import soccerBall from '../images/Soccer-Ball-icon.png';
 import './NavMenu.css';
 
 export class NavMenu extends Component {
-  displayName = NavMenu.name
+  displayName = NavMenu.name;
 
   render() {
     return (
