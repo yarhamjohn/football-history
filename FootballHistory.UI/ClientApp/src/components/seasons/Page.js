@@ -10,9 +10,9 @@ class Page extends Component {
   constructor(props) {
     super(props);
     this.state = { 
-      allTiers: [],
+      allDivisionTiers: [],
       allSeasons: [],
-      selectedTier: null,
+      selectedDivisionTier: null,
       selectedSeason: null,
       isLoading: true 
     };
@@ -20,7 +20,7 @@ class Page extends Component {
 
   updateFilter(selectedTier, selectedSeason) {
     this.setState({ 
-      selectedTier: selectedTier, 
+      selectedDivisionTier: selectedTier, 
       selectedSeason: selectedSeason
     });
   };
@@ -33,16 +33,16 @@ class Page extends Component {
         let filteredSeasons = data.allSeasons.filter(s => s.slice(0, 4) >= 1992 && s.slice(7, 11) <= 2018);
         
         this.setState({
-          allTiers: data.allTiers,
+          allDivisionTiers: data.allTiers,
           allSeasons: filteredSeasons,
-          selectedTier: this.getDefaultTier(data.allTiers),
+          selectedDivisionTier: this.getDefaultDivisionTier(data.allTiers),
           selectedSeason: this.getDefaultSeason(filteredSeasons),
           isLoading: false
         });
       });
   };
   
-  getDefaultTier(tiers)
+  getDefaultDivisionTier(tiers)
   {
     return tiers.filter(t => t.tier === 1)[0];
   }
@@ -61,7 +61,7 @@ class Page extends Component {
   }
 
   render() {
-    const { allTiers, allSeasons, selectedTier, selectedSeason, isLoading } = this.state;
+    const { allDivisionTiers, allSeasons, selectedDivisionTier, selectedSeason, isLoading } = this.state;
 
     if (isLoading) {
       return <p><em>Loading...</em></p>;
@@ -69,25 +69,24 @@ class Page extends Component {
 
     return (
       <React.Fragment>
-        <h1>{this.getDivisionName(selectedTier, selectedSeason)}</h1>
-        <h2>{selectedSeason}</h2>
+        <h1 className='header'>{this.getDivisionName(selectedDivisionTier, selectedSeason)} ({selectedSeason})</h1>
         
         <div className='filter-container'>
           <Filter 
-            allTiers={allTiers}
+            allDivisionTiers={allDivisionTiers}
             allSeasons={allSeasons}
-            selectedTier={selectedTier} 
+            selectedDivisionTier={selectedDivisionTier} 
             selectedSeason={selectedSeason}
-            updateFilter={(selectedTier, selectedSeason) => this.updateFilter(selectedTier, selectedSeason)}
+            updateFilter={(selectedDivisionTier, selectedSeason) => this.updateFilter(selectedDivisionTier, selectedSeason)}
           />
         </div>
 
         <div className='table-container'>
-          <LeagueTable tier={selectedTier} seasonStartYear={selectedSeason.substring(0, 4)} />
-          {selectedTier.tier !== 1 && <PlayOffMatches tier={selectedTier} seasonStartYear={selectedSeason.substring(0, 4)} />}
+          <LeagueTable tier={selectedDivisionTier.tier} seasonStartYear={selectedSeason.substring(0, 4)} />
+          {selectedDivisionTier.tier !== 1 && <PlayOffMatches tier={selectedDivisionTier.tier} seasonStartYear={selectedSeason.substring(0, 4)} />}
         </div>
 
-        <ResultMatrix tier={selectedTier} seasonStartYear={selectedSeason.substring(0, 4)} />
+        <ResultMatrix tier={selectedDivisionTier.tier} seasonStartYear={selectedSeason.substring(0, 4)} />
       </React.Fragment>
     );
   };

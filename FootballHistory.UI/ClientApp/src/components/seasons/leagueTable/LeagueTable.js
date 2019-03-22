@@ -15,7 +15,7 @@ class LeagueTable extends Component {
   fetchLeagueTable() {
     const { tier, seasonStartYear } = this.props;
 
-    fetch(`${baseUrl}/api/LeagueSeason/GetLeagueTable?tier=${tier.tier}&seasonStartYear=${seasonStartYear}`)
+    fetch(`${baseUrl}/api/LeagueSeason/GetLeagueTable?tier=${tier}&seasonStartYear=${seasonStartYear}`)
       .then(response => response.json())
       .then(data => {
         this.setState({ 

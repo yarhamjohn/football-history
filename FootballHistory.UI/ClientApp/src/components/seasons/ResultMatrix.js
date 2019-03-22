@@ -15,7 +15,7 @@ class ResultMatrix extends Component {
   fetchResultMatrix() {
     const { tier, seasonStartYear } = this.props;
 
-      fetch(`${baseUrl}/api/LeagueSeason/GetResultMatrix?tier=${tier.tier}&seasonStartYear=${seasonStartYear}`)
+      fetch(`${baseUrl}/api/LeagueSeason/GetResultMatrix?tier=${tier}&seasonStartYear=${seasonStartYear}`)
       .then(response => response.json())
       .then(data => {
         this.setState({ 

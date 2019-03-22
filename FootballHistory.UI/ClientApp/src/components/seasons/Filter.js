@@ -9,8 +9,8 @@ class Filter extends Component {
   };
 
   updateSeason(season) {
-    const { updateFilter, selectedTier } = this.props;
-    updateFilter(selectedTier, season);
+    const { updateFilter, selectedDivisionTier } = this.props;
+    updateFilter(selectedDivisionTier, season);
   };
 
   getDivisionInfo(tier) {
@@ -19,27 +19,27 @@ class Filter extends Component {
   };
 
   render() {
-    const { allTiers, allSeasons, selectedTier, selectedSeason } = this.props;
+    const { allDivisionTiers, allSeasons, selectedDivisionTier, selectedSeason } = this.props;
 
     return (
       <ButtonToolbar>
         <DropdownButton className='filter-button' variant='outline-dark' title="Division" id="DivisionSelect">
         {
-          allTiers.map(t => 
-            <DropdownItem key={t.tier} eventKey={t} 
-              className={t.tier === selectedTier ? "active" : ""}
-              onSelect={(t) => this.updateTier(t)}
+          allDivisionTiers.map(dt => 
+            <DropdownItem key={dt.tier} 
+              className={dt.tier === selectedDivisionTier.tier ? "active" : ""}
+              onSelect={() => this.updateTier(dt)}
             >
-              {`Tier ${t.tier}: ${this.getDivisionInfo(t)}`}
+              {`Tier ${dt.tier}: ${this.getDivisionInfo(dt)}`}
             </DropdownItem>)
         }
         </DropdownButton>
         <DropdownButton className='filter-button' variant='outline-dark' title="Season" id="SeasonSelect">
         {
           allSeasons.sort().reverse().map(s =>
-            <DropdownItem key={s} eventKey={s}
+            <DropdownItem key={s}
               className={s === selectedSeason ? "active" : ""}
-              onSelect={(s) => this.updateSeason(s)}
+              onSelect={() => this.updateSeason(s)}
             >
               {s}
             </DropdownItem>)
