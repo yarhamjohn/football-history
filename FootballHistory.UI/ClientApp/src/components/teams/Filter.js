@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from "react";
-import {ButtonToolbar, DropdownButton, DropdownItem} from "react-bootstrap";
+import {Dropdown, ButtonToolbar} from "react-bootstrap";
+import './Filter.css';
 
 function Filter(props) {
     const [allTeams, setAllTeams] = useState(props.allTeams);
@@ -7,8 +8,11 @@ function Filter(props) {
     
     useEffect(() => {
         setAllTeams(props.allTeams);
+    }, [props.allTeams]);
+
+    useEffect(() => {
         setSelectedTeam(props.selectedTeam);
-    });
+    }, [props.selectedTeam]);
     
     const updateSelectedTeam = (team) => {
         setSelectedTeam(team);
@@ -16,21 +20,22 @@ function Filter(props) {
     };
 
     return (
-        <div style={{marginBottom:'1rem'}}>
-            <ButtonToolbar className='filter-buttons'>
-                <DropdownButton title="Teams" id="TeamSelect">
+        <ButtonToolbar>
+            <Dropdown className='filter-button'>
+                <Dropdown.Toggle variant='outline-primary'>Team</Dropdown.Toggle>
+                <Dropdown.Menu flip={false} style={{marginTop:5}}>
                     {
                         allTeams.map(t =>
-                            <DropdownItem key={t} eventKey={t}
-                                      className={t === selectedTeam ? "active" : ""}
-                                      onSelect={(t) => updateSelectedTeam(t)}
+                            <Dropdown.Item key={t} eventKey={t}
+                                          className={t === selectedTeam ? "active" : ""}
+                                          onSelect={(t) => updateSelectedTeam(t)}
                             >
                                 {t}
-                            </DropdownItem>)
+                            </Dropdown.Item>)
                     }
-                </DropdownButton>
-            </ButtonToolbar>
-        </div>
+                </Dropdown.Menu>
+            </Dropdown>        
+        </ButtonToolbar>
     );
 }
 

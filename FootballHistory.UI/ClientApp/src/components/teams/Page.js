@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import { Spinner } from 'react-bootstrap';
 import Filter from "./Filter";
 import HistoricalPositions from "./HistoricalPositions";
 import baseUrl from "../../api/LeagueSeasonApi";
+import './Page.css';
 
 function Page() {
     const [selectedTeam, setSelectedTeam] = useState("");
@@ -26,9 +26,13 @@ function Page() {
     
   return (
       <div>
-          <h1>{selectedTeam}</h1>
-          <Filter updateSelectedTeam={(team) => setSelectedTeam(team)} selectedTeam={selectedTeam} allTeams={allTeams}/>
-          <HistoricalPositions selectedTeam={selectedTeam} />
+          <h1 className='header'>{selectedTeam}</h1>
+          <div className='filter-container'>
+            <Filter updateSelectedTeam={(team) => setSelectedTeam(team)} selectedTeam={selectedTeam} allTeams={allTeams}/>
+          </div>
+          <div className='graph-container'>
+              <HistoricalPositions selectedTeam={selectedTeam} />
+          </div>
       </div>
   );
 }
