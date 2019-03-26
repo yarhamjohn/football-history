@@ -1,0 +1,14 @@
+.tick--mark {
+    position: absolute;
+    margin-top: 14px;
+    width: 1px;
+    height: 5px;
+    background-color: rgb(200,200,200);
+}
+
+.tick--label {
+    position: absolute;
+    margin-top: 22px;
+    font-size: 10px;
+    text-align: center;
+}

@@ -10,11 +10,13 @@
     "react": "^16.8.0",
     "react-bootstrap": "^1.0.0-beta.6",
     "react-chartkick": "^0.3.0",
+    "react-compound-slider": "^1.2.1",
     "react-dom": "^16.8.0",
     "react-router-bootstrap": "^0.24.4",
     "react-router-dom": "^4.2.2",
     "react-scripts": "1.0.17",
-    "rimraf": "^2.6.2"
+    "rimraf": "^2.6.2",
+    "underscore": "^1.9.1"
   },
   "scripts": {
     "start": "rimraf ./build && react-scripts start",

@@ -2221,6 +2221,11 @@ currently-unhandled@^0.4.1:
   dependencies:
     array-find-index "^1.0.1"
 
+d3-array@^1.2.4:
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/d3-array/-/d3-array-1.2.4.tgz#635ce4d5eea759f6f605863dbcfc30edc737f71f"
+  integrity sha512-KHW6M86R+FUPYGb3R5XiYjXPq7VzwxZ22buHhAEVG5ztoEcZZMLov530mmccaqA1GghZArjQV46fuc8kUqhhHw==
+
 d@1:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/d/-/d-1.0.0.tgz#754bb5bfe55451da69a58b94d45f4c5b0462d58f"
@@ -6671,6 +6676,16 @@ react-chartkick@^0.3.0:
   dependencies:
     chartkick "^3.0.0"
 
+react-compound-slider@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/react-compound-slider/-/react-compound-slider-1.2.1.tgz#0f127a9944cf860f2041b70035e96a2f1d39d2c6"
+  integrity sha512-N1cwnSkjuiXvVWo8kNDcQ/jiQK2KrybEhnf72kQYL0OcLc36WrlAu9xVo8Yz6c3xWCJI+WKFcFjmitI3FQKn9g==
+  dependencies:
+    "@babel/runtime" "^7.3.4"
+    d3-array "^1.2.4"
+    prop-types "^15.7.2"
+    warning "^3.0.0"
+
 react-context-toolbox@^2.0.2:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/react-context-toolbox/-/react-context-toolbox-2.0.2.tgz#35637287cb23f801e6ed802c2bb7a97e1f04e3fb"
@@ -8158,6 +8173,11 @@ uncontrollable@^6.0.0, uncontrollable@^6.1.0:
   integrity sha512-2TzEm0pLKauMBZfAZXsgQvLpZHEp95891frCZdGDrSG7dWYaIQhedwLAzi0X8pR8KHNqlmuYEb2cEgbQzr050A==
   dependencies:
     invariant "^2.2.4"
+
+underscore@^1.9.1:
+  version "1.9.1"
+  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.9.1.tgz#06dce34a0e68a7babc29b365b8e74b8925203961"
+  integrity sha512-5/4etnCkd9c8gwgowi5/om/mYO5ajCaOgdzj/oW+0eQV9WxKBDZw5+ycmKmeaTXjInS/W0BzpGLo2xR2aBwZdg==
 
 union-value@^1.0.0:
   version "1.0.0"

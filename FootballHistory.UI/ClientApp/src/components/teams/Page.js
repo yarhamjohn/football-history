@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import Filter from "./Filter";
+import _ from "underscore";
 import HistoricalPositions from "./HistoricalPositions";
 import baseUrl from "../../api/LeagueSeasonApi";
 import './Page.css';
@@ -11,6 +12,7 @@ function Page() {
     const [isLoadingTeams, setIsLoadingTeams] = useState(true);
     const [historicalPositions, setHistoricalPositions] = useState([]);
     const [isLoadingHistoricalPositions, setIsLoadingHistoricalPositions] = useState(true);
+    const [selectedSeasons, setSelectedSeasons] = useState([]);
     
     function firstTeamAlphabetically(data) {
         let sorted = data.sort();
@@ -61,23 +63,28 @@ function Page() {
     }, [historicalPositions]);
     
     return (
-      isLoadingTeams
-          ? <Spinner animation='border' variant='info' />
-          : <div>
-              <h1 className='header'>{selectedTeam}</h1>
-              <div className='filter-container'>
-                  <Filter updateSelectedTeam={(team) => setSelectedTeam(team)} 
-                          selectedTeam={selectedTeam}
-                          allTeams={allTeams}
-                          disableButton={isLoadingHistoricalPositions}/>
-              </div>
-              <div className='graph-container'>
-                  {
-                      isLoadingHistoricalPositions
-                      ? <Spinner animation='border' variant='info'/>
-                      : <HistoricalPositions historicalPositions={historicalPositions}/>
-                  }
-              </div>
+        isLoadingTeams
+            ? <Spinner animation='border' variant='info' />
+            : <div>
+                <h1 className='header'>{selectedTeam}</h1>
+                <div className='filter-container'>
+                    <Filter 
+                        updateSelectedTeam={(team) => setSelectedTeam(team)} 
+                        selectedTeam={selectedTeam}
+                        allTeams={allTeams}
+                        disableButton={isLoadingHistoricalPositions}
+                        updateSelectedSeasons={(values) => setSelectedSeasons(values)}
+                        selectedSeasons={selectedSeasons}
+                        allSeasons={_.range(1992, 2018, 1)}
+                    />
+                </div>
+                <div className='graph-container'>
+                {
+                    isLoadingHistoricalPositions
+                        ? <Spinner animation='border' variant='info'/>
+                        : <HistoricalPositions historicalPositions={historicalPositions}/>
+                }
+                </div>
             </div>
       );
 }
