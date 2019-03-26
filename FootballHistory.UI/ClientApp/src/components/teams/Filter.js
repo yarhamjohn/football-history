@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from "react";
+import PropTypes from "prop-types";
 import {Dropdown, ButtonToolbar} from "react-bootstrap";
 import './Filter.css';
 
@@ -19,6 +20,7 @@ function Filter(props) {
         props.updateSelectedTeam(team);
     };
 
+    //TODO: make this button object shared
     return (
         <ButtonToolbar>
             <Dropdown className='filter-button'>
@@ -38,5 +40,10 @@ function Filter(props) {
         </ButtonToolbar>
     );
 }
+
+Filter.propTypes = {
+    allTeams: PropTypes.arrayOf(PropTypes.string),
+    selectedTeam: PropTypes.string
+};
 
 export default Filter;

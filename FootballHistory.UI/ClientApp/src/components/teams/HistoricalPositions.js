@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import PropTypes from "prop-types";
 import baseUrl from "../../api/LeagueSeasonApi";
 import {LineChart} from "react-chartkick";
 import {Spinner} from "react-bootstrap";
@@ -142,5 +143,9 @@ function HistoricalPositions(props) {
         }
     }
 }
+
+HistoricalPositions.propTypes = {
+    selectedTeam: PropTypes.string
+};
 
 export default HistoricalPositions;
