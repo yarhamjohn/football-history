@@ -10,7 +10,8 @@ function Filter(props) {
                 buttonLabel="Team" 
                 currentSelection={props.selectedTeam} 
                 dropdownItems={props.allTeams} 
-                updateSelected={(t) => props.updateSelectedTeam(t)} />
+                updateSelected={(t) => props.updateSelectedTeam(t)}
+                disableButton={props.disableButton} />
         </ButtonToolbar>
     );
 }
@@ -18,7 +19,8 @@ function Filter(props) {
 Filter.propTypes = {
     allTeams: PropTypes.arrayOf(PropTypes.string),
     selectedTeam: PropTypes.string,
-    updateSelectedTeam: PropTypes.func
+    updateSelectedTeam: PropTypes.func,
+    disableButton: PropTypes.bool
 };
 
 export default Filter;

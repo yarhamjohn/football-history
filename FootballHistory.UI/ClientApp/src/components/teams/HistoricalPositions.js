@@ -1,45 +1,8 @@
-import React, {useEffect, useState} from "react";
+import React from "react";
 import PropTypes from "prop-types";
-import baseUrl from "../../api/LeagueSeasonApi";
 import {LineChart} from "react-chartkick";
-import {Spinner} from "react-bootstrap";
 
 function HistoricalPositions(props) {
-    const [selectedTeam, setSelectedTeam] = useState("");
-    const [historicalPositions, setHistoricalPositions] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        setSelectedTeam(props.selectedTeam);
-    }, [props.selectedTeam]);
-    
-    useEffect(() => {
-        if (historicalPositions.length > 0)
-        {
-            setIsLoading(false);
-        }
-    }, [historicalPositions]);
-    
-    useEffect(() => {
-        setIsLoading(true);
-        
-        fetch(`${baseUrl}/api/Team/GetHistoricalPositions?team=${selectedTeam}&firstSeasonStartYear=${1992}&lastSeasonStartYear=${2017}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Failed to fetch')
-                }
-
-                return response.json()
-            })
-            .then(data => {
-                setHistoricalPositions(data)
-            })
-            .catch(err => {
-                console.log(err);
-                setIsLoading(false);
-            })
-        }, [selectedTeam]);
-
     let seriesData = [{name: "Positions", data: AddAllPositionsSeriesData()}];
     let colors = ["#0000FF"];
 
@@ -48,51 +11,49 @@ function HistoricalPositions(props) {
 
     //TODO: fix tooltip text
     return (
-            isLoading 
-                ? <Spinner animation='border' variant='info' /> 
-                : <div style={{display: 'flex'}}>
-                    <div style={{minWidth: '120px', display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly'}}>
-                        <strong>Premier League</strong>
-                        <strong>Championship</strong>
-                        <strong>League One</strong>
-                        <strong>League Two</strong>
-                    </div>
-                    <LineChart
-                        data={seriesData}
-                        colors={colors}
-                        min={1}
-                        max={92}
-                        legend={false}
-                        library={{
-                            chartArea: {
-                                width: '90%',
-                                height: '75%'
-                            },
-                            series: { 
-                                0: { targetAxisIndex: 1}
-                            },
-                            hAxis: {
-                                slantedText: true
-                            },
-                            vAxes: {
-                                0: {
-                                    ticks: [
-                                        4, 8, 12, 16, 20, 
-                                        {v: 24, f:"4"}, {v: 28, f:"8"}, {v: 32, f:"12"}, {v: 36, f:"16"}, {v: 40, f:"20"}, {v: 44, f:"24"}, 
-                                        {v: 48, f:"4"}, {v: 52, f:"8"}, {v: 56, f:"12"}, {v: 60, f:"16"}, {v: 64, f:"20"}, {v: 68, f:"24"}, 
-                                        {v: 72, f:"4"}, {v: 76, f:"8"}, {v: 80, f:"12"}, {v: 84, f:"16"}, {v: 88, f:"20"}, {v: 92, f:"24"}],
-                                    direction: -1
-                                }, 
-                                1: {
-                                    ticks: [20, 44, 68, 92],
-                                    direction: -1,
-                                    gridlines: { color: "#000000"},
-                                    textPosition: 'none'
-                                }
-                            }
-                        }}
-                        />
-                </div>
+        <div style={{display: 'flex'}}>
+            <div style={{minWidth: '120px', display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly'}}>
+                <strong>Premier League</strong>
+                <strong>Championship</strong>
+                <strong>League One</strong>
+                <strong>League Two</strong>
+            </div>
+            <LineChart
+                data={seriesData}
+                colors={colors}
+                min={1}
+                max={92}
+                legend={false}
+                library={{
+                    chartArea: {
+                        width: '90%',
+                        height: '75%'
+                    },
+                    series: { 
+                        0: { targetAxisIndex: 1}
+                    },
+                    hAxis: {
+                        slantedText: true
+                    },
+                    vAxes: {
+                        0: {
+                            ticks: [
+                                4, 8, 12, 16, 20, 
+                                {v: 24, f:"4"}, {v: 28, f:"8"}, {v: 32, f:"12"}, {v: 36, f:"16"}, {v: 40, f:"20"}, {v: 44, f:"24"}, 
+                                {v: 48, f:"4"}, {v: 52, f:"8"}, {v: 56, f:"12"}, {v: 60, f:"16"}, {v: 64, f:"20"}, {v: 68, f:"24"}, 
+                                {v: 72, f:"4"}, {v: 76, f:"8"}, {v: 80, f:"12"}, {v: 84, f:"16"}, {v: 88, f:"20"}, {v: 92, f:"24"}],
+                            direction: -1
+                        }, 
+                        1: {
+                            ticks: [20, 44, 68, 92],
+                            direction: -1,
+                            gridlines: { color: "#000000"},
+                            textPosition: 'none'
+                        }
+                    }
+                }}
+                />
+        </div>
     );
 
     function GetSeasonAbbreviation(season) {
@@ -100,7 +61,7 @@ function HistoricalPositions(props) {
     }
 
     function AddAllPositionsSeriesData() {
-        return historicalPositions.reduce(function (map, pos) {
+        return props.historicalPositions.reduce(function (map, pos) {
             if (pos.absolutePosition === 0) {
                 map[GetSeasonAbbreviation(pos.season)] = null;
             }
@@ -112,7 +73,7 @@ function HistoricalPositions(props) {
     }
     
     function AddPromotionPositions() {
-        let promotionPositions = historicalPositions.filter(pos => pos.status === "P" || pos.status === "C" || pos.status === "PO (P)");
+        let promotionPositions = props.historicalPositions.filter(pos => pos.status === "P" || pos.status === "C" || pos.status === "PO (P)");
         for (let i = 0; i < promotionPositions.length; i++) {
             let data = {};
             data[GetSeasonAbbreviation(promotionPositions[i].season)] = promotionPositions[i].absolutePosition;
@@ -128,7 +89,7 @@ function HistoricalPositions(props) {
     }
 
     function AddRelegationPositions() {
-        let relegationPositions = historicalPositions.filter(pos => pos.status === "R");
+        let relegationPositions = props.historicalPositions.filter(pos => pos.status === "R");
         for (let i = 0; i < relegationPositions.length; i++) {
             let data = {};
             data[GetSeasonAbbreviation(relegationPositions[i].season)] = relegationPositions[i].absolutePosition;
@@ -145,7 +106,13 @@ function HistoricalPositions(props) {
 }
 
 HistoricalPositions.propTypes = {
-    selectedTeam: PropTypes.string
+    historicalPositions: PropTypes.arrayOf(
+        PropTypes.shape({
+                season: PropTypes.string, 
+                absolutePosition: PropTypes.number, 
+                status: PropTypes.string
+            })
+    )
 };
 
 export default HistoricalPositions;

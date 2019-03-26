@@ -6,7 +6,7 @@ import './DropdownButton.css';
 function DropdownButton(props) {
     return (
         <Dropdown className='filter-button'>
-            <Dropdown.Toggle variant='outline-primary'>{props.buttonLabel}</Dropdown.Toggle>
+            <Dropdown.Toggle variant='outline-primary' disabled={props.disableButton}>{props.buttonLabel}</Dropdown.Toggle>
             <Dropdown.Menu flip={false}>
                 {
                     props.dropdownItems.map(i =>
@@ -26,7 +26,8 @@ DropdownButton.propTypes = {
     buttonLabel: PropTypes.string,
     dropdownItems: PropTypes.arrayOf(PropTypes.string),
     currentSelection: PropTypes.string,
-    updateSelected: PropTypes.func
+    updateSelected: PropTypes.func,
+    disableButton: PropTypes.bool
 };
 
 export default DropdownButton;
