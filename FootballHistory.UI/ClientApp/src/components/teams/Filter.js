@@ -1,49 +1,23 @@
-import React, {useState, useEffect} from "react";
+import React from "react";
 import PropTypes from "prop-types";
-import {Dropdown, ButtonToolbar} from "react-bootstrap";
-import './Filter.css';
+import DropdownButton from "../shared/DropdownButton";
 
 function Filter(props) {
-    const [allTeams, setAllTeams] = useState([]);
-    const [selectedTeam, setSelectedTeam] = useState("");
-    
-    useEffect(() => {
-        setAllTeams(props.allTeams);
-    }, [props.allTeams]);
-
-    useEffect(() => {
-        setSelectedTeam(props.selectedTeam);
-    }, [props.selectedTeam]);
-    
-    const updateSelectedTeam = (team) => {
-        setSelectedTeam(team);
-        props.updateSelectedTeam(team);
-    };
-
-    //TODO: make this button object shared
     return (
-        <ButtonToolbar>
-            <Dropdown className='filter-button'>
-                <Dropdown.Toggle variant='outline-primary'>Team</Dropdown.Toggle>
-                <Dropdown.Menu flip={false} style={{marginTop:5}}>
-                    {
-                        allTeams.map(t =>
-                            <Dropdown.Item key={t} eventKey={t}
-                                          className={t === selectedTeam ? "active" : ""}
-                                          onSelect={(t) => updateSelectedTeam(t)}
-                            >
-                                {t}
-                            </Dropdown.Item>)
-                    }
-                </Dropdown.Menu>
-            </Dropdown>        
-        </ButtonToolbar>
+        <div>
+            <DropdownButton 
+                buttonLabel="Team" 
+                currentSelection={props.selectedTeam} 
+                dropdownItems={props.allTeams} 
+                updateSelected={(t) => props.updateSelectedTeam(t)} />
+        </div>
     );
 }
 
 Filter.propTypes = {
     allTeams: PropTypes.arrayOf(PropTypes.string),
-    selectedTeam: PropTypes.string
+    selectedTeam: PropTypes.string,
+    updateSelectedTeam: PropTypes.func
 };
 
 export default Filter;
