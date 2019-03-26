@@ -3,8 +3,8 @@ import {Dropdown, ButtonToolbar} from "react-bootstrap";
 import './Filter.css';
 
 function Filter(props) {
-    const [allTeams, setAllTeams] = useState(props.allTeams);
-    const [selectedTeam, setSelectedTeam] = useState(props.selectedTeam);
+    const [allTeams, setAllTeams] = useState([]);
+    const [selectedTeam, setSelectedTeam] = useState("");
     
     useEffect(() => {
         setAllTeams(props.allTeams);

@@ -6,14 +6,22 @@ import {Spinner} from "react-bootstrap";
 function HistoricalPositions(props) {
     const [selectedTeam, setSelectedTeam] = useState("");
     const [historicalPositions, setHistoricalPositions] = useState([]);
-    const [isLoading, setIsLoading] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         setSelectedTeam(props.selectedTeam);
-    });
+    }, [props.selectedTeam]);
+    
+    useEffect(() => {
+        if (historicalPositions.length > 0)
+        {
+            setIsLoading(false);
+        }
+    }, [historicalPositions]);
     
     useEffect(() => {
         setIsLoading(true);
+        
         fetch(`${baseUrl}/api/Team/GetHistoricalPositions?team=${selectedTeam}&firstSeasonStartYear=${1992}&lastSeasonStartYear=${2017}`)
             .then(response => {
                 if (!response.ok) {
@@ -23,7 +31,6 @@ function HistoricalPositions(props) {
                 return response.json()
             })
             .then(data => {
-                setIsLoading(false);
                 setHistoricalPositions(data)
             })
             .catch(err => {
