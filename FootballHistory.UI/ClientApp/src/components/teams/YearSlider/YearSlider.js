@@ -7,8 +7,8 @@ import Tick from "./Tick";
 import "./YearSlider.css";
 
 function YearSlider(props) {
-    const [domain, setDomain] = useState([0,1]);
-    const [values, setValues] = useState([0,1]);
+    const [domain, setDomain] = useState([props.rangeStart, props.rangeEnd]);
+    const [values, setValues] = useState([props.selectedStart, props.selectedEnd]);
 
     useEffect(() => {
         setDomain([props.rangeStart, props.rangeEnd]);
@@ -23,23 +23,20 @@ function YearSlider(props) {
         props.updateSelectedSeasons(values);
     }
 
-    if (props.disableSlider)
-    {
-        return <div></div>
-    }
-
+    //TODO: figure out how to disable it when loading
     let numTicks = props.rangeEnd - props.rangeStart;
     return (
-        <div className="slider--container">
+        <div className="slider--container" style={{opacity: props.disableSlider ? 0.5 : 1}}>
             <Slider mode={1}
                     step={1}
+                    disabled={props.disableSlider}
                     domain={domain}
                     rootStyle={{
                         margin: '5%',
                         position: 'relative',
                         width: '90%'
                     }}
-                    onChange={(selectedValues) => onChange(selectedValues)}
+                    onChange={props.disableSlider ? () => {} : (selectedValues) => onChange(selectedValues)}
                     values={values}
             >
                 <Rail>
