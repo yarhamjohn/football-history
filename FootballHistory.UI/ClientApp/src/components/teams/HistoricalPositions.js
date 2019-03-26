@@ -1,8 +1,15 @@
-import React from "react";
+import React, { useState , useEffect } from "react";
 import PropTypes from "prop-types";
 import {LineChart} from "react-chartkick";
 
 function HistoricalPositions(props) {
+    const [historicalPositions, setHistoricalPositions] = useState([]);
+    
+    useEffect(() => {
+        let sortedHistoricalPositions = props.historicalPositions.sort((a, b) => parseInt(a.season.substring(0, 4)) > parseInt(b.season.substring(0, 4)) ? 1 : -1);
+        setHistoricalPositions(sortedHistoricalPositions);    
+    }, [props.historicalPositions]);
+    
     let seriesData = [{name: "Positions", data: AddAllPositionsSeriesData()}];
     let colors = ["#0000FF"];
 
@@ -61,7 +68,7 @@ function HistoricalPositions(props) {
     }
 
     function AddAllPositionsSeriesData() {
-        return props.historicalPositions.reduce(function (map, pos) {
+        return historicalPositions.reduce(function (map, pos) {
             if (pos.absolutePosition === 0) {
                 map[GetSeasonAbbreviation(pos.season)] = null;
             }
@@ -73,7 +80,7 @@ function HistoricalPositions(props) {
     }
     
     function AddPromotionPositions() {
-        let promotionPositions = props.historicalPositions.filter(pos => pos.status === "P" || pos.status === "C" || pos.status === "PO (P)");
+        let promotionPositions = historicalPositions.filter(pos => pos.status === "P" || pos.status === "C" || pos.status === "PO (P)");
         for (let i = 0; i < promotionPositions.length; i++) {
             let data = {};
             data[GetSeasonAbbreviation(promotionPositions[i].season)] = promotionPositions[i].absolutePosition;
@@ -89,7 +96,7 @@ function HistoricalPositions(props) {
     }
 
     function AddRelegationPositions() {
-        let relegationPositions = props.historicalPositions.filter(pos => pos.status === "R");
+        let relegationPositions = historicalPositions.filter(pos => pos.status === "R");
         for (let i = 0; i < relegationPositions.length; i++) {
             let data = {};
             data[GetSeasonAbbreviation(relegationPositions[i].season)] = relegationPositions[i].absolutePosition;

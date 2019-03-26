@@ -12,7 +12,7 @@ function Page() {
     const [isLoadingTeams, setIsLoadingTeams] = useState(true);
     const [historicalPositions, setHistoricalPositions] = useState([]);
     const [isLoadingHistoricalPositions, setIsLoadingHistoricalPositions] = useState(true);
-    const [selectedSeasons, setSelectedSeasons] = useState([1992, 2017]);
+    const [selectedSeasons, setSelectedSeasons] = useState([1992, 2017]); //TODO: This should be dynamic somehow
     
     function firstTeamAlphabetically(data) {
         let sorted = data.sort();
@@ -30,6 +30,55 @@ function Page() {
             });
     }, []);
 
+    function fetchHistoricalPositions(existingHistoricalPositions, firstSeasonStartYear, lastSeasonStartYear) {
+        fetch(`${baseUrl}/api/Team/GetHistoricalPositions?team=${selectedTeam}&firstSeasonStartYear=${firstSeasonStartYear}&lastSeasonStartYear=${lastSeasonStartYear}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch')
+                }
+
+                return response.json()
+            })
+            .then(data => {
+                setHistoricalPositions([...existingHistoricalPositions, ...data])
+            })
+            .catch(err => {
+                console.log(err);
+                setIsLoadingHistoricalPositions(false);
+            })
+    }
+    
+    useEffect(() => {
+        if (selectedTeam !== "")
+        {
+            setIsLoadingHistoricalPositions(true);
+
+            let seasonStartYears = historicalPositions.map(hp => parseInt(hp.season.substring(0, 4)));
+            let currentFirstYear = Math.min(...seasonStartYears);
+            let currentLastYear = Math.max(...seasonStartYears);
+            let selectedFirstYear = Math.min(...selectedSeasons);
+            let selectedLastYear = Math.max(...selectedSeasons);
+            
+            let allDataExists = selectedFirstYear >= currentFirstYear && selectedLastYear <= currentLastYear;
+            if (allDataExists)
+            {
+                let newData = historicalPositions.filter(hp => {
+                    let year = parseInt(hp.season.substring(0, 4));
+                    return year >= selectedFirstYear && year <= selectedLastYear;
+                });
+                
+                setHistoricalPositions(newData);
+                return;
+            }
+            
+            if (selectedFirstYear < currentFirstYear) {
+                fetchHistoricalPositions(historicalPositions, selectedFirstYear, currentFirstYear - 1);
+            } else {
+                fetchHistoricalPositions(historicalPositions, currentLastYear + 1, selectedLastYear);
+            }
+        }
+    }, [selectedSeasons]);
+
     useEffect(() => {
         setIsLoadingTeams(false);
 
@@ -37,24 +86,10 @@ function Page() {
         {
             setIsLoadingHistoricalPositions(true);
 
-            fetch(`${baseUrl}/api/Team/GetHistoricalPositions?team=${selectedTeam}&firstSeasonStartYear=${Math.min(...selectedSeasons)}&lastSeasonStartYear=${Math.max(...selectedSeasons)}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch')
-                    }
-
-                    return response.json()
-                })
-                .then(data => {
-                    setHistoricalPositions(data)
-                })
-                .catch(err => {
-                    console.log(err);
-                    setIsLoadingHistoricalPositions(false);
-                })
+            fetchHistoricalPositions([], Math.min(...selectedSeasons), Math.max(...selectedSeasons));
         }
-    }, [selectedTeam, selectedSeasons]);
-    
+    }, [selectedTeam]);
+
     useEffect(() => {
         if (historicalPositions.length > 0)
         {
@@ -75,7 +110,7 @@ function Page() {
                         disableButton={isLoadingHistoricalPositions}
                         updateSelectedSeasons={(values) => setSelectedSeasons(values)}
                         selectedSeasons={selectedSeasons}
-                        allSeasons={_.range(1992, 2018, 1)}
+                        allSeasons={_.range(1992, 2018, 1)} //TODO: This should be dynamic somehow
                     />
                 </div>
                 <div className='graph-container'>

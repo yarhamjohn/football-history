@@ -23,7 +23,6 @@ function YearSlider(props) {
         props.updateSelectedSeasons(values);
     }
 
-    //TODO: figure out how to disable it when loading
     let numTicks = props.rangeEnd - props.rangeStart;
     return (
         <div className="slider--container" style={{opacity: props.disableSlider ? 0.5 : 1}}>
