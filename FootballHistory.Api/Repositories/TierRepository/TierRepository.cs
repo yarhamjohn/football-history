@@ -21,7 +21,7 @@ namespace FootballHistory.Api.Repositories.TierRepository
         {
             using (var conn = Context.Database.GetDbConnection())
             {
-                var cmd = GetDbCommand(conn, team);
+                var cmd = GetDbCommand(conn, team, seasonStartYear, seasonEndYear);
                 return GetTierBySeason(cmd, seasonStartYear, seasonEndYear);
             }
         }
@@ -61,28 +61,34 @@ namespace FootballHistory.Api.Repositories.TierRepository
             return result.ToArray();
         }
 
-        private static DbCommand GetDbCommand(DbConnection conn, string team)
+        private static DbCommand GetDbCommand(DbConnection conn, string team, int seasonStartYear, int seasonEndYear)
         {
             const string sql = @"
 SELECT Tier, SeasonStartYear
 FROM (
-    SELECT d.Tier
-      ,CASE WHEN MONTH(lm.MatchDate) >= 7 
-            THEN YEAR(lm.MatchDate)
-            ELSE YEAR(lm.MatchDate) - 1 
-            END AS SeasonStartYear
-    FROM [dbo].[LeagueMatches] lm
-    INNER JOIN dbo.Divisions d ON d.Id = lm.DivisionId
-    INNER JOIN dbo.Clubs c ON c.Id = lm.HomeClubId
-    WHERE c.Name = @TeamName
-) AS a
-GROUP BY a.Tier, a.SeasonStartYear
+    SELECT Tier, SeasonStartYear
+    FROM (
+        SELECT d.Tier
+          ,CASE WHEN MONTH(lm.MatchDate) >= 7 
+                THEN YEAR(lm.MatchDate)
+                ELSE YEAR(lm.MatchDate) - 1 
+                END AS SeasonStartYear
+        FROM [dbo].[LeagueMatches] lm
+        INNER JOIN dbo.Divisions d ON d.Id = lm.DivisionId
+        INNER JOIN dbo.Clubs c ON c.Id = lm.HomeClubId
+        WHERE c.Name = @TeamName
+    ) AS a
+    GROUP BY a.Tier, a.SeasonStartYear
+) AS b
+WHERE b.SeasonStartYear BETWEEN @SeasonStartYear AND @SeasonEndYear
 ";
             conn.Open();
             
             var cmd = conn.CreateCommand();
             cmd.CommandText = sql;
             cmd.Parameters.Add(new SqlParameter("@TeamName", team));
+            cmd.Parameters.Add(new SqlParameter("@SeasonStartYear", seasonStartYear));
+            cmd.Parameters.Add(new SqlParameter("@SeasonEndYear", seasonEndYear));
 
             return cmd;
         }

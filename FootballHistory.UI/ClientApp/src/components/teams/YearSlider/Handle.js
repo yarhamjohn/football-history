@@ -6,8 +6,8 @@ function Handle(props) {
     return (
         <div
             role="slider"
-            aria-valuemin={props.domain.min}
-            aria-valuemax={props.domain.max}
+            aria-valuemin={Math.min(...props.domain)}
+            aria-valuemax={Math.max(...props.domain)}
             aria-valuenow={props.handle.value}
             className='handle-marker'
             style={{ left: `${props.handle.percent}%` }}
@@ -17,10 +17,7 @@ function Handle(props) {
 }
 
 Handle.propTypes = {
-    domain: PropTypes.shape({
-        min: PropTypes.number,
-        max: PropTypes.number
-    }),
+    domain: PropTypes.arrayOf(PropTypes.number),
     handle: PropTypes.shape({
         value: PropTypes.number,
         percent: PropTypes.number,

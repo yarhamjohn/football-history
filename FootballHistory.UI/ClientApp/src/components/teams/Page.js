@@ -12,7 +12,7 @@ function Page() {
     const [isLoadingTeams, setIsLoadingTeams] = useState(true);
     const [historicalPositions, setHistoricalPositions] = useState([]);
     const [isLoadingHistoricalPositions, setIsLoadingHistoricalPositions] = useState(true);
-    const [selectedSeasons, setSelectedSeasons] = useState([]);
+    const [selectedSeasons, setSelectedSeasons] = useState([1992, 2017]);
     
     function firstTeamAlphabetically(data) {
         let sorted = data.sort();
@@ -37,7 +37,7 @@ function Page() {
         {
             setIsLoadingHistoricalPositions(true);
 
-            fetch(`${baseUrl}/api/Team/GetHistoricalPositions?team=${selectedTeam}&firstSeasonStartYear=${1992}&lastSeasonStartYear=${2017}`)
+            fetch(`${baseUrl}/api/Team/GetHistoricalPositions?team=${selectedTeam}&firstSeasonStartYear=${Math.min(...selectedSeasons)}&lastSeasonStartYear=${Math.max(...selectedSeasons)}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Failed to fetch')
@@ -53,7 +53,7 @@ function Page() {
                     setIsLoadingHistoricalPositions(false);
                 })
         }
-    }, [selectedTeam]);
+    }, [selectedTeam, selectedSeasons]);
     
     useEffect(() => {
         if (historicalPositions.length > 0)
