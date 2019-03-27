@@ -30,11 +30,6 @@ function YearSlider(props) {
                     step={1}
                     disabled={props.disableSlider}
                     domain={domain}
-                    rootStyle={{
-                        margin: '5%',
-                        position: 'relative',
-                        width: '90%'
-                    }}
                     onChange={props.disableSlider ? () => {} : (selectedValues) => onChange(selectedValues)}
                     values={values}
             >

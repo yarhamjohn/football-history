@@ -1,6 +1,9 @@
 .slider--container {
     height: 50px;
-    width: 100%;
+    width: 95%;
+    margin: 1rem;
+    padding-top: 1rem;
+    position: relative;
 }
 
 .slider--rail {
