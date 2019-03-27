@@ -10,13 +10,12 @@ function HistoricalPositions(props) {
         setHistoricalPositions(sortedHistoricalPositions);    
     }, [props.historicalPositions]);
     
-    let seriesData = [{name: "Positions", data: AddAllPositionsSeriesData()}];
+    let seriesData = [{name: "Position", data: AddAllPositionsSeriesData()}];
     let colors = ["#0000FF"];
 
     AddPromotionPositions();
     AddRelegationPositions();
 
-    //TODO: fix tooltip text
     return (
         <div style={{display: 'flex'}}>
             <div style={{minWidth: '120px', display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly'}}>
@@ -87,7 +86,7 @@ function HistoricalPositions(props) {
             
             seriesData.push(
                 {
-                    name: `Promotion${i}`,
+                    name: `Position (Promotion #${i + 1})`,
                     data: data
                 });
 
@@ -103,7 +102,7 @@ function HistoricalPositions(props) {
 
             seriesData.push(
                 {
-                    name: `Relegation${i}`,
+                    name: `Position (Relegation #${i + 1})`,
                     data: data
                 });
 

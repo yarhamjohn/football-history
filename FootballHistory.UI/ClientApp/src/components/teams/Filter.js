@@ -33,7 +33,6 @@ function Filter(props) {
                     updateSelected={(t) => props.updateSelectedTeam(t)}
                     disableButton={props.disableButton} />
             </ButtonToolbar>
-            
             <YearSlider 
                 rangeStart={Math.min(...props.allSeasons)} 
                 rangeEnd={Math.max(...props.allSeasons)} 
