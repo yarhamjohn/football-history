@@ -30,7 +30,7 @@ class Page extends Component {
       .then(response => response.json())
       .then(data => {
         
-        let filteredSeasons = data.allSeasons.filter(s => s.slice(0, 4) >= 1992 && s.slice(7, 11) <= 2018);
+        let filteredSeasons = data.allSeasons.filter(s => s.slice(0, 4) >= 1992 && s.slice(7, 11) <= 2019);
         
         this.setState({
           allDivisionTiers: data.allTiers,

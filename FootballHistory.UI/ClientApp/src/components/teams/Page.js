@@ -110,7 +110,7 @@ function Page() {
                         disableButton={isLoadingHistoricalPositions}
                         updateSelectedSeasons={(values) => setSelectedSeasons(values)}
                         selectedSeasons={selectedSeasons}
-                        allSeasons={_.range(1992, 2018, 1)} //TODO: This should be dynamic somehow
+                        allSeasons={_.range(1992, 2019, 1)} //TODO: This should be dynamic somehow
                     />
                 </div>
                 <div className='graph-container'>
