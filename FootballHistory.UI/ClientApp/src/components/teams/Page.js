@@ -12,7 +12,7 @@ function Page() {
     const [isLoadingTeams, setIsLoadingTeams] = useState(true);
     const [historicalPositions, setHistoricalPositions] = useState([]);
     const [isLoadingHistoricalPositions, setIsLoadingHistoricalPositions] = useState(true);
-    const [selectedSeasons, setSelectedSeasons] = useState([1992, 2017]); //TODO: This should be dynamic somehow
+    const [selectedSeasons, setSelectedSeasons] = useState([1992, 2018]); //TODO: This should be dynamic somehow
     
     function firstTeamAlphabetically(data) {
         let sorted = data.sort();
