@@ -65,9 +65,9 @@ def CleanseTeams(team):
     elif team == "Colchester":
         return "Colchester United"
     elif team == "Coventry":
-        return "Coventry"
+        return "Coventry City"
     elif team == "Crewe":
-        return "Crewe Alexander"
+        return "Crewe Alexandra"
     elif team == "Dag and Red":
         return "Dagenham and Redbridge"
     elif team == "Derby":
@@ -90,6 +90,8 @@ def CleanseTeams(team):
         return "Huddersfield Town"
     elif team == "Ipswich":
         return "Ipswich Town"
+    elif team == "Hull":
+        return "Hull City"
     elif team == "Kidderminster":
         return "Kidderminster Harriers"
     elif team == "Leeds":
