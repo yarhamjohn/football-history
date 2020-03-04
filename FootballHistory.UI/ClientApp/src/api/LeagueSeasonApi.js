@@ -2,4 +2,4 @@
 const baseUrlDevVS = "https://localhost:44338";
 const baseUrl = "https://footballhistoryapi.azurewebsites.net";
 
-export default baseUrl;
+export default baseUrlDev;

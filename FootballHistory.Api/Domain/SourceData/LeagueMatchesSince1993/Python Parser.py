@@ -2,8 +2,8 @@ import csv
 import glob
 
 def parser():
-    files = glob.glob('C:\\Data\\*.csv')
-    target = open('C:\\Data\\result.csv', 'w')
+    files = glob.glob('C:\\repos\\football-history\\FootballHistory.Api\\Domain\\SourceData\\LeagueMatchesSince1993\\New folder\\*.csv')
+    target = open('C:\\repos\\football-history\\FootballHistory.Api\\Domain\\SourceData\\LeagueMatchesSince1993\\New folder\\result.csv', 'w')
     
     for file in files:
         with open(file) as csvfile:
