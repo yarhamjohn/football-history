@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootballHistory.UI", "Footb
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootballHistory.Api.UnitTests", "FootballHistory.Api.UnitTests\FootballHistory.Api.UnitTests.csproj", "{9D9649AF-10CB-4A90-8B7B-1DEB14D61B66}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootballHistoryTest.Api", "FootballHistoryTest.Api\FootballHistoryTest.Api.csproj", "{5A5BF197-D2B3-4EF3-B936-3069F7F038FD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{9D9649AF-10CB-4A90-8B7B-1DEB14D61B66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D9649AF-10CB-4A90-8B7B-1DEB14D61B66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D9649AF-10CB-4A90-8B7B-1DEB14D61B66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A5BF197-D2B3-4EF3-B936-3069F7F038FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A5BF197-D2B3-4EF3-B936-3069F7F038FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A5BF197-D2B3-4EF3-B936-3069F7F038FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A5BF197-D2B3-4EF3-B936-3069F7F038FD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

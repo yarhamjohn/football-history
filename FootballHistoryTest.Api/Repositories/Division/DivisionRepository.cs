@@ -2,11 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
-using FootballHistory.Api.Controllers;
-using FootballHistory.Api.Domain;
+using FootballHistoryTest.Api.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace FootballHistory.Api.Repositories.DivisionRepository
+namespace FootballHistoryTest.Api.Repositories.Division
 {
     public class DivisionRepository : IDivisionRepository
     {
@@ -17,13 +16,13 @@ namespace FootballHistory.Api.Repositories.DivisionRepository
             Context = context;
         }
         
-        public List<DivisionModel> GetDivisions()
+        public List<DivisionModel> GetDivisionModels(int? tier = null)
         {
             using var conn = Context.Database.GetDbConnection();
-            var cmd = GetDbCommand(conn);
+            var cmd = GetDbCommand(conn, tier);
             return GetDivisions(cmd);
         }
-
+        
         private static List<DivisionModel> GetDivisions(DbCommand cmd)
         {
             var divisionModels = new List<DivisionModel>();
@@ -35,7 +34,7 @@ namespace FootballHistory.Api.Repositories.DivisionRepository
                     new DivisionModel
                     {
                         Name = reader.GetString(0),
-                        Tier = (Tier) reader.GetByte(1),
+                        Tier = reader.GetByte(1),
                         From = reader.GetInt16(2),
                         To = reader.IsDBNull(3) ? DateTime.UtcNow.Year : reader.GetInt16(3)
                     }
@@ -45,20 +44,28 @@ namespace FootballHistory.Api.Repositories.DivisionRepository
             return divisionModels;
         }
 
-        private static DbCommand GetDbCommand(DbConnection conn)
+        private static DbCommand GetDbCommand(DbConnection conn, int? tier = null)
         {
-            const string sql = @"
+            var whereClause = tier == null ? "" : "WHERE [Tier] = @Tier";
+            var sql = $@"
 SELECT [Name]
       ,[Tier]
       ,[From]
       ,[To]
   FROM [dbo].[Divisions]
+  {whereClause}
 ";
             conn.Open();
             
             var cmd = conn.CreateCommand();
             cmd.CommandText = sql;
-            
+
+            if (tier != null)
+            {
+                var tierParameter = new SqlParameter {ParameterName = "@Tier", Value = tier};
+                cmd.Parameters.Add(tierParameter);
+            }
+
             return cmd;
         }
     }

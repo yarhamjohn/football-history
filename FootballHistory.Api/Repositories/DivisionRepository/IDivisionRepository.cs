@@ -5,6 +5,5 @@ namespace FootballHistory.Api.Repositories.DivisionRepository
     public interface IDivisionRepository
     {
         List<DivisionModel> GetDivisions();
-        List<DivisionModel> GetDivisions(int tier);
     }
 }
