@@ -22,10 +22,17 @@ namespace FootballHistoryTest.Api.Domain
         {
         }
     }
-    
+
     public class LeagueRepositoryContext : DbContext
     {
         public LeagueRepositoryContext(DbContextOptions<LeagueRepositoryContext> options) : base(options)
+        {
+        }
+    }
+
+    public class MatchRepositoryContext : DbContext
+    {
+        public MatchRepositoryContext(DbContextOptions<MatchRepositoryContext> options) : base(options)
         {
         }
     }

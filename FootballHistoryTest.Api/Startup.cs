@@ -1,6 +1,7 @@
 ﻿using FootballHistoryTest.Api.Domain;
 using FootballHistoryTest.Api.Repositories.Division;
 using FootballHistoryTest.Api.Repositories.League;
+using FootballHistoryTest.Api.Repositories.Match;
 using FootballHistoryTest.Api.Repositories.Season;
 using FootballHistoryTest.Api.Repositories.Team;
 using Microsoft.AspNetCore.Builder;
@@ -36,12 +37,14 @@ namespace FootballHistoryTest.Api
             services.AddTransient<ITeamRepository, TeamRepository>();
             services.AddTransient<ISeasonRepository, SeasonRepository>();
             services.AddTransient<ILeagueRepository, LeagueRepository>();
+            services.AddTransient<IMatchRepository, MatchRepository>();
 
             var connString = Configuration.GetConnectionString("FootballHistory");
             services.AddDbContext<DivisionRepositoryContext>(options => options.UseSqlServer(connString));
             services.AddDbContext<TeamRepositoryContext>(options => options.UseSqlServer(connString));
             services.AddDbContext<SeasonRepositoryContext>(options => options.UseSqlServer(connString));
             services.AddDbContext<LeagueRepositoryContext>(options => options.UseSqlServer(connString));
+            services.AddDbContext<MatchRepositoryContext>(options => options.UseSqlServer(connString));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
