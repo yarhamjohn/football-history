@@ -48,7 +48,7 @@ namespace FootballHistoryTest.Api.Repositories.League
                     PromotionPlaces = reader.GetByte(3),
                     PlayOffPlaces = reader.GetByte(4),
                     RelegationPlaces = reader.GetByte(5),
-                    PointsForWin = reader.GetByte(6),
+                    PointsForWin = reader.GetByte(6)
                 });
             }
 

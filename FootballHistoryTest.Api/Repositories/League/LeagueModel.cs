@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using FootballHistoryTest.Api.Repositories.Team;
-
 namespace FootballHistoryTest.Api.Repositories.League
 {
     public class LeagueModel

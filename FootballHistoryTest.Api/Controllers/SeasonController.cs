@@ -16,16 +16,16 @@ namespace FootballHistoryTest.Api.Controllers
         }
         
         [HttpGet("[action]")]
-        public List<Season> GetSeasons()
+        public List<SeasonDates> GetSeasonDates()
         {
-            var seasonModels = _seasonRepository.GetSeasonModels();
-            return seasonModels
-                .Select(s => new Season {StartYear = s.SeasonStartYear, EndYear = s.SeasonEndYear})
+            var seasonDatesModels = _seasonRepository.GetSeasonDateModels();
+            return seasonDatesModels
+                .Select(s => new SeasonDates {StartYear = s.SeasonStartYear, EndYear = s.SeasonEndYear})
                 .ToList();
         }
     }
     
-    public class Season
+    public class SeasonDates
     {
         public int StartYear { get; set; }
         public int EndYear { get; set; }

@@ -13,25 +13,25 @@ namespace FootballHistoryTest.Api.Repositories.Match
     public class MatchRepository : IMatchRepository
     {
         private MatchRepositoryContext Context { get; }
+        private PlayOffMatchRepositoryContext PlayOffContext { get; }
 
-        public MatchRepository(MatchRepositoryContext context)
+        public MatchRepository(MatchRepositoryContext context, PlayOffMatchRepositoryContext playOffContext)
         {
             Context = context;
+            PlayOffContext = playOffContext;
         }
 
         public List<MatchModel> GetLeagueMatchModels(List<int> seasonStartYears, List<int> tiers, List<string> teams)
         {
             using var conn = Context.Database.GetDbConnection();
-            
             var cmd = GetLeagueMatchDbCommand(conn, seasonStartYears, tiers, teams);
             return GetLeagueMatches(cmd);
         }
 
-        public List<MatchModel> GetPlayOffMatchModels(int seasonStartYear, int tier)
+        public List<MatchModel> GetPlayOffMatchModels(List<int> seasonStartYears, List<int> tiers)
         {
-            using var conn = Context.Database.GetDbConnection();
-            
-            var cmd = GetPlayOffMatchDbCommand(conn, seasonStartYear, tier);
+            using var conn = PlayOffContext.Database.GetDbConnection();
+            var cmd = GetPlayOffMatchDbCommand(conn, seasonStartYears, tiers);
             return GetPlayOffMatches(cmd);
         }
 
@@ -109,20 +109,20 @@ namespace FootballHistoryTest.Api.Repositories.Match
             var sql = $@"
 SELECT d.Tier
       ,d.Name
-      ,lm.MatchDate
+      ,m.MatchDate
       ,hc.Name
       ,hc.Abbreviation
       ,ac.Name
       ,ac.Abbreviation
-      ,lm.HomeGoals
-      ,lm.AwayGoals
-FROM [dbo].[LeagueMatches] AS lm
+      ,m.HomeGoals
+      ,m.AwayGoals
+FROM [dbo].[LeagueMatches] AS m
 INNER JOIN [dbo].[Divisions] AS d
-  ON lm.DivisionId = d.Id
+  ON m.DivisionId = d.Id
 INNER JOIN [dbo].[Clubs] AS hc
-  ON lm.HomeClubId = hc.Id
+  ON m.HomeClubId = hc.Id
 INNER JOIN [dbo].[Clubs] AS ac
-  ON lm.AwayClubId = ac.Id
+  ON m.AwayClubId = ac.Id
 {whereClause}
 ";
 
@@ -147,46 +147,53 @@ INNER JOIN [dbo].[Clubs] AS ac
             return cmd;
         }
         
-        private static DbCommand GetPlayOffMatchDbCommand(DbConnection conn, int seasonStartYear, int tier)
+        private static DbCommand GetPlayOffMatchDbCommand(DbConnection conn, List<int> seasonStartYears, List<int> tiers)
         {            
             conn.Open();
             var cmd = conn.CreateCommand();
-
+            
+            var whereClause = BuildWhereClause(seasonStartYears, tiers, new List<string>());
             var sql = $@"
 SELECT d.Tier
       ,d.Name
-      ,p.MatchDate
-      ,p.Round
+      ,m.MatchDate
+      ,m.Round
       ,hc.Name
       ,hc.Abbreviation
       ,ac.Name
       ,ac.Abbreviation
-      ,p.HomeGoals
-      ,p.AwayGoals
-      ,p.ExtraTime
-      ,p.HomeGoalsET
-      ,p.AwayGoalsET
-      ,p.PenaltyShootout
-      ,p.HomePenaltiesTaken
-      ,p.HomePenaltiesScored
-      ,p.AwayPenaltiesTaken
-      ,p.AwayPenaltiesScored
-FROM [dbo].[PlayOffMatches] AS p
+      ,m.HomeGoals
+      ,m.AwayGoals
+      ,m.ExtraTime
+      ,m.HomeGoalsET
+      ,m.AwayGoalsET
+      ,m.PenaltyShootout
+      ,m.HomePenaltiesTaken
+      ,m.HomePenaltiesScored
+      ,m.AwayPenaltiesTaken
+      ,m.AwayPenaltiesScored
+FROM [dbo].[PlayOffMatches] AS m
 INNER JOIN [dbo].[Divisions] AS d
-  ON p.DivisionId = d.Id
+  ON m.DivisionId = d.Id
 INNER JOIN [dbo].[Clubs] AS hc
-  ON p.HomeClubId = hc.Id
+  ON m.HomeClubId = hc.Id
 INNER JOIN [dbo].[Clubs] AS ac
-  ON p.AwayClubId = ac.Id
-WHERE d.Tier = @Tier 
-  AND p.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
+  ON m.AwayClubId = ac.Id
+{whereClause}
 ";
 
             cmd.CommandText = sql;
 
-            cmd.Parameters.Add(new SqlParameter {ParameterName = "@Tier", Value = tier});
-            cmd.Parameters.Add(new SqlParameter {ParameterName = "@SeasonStartYear", Value = seasonStartYear});
-            cmd.Parameters.Add(new SqlParameter {ParameterName = "@SeasonEndYear", Value = seasonStartYear + 1});
+            for (var i = 0; i < tiers.Count; i++)
+            {
+                cmd.Parameters.Add(new SqlParameter {ParameterName = $"@Tier{i}", Value = tiers[i]});
+            }
+            
+            for (var i = 0; i < seasonStartYears.Count; i++)
+            {
+                cmd.Parameters.Add(new SqlParameter {ParameterName = $"@SeasonStartYear{i}", Value = seasonStartYears[i]});
+                cmd.Parameters.Add(new SqlParameter {ParameterName = $"@SeasonEndYear{i}", Value = seasonStartYears[i] + 1});
+            }
 
             return cmd;
         }
@@ -206,7 +213,7 @@ WHERE d.Tier = @Tier
             
             for (var i = 0; i < seasonStartYears.Count; i++)
             {
-                clauses.Add($"lm.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear{i}, 7, 1) AND DATEFROMPARTS(@SeasonEndYear{i}, 6, 30)");
+                clauses.Add($"m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear{i}, 7, 1) AND DATEFROMPARTS(@SeasonEndYear{i}, 6, 30)");
             }
 
             return clauses.Count > 0 ? $"WHERE {string.Join(" AND ", clauses)}" : "";

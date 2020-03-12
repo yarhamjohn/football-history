@@ -36,4 +36,11 @@ namespace FootballHistoryTest.Api.Domain
         {
         }
     }
+    
+    public class PlayOffMatchRepositoryContext : DbContext
+    {
+        public PlayOffMatchRepositoryContext(DbContextOptions<PlayOffMatchRepositoryContext> options) : base(options)
+        {
+        }
+    }
 }

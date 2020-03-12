@@ -16,7 +16,7 @@ namespace FootballHistoryTest.Api.Repositories.Season
             Context = context;
         }
         
-        public List<SeasonModel> GetSeasonModels()
+        public List<SeasonDatesModel> GetSeasonDateModels()
         {
             using var conn = Context.Database.GetDbConnection();
             
@@ -24,15 +24,15 @@ namespace FootballHistoryTest.Api.Repositories.Season
             return GetTierBySeason(cmd);
         }
         
-        private static List<SeasonModel> GetTierBySeason(DbCommand cmd)
+        private static List<SeasonDatesModel> GetTierBySeason(DbCommand cmd)
         {
-            var result = new List<SeasonModel>();
+            var result = new List<SeasonDatesModel>();
             
             using (var reader = cmd.ExecuteReader())
             {
                 while (reader.Read())
                 {
-                    result.Add(new SeasonModel
+                    result.Add(new SeasonDatesModel
                         {SeasonStartYear = reader.GetInt32(0), SeasonEndYear = reader.GetInt32(1)});
                 }
             }

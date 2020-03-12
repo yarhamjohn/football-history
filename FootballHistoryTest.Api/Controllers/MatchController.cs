@@ -24,16 +24,16 @@ namespace FootballHistoryTest.Api.Controllers
         }
     
         [HttpGet("[action]")]
-        public List<Match> GetHeadToHeadMatches(List<int> seasonStartYears, List<int> tiers, string teamOne, string teamTwo)
+        public List<Match> GetHeadToHeadLeagueMatches(List<int> seasonStartYears, List<int> tiers, string teamOne, string teamTwo)
         {
             var matchModels = _matchRepository.GetLeagueHeadToHeadMatchModels(seasonStartYears, tiers, teamOne, teamTwo);
             return GetMatches(matchModels);
         }
     
         [HttpGet("[action]")]
-        public List<KnockoutMatch> GetPlayOffMatches(int seasonStartYear, int tier)
+        public List<KnockoutMatch> GetPlayOffMatches(List<int> seasonStartYears, List<int> tiers)
         {
-            var matchModels = _matchRepository.GetPlayOffMatchModels(seasonStartYear, tier);
+            var matchModels = _matchRepository.GetPlayOffMatchModels(seasonStartYears, tiers);
             return matchModels
                 .Select(m => new KnockoutMatch
                 {

@@ -45,6 +45,7 @@ namespace FootballHistoryTest.Api
             services.AddDbContext<SeasonRepositoryContext>(options => options.UseSqlServer(connString));
             services.AddDbContext<LeagueRepositoryContext>(options => options.UseSqlServer(connString));
             services.AddDbContext<MatchRepositoryContext>(options => options.UseSqlServer(connString));
+            services.AddDbContext<PlayOffMatchRepositoryContext>(options => options.UseSqlServer(connString));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

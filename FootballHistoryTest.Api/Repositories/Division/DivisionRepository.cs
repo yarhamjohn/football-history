@@ -16,7 +16,7 @@ namespace FootballHistoryTest.Api.Repositories.Division
             Context = context;
         }
         
-        public List<DivisionModel> GetDivisionModels(int? tier = null)
+        public List<DivisionModel> GetDivisionModels(int? tier)
         {
             using var conn = Context.Database.GetDbConnection();
             var cmd = GetDbCommand(conn, tier);
@@ -44,7 +44,7 @@ namespace FootballHistoryTest.Api.Repositories.Division
             return divisionModels;
         }
 
-        private static DbCommand GetDbCommand(DbConnection conn, int? tier = null)
+        private static DbCommand GetDbCommand(DbConnection conn, int? tier)
         {
             var whereClause = tier == null ? "" : "WHERE [Tier] = @Tier";
             var sql = $@"
