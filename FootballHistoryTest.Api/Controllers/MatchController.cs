@@ -17,87 +17,17 @@ namespace FootballHistoryTest.Api.Controllers
         }
     
         [HttpGet("[action]")]
-        public List<Match> GetLeagueMatchesForTeam(int seasonStartYear, string team)
+        public List<Match> GetLeagueMatches(List<int> seasonStartYears, List<int> tiers, List<string> teams)
         {
-            var matchModels = _matchRepository.GetLeagueMatchModels(seasonStartYear, team);
-            return matchModels
-                .Select(m => new Match
-                {
-                    Tier = m.Tier,
-                    Division = m.Division,
-                    Date = m.Date,
-                    HomeTeam = m.HomeTeam,
-                    HomeTeamAbbreviation = m.HomeTeamAbbreviation,
-                    AwayTeam = m.AwayTeam,
-                    AwayTeamAbbreviation = m.AwayTeamAbbreviation,
-                    HomeGoals = m.HomeGoals,
-                    AwayGoals = m.AwayGoals
-                    
-                })
-                .ToList();
+            var matchModels = _matchRepository.GetLeagueMatchModels(seasonStartYears, tiers, teams);
+            return GetMatches(matchModels);
         }
     
         [HttpGet("[action]")]
-        public List<Match> GetMatchesForTeam(string team)
+        public List<Match> GetHeadToHeadMatches(List<int> seasonStartYears, List<int> tiers, string teamOne, string teamTwo)
         {
-            var matchModels = _matchRepository.GetLeagueMatchModels(team);
-            return matchModels
-                .Select(m => new Match
-                {
-                    Tier = m.Tier,
-                    Division = m.Division,
-                    Date = m.Date,
-                    HomeTeam = m.HomeTeam,
-                    HomeTeamAbbreviation = m.HomeTeamAbbreviation,
-                    AwayTeam = m.AwayTeam,
-                    AwayTeamAbbreviation = m.AwayTeamAbbreviation,
-                    HomeGoals = m.HomeGoals,
-                    AwayGoals = m.AwayGoals
-                    
-                })
-                .ToList();
-        }
-    
-        [HttpGet("[action]")]
-        public List<Match> GetMatchesBetweenTeam(string teamOne, string teamTwo)
-        {
-            var matchModels = _matchRepository.GetLeagueMatchModels(teamOne, teamTwo);
-            return matchModels
-                .Select(m => new Match
-                {
-                    Tier = m.Tier,
-                    Division = m.Division,
-                    Date = m.Date,
-                    HomeTeam = m.HomeTeam,
-                    HomeTeamAbbreviation = m.HomeTeamAbbreviation,
-                    AwayTeam = m.AwayTeam,
-                    AwayTeamAbbreviation = m.AwayTeamAbbreviation,
-                    HomeGoals = m.HomeGoals,
-                    AwayGoals = m.AwayGoals
-                    
-                })
-                .ToList();
-        }
-    
-        [HttpGet("[action]")]
-        public List<Match> GetLeagueMatches(int seasonStartYear, int tier)
-        {
-            var matchModels = _matchRepository.GetLeagueMatchModels(seasonStartYear, tier);
-            return matchModels
-                .Select(m => new Match
-                {
-                    Tier = m.Tier,
-                    Division = m.Division,
-                    Date = m.Date,
-                    HomeTeam = m.HomeTeam,
-                    HomeTeamAbbreviation = m.HomeTeamAbbreviation,
-                    AwayTeam = m.AwayTeam,
-                    AwayTeamAbbreviation = m.AwayTeamAbbreviation,
-                    HomeGoals = m.HomeGoals,
-                    AwayGoals = m.AwayGoals
-                    
-                })
-                .ToList();
+            var matchModels = _matchRepository.GetLeagueHeadToHeadMatchModels(seasonStartYears, tiers, teamOne, teamTwo);
+            return GetMatches(matchModels);
         }
     
         [HttpGet("[action]")]
@@ -117,14 +47,34 @@ namespace FootballHistoryTest.Api.Controllers
                     HomeGoals = m.HomeGoals,
                     AwayGoals = m.AwayGoals,
                     Round = m.Round,
-                    Leg = m.Leg,
                     ExtraTime = m.ExtraTime,
                     HomeGoalsExtraTime = m.HomeGoalsExtraTime,
                     AwayGoalsExtraTime = m.AwayGoalsExtraTime,
                     PenaltyShootout = m.PenaltyShootout,
-                    HomeGoalsPenaltyShootout = m.HomeGoalsPenaltyShootout,
-                    AwayGoalsPenaltyShootout = m.AwayGoalsPenaltyShootout
+                    HomePenaltiesTaken = m.HomePenaltiesTaken,
+                    HomePenaltiesScored = m.HomePenaltiesScored,
+                    AwayPenaltiesTaken = m.AwayPenaltiesTaken,
+                    AwayPenaltiesScored = m.AwayPenaltiesScored
 
+                })
+                .ToList();
+        }
+
+        private List<Match> GetMatches(List<MatchModel> matchModels)
+        {
+            return matchModels
+                .Select(m => new Match
+                {
+                    Tier = m.Tier,
+                    Division = m.Division,
+                    Date = m.Date, 
+                    HomeTeam = m.HomeTeam,
+                    HomeTeamAbbreviation = m.HomeTeamAbbreviation,
+                    AwayTeam = m.AwayTeam,
+                    AwayTeamAbbreviation = m.AwayTeamAbbreviation,
+                    HomeGoals = m.HomeGoals,
+                    AwayGoals = m.AwayGoals
+                    
                 })
                 .ToList();
         }
@@ -146,12 +96,13 @@ namespace FootballHistoryTest.Api.Controllers
     public class KnockoutMatch : Match
     {
         public string Round { get; set; }
-        public int? Leg { get; set; }
         public bool ExtraTime { get; set; }
         public int? HomeGoalsExtraTime { get; set; }
         public int? AwayGoalsExtraTime { get; set; }
         public bool PenaltyShootout { get; set; }
-        public int? HomeGoalsPenaltyShootout { get; set; }
-        public int? AwayGoalsPenaltyShootout { get; set; }
+        public int? HomePenaltiesTaken { get; set; }
+        public int? HomePenaltiesScored { get; set; }
+        public int? AwayPenaltiesTaken { get; set; }
+        public int? AwayPenaltiesScored { get; set; }
     }
 }
