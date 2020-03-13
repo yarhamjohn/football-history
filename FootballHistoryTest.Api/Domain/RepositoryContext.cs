@@ -43,4 +43,11 @@ namespace FootballHistoryTest.Api.Domain
         {
         }
     }
+
+    public class PointsDeductionRepositoryContext : DbContext
+    {
+        public PointsDeductionRepositoryContext(DbContextOptions<PointsDeductionRepositoryContext> options) : base(options)
+        {
+        }
+    }
 }

@@ -20,13 +20,7 @@
 //             public int AbsolutePosition { get; set; }
 //             public string Status { get; set; }
 //         }
-//         
-//         [HttpGet("[action]")]
-//         public TestLeagueTable GetLeagueTable(int tier, int startYear)
-//         {
-//             return new TestLeagueTable();
-//         }
-//         
+//
 //         [HttpGet("[action]")]
 //         public List<TestLeaguePosition> GetLeaguePositions(int tier, int startYear, string team)
 //         {

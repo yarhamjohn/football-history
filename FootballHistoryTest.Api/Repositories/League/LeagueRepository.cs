@@ -26,14 +26,6 @@ namespace FootballHistoryTest.Api.Repositories.League
             return GetLeague(cmd).Single();
         }
 
-        public List<LeagueModel> GetLeagueModels(int seasonStartYear)
-        {
-            using var conn = Context.Database.GetDbConnection();
-            
-            var cmd = GetDbCommand(conn, seasonStartYear);
-            return GetLeague(cmd);
-        }
-
         private static List<LeagueModel> GetLeague(DbCommand cmd)
         {
             var result = new List<LeagueModel>();
@@ -48,7 +40,8 @@ namespace FootballHistoryTest.Api.Repositories.League
                     PromotionPlaces = reader.GetByte(3),
                     PlayOffPlaces = reader.GetByte(4),
                     RelegationPlaces = reader.GetByte(5),
-                    PointsForWin = reader.GetByte(6)
+                    PointsForWin = reader.GetByte(6),
+                    StartYear = reader.GetInt32(7)
                 });
             }
 
@@ -59,7 +52,7 @@ namespace FootballHistoryTest.Api.Repositories.League
         {
             var whereClause = tier == null
                 ? "WHERE ls.[EndYear] = @SeasonStartYear"
-                : "WHERE d.[Tier] = @Tier AND ls.[EndYear] = @SeasonStartYear";
+                : "WHERE d.[Tier] = @Tier AND ls.[StartYear] = @SeasonStartYear";
             
             var sql = $@"
 SELECT d.Name
@@ -69,6 +62,7 @@ SELECT d.Name
       ,[PlayOffPlaces]
       ,[RelegationPlaces]
       ,[PointsForWin]
+      ,[StartYear]
   FROM [dbo].[LeagueStatuses] AS ls
   LEFT JOIN [dbo].[Divisions] AS d ON ls.[DivisionId] = d.[Id]
   {whereClause}

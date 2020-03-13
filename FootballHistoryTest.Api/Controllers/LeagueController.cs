@@ -1,9 +1,8 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using FootballHistoryTest.Api.Calculators;
 using FootballHistoryTest.Api.Repositories.League;
 using FootballHistoryTest.Api.Repositories.Match;
+using FootballHistoryTest.Api.Repositories.PointDeductions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FootballHistoryTest.Api.Controllers
@@ -13,17 +12,24 @@ namespace FootballHistoryTest.Api.Controllers
     {
         private readonly ILeagueRepository _leagueRepository;
         private readonly IMatchRepository _matchRepository;
+        private readonly IPointsDeductionRepository _pointDeductionsRepository;
 
-        public LeagueController(ILeagueRepository leagueRepository, IMatchRepository matchRepository)
+        public LeagueController(ILeagueRepository leagueRepository, IMatchRepository matchRepository, IPointsDeductionRepository pointDeductionsRepository)
         {
             _leagueRepository = leagueRepository;
             _matchRepository = matchRepository;
+            _pointDeductionsRepository = pointDeductionsRepository;
         }
 
         [HttpGet("[action]")]
         public League GetLeague(int seasonStartYear, int tier)
         {
+            var playOffMatches = _matchRepository.GetPlayOffMatchModels(new List<int> {seasonStartYear}, new List<int> { tier });
+            var leagueMatches = _matchRepository.GetLeagueMatchModels(new List<int> {seasonStartYear}, new List<int> {tier});
+            var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(seasonStartYear, tier);
             var leagueModel = _leagueRepository.GetLeagueModel(seasonStartYear, tier);
+            var leagueTable = LeagueTableCalculator.GetLeagueTable(leagueMatches, playOffMatches, leagueModel, pointsDeductions);
+
             return new League
             {
                 Name = leagueModel.Name,
@@ -32,33 +38,10 @@ namespace FootballHistoryTest.Api.Controllers
                 PromotionPlaces = leagueModel.PromotionPlaces,
                 RelegationPlaces = leagueModel.RelegationPlaces,
                 PlayOffPlaces = leagueModel.PlayOffPlaces,
-                PointsForWin = leagueModel.PointsForWin
+                PointsForWin = leagueModel.PointsForWin,
+                StartYear = leagueModel.StartYear,
+                Table = leagueTable
             };
-        }
-
-        [HttpGet("[action]")]
-        public List<League> GetLeaguesInSeason(int seasonStartYear)
-        {
-            // do it by tier...
-            var playOffMatches = _matchRepository.GetPlayOffMatchModels(new List<int> {seasonStartYear}, new List<int>());
-            var leagueMatches = _matchRepository.GetLeagueMatchModels(new List<int> { seasonStartYear }, new List<int>(), new List<string>());
-            var leagueTable = LeagueTableCalculator.GetLeagueTable(leagueMatches, playOffMatches);
-
-            var result = _leagueRepository.GetLeagueModels(seasonStartYear)
-                .Select(d => new League
-                {
-                    Name = d.Name,
-                    Tier = d.Tier,
-                    TotalPlaces = d.TotalPlaces,
-                    PromotionPlaces = d.PromotionPlaces,
-                    RelegationPlaces = d.RelegationPlaces,
-                    PlayOffPlaces = d.PlayOffPlaces,
-                    PointsForWin = d.PointsForWin,
-                    Table = leagueTable
-                })
-                .ToList();
-
-            return result;
         }
     }
 
@@ -71,6 +54,7 @@ namespace FootballHistoryTest.Api.Controllers
         public int PlayOffPlaces { get; set; }
         public int RelegationPlaces { get; set; }
         public int PointsForWin { get; set; }
+        public int StartYear { get; set; }
         public List<LeagueTableRow> Table { get; set; }
     }
 

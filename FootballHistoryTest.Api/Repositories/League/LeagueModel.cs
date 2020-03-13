@@ -9,5 +9,6 @@ namespace FootballHistoryTest.Api.Repositories.League
         public int PlayOffPlaces { get; set; }
         public int RelegationPlaces { get; set; }
         public int PointsForWin { get; set; }
+        public int StartYear { get; set; }
     }
 }

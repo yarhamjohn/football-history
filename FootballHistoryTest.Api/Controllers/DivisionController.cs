@@ -16,7 +16,7 @@ namespace FootballHistoryTest.Api.Controllers
         }
         
         [HttpGet("[action]")]
-        public List<Division> GetHistoricalDivisions(int? tier)
+        public List<Division> GetTierDivisionHistory(int? tier)
         {
             return _divisionRepository.GetDivisionModels(tier)
                 .Select(d => new Division { Name = d.Name, Tier = d.Tier, YearActiveFrom = d.From, YearActiveTo = d.To} )

@@ -21,6 +21,11 @@ namespace FootballHistoryTest.Api.Repositories.Match
             PlayOffContext = playOffContext;
         }
 
+        public List<MatchModel> GetLeagueMatchModels(List<int> seasonStartYears, List<int> tiers)
+        {
+            return GetLeagueMatchModels(seasonStartYears, tiers, new List<string>());
+        }
+
         public List<MatchModel> GetLeagueMatchModels(List<int> seasonStartYears, List<int> tiers, List<string> teams)
         {
             using var conn = Context.Database.GetDbConnection();
