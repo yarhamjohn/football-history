@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using FootballHistoryTest.Api.Calculators;
 using FootballHistoryTest.Api.Repositories.League;
 using FootballHistoryTest.Api.Repositories.Match;
@@ -98,6 +97,6 @@ namespace FootballHistoryTest.Api.Controllers
         public int Points { get; set; }
         public int PointsDeducted { get; set; }
         public string PointsDeductionReason { get; set; }
-        public string Status { get; set; }
+        public LeagueStatus Status { get; set; }
     }
 }

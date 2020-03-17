@@ -25,6 +25,15 @@ namespace FootballHistoryTest.Api.Repositories.League
             var cmd = GetDbCommand(conn, seasonStartYear, tier);
             return GetLeague(cmd).Single();
         }
+        
+        public List<LeagueModel> GetLeagueModels(int seasonStartYear, List<int> tiers)
+        {
+            using var conn = Context.Database.GetDbConnection();
+
+            return tiers
+                .Select(tier => GetDbCommand(conn, seasonStartYear, tier))
+                .Select(cmd => GetLeague(cmd).Single()).ToList();
+        }
 
         private static List<LeagueModel> GetLeague(DbCommand cmd)
         {

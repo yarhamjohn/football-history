@@ -6,6 +6,7 @@ using FootballHistoryTest.Api.Repositories.League;
 using FootballHistoryTest.Api.Repositories.Match;
 using FootballHistoryTest.Api.Repositories.PointDeductions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace FootballHistoryTest.Api.Controllers
 {
@@ -16,51 +17,67 @@ namespace FootballHistoryTest.Api.Controllers
         private readonly IMatchRepository _matchRepository;
         private readonly IPointsDeductionRepository _pointDeductionsRepository;
 
-        public PositionController(ILeagueRepository leagueRepository, IMatchRepository matchRepository, IPointsDeductionRepository pointDeductionsRepository)
+        public PositionController(ILeagueRepository leagueRepository, IMatchRepository matchRepository,
+            IPointsDeductionRepository pointDeductionsRepository)
         {
             _leagueRepository = leagueRepository;
             _matchRepository = matchRepository;
             _pointDeductionsRepository = pointDeductionsRepository;
         }
-        
+
         [HttpGet("[action]")]
         public List<LeaguePosition> GetLeaguePositions(int seasonStartYear, int tier, string team)
         {
-            var leagueMatches = _matchRepository.GetLeagueMatchModels(new List<int> {seasonStartYear}, new List<int> {tier});
+            var leagueMatches =
+                _matchRepository.GetLeagueMatchModels(new List<int> {seasonStartYear}, new List<int> {tier});
             var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(seasonStartYear, tier);
             var leagueModel = _leagueRepository.GetLeagueModel(seasonStartYear, tier);
-            
-            var dates = leagueMatches.Select(m => m.Date).Distinct().OrderBy(m => m.Date).ToList();
-            var startDate = dates.First();
-            var endDate = dates.Last().AddDays(1);
-            var leaguePositions = new List<LeaguePosition>();
-            
-            for (var date = startDate; date <= endDate; date = date.AddDays(1))
+
+            return LeaguePositionCalculator.GetPositions(leagueMatches, leagueModel, pointsDeductions, team);
+        }
+
+        [HttpGet("[action]")]
+        public List<HistoricalPosition> GetHistoricalPositions(List<int> seasonStartYears, string team)
+        {
+            var historicalPositions = new List<HistoricalPosition>();
+            foreach (var year in seasonStartYears)
             {
-                var leagueTable = LeagueTableCalculator.GetPartialLeagueTable(leagueMatches, leagueModel, pointsDeductions, date);
-                leaguePositions.Add(new LeaguePosition {Date = date, Position = leagueTable.Single(r => r.Team == team).Position});                
+                var leagueMatches = _matchRepository.GetLeagueMatchModels(new List<int> {year}, new List<int>());
+                var tier = leagueMatches.Select(m => m.Tier).First();
+                var playOffMatches = _matchRepository.GetPlayOffMatchModels(new List<int> {year}, new List<int> {tier});
+                var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(year, tier);
+                var leagueModels = _leagueRepository.GetLeagueModels(year, Enumerable.Range(1, tier).ToList());
+                var leagueTable =
+                    LeagueTableCalculator.GetFullLeagueTable(leagueMatches, playOffMatches, leagueModels.Single(m => m.Tier == tier),
+                        pointsDeductions);
+
+                var teamRow = leagueTable.Single(r => r.Team == team);
+                historicalPositions.Add(new HistoricalPosition
+                {
+                    SeasonDates = new SeasonDates {StartYear = year, EndYear = year + 1}, 
+                    Tier = tier,
+                    Position = teamRow.Position,
+                    AbsolutePosition = leagueModels.Where(m => m.Tier != tier).Select(m => m.TotalPlaces).Sum() + teamRow.Position,
+                    Status = teamRow.Status
+                });
             }
 
-            return leaguePositions;
-        }
-        
-        [HttpGet("[action]")]
-        public List<HistoricalPosition> GetHistoricalPositions(int startYear, int endYear, string team)
-        {
-            return new List<HistoricalPosition>();
+            return historicalPositions;
         }
     }
-    
+
     public class LeaguePosition
     {
         public DateTime Date { get; set; }
         public int Position { get; set; }
     }
-    
+
     public class HistoricalPosition
     {
         public SeasonDates SeasonDates { get; set; }
+        public int Tier { get; set; }
+        public int Position { get; set; }
         public int AbsolutePosition { get; set; }
-        public string Status { get; set; }
+        public LeagueStatus Status { get; set; }
     }
 }

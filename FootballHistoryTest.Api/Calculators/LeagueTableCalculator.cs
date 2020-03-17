@@ -71,28 +71,28 @@ namespace FootballHistoryTest.Api.Calculators
             {
                 if (r.Position == 1)
                 {
-                    r.Status = "Champions";
+                    r.Status = LeagueStatus.Champions;
                 }
 
                 if (r.Position > leagueTable.Count - leagueModel.RelegationPlaces)
                 {
-                    r.Status = "Relegated";
+                    r.Status = LeagueStatus.Relegated;
                 }
 
                 if (r.Position > 1 && r.Position <= leagueModel.PromotionPlaces)
                 {
-                    r.Status = "Promoted";
+                    r.Status = LeagueStatus.Promoted;
                 }
 
                 if (r.Position > leagueModel.PromotionPlaces &&
                     r.Position <= leagueModel.PromotionPlaces + leagueModel.PlayOffPlaces)
                 {
-                    r.Status = "Play-Offs";
+                    r.Status = LeagueStatus.PlayOffs;
                 }
 
                 if (r.Team == playOffWinner)
                 {
-                    r.Status = "Play-Off Winner";
+                    r.Status = LeagueStatus.PlayOffWinner;
                 }
             });
 
@@ -124,9 +124,9 @@ namespace FootballHistoryTest.Api.Calculators
                     .ToList(); // unless it affects a promotion/relegation spot at the end of the season in which case a play-off occurs (this has never happened)
             }
 
-            for (var i = 0; i < sortedLeagueTable.Count; i++)
+            for (var i = 1; i <= sortedLeagueTable.Count; i++)
             {
-                sortedLeagueTable[i].Position = i + 1;
+                sortedLeagueTable[i].Position = i;
             }
 
             return sortedLeagueTable;
