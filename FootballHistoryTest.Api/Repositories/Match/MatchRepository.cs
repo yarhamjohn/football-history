@@ -206,21 +206,54 @@ INNER JOIN [dbo].[Clubs] AS ac
         private static string BuildWhereClause(List<int> seasonStartYears, List<int> tiers, List<string> teams)
         {
             var clauses = new List<string>();
+            var tierClauses = new List<string>();
             for (var i = 0; i < tiers.Count; i++)
             {
-                clauses.Add($"d.Tier = @Tier{i}");
-            }
-            
-            for (var i = 0; i < teams.Count; i++)
-            {
-                clauses.Add($"(hc.Name = @Team{i} OR ac.Name = @Team{i})");
-            }
-            
-            for (var i = 0; i < seasonStartYears.Count; i++)
-            {
-                clauses.Add($"m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear{i}, 7, 1) AND DATEFROMPARTS(@SeasonEndYear{i}, 6, 30)");
+                tierClauses.Add($"d.Tier = @Tier{i}");
             }
 
+            if (tierClauses.Count > 1)
+            {
+                clauses.Add("(" + string.Join(" OR ", tierClauses) + ")");
+            }
+
+            if (tierClauses.Count == 1)
+            {
+                clauses.Add(tierClauses.Single());
+            }
+
+            var teamClauses = new List<string>();
+            for (var i = 0; i < teams.Count; i++)
+            {
+                teamClauses.Add($"(hc.Name = @Team{i} OR ac.Name = @Team{i})");
+            }
+
+            if (teamClauses.Count > 1)
+            {
+                clauses.Add("(" + string.Join(" OR ", teamClauses) + ")");
+            }
+
+            if (teamClauses.Count == 1)
+            {
+                clauses.Add(teamClauses.Single());
+            }
+            
+            var seasonClauses = new List<string>();
+            for (var i = 0; i < seasonStartYears.Count; i++)
+            {
+                seasonClauses.Add($"m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear{i}, 7, 1) AND DATEFROMPARTS(@SeasonEndYear{i}, 6, 30)");
+            }
+
+            if (seasonClauses.Count > 1)
+            {
+                clauses.Add("(" + string.Join(" OR ", seasonClauses) + ")");
+            }
+
+            if (seasonClauses.Count == 1)
+            {
+                clauses.Add(seasonClauses.Single());
+            }
+            
             return clauses.Count > 0 ? $"WHERE {string.Join(" AND ", clauses)}" : "";
         }
     }

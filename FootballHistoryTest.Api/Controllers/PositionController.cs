@@ -40,6 +40,8 @@ namespace FootballHistoryTest.Api.Controllers
         public List<HistoricalPosition> GetHistoricalPositions(List<int> seasonStartYears, string team)
         {
             var historicalPositions = new List<HistoricalPosition>();
+            
+            // can't loop here as connections are closed...
             foreach (var year in seasonStartYears)
             {
                 var leagueMatches = _matchRepository.GetLeagueMatchModels(new List<int> {year}, new List<int>());

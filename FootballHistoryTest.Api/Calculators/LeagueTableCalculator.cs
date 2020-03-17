@@ -124,9 +124,9 @@ namespace FootballHistoryTest.Api.Calculators
                     .ToList(); // unless it affects a promotion/relegation spot at the end of the season in which case a play-off occurs (this has never happened)
             }
 
-            for (var i = 1; i <= sortedLeagueTable.Count; i++)
+            for (var i = 0; i < sortedLeagueTable.Count; i++)
             {
-                sortedLeagueTable[i].Position = i;
+                sortedLeagueTable[i].Position = i + 1;
             }
 
             return sortedLeagueTable;

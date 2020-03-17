@@ -20,19 +20,15 @@ namespace FootballHistoryTest.Api.Repositories.League
         
         public LeagueModel GetLeagueModel(int seasonStartYear, int tier)
         {
-            using var conn = Context.Database.GetDbConnection();
-
-            var cmd = GetDbCommand(conn, seasonStartYear, tier);
-            return GetLeague(cmd).Single();
+            return GetLeagueModels(seasonStartYear, new List<int> { tier }).Single();
         }
         
         public List<LeagueModel> GetLeagueModels(int seasonStartYear, List<int> tiers)
         {
             using var conn = Context.Database.GetDbConnection();
+            var cmd = GetDbCommand(conn, seasonStartYear, tiers);
 
-            return tiers
-                .Select(tier => GetDbCommand(conn, seasonStartYear, tier))
-                .Select(cmd => GetLeague(cmd).Single()).ToList();
+            return GetLeague(cmd);
         }
 
         private static List<LeagueModel> GetLeague(DbCommand cmd)
@@ -57,11 +53,9 @@ namespace FootballHistoryTest.Api.Repositories.League
             return result;
         }
 
-        private static DbCommand GetDbCommand(DbConnection conn, int seasonStartYear, int? tier = null)
+        private static DbCommand GetDbCommand(DbConnection conn, int seasonStartYear, List<int> tiers)
         {
-            var whereClause = tier == null
-                ? "WHERE ls.[EndYear] = @SeasonStartYear"
-                : "WHERE d.[Tier] = @Tier AND ls.[StartYear] = @SeasonStartYear";
+            var whereClause = BuildWhereClause(tiers);
             
             var sql = $@"
 SELECT d.Name
@@ -81,9 +75,9 @@ SELECT d.Name
             var cmd = conn.CreateCommand();
             cmd.CommandText = sql;
 
-            if (tier != null)
+            for (var i = 0; i < tiers.Count; i++)
             {
-                var tierParameter = new SqlParameter {ParameterName = "@Tier", Value = tier};
+                var tierParameter = new SqlParameter {ParameterName = $"@Tier{i}", Value = tiers[i]};
                 cmd.Parameters.Add(tierParameter);
             }
             
@@ -91,6 +85,28 @@ SELECT d.Name
             cmd.Parameters.Add(seasonStartYearParameter);
 
             return cmd;
+        }
+        
+        private static string BuildWhereClause(List<int> tiers)
+        {
+            var clauses = new List<string> { "WHERE ls.[StartYear] = @SeasonStartYear" };
+            var tierClauses = new List<string>();
+            for (var i = 0; i < tiers.Count; i++)
+            {
+                tierClauses.Add($"d.Tier = @Tier{i}");
+            }
+
+            if (tierClauses.Count > 1)
+            {
+                clauses.Add("(" + string.Join(" OR ", tierClauses) + ")");
+            }
+
+            if (tierClauses.Count == 1)
+            {
+                clauses.Add(tierClauses.Single());
+            }
+
+            return string.Join(" AND ", clauses);
         }
     }
 }

@@ -12,6 +12,11 @@ namespace FootballHistoryTest.Api.Calculators
     {
         public static List<LeaguePosition> GetPositions(List<MatchModel> leagueMatches, LeagueModel leagueModel, List<PointsDeductionModel> pointsDeductions, string team)
         {
+            if (!leagueMatches.Any(m => m.HomeTeam == team || m.AwayTeam == team))
+            {
+                return new List<LeaguePosition>();
+            }
+            
             var dates = leagueMatches.Select(m => m.Date).Distinct().OrderBy(m => m.Date).ToList();
             var startDate = dates.First();
             var endDate = dates.Last().AddDays(1);
