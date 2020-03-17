@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using FootballHistoryTest.Api.Controllers;
@@ -9,13 +10,21 @@ namespace FootballHistoryTest.Api.Calculators
 {
     public static class LeagueTableCalculator
     {
-        public static List<LeagueTableRow> GetLeagueTable(List<MatchModel> leagueMatches, List<MatchModel> playOffMatches, LeagueModel leagueModel, List<PointsDeductionModel> pointsDeductions)
+        public static List<LeagueTableRow> GetFullLeagueTable(List<MatchModel> leagueMatches, List<MatchModel> playOffMatches, LeagueModel leagueModel, List<PointsDeductionModel> pointsDeductions)
         {
             var leagueTable = GetTable(leagueMatches, leagueModel, pointsDeductions);
             var sortedLeagueTable = SortTable(leagueTable, leagueModel);
             return AddStatuses(sortedLeagueTable, playOffMatches, leagueModel);
         }
 
+        public static List<LeagueTableRow> GetPartialLeagueTable(List<MatchModel> leagueMatches, LeagueModel leagueModel, List<PointsDeductionModel> pointsDeductions, DateTime date)
+        {
+            var matches = leagueMatches.Where(m => m.Date < date).ToList();
+            var leagueTable = GetTable(matches, leagueModel, pointsDeductions);
+            var expandedLeagueTable = AddMissingTeams(leagueTable, leagueMatches.Select(m => m.HomeTeam).Distinct().ToList());
+            return SortTable(expandedLeagueTable, leagueModel);
+        }
+        
         private static List<LeagueTableRow> GetTable(List<MatchModel> leagueMatches, LeagueModel leagueModel, List<PointsDeductionModel> pointDeductions)
         {
             var leagueTable = new List<LeagueTableRow>();
@@ -121,6 +130,15 @@ namespace FootballHistoryTest.Api.Calculators
             }
 
             return sortedLeagueTable;
+        }
+
+        private static List<LeagueTableRow> AddMissingTeams(List<LeagueTableRow> leagueTable, List<string> teams)
+        {
+            var existingTeams = leagueTable.Select(r => r.Team);
+            var missingTeams = teams.Except(existingTeams);
+            
+            leagueTable.AddRange(missingTeams.Select(team => new LeagueTableRow {Team = team}));
+            return leagueTable;
         }
 
         private static bool PremierLeague_Or_FootballLeagueFrom1999(LeagueModel leagueModel)

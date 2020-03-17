@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using FootballHistoryTest.Api.Calculators;
 using FootballHistoryTest.Api.Repositories.League;
 using FootballHistoryTest.Api.Repositories.Match;
@@ -28,7 +30,31 @@ namespace FootballHistoryTest.Api.Controllers
             var leagueMatches = _matchRepository.GetLeagueMatchModels(new List<int> {seasonStartYear}, new List<int> {tier});
             var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(seasonStartYear, tier);
             var leagueModel = _leagueRepository.GetLeagueModel(seasonStartYear, tier);
-            var leagueTable = LeagueTableCalculator.GetLeagueTable(leagueMatches, playOffMatches, leagueModel, pointsDeductions);
+            var leagueTable = LeagueTableCalculator.GetFullLeagueTable(leagueMatches, playOffMatches, leagueModel, pointsDeductions);
+
+            return new League
+            {
+                Name = leagueModel.Name,
+                Tier = leagueModel.Tier,
+                TotalPlaces = leagueModel.TotalPlaces,
+                PromotionPlaces = leagueModel.PromotionPlaces,
+                RelegationPlaces = leagueModel.RelegationPlaces,
+                PlayOffPlaces = leagueModel.PlayOffPlaces,
+                PointsForWin = leagueModel.PointsForWin,
+                StartYear = leagueModel.StartYear,
+                Table = leagueTable
+            };
+        }
+
+        [HttpGet("[action]")]
+        public League GetLeagueOnDate(int tier, DateTime date)
+        {
+            var seasonStartYear = date.Month > 6 ? date.Year : date.Year - 1;
+            
+            var leagueMatches = _matchRepository.GetLeagueMatchModels(new List<int> {seasonStartYear}, new List<int> {tier});
+            var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(seasonStartYear, tier);
+            var leagueModel = _leagueRepository.GetLeagueModel(seasonStartYear, tier);
+            var leagueTable = LeagueTableCalculator.GetPartialLeagueTable(leagueMatches, leagueModel, pointsDeductions, date);
 
             return new League
             {
