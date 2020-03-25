@@ -50,4 +50,11 @@ namespace FootballHistoryTest.Api.Domain
         {
         }
     }
+
+    public class TierRepositoryContext : DbContext
+    {
+        public TierRepositoryContext(DbContextOptions<TierRepositoryContext> options) : base(options)
+        {
+        }
+    }
 }
