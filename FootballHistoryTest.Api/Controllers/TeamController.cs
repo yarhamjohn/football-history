@@ -16,9 +16,17 @@ namespace FootballHistoryTest.Api.Controllers
         }
         
         [HttpGet("[action]")]
-        public List<Team> GetTeams()
+        public List<Team> GetAllTeams()
         {
             return _teamRepository.GetTeamModels()
+                .Select(t => new Team() {Name = t.Name, Abbreviation = t.Abbreviation})
+                .ToList();
+        }
+        
+        [HttpGet("[action]")]
+        public List<Team> GetTeams(int seasonStartYear, int tier)
+        {
+            return _teamRepository.GetTeamModels(seasonStartYear, tier)
                 .Select(t => new Team() {Name = t.Name, Abbreviation = t.Abbreviation})
                 .ToList();
         }

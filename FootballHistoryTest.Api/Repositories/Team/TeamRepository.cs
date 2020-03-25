@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Data.SqlClient;
 using FootballHistoryTest.Api.Domain;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +20,14 @@ namespace FootballHistoryTest.Api.Repositories.Team
             using var conn = _context.Database.GetDbConnection();
             
             var cmd = GetDbCommand(conn);
+            return SelectAllTeams(cmd);
+        }
+        
+        public List<TeamModel> GetTeamModels(int seasonStartYear, int tier)
+        {
+            using var conn = _context.Database.GetDbConnection();
+            
+            var cmd = GetDbCommand(conn, seasonStartYear, tier);
             return SelectAllTeams(cmd);
         }
         
@@ -46,6 +55,32 @@ namespace FootballHistoryTest.Api.Repositories.Team
             var cmd = conn.CreateCommand();
             cmd.CommandText = sql;
             
+            return cmd;
+        }
+        
+        private static DbCommand GetDbCommand(DbConnection conn, int seasonStartYear, int tier)
+        {
+            const string sql = @"
+SELECT DISTINCT hc.Name, hc.Abbreviation
+  FROM dbo.LeagueMatches AS m
+LEFT JOIN dbo.Clubs AS hc
+  ON hc.Id = m.HomeClubId
+LEFT JOIN dbo.Clubs AS ac
+  ON ac.Id = m.AwayClubId
+LEFT JOIN dbo.Divisions AS d
+  ON d.Id = m.DivisionId
+WHERE d.Tier = @Tier AND m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
+";
+
+            conn.Open();
+            
+            var cmd = conn.CreateCommand();
+            cmd.CommandText = sql;
+
+            cmd.Parameters.Add(new SqlParameter {ParameterName = "@Tier", Value = tier});
+            cmd.Parameters.Add(new SqlParameter {ParameterName = "@SeasonStartYear", Value = seasonStartYear});
+            cmd.Parameters.Add(new SqlParameter {ParameterName = "@SeasonEndYear", Value = seasonStartYear + 1});
+
             return cmd;
         }
     }
