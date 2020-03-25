@@ -40,19 +40,29 @@ namespace FootballHistoryTest.Api.Controllers
         }
 
         [HttpGet("[action]")]
-        public List<HistoricalPosition> GetHistoricalPositions(List<int> seasonStartYears, string team)
+        public List<HistoricalPosition> GetHistoricalPositions(int startYear, int endYear, string team)
+        {
+            var start = Math.Min(startYear, endYear);
+            var numYears = Math.Max(startYear, endYear) - start;
+            var seasonStartYears = Enumerable.Range(start, numYears).ToList();
+            return GetHistoricalPositionsForSeasons(seasonStartYears, team);
+        }
+
+        [HttpGet("[action]")]
+        public List<HistoricalPosition> GetHistoricalPositionsForSeasons(List<int> seasonStartYears, string team)
         {
             var historicalPositions = new List<HistoricalPosition>();
 
-            var tiers = _tierRepository.GetTierModels(seasonStartYears, team);
-            
-            var leagueMatches = _matchRepository.GetLeagueMatchModels(seasonStartYears, new List<int>());
-            var playOffMatches = _matchRepository.GetPlayOffMatchModels(seasonStartYears, new List<int>());
-            var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(seasonStartYears, new List<int>());
+            var tierModels = _tierRepository.GetTierModels(seasonStartYears, team);
+            var tiers = tierModels.Select(t => t.Tier).ToList();
 
-            var leagueModels = _leagueRepository.GetLeagueModels(seasonStartYears, new List<int>());
+            var leagueMatches = _matchRepository.GetLeagueMatchModels(seasonStartYears, tiers);
+            var playOffMatches = _matchRepository.GetPlayOffMatchModels(seasonStartYears, tiers);
+            var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(seasonStartYears, tiers);
+
+            var leagueModels = _leagueRepository.GetLeagueModels(seasonStartYears, tiers);
             
-            foreach (var tierModel in tiers)
+            foreach (var tierModel in tierModels)
             {
                 var leagueMatchesInSeason = leagueMatches.Where(m =>
                     m.Date >= new DateTime(tierModel.SeasonStartYear, 7, 1) && m.Date <= new DateTime(tierModel.SeasonStartYear + 1, 6, 30) && m.Tier == tierModel.Tier).ToList();
@@ -86,6 +96,7 @@ namespace FootballHistoryTest.Api.Controllers
 
     public class HistoricalPosition
     {
+        //TODO: Dont use season
         public Season Season { get; set; }
         public int Tier { get; set; }
         public int Position { get; set; }

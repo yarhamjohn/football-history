@@ -5,6 +5,7 @@ namespace FootballHistoryTest.Api.Repositories.Match
 {
     public interface IMatchRepository
     {
+        //TODO: have single param overloads
         List<MatchModel> GetLeagueMatchModels(List<int> seasonStartYears, List<int> tiers);
         List<MatchModel> GetLeagueMatchModels(List<int> seasonStartYears, List<int> tiers, List<string> teams);
         List<MatchModel> GetPlayOffMatchModels(List<int> seasonStartYears, List<int> tiers);
