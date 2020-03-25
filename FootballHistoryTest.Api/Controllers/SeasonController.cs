@@ -14,20 +14,30 @@ namespace FootballHistoryTest.Api.Controllers
         {
             _seasonRepository = seasonRepository;
         }
-        
+
         [HttpGet("[action]")]
-        public List<SeasonDates> GetSeasonDates()
+        public List<Season> GetSeasons()
         {
-            var seasonDatesModels = _seasonRepository.GetSeasonDateModels();
-            return seasonDatesModels
-                .Select(s => new SeasonDates {StartYear = s.SeasonStartYear, EndYear = s.SeasonEndYear})
-                .ToList();
+            var seasonModels = _seasonRepository.GetSeasonModels();
+            return seasonModels.GroupBy(s => s.SeasonStartYear,
+                (startYear, models) => new Season
+                {
+                    StartYear = startYear, EndYear = startYear + 1,
+                    Divisions = models.Select(m => new Division {Name = m.Name, Tier = m.Tier}).ToList()
+                }).ToList();
         }
     }
-    
-    public class SeasonDates
+
+    public class Season
     {
         public int StartYear { get; set; }
         public int EndYear { get; set; }
+        public List<Division> Divisions { get; set; }
+    }
+
+    public class Division
+    {
+        public string Name { get; set; }
+        public int Tier { get; set; }
     }
 }

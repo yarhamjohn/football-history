@@ -16,7 +16,7 @@ namespace FootballHistoryTest.Api.Repositories.Season
             Context = context;
         }
         
-        public List<SeasonDatesModel> GetSeasonDateModels()
+        public List<SeasonModel> GetSeasonModels()
         {
             using var conn = Context.Database.GetDbConnection();
             
@@ -24,16 +24,21 @@ namespace FootballHistoryTest.Api.Repositories.Season
             return GetTierBySeason(cmd);
         }
         
-        private static List<SeasonDatesModel> GetTierBySeason(DbCommand cmd)
+        private static List<SeasonModel> GetTierBySeason(DbCommand cmd)
         {
-            var result = new List<SeasonDatesModel>();
+            var result = new List<SeasonModel>();
             
             using (var reader = cmd.ExecuteReader())
             {
                 while (reader.Read())
                 {
-                    result.Add(new SeasonDatesModel
-                        {SeasonStartYear = reader.GetInt32(0), SeasonEndYear = reader.GetInt32(1)});
+                    result.Add(new SeasonModel
+                        {
+                            SeasonStartYear = reader.GetInt32(0), 
+                            SeasonEndYear = reader.GetInt32(1), 
+                            Tier = reader.GetByte(2), 
+                            Name = reader.GetString(3)
+                        });
                 }
             }
 
@@ -42,7 +47,10 @@ namespace FootballHistoryTest.Api.Repositories.Season
 
         private static DbCommand GetDbCommand(DbConnection conn)
         {
-            const string sql = @"SELECT StartYear, EndYear FROM [dbo].[LeagueStatuses]";
+            const string sql = @"
+SELECT s.StartYear, s.EndYear, d.Tier, d.Name FROM [dbo].[LeagueStatuses] AS s
+INNER JOIN dbo.Divisions AS d ON s.DivisionId = d.Id
+";
             conn.Open();
             
             var cmd = conn.CreateCommand();

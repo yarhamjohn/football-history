@@ -66,7 +66,7 @@ namespace FootballHistoryTest.Api.Controllers
                 var teamRow = leagueTable.Single(r => r.Team == team);
                 historicalPositions.Add(new HistoricalPosition
                 {
-                    SeasonDates = new SeasonDates {StartYear = tierModel.SeasonStartYear, EndYear = tierModel.SeasonStartYear + 1}, 
+                    Season = new Season {StartYear = tierModel.SeasonStartYear, EndYear = tierModel.SeasonStartYear + 1}, 
                     Tier = tierModel.Tier,
                     Position = teamRow.Position,
                     AbsolutePosition = leagueModels.Where(m => m.Tier != tierModel.Tier).Select(m => m.TotalPlaces).Sum() + teamRow.Position,
@@ -86,7 +86,7 @@ namespace FootballHistoryTest.Api.Controllers
 
     public class HistoricalPosition
     {
-        public SeasonDates SeasonDates { get; set; }
+        public Season Season { get; set; }
         public int Tier { get; set; }
         public int Position { get; set; }
         public int AbsolutePosition { get; set; }

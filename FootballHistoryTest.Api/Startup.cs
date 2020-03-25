@@ -1,5 +1,4 @@
 ﻿using FootballHistoryTest.Api.Domain;
-using FootballHistoryTest.Api.Repositories.Division;
 using FootballHistoryTest.Api.Repositories.League;
 using FootballHistoryTest.Api.Repositories.Match;
 using FootballHistoryTest.Api.Repositories.PointDeductions;
@@ -35,7 +34,6 @@ namespace FootballHistoryTest.Api
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Football History API", Version = "v1" });
             });
             
-            services.AddTransient<IDivisionRepository, DivisionRepository>();
             services.AddTransient<ITeamRepository, TeamRepository>();
             services.AddTransient<ISeasonRepository, SeasonRepository>();
             services.AddTransient<ILeagueRepository, LeagueRepository>();
@@ -44,7 +42,6 @@ namespace FootballHistoryTest.Api
             services.AddTransient<ITierRepository, TierRepository>();
 
             var connString = Configuration.GetConnectionString("FootballHistory");
-            services.AddDbContext<DivisionRepositoryContext>(options => options.UseSqlServer(connString));
             services.AddDbContext<TeamRepositoryContext>(options => options.UseSqlServer(connString));
             services.AddDbContext<SeasonRepositoryContext>(options => options.UseSqlServer(connString));
             services.AddDbContext<LeagueRepositoryContext>(options => options.UseSqlServer(connString));

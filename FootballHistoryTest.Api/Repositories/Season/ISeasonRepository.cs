@@ -4,6 +4,6 @@ namespace FootballHistoryTest.Api.Repositories.Season
 {
     public interface ISeasonRepository
     {
-        List<SeasonDatesModel> GetSeasonDateModels();
+        List<SeasonModel> GetSeasonModels();
     }
 }
