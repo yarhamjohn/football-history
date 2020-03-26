@@ -9,9 +9,9 @@ namespace FootballHistoryTest.Api.Controllers
     {
         private readonly IPositionBuilder _positionBuilder;
 
-        public PositionController(IPositionBuilder leagueRepository)
+        public PositionController(IPositionBuilder leagueBuilder)
         {
-            _positionBuilder = leagueRepository;
+            _positionBuilder = leagueBuilder;
         }
 
         [HttpGet("[action]")]

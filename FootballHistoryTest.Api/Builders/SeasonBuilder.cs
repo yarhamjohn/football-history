@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using FootballHistoryTest.Api.Domain;
 using FootballHistoryTest.Api.Repositories.Season;
+using Microsoft.EntityFrameworkCore;
 
 namespace FootballHistoryTest.Api.Builders
 {
@@ -11,16 +13,20 @@ namespace FootballHistoryTest.Api.Builders
     
     public class SeasonBuilder : ISeasonBuilder
     {
+        private readonly DatabaseContext _context;
         private readonly ISeasonRepository _seasonRepository;
 
-        public SeasonBuilder(ISeasonRepository seasonRepository)
+        public SeasonBuilder(DatabaseContext context, ISeasonRepository seasonRepository)
         {
+            _context = context;
             _seasonRepository = seasonRepository;
         }
             
         public List<Season> GetSeasons()
         {
-            var seasonModels = _seasonRepository.GetSeasonModels();
+            using var conn = _context.Database.GetDbConnection();
+
+            var seasonModels = _seasonRepository.GetSeasonModels(conn);
             return seasonModels.GroupBy(s => s.SeasonStartYear,
                 (startYear, models) => new Season
                 {

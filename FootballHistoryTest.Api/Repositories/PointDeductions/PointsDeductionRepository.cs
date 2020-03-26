@@ -10,23 +10,17 @@ namespace FootballHistoryTest.Api.Repositories.PointDeductions
 {
     public class PointsDeductionRepository : IPointsDeductionRepository
     {
-        private PointsDeductionRepositoryContext Context { get; }
-
-        public PointsDeductionRepository(PointsDeductionRepositoryContext context)
+        public List<PointsDeductionModel> GetPointsDeductionModels(DbConnection conn, int seasonStartYear, int tier)
         {
-            Context = context;
+            return GetPointsDeductionModels(conn, new List<int> {seasonStartYear}, new List<int> {tier});
         }
         
-        public List<PointsDeductionModel> GetPointsDeductionModels(int seasonStartYear, int tier)
+        public List<PointsDeductionModel> GetPointsDeductionModels(DbConnection conn, List<int> seasonStartYears, List<int> tiers)
         {
-            return GetPointsDeductionModels(new List<int> {seasonStartYear}, new List<int> {tier});
-        }
-        
-        public List<PointsDeductionModel> GetPointsDeductionModels(List<int> seasonStartYears, List<int> tiers)
-        {
-            using var conn = Context.Database.GetDbConnection();
             var cmd = GetDbCommand(conn, seasonStartYears, tiers);
-            return GetPointDeductions(cmd);
+            var result = GetPointDeductions(cmd);
+            conn.Close();
+            return result;
         }
         
         private static List<PointsDeductionModel> GetPointDeductions(DbCommand cmd)

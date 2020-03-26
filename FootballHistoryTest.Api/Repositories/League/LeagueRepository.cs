@@ -11,24 +11,17 @@ namespace FootballHistoryTest.Api.Repositories.League
 {
     public class LeagueRepository : ILeagueRepository
     {
-        private LeagueRepositoryContext Context { get; }
-
-        public LeagueRepository(LeagueRepositoryContext context)
+        public LeagueModel GetLeagueModel(DbConnection conn, int seasonStartYear, int tier)
         {
-            Context = context;
+            return GetLeagueModels(conn, new List<int> {seasonStartYear}, new List<int> { tier }).Single();
         }
         
-        public LeagueModel GetLeagueModel(int seasonStartYear, int tier)
+        public List<LeagueModel> GetLeagueModels(DbConnection conn, List<int> seasonStartYears, List<int> tiers)
         {
-            return GetLeagueModels(new List<int> {seasonStartYear}, new List<int> { tier }).Single();
-        }
-        
-        public List<LeagueModel> GetLeagueModels(List<int> seasonStartYears, List<int> tiers)
-        {
-            using var conn = Context.Database.GetDbConnection();
             var cmd = GetDbCommand(conn, seasonStartYears, tiers);
-
-            return GetLeague(cmd);
+            var result = GetLeague(cmd);
+            conn.Close();
+            return result;
         }
 
         private static List<LeagueModel> GetLeague(DbCommand cmd)
