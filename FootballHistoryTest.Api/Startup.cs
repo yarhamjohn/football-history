@@ -1,4 +1,5 @@
-﻿using FootballHistoryTest.Api.Domain;
+﻿using FootballHistoryTest.Api.Builders;
+using FootballHistoryTest.Api.Domain;
 using FootballHistoryTest.Api.Repositories.League;
 using FootballHistoryTest.Api.Repositories.Match;
 using FootballHistoryTest.Api.Repositories.PointDeductions;
@@ -34,6 +35,11 @@ namespace FootballHistoryTest.Api
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Football History API", Version = "v1" });
             });
             
+            services.AddTransient<ITeamBuilder, TeamBuilder>();
+            services.AddTransient<ISeasonBuilder, SeasonBuilder>();
+            services.AddTransient<IMatchBuilder, MatchBuilder>();
+            services.AddTransient<ILeagueBuilder, LeagueBuilder>();
+
             services.AddTransient<ITeamRepository, TeamRepository>();
             services.AddTransient<ISeasonRepository, SeasonRepository>();
             services.AddTransient<ILeagueRepository, LeagueRepository>();

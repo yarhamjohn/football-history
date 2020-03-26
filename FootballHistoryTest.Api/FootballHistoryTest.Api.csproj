@@ -12,8 +12,4 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.0.0-beta" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Builders" />
-  </ItemGroup>
-
 </Project>
