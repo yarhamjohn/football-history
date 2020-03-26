@@ -31,8 +31,7 @@ namespace FootballHistoryTest.Api.Controllers
         [HttpGet("[action]")]
         public List<LeaguePosition> GetLeaguePositions(int seasonStartYear, int tier, string team)
         {
-            var leagueMatches =
-                _matchRepository.GetLeagueMatchModels(new List<int> {seasonStartYear}, new List<int> {tier});
+            var leagueMatches = _matchRepository.GetLeagueMatchModels(seasonStartYear, tier);
             var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(new List<int> {seasonStartYear}, new List<int> {tier});
             var leagueModel = _leagueRepository.GetLeagueModel(seasonStartYear, tier);
 

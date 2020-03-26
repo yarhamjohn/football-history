@@ -17,6 +17,11 @@ namespace FootballHistoryTest.Api.Repositories.PointDeductions
             Context = context;
         }
         
+        public List<PointsDeductionModel> GetPointsDeductionModels(int seasonStartYear, int tier)
+        {
+            return GetPointsDeductionModels(new List<int> {seasonStartYear}, new List<int> {tier});
+        }
+        
         public List<PointsDeductionModel> GetPointsDeductionModels(List<int> seasonStartYears, List<int> tiers)
         {
             using var conn = Context.Database.GetDbConnection();

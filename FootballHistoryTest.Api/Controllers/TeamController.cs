@@ -19,7 +19,7 @@ namespace FootballHistoryTest.Api.Controllers
         public List<Team> GetAllTeams()
         {
             return _teamRepository.GetTeamModels()
-                .Select(t => new Team() {Name = t.Name, Abbreviation = t.Abbreviation})
+                .Select(t => new Team {Name = t.Name, Abbreviation = t.Abbreviation})
                 .ToList();
         }
         
@@ -27,7 +27,7 @@ namespace FootballHistoryTest.Api.Controllers
         public List<Team> GetTeamsInLeague(int seasonStartYear, int tier)
         {
             return _teamRepository.GetTeamModels(seasonStartYear, tier)
-                .Select(t => new Team() {Name = t.Name, Abbreviation = t.Abbreviation})
+                .Select(t => new Team {Name = t.Name, Abbreviation = t.Abbreviation})
                 .ToList();
         }
     }

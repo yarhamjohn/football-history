@@ -25,9 +25,9 @@ namespace FootballHistoryTest.Api.Controllers
         [HttpGet("[action]")]
         public League GetLeague(int seasonStartYear, int tier)
         {
-            var playOffMatches = _matchRepository.GetPlayOffMatchModels(new List<int> {seasonStartYear}, new List<int> { tier });
-            var leagueMatches = _matchRepository.GetLeagueMatchModels(new List<int> {seasonStartYear}, new List<int> {tier});
-            var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(new List<int> {seasonStartYear}, new List<int> {tier});
+            var playOffMatches = _matchRepository.GetPlayOffMatchModels(seasonStartYear, tier);
+            var leagueMatches = _matchRepository.GetLeagueMatchModels(seasonStartYear, tier);
+            var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(seasonStartYear, tier);
             var leagueModel = _leagueRepository.GetLeagueModel(seasonStartYear, tier);
             var leagueTable = LeagueTableCalculator.GetFullLeagueTable(leagueMatches, playOffMatches, leagueModel, pointsDeductions);
 
@@ -50,8 +50,8 @@ namespace FootballHistoryTest.Api.Controllers
         {
             var seasonStartYear = date.Month > 6 ? date.Year : date.Year - 1;
             
-            var leagueMatches = _matchRepository.GetLeagueMatchModels(new List<int> {seasonStartYear}, new List<int> {tier});
-            var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(new List<int> {seasonStartYear}, new List<int> {tier});
+            var leagueMatches = _matchRepository.GetLeagueMatchModels(seasonStartYear, tier);
+            var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(seasonStartYear, tier);
             var leagueModel = _leagueRepository.GetLeagueModel(seasonStartYear, tier);
             var leagueTable = LeagueTableCalculator.GetPartialLeagueTable(leagueMatches, leagueModel, pointsDeductions, date);
 
