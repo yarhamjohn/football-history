@@ -38,7 +38,7 @@ namespace FootballHistoryTest.Api.Builders
         public List<LeaguePosition> GetLeaguePositions(int seasonStartYear, int tier, string team)
         {
             var leagueMatches = _matchRepository.GetLeagueMatchModels(seasonStartYear, tier);
-            var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(new List<int> {seasonStartYear}, new List<int> {tier});
+            var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(seasonStartYear, tier);
             var leagueModel = _leagueRepository.GetLeagueModel(seasonStartYear, tier);
 
             return LeaguePositionCalculator.GetPositions(leagueMatches, leagueModel, pointsDeductions, team);
@@ -79,7 +79,7 @@ namespace FootballHistoryTest.Api.Builders
                 var teamRow = leagueTable.Single(r => r.Team == team);
                 historicalPositions.Add(new HistoricalPosition
                 {
-                    Season = new Season {StartYear = tierModel.SeasonStartYear, EndYear = tierModel.SeasonStartYear + 1}, 
+                    SeasonStartYear = tierModel.SeasonStartYear,
                     Tier = tierModel.Tier,
                     Position = teamRow.Position,
                     AbsolutePosition = leagueModels.Where(m => m.Tier != tierModel.Tier).Select(m => m.TotalPlaces).Sum() + teamRow.Position,
@@ -99,8 +99,7 @@ namespace FootballHistoryTest.Api.Builders
 
     public class HistoricalPosition
     {
-        //TODO: Dont use season
-        public Season Season { get; set; }
+        public int SeasonStartYear { get; set; }
         public int Tier { get; set; }
         public int Position { get; set; }
         public int AbsolutePosition { get; set; }
