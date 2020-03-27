@@ -2,44 +2,56 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using FootballHistoryTest.Api.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace FootballHistoryTest.Api.Repositories.Match
 {
     public class MatchRepository : IMatchRepository
     {
-        public List<MatchModel> GetLeagueMatchModels(DbConnection conn, int seasonStartYear, int tier)
+        private readonly DatabaseContext _context;
+
+        public MatchRepository(DatabaseContext context)
         {
-            return GetLeagueMatchModels(conn, new List<int> {seasonStartYear}, new List<int> {tier}, new List<string>());
-        }
-        
-        public List<MatchModel> GetLeagueMatchModels(DbConnection conn, List<int> seasonStartYears, List<int> tiers)
-        {
-            return GetLeagueMatchModels(conn, seasonStartYears, tiers, new List<string>());
+            _context = context;
         }
 
-        public List<MatchModel> GetLeagueMatchModels(DbConnection conn, List<int> seasonStartYears, List<int> tiers, List<string> teams)
+        public List<MatchModel> GetLeagueMatchModels(int seasonStartYear, int tier)
         {
+            return GetLeagueMatchModels(new List<int> {seasonStartYear}, new List<int> {tier}, new List<string>());
+        }
+        
+        public List<MatchModel> GetLeagueMatchModels(List<int> seasonStartYears, List<int> tiers)
+        {
+            return GetLeagueMatchModels(seasonStartYears, tiers, new List<string>());
+        }
+
+        public List<MatchModel> GetLeagueMatchModels(List<int> seasonStartYears, List<int> tiers, List<string> teams)
+        {
+            var conn = _context.Database.GetDbConnection();
             var cmd = GetLeagueMatchDbCommand(conn, seasonStartYears, tiers, teams);
             var result = GetLeagueMatches(cmd);
             conn.Close();
             return result;
         }
 
-        public List<MatchModel> GetPlayOffMatchModels(DbConnection conn, int seasonStartYear, int tier)
+        public List<MatchModel> GetPlayOffMatchModels(int seasonStartYear, int tier)
         {
-            return GetPlayOffMatchModels(conn, new List<int> { seasonStartYear }, new List<int> {tier});
+            return GetPlayOffMatchModels(new List<int> { seasonStartYear }, new List<int> {tier});
         }
 
-        public List<MatchModel> GetPlayOffMatchModels(DbConnection conn, List<int> seasonStartYears, List<int> tiers)
+        public List<MatchModel> GetPlayOffMatchModels(List<int> seasonStartYears, List<int> tiers)
         {
+            var conn = _context.Database.GetDbConnection();
             var cmd = GetPlayOffMatchDbCommand(conn, seasonStartYears, tiers);
             var result = GetPlayOffMatches(cmd);
             conn.Close();
             return result;
         }
 
-        public List<MatchModel> GetLeagueHeadToHeadMatchModels(DbConnection conn, List<int> seasonStartYears, List<int> tiers, string teamOne, string teamTwo)
+        public List<MatchModel> GetLeagueHeadToHeadMatchModels(List<int> seasonStartYears, List<int> tiers, string teamOne, string teamTwo)
         {
+            var conn = _context.Database.GetDbConnection();
             var cmd = GetLeagueMatchDbCommand(conn, seasonStartYears, tiers, new List<string> {teamOne, teamTwo});
             var result = GetLeagueMatches(cmd)
                 .Where(m => m.HomeTeam == teamOne && m.AwayTeam == teamTwo || m.HomeTeam == teamTwo && m.AwayTeam == teamOne)

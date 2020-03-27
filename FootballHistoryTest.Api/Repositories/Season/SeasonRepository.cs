@@ -9,8 +9,17 @@ namespace FootballHistoryTest.Api.Repositories.Season
 {
     public class SeasonRepository : ISeasonRepository
     {
-        public List<SeasonModel> GetSeasonModels(DbConnection conn)
+        private readonly DatabaseContext _context;
+
+        public SeasonRepository(DatabaseContext context)
         {
+            _context = context;
+        }
+
+        public List<SeasonModel> GetSeasonModels()
+        {
+            var conn = _context.Database.GetDbConnection();
+
             var cmd = GetDbCommand(conn);
             var result = GetTierBySeason(cmd);
             conn.Close();

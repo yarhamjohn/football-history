@@ -1,21 +1,33 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
+using FootballHistoryTest.Api.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace FootballHistoryTest.Api.Repositories.Team
 {
     public class TeamRepository : ITeamRepository
     {
-        public List<TeamModel> GetTeamModels(DbConnection conn)
+        private readonly DatabaseContext _context;
+
+        public TeamRepository(DatabaseContext context)
         {
+            _context = context;
+        }
+
+        public List<TeamModel> GetTeamModels()
+        {
+            var conn = _context.Database.GetDbConnection();
             var cmd = GetDbCommand(conn);
             var result = SelectAllTeams(cmd);
             conn.Close();
             return result;
         }
         
-        public List<TeamModel> GetTeamModels(DbConnection conn, int seasonStartYear, int tier)
+        public List<TeamModel> GetTeamModels(int seasonStartYear, int tier)
         {
+            var conn = _context.Database.GetDbConnection();
+
             var cmd = GetDbCommand(conn, seasonStartYear, tier);
             var result = SelectAllTeams(cmd);
             conn.Close();

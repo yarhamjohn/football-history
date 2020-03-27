@@ -14,29 +14,23 @@ namespace FootballHistoryTest.Api.Builders
     
     public class TeamBuilder : ITeamBuilder
     {
-        private readonly DatabaseContext _context;
         private readonly ITeamRepository _teamRepository;
 
-        public TeamBuilder(DatabaseContext context, ITeamRepository teamRepository)
+        public TeamBuilder(ITeamRepository teamRepository)
         {
-            _context = context;
             _teamRepository = teamRepository;
         }
         
         public List<Team> GetAllTeams()
         {
-            using var conn = _context.Database.GetDbConnection();
-
-            return _teamRepository.GetTeamModels(conn)
+            return _teamRepository.GetTeamModels()
                 .Select(t => new Team {Name = t.Name, Abbreviation = t.Abbreviation})
                 .ToList();
         }
         
         public List<Team> GetTeamsInLeague(int seasonStartYear, int tier)
         {
-            using var conn = _context.Database.GetDbConnection();
-
-            return _teamRepository.GetTeamModels(conn, seasonStartYear, tier)
+            return _teamRepository.GetTeamModels(seasonStartYear, tier)
                 .Select(t => new Team {Name = t.Name, Abbreviation = t.Abbreviation})
                 .ToList();
         }

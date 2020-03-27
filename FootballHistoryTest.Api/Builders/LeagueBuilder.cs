@@ -17,14 +17,12 @@ namespace FootballHistoryTest.Api.Builders
     
     public class LeagueBuilder : ILeagueBuilder
     {
-        private readonly DatabaseContext _context;
         private readonly ILeagueRepository _leagueRepository;
         private readonly IMatchRepository _matchRepository;
         private readonly IPointsDeductionRepository _pointDeductionsRepository;
 
-        public LeagueBuilder(DatabaseContext context, ILeagueRepository leagueRepository, IMatchRepository matchRepository, IPointsDeductionRepository pointDeductionsRepository)
+        public LeagueBuilder( ILeagueRepository leagueRepository, IMatchRepository matchRepository, IPointsDeductionRepository pointDeductionsRepository)
         {
-            _context = context;
             _leagueRepository = leagueRepository;
             _matchRepository = matchRepository;
             _pointDeductionsRepository = pointDeductionsRepository;
@@ -32,12 +30,10 @@ namespace FootballHistoryTest.Api.Builders
 
         public League GetLeague(int seasonStartYear, int tier)
         {
-            using var conn = _context.Database.GetDbConnection();
-
-            var playOffMatches = _matchRepository.GetPlayOffMatchModels(conn, seasonStartYear, tier);
-            var leagueMatches = _matchRepository.GetLeagueMatchModels(conn, seasonStartYear, tier);
-            var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(conn, seasonStartYear, tier);
-            var leagueModel = _leagueRepository.GetLeagueModel(conn, seasonStartYear, tier);
+            var playOffMatches = _matchRepository.GetPlayOffMatchModels(seasonStartYear, tier);
+            var leagueMatches = _matchRepository.GetLeagueMatchModels(seasonStartYear, tier);
+            var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(seasonStartYear, tier);
+            var leagueModel = _leagueRepository.GetLeagueModel(seasonStartYear, tier);
             var leagueTable = LeagueTableCalculator.GetFullLeagueTable(leagueMatches, playOffMatches, leagueModel, pointsDeductions);
 
             return new League
@@ -56,13 +52,11 @@ namespace FootballHistoryTest.Api.Builders
 
         public League GetLeagueOnDate(int tier, DateTime date)
         {
-            using var conn = _context.Database.GetDbConnection();
-
             var seasonStartYear = date.Month > 6 ? date.Year : date.Year - 1;
             
-            var leagueMatches = _matchRepository.GetLeagueMatchModels(conn, seasonStartYear, tier);
-            var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(conn, seasonStartYear, tier);
-            var leagueModel = _leagueRepository.GetLeagueModel(conn, seasonStartYear, tier);
+            var leagueMatches = _matchRepository.GetLeagueMatchModels(seasonStartYear, tier);
+            var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(seasonStartYear, tier);
+            var leagueModel = _leagueRepository.GetLeagueModel(seasonStartYear, tier);
             var leagueTable = LeagueTableCalculator.GetPartialLeagueTable(leagueMatches, leagueModel, pointsDeductions, date);
 
             return new League

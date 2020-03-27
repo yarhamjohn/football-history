@@ -19,36 +19,28 @@ namespace FootballHistoryTest.Api.Builders
     
     public class MatchBuilder : IMatchBuilder
     {
-        private readonly DatabaseContext _context;
         private readonly IMatchRepository _matchRepository;
 
-        public MatchBuilder(DatabaseContext context, IMatchRepository matchRepository)
+        public MatchBuilder(IMatchRepository matchRepository)
         {
-            _context = context;
             _matchRepository = matchRepository;
         }
     
         public List<Match> GetLeagueMatches(List<int> seasonStartYears, List<int> tiers, List<string> teams)
         {
-            using var conn = _context.Database.GetDbConnection();
-
-            var matchModels = _matchRepository.GetLeagueMatchModels(conn, seasonStartYears, tiers, teams);
+            var matchModels = _matchRepository.GetLeagueMatchModels(seasonStartYears, tiers, teams);
             return GetMatches(matchModels);
         }
     
         public List<Match> GetHeadToHeadLeagueMatches(List<int> seasonStartYears, List<int> tiers, string teamOne, string teamTwo)
         {
-            using var conn = _context.Database.GetDbConnection();
-
-            var matchModels = _matchRepository.GetLeagueHeadToHeadMatchModels(conn, seasonStartYears, tiers, teamOne, teamTwo);
+            var matchModels = _matchRepository.GetLeagueHeadToHeadMatchModels(seasonStartYears, tiers, teamOne, teamTwo);
             return GetMatches(matchModels);
         }
     
         public List<KnockoutMatch> GetPlayOffMatches(List<int> seasonStartYears, List<int> tiers)
         {
-            using var conn = _context.Database.GetDbConnection();
-
-            var matchModels = _matchRepository.GetPlayOffMatchModels(conn, seasonStartYears, tiers);
+            var matchModels = _matchRepository.GetPlayOffMatchModels(seasonStartYears, tiers);
             return matchModels
                 .Select(m => new KnockoutMatch
                 {

@@ -13,20 +13,16 @@ namespace FootballHistoryTest.Api.Builders
     
     public class SeasonBuilder : ISeasonBuilder
     {
-        private readonly DatabaseContext _context;
         private readonly ISeasonRepository _seasonRepository;
 
-        public SeasonBuilder(DatabaseContext context, ISeasonRepository seasonRepository)
+        public SeasonBuilder(ISeasonRepository seasonRepository)
         {
-            _context = context;
             _seasonRepository = seasonRepository;
         }
             
         public List<Season> GetSeasons()
         {
-            using var conn = _context.Database.GetDbConnection();
-
-            var seasonModels = _seasonRepository.GetSeasonModels(conn);
+            var seasonModels = _seasonRepository.GetSeasonModels();
             return seasonModels.GroupBy(s => s.SeasonStartYear,
                 (startYear, models) => new Season
                 {

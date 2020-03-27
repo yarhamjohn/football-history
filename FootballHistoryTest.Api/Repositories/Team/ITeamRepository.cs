@@ -5,7 +5,7 @@ namespace FootballHistoryTest.Api.Repositories.Team
 {
     public interface ITeamRepository
     {
-        List<TeamModel> GetTeamModels(DbConnection conn);
-        List<TeamModel> GetTeamModels(DbConnection conn, int seasonStartYear, int tier);
+        List<TeamModel> GetTeamModels();
+        List<TeamModel> GetTeamModels(int seasonStartYear, int tier);
     }
 }

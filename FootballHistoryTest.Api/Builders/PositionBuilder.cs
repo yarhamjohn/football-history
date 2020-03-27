@@ -21,16 +21,14 @@ namespace FootballHistoryTest.Api.Builders
     
     public class PositionBuilder : IPositionBuilder
     {
-        private readonly DatabaseContext _context;
         private readonly ILeagueRepository _leagueRepository;
         private readonly IMatchRepository _matchRepository;
         private readonly IPointsDeductionRepository _pointDeductionsRepository;
         private readonly ITierRepository _tierRepository;
 
-        public PositionBuilder(DatabaseContext context, ILeagueRepository leagueRepository, IMatchRepository matchRepository,
+        public PositionBuilder(ILeagueRepository leagueRepository, IMatchRepository matchRepository,
             IPointsDeductionRepository pointDeductionsRepository, ITierRepository tierRepository)
         {
-            _context = context;
             _leagueRepository = leagueRepository;
             _matchRepository = matchRepository;
             _pointDeductionsRepository = pointDeductionsRepository;
@@ -39,11 +37,9 @@ namespace FootballHistoryTest.Api.Builders
 
         public List<LeaguePosition> GetLeaguePositions(int seasonStartYear, int tier, string team)
         {
-            using var conn = _context.Database.GetDbConnection();
-            
-            var leagueMatches = _matchRepository.GetLeagueMatchModels(conn, seasonStartYear, tier);
-            var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(conn, new List<int> {seasonStartYear}, new List<int> {tier});
-            var leagueModel = _leagueRepository.GetLeagueModel(conn, seasonStartYear, tier);
+            var leagueMatches = _matchRepository.GetLeagueMatchModels(seasonStartYear, tier);
+            var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(new List<int> {seasonStartYear}, new List<int> {tier});
+            var leagueModel = _leagueRepository.GetLeagueModel(seasonStartYear, tier);
 
             return LeaguePositionCalculator.GetPositions(leagueMatches, leagueModel, pointsDeductions, team);
         }
@@ -58,18 +54,16 @@ namespace FootballHistoryTest.Api.Builders
 
         public List<HistoricalPosition> GetHistoricalPositionsForSeasons(List<int> seasonStartYears, string team)
         {
-            using var conn = _context.Database.GetDbConnection();
-
             var historicalPositions = new List<HistoricalPosition>();
 
-            var tierModels = _tierRepository.GetTierModels(conn, seasonStartYears, team);
+            var tierModels = _tierRepository.GetTierModels(seasonStartYears, team);
             var tiers = tierModels.Select(t => t.Tier).ToList();
 
-            var leagueMatches = _matchRepository.GetLeagueMatchModels(conn, seasonStartYears, tiers);
-            var playOffMatches = _matchRepository.GetPlayOffMatchModels(conn, seasonStartYears, tiers);
-            var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(conn, seasonStartYears, tiers);
+            var leagueMatches = _matchRepository.GetLeagueMatchModels(seasonStartYears, tiers);
+            var playOffMatches = _matchRepository.GetPlayOffMatchModels(seasonStartYears, tiers);
+            var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(seasonStartYears, tiers);
 
-            var leagueModels = _leagueRepository.GetLeagueModels(conn, seasonStartYears, tiers);
+            var leagueModels = _leagueRepository.GetLeagueModels(seasonStartYears, tiers);
             
             foreach (var tierModel in tierModels)
             {

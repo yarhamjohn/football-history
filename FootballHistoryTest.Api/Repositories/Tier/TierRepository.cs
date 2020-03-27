@@ -2,13 +2,24 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using FootballHistoryTest.Api.Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace FootballHistoryTest.Api.Repositories.Tier
 {
     public class TierRepository : ITierRepository
     {
-        public List<TierModel> GetTierModels(DbConnection conn, List<int> seasonStartYears, string team)
+        private readonly DatabaseContext _context;
+
+        public TierRepository(DatabaseContext context)
         {
+            _context = context;
+        }
+
+        public List<TierModel> GetTierModels(List<int> seasonStartYears, string team)
+        {
+            var conn = _context.Database.GetDbConnection();
+
             var cmd = GetDbCommand(conn,  team);
             var result = GetTiers(cmd).Where(t => seasonStartYears.Contains(t.SeasonStartYear)).ToList();
             conn.Close();
