@@ -52,7 +52,7 @@ LEFT JOIN dbo.Clubs AS hc
   ON hc.Id = m.HomeClubId
 LEFT JOIN dbo.Clubs AS ac
   ON ac.Id = m.AwayClubId
-WHERE hc.Name = @Team OR ac.Name = @Team AND MONTH(m.MatchDate) >= 7
+WHERE (hc.Name = @Team OR ac.Name = @Team) AND MONTH(m.MatchDate) >= 7
 ORDER BY ROW_NUMBER() OVER (PARTITION BY YEAR(m.MatchDate) ORDER BY YEAR(m.MatchDate))";
 
             conn.Open();
