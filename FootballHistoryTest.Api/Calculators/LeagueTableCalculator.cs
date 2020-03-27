@@ -25,7 +25,7 @@ namespace FootballHistoryTest.Api.Calculators
             var expandedLeagueTable = AddMissingTeams(leagueTable, leagueMatches.Select(m => m.HomeTeam).Distinct().ToList());
             return SortTable(expandedLeagueTable, leagueModel);
         }
-        
+
         private static List<LeagueTableRow> GetTable(List<MatchModel> leagueMatches, LeagueModel leagueModel, List<PointsDeductionModel> pointDeductions)
         {
             var leagueTable = new List<LeagueTableRow>();
@@ -33,7 +33,7 @@ namespace FootballHistoryTest.Api.Calculators
             var teams = leagueMatches.Select(m => m.HomeTeam).Distinct();
             foreach (var team in teams)
             {
-                var teamMatches = leagueMatches.Where(m => MatchCalculator.MatchInvolvesTeam(m, team)).ToList();
+                var teamMatches = leagueMatches.Where(m => MatchInvolvesTeam(m, team)).ToList();
                 var numWins = GetNumWins(teamMatches, team);
                 var numDefeats = GetNumDefeats(teamMatches, team);
                 var numDraws = GetNumDraws(teamMatches, team);
@@ -137,7 +137,7 @@ namespace FootballHistoryTest.Api.Calculators
         {
             var existingTeams = leagueTable.Select(r => r.Team);
             var missingTeams = teams.Except(existingTeams);
-            
+
             leagueTable.AddRange(missingTeams.Select(team => new LeagueTableRow {Team = team}));
             return leagueTable;
         }
@@ -149,23 +149,94 @@ namespace FootballHistoryTest.Api.Calculators
 
         private static int GetNumDraws(List<MatchModel> teamMatches, string team)
         {
-            return teamMatches.Count(m => MatchCalculator.TeamDrewMatch(m, team));
+            return teamMatches.Count(m => TeamDrewMatch(m, team));
         }
 
         private static int GetNumDefeats(List<MatchModel> matches, string team)
         {
-            return matches.Count(m => MatchCalculator.TeamLostMatch(m, team));
+            return matches.Count(m => TeamLostMatch(m, team));
         }
 
         private static int GetNumWins(List<MatchModel> matches, string team)
         {
-            return matches.Count(m => MatchCalculator.TeamWonMatch(m, team));
+            return matches.Count(m => TeamWonMatch(m, team));
         }
 
         private static string? GetPlayOffWinner(List<MatchModel> playOffMatches)
         {
             var playOffFinal = playOffMatches.SingleOrDefault(m => m.Round == "Final");
-            return playOffFinal == null ? null : MatchCalculator.GetMatchWinner(playOffFinal);
+            return playOffFinal == null ? null : GetMatchWinner(playOffFinal);
+        }
+
+                public static bool MatchInvolvesTeam(MatchModel match, string team)
+        {
+            return match.HomeTeam == team || match.AwayTeam == team;
+        }
+
+        private static string? GetMatchWinner(MatchModel matchModel)
+        {
+            if (matchModel.HomeGoals > matchModel.AwayGoals)
+            {
+                return matchModel.HomeTeam;
+            }
+
+            if (matchModel.HomeGoals < matchModel.AwayGoals)
+            {
+                return matchModel.AwayTeam;
+            }
+
+            if (matchModel.HomeGoalsExtraTime > matchModel.AwayGoalsExtraTime)
+            {
+                return matchModel.HomeTeam;
+            }
+
+            if (matchModel.HomeGoalsExtraTime < matchModel.AwayGoalsExtraTime)
+            {
+                return matchModel.AwayTeam;
+            }
+
+            if (matchModel.HomePenaltiesScored > matchModel.AwayPenaltiesScored)
+            {
+                return matchModel.HomeTeam;
+            }
+
+            if (matchModel.HomePenaltiesScored < matchModel.AwayPenaltiesScored)
+            {
+                return matchModel.AwayTeam;
+            }
+
+            return null;
+        }
+
+        private static bool TeamWonMatch(MatchModel match, string team)
+        {
+            return match.HomeTeam == team && HomeTeamWon(match) ||
+                   match.AwayTeam == team && AwayTeamWon(match);
+        }
+
+        private static bool TeamLostMatch(MatchModel match, string team)
+        {
+            return match.HomeTeam == team && AwayTeamWon(match) ||
+                   match.AwayTeam == team && HomeTeamWon(match);
+        }
+
+        public static bool TeamDrewMatch(MatchModel match, string team)
+        {
+            return !TeamWonMatch(match, team) && !TeamLostMatch(match, team);
+        }
+
+        private static bool HomeTeamWon(MatchModel match)
+        {
+            return match.HomeGoals > match.AwayGoals
+                   || match.HomeGoalsExtraTime > match.AwayGoalsExtraTime
+                   || match.HomePenaltiesScored > match.AwayPenaltiesScored;
+        }
+
+        private static bool AwayTeamWon(MatchModel match)
+        {
+            return match.HomeGoals < match.AwayGoals
+                   || match.HomeGoalsExtraTime < match.AwayGoalsExtraTime
+                   || match.HomePenaltiesScored < match.AwayPenaltiesScored;
         }
     }
 }
