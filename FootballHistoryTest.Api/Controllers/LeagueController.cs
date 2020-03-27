@@ -15,9 +15,10 @@ namespace FootballHistoryTest.Api.Controllers
         }
 
         [HttpGet("[action]")]
-        public League GetLeague(int seasonStartYear, int tier)
+        public League GetCompletedLeague(int seasonStartYear, int tier)
         {
-            return _leagueBuilder.GetLeague(seasonStartYear, tier);
+            var seasonEndDate = new DateTime(seasonStartYear, 06, 30);
+            return _leagueBuilder.GetLeagueOnDate(tier, seasonEndDate);
         }
 
         [HttpGet("[action]")]

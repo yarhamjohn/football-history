@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using FootballHistoryTest.Api.Calculators;
 using FootballHistoryTest.Api.Domain;
 using FootballHistoryTest.Api.Repositories.League;
@@ -11,53 +12,31 @@ namespace FootballHistoryTest.Api.Builders
 {
     public interface ILeagueBuilder
     {
-        League GetLeague(int seasonStartYear, int tier);
         League GetLeagueOnDate(int tier, DateTime date);
     }
-    
+
     public class LeagueBuilder : ILeagueBuilder
     {
         private readonly ILeagueRepository _leagueRepository;
         private readonly IMatchRepository _matchRepository;
         private readonly IPointsDeductionRepository _pointDeductionsRepository;
 
-        public LeagueBuilder( ILeagueRepository leagueRepository, IMatchRepository matchRepository, IPointsDeductionRepository pointDeductionsRepository)
+        public LeagueBuilder(ILeagueRepository leagueRepository, IMatchRepository matchRepository,
+            IPointsDeductionRepository pointDeductionsRepository)
         {
             _leagueRepository = leagueRepository;
             _matchRepository = matchRepository;
             _pointDeductionsRepository = pointDeductionsRepository;
         }
 
-        public League GetLeague(int seasonStartYear, int tier)
-        {
-            var playOffMatches = _matchRepository.GetPlayOffMatchModels(seasonStartYear, tier);
-            var leagueMatches = _matchRepository.GetLeagueMatchModels(seasonStartYear, tier);
-            var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(seasonStartYear, tier);
-            var leagueModel = _leagueRepository.GetLeagueModel(seasonStartYear, tier);
-            var leagueTable = LeagueTableCalculator.GetFullLeagueTable(leagueMatches, playOffMatches, leagueModel, pointsDeductions);
-
-            return new League
-            {
-                Name = leagueModel.Name,
-                Tier = leagueModel.Tier,
-                TotalPlaces = leagueModel.TotalPlaces,
-                PromotionPlaces = leagueModel.PromotionPlaces,
-                RelegationPlaces = leagueModel.RelegationPlaces,
-                PlayOffPlaces = leagueModel.PlayOffPlaces,
-                PointsForWin = leagueModel.PointsForWin,
-                StartYear = leagueModel.StartYear,
-                Table = leagueTable
-            };
-        }
-
         public League GetLeagueOnDate(int tier, DateTime date)
         {
             var seasonStartYear = date.Month > 6 ? date.Year : date.Year - 1;
-            
-            var leagueMatches = _matchRepository.GetLeagueMatchModels(seasonStartYear, tier);
+
             var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(seasonStartYear, tier);
             var leagueModel = _leagueRepository.GetLeagueModel(seasonStartYear, tier);
-            var leagueTable = LeagueTableCalculator.GetPartialLeagueTable(leagueMatches, leagueModel, pointsDeductions, date);
+            var playOffMatches = _matchRepository.GetPlayOffMatchModels(seasonStartYear, tier);
+            var leagueMatches = _matchRepository.GetLeagueMatchModels(seasonStartYear, tier);
 
             return new League
             {
@@ -69,8 +48,23 @@ namespace FootballHistoryTest.Api.Builders
                 PlayOffPlaces = leagueModel.PlayOffPlaces,
                 PointsForWin = leagueModel.PointsForWin,
                 StartYear = leagueModel.StartYear,
-                Table = leagueTable
+                Table = GetLeagueTable(date, playOffMatches, leagueMatches, leagueModel, pointsDeductions)
             };
+        }
+
+        private static List<LeagueTableRow> GetLeagueTable(DateTime date, List<MatchModel> playOffMatches,
+            List<MatchModel> leagueMatches, LeagueModel leagueModel,
+            List<PointsDeductionModel> pointsDeductions)
+        {
+            return AllMatchesHaveBeenPlayed(date, playOffMatches, leagueMatches)
+                ? LeagueTableCalculator.GetFullLeagueTable(leagueMatches, playOffMatches, leagueModel, pointsDeductions)
+                : LeagueTableCalculator.GetPartialLeagueTable(leagueMatches, leagueModel, pointsDeductions, date);
+        }
+
+        private static bool AllMatchesHaveBeenPlayed(DateTime date, IEnumerable<MatchModel> playOffMatches,
+            IEnumerable<MatchModel> leagueMatches)
+        {
+            return !playOffMatches.Any(match => match.Date >= date) && !leagueMatches.Any(match => match.Date >= date);
         }
     }
 

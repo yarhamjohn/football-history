@@ -16,7 +16,6 @@ namespace FootballHistoryTest.Api.Builders
         List<LeaguePosition> GetLeaguePositions(int seasonStartYear, int tier, string team);
         List<HistoricalPosition> GetHistoricalPositions(int startYear, int endYear, string team);
         List<HistoricalPosition> GetHistoricalPositionsForSeasons(List<int> seasonStartYears, string team);
-
     }
     
     public class PositionBuilder : IPositionBuilder
