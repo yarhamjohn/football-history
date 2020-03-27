@@ -101,6 +101,6 @@ namespace FootballHistoryTest.Api.Builders
         public int Points { get; set; }
         public int PointsDeducted { get; set; }
         public string PointsDeductionReason { get; set; }
-        public LeagueStatus Status { get; set; }
+        public string Status { get; set; }
     }
 }

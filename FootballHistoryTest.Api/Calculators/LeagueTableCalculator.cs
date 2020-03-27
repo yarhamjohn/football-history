@@ -72,28 +72,28 @@ namespace FootballHistoryTest.Api.Calculators
             {
                 if (r.Position == 1)
                 {
-                    r.Status = LeagueStatus.Champions;
+                    r.Status = "Champions";
                 }
 
                 if (r.Position > leagueTable.Count - leagueModel.RelegationPlaces)
                 {
-                    r.Status = LeagueStatus.Relegated;
+                    r.Status = "Relegated";
                 }
 
                 if (r.Position > 1 && r.Position <= leagueModel.PromotionPlaces)
                 {
-                    r.Status = LeagueStatus.Promoted;
+                    r.Status = "Promoted";
                 }
 
                 if (r.Position > leagueModel.PromotionPlaces &&
                     r.Position <= leagueModel.PromotionPlaces + leagueModel.PlayOffPlaces)
                 {
-                    r.Status = LeagueStatus.PlayOffs;
+                    r.Status = "PlayOffs";
                 }
 
                 if (r.Team == playOffWinner)
                 {
-                    r.Status = LeagueStatus.PlayOffWinner;
+                    r.Status = "PlayOff Winner";
                 }
             });
 

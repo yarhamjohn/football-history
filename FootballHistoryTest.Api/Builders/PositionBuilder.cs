@@ -104,6 +104,6 @@ namespace FootballHistoryTest.Api.Builders
         public int Tier { get; set; }
         public int Position { get; set; }
         public int AbsolutePosition { get; set; }
-        public LeagueStatus Status { get; set; }
+        public string Status { get; set; }
     }
 }
