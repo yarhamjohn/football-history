@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
-using FootballHistoryTest.Api.Domain;
 using FootballHistoryTest.Api.Repositories.Season;
-using Microsoft.EntityFrameworkCore;
 
 namespace FootballHistoryTest.Api.Builders
 {

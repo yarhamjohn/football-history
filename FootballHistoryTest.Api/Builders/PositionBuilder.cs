@@ -2,12 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FootballHistoryTest.Api.Calculators;
-using FootballHistoryTest.Api.Domain;
 using FootballHistoryTest.Api.Repositories.League;
 using FootballHistoryTest.Api.Repositories.Match;
 using FootballHistoryTest.Api.Repositories.PointDeductions;
 using FootballHistoryTest.Api.Repositories.Tier;
-using Microsoft.EntityFrameworkCore;
 
 namespace FootballHistoryTest.Api.Builders
 {
