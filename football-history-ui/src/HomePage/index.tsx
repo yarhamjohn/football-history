@@ -1,6 +1,6 @@
 import React, {FunctionComponent} from "react";
 
-const Page: FunctionComponent = () => {
+const HomePage: FunctionComponent = () => {
     return (
         <div>
             <h1>History of the English Football League</h1>
@@ -61,4 +61,4 @@ const Page: FunctionComponent = () => {
 
 };
 
-export { Page };
+export { HomePage };

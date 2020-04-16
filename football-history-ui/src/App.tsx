@@ -1,9 +1,12 @@
-import React from "react";
+import React, { FunctionComponent, useState } from "react";
 import "./App.css";
-import { Page } from "./HomePage";
+import { HomePage } from "./HomePage";
 import { AppHeader } from "./components/AppHeader";
+import { ClubPage } from "./ClubPage";
 
-function App() {
+const App: FunctionComponent = () => {
+  const [ activePage, setActivePage ] = useState<"Home" | "Club">("Home");
+
   return (
     <div
       style={{
@@ -13,9 +16,9 @@ function App() {
         gridTemplateAreas: "'icon icon header header' 'leftGutter main main rightGutter'",
       }}
     >
-      <AppHeader />
+      <AppHeader activePage={activePage} setActivePage={(page) => setActivePage(page)}/>
       <div style={{ gridArea: "main" }}>
-        <Page />
+        {activePage === "Home" ? <HomePage /> : <ClubPage />}
       </div>
     </div>
   );
