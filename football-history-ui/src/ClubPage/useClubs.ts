@@ -15,7 +15,7 @@ const useClubs = () => {
       .catch(console.log);
   }, []);
 
-  return clubs;
+  return { clubs };
 };
 
 export { useClubs };
