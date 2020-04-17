@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useState } from "react";
 import { Divider, Dropdown, DropdownItemProps } from "semantic-ui-react";
 import { Club, useClubs } from "./useClubs";
+import { LeagueTable } from "../components/LeagueTable";
 
 function GetDropDownClubs(clubs: Club[]): DropdownItemProps[] {
   return clubs.map((c) => {
@@ -18,7 +19,7 @@ function isString(x: any): x is string {
 
 const ClubPage: FunctionComponent = () => {
   const { clubs } = useClubs();
-  const [selectedClub, setSelectedClub] = useState<Club>();
+  const [selectedClub, setSelectedClub] = useState<Club | undefined>(undefined);
 
   const selectClub = (selection: any) => {
     if (isString(selection)) {
@@ -56,7 +57,17 @@ const ClubPage: FunctionComponent = () => {
       />
       <div style={{ gridArea: "clubMain" }}>
         <Divider />
-        <h1 style={{ margin: 0, gridArea: "clubMain" }}>{selectedClub?.name}</h1>
+        {selectedClub === undefined ? (
+          <p>
+            Select a club from the dropdown. The list contains all clubs to have featured in the
+            Football League or Premier League since 1992.
+          </p>
+        ) : (
+          <>
+            <h1>{selectedClub.name}</h1>
+            <LeagueTable club={selectedClub.name} seasonStartYear={2012} />
+          </>
+        )}
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
@@ -16,6 +17,43 @@ namespace FootballHistoryTest.Api.Repositories.Tier
             _context = context;
         }
 
+        public int GetTierForTeamInYear(int seasonStartYear, string team)
+        {
+            var conn = _context.Database.GetDbConnection();
+
+            var cmd = GetDbCommand(conn,  team, seasonStartYear);
+            var result = GetTier(cmd);
+            conn.Close();
+            return result;
+        }
+
+        private DbCommand GetDbCommand(DbConnection conn, string team, int seasonStartYear)
+        {
+            const string sql = @"
+SELECT DISTINCT d.Tier
+  FROM [dbo].[LeagueMatches] AS m
+LEFT JOIN dbo.Divisions AS d
+  ON d.Id = m.DivisionId
+LEFT JOIN dbo.Clubs AS hc
+  ON hc.Id = m.HomeClubId
+LEFT JOIN dbo.Clubs AS ac
+  ON ac.Id = m.AwayClubId
+WHERE (hc.Name = @Team OR ac.Name = @Team) AND m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonStartYear + 1, 6, 30)";
+
+            conn.Open();
+            
+            var cmd = conn.CreateCommand();
+            cmd.CommandText = sql;
+            
+            var teamParameter = new SqlParameter {ParameterName = "@Team", Value = team};
+            cmd.Parameters.Add(teamParameter);
+
+            var seasonStartYearParameter = new SqlParameter {ParameterName = "@SeasonStartYear", Value = seasonStartYear};
+            cmd.Parameters.Add(seasonStartYearParameter);
+            
+            return cmd;
+        }
+
         public List<TierModel> GetTierModels(List<int> seasonStartYears, string team)
         {
             var conn = _context.Database.GetDbConnection();
@@ -24,6 +62,11 @@ namespace FootballHistoryTest.Api.Repositories.Tier
             var result = GetTiers(cmd).Where(t => seasonStartYears.Contains(t.SeasonStartYear)).ToList();
             conn.Close();
             return result;
+        }
+
+        private static int GetTier(DbCommand cmd)
+        {
+            return Convert.ToInt32(cmd.ExecuteScalar());
         }
         
         private static List<TierModel> GetTiers(DbCommand cmd)
