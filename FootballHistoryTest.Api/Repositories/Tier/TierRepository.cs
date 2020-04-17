@@ -17,7 +17,7 @@ namespace FootballHistoryTest.Api.Repositories.Tier
             _context = context;
         }
 
-        public int GetTierForTeamInYear(int seasonStartYear, string team)
+        public int? GetTierForTeamInYear(int seasonStartYear, string team)
         {
             var conn = _context.Database.GetDbConnection();
 
@@ -64,8 +64,14 @@ WHERE (hc.Name = @Team OR ac.Name = @Team) AND m.MatchDate BETWEEN DATEFROMPARTS
             return result;
         }
 
-        private static int GetTier(DbCommand cmd)
+        private static int? GetTier(DbCommand cmd)
         {
+            var result = cmd.ExecuteScalar();
+            if (result == null)
+            {
+                return null;
+            }
+            
             return Convert.ToInt32(cmd.ExecuteScalar());
         }
         

@@ -17,7 +17,7 @@ export interface LeagueTableRow {
 }
 
 export interface LeagueTable {
-  name: string;
+  name: string | null;
   tier: number;
   totalPlaces: number;
   promotionPlaces: number;
@@ -25,7 +25,7 @@ export interface LeagueTable {
   relegationPlaces: number;
   pointsForWin: number;
   startYear: number;
-  table: LeagueTableRow[];
+  table: LeagueTableRow[] | null;
 }
 
 const useLeagueTable = () => {

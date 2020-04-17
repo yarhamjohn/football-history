@@ -29,7 +29,7 @@ namespace FootballHistoryTest.Api.Controllers
         {
             var tier = _tierRepository.GetTierForTeamInYear(seasonStartYear, team);
             var seasonEndDate = new DateTime(seasonStartYear + 1, 06, 30);
-            return _leagueBuilder.GetLeagueOnDate(tier, seasonEndDate);
+            return tier == null ? new League() : _leagueBuilder.GetLeagueOnDate((int)tier, seasonEndDate);
         }
 
         [HttpGet("[action]")]

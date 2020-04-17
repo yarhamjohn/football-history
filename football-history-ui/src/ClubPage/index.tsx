@@ -2,6 +2,7 @@ import React, { FunctionComponent, useState } from "react";
 import { Divider, Dropdown, DropdownItemProps } from "semantic-ui-react";
 import { Club, useClubs } from "./useClubs";
 import { LeagueTable } from "../components/LeagueTable";
+import { useSeasons } from "./useSeasons";
 
 function GetDropDownClubs(clubs: Club[]): DropdownItemProps[] {
   return clubs.map((c) => {
@@ -19,6 +20,7 @@ function isString(x: any): x is string {
 
 const ClubPage: FunctionComponent = () => {
   const { clubs } = useClubs();
+  const { seasons } = useSeasons();
   const [selectedClub, setSelectedClub] = useState<Club | undefined>(undefined);
 
   const selectClub = (selection: any) => {
@@ -35,6 +37,14 @@ const ClubPage: FunctionComponent = () => {
     } else {
       throw new Error("An unexpected error occurred. The selection could not be processed.");
     }
+  };
+
+  const getLastSeason = () => {
+    if (seasons === undefined) {
+      return undefined;
+    }
+
+    return Math.max(...seasons.map((s) => s.startYear));
   };
 
   return (
@@ -65,7 +75,7 @@ const ClubPage: FunctionComponent = () => {
         ) : (
           <>
             <h1>{selectedClub.name}</h1>
-            <LeagueTable club={selectedClub.name} seasonStartYear={2012} />
+            <LeagueTable club={selectedClub.name} seasonStartYear={getLastSeason()} />
           </>
         )}
       </div>
