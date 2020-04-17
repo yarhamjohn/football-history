@@ -9,7 +9,12 @@ const AppHeader: FunctionComponent<{
   return (
     <>
       <Image src={soccerBall} fluid style={{ gridArea: "icon", padding: "10px" }} />
-      <Menu color={"teal"} pointing secondary style={{ fontSize: "1.5rem", gridArea: "header" }}>
+      <Menu
+        color={"teal"}
+        pointing
+        secondary
+        style={{ fontSize: "1.5rem", alignSelf: "center", gridArea: "header", margin: 0 }}
+      >
         <Menu.Item name="Home" active={activePage === "Home"} onClick={() => setActivePage("Home")}>
           Home
         </Menu.Item>

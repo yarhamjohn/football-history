@@ -39,7 +39,7 @@ const ClubPage: FunctionComponent = () => {
   return (
     <div
       style={{
-        margin: "1rem",
+        marginTop: "1rem",
         display: "grid",
         gridTemplateColumns: "auto minmax(100px, auto) auto",
         gridTemplateRows: "auto auto",

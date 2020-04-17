@@ -11,9 +11,9 @@ const App: FunctionComponent = () => {
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "100px auto 100px",
+        gridTemplateColumns: "75px auto 75px",
         gridTemplateRows: "auto auto ",
-        gridTemplateAreas: "'icon header header' 'leftGutter main rightGutter'",
+        gridTemplateAreas: "'icon header rightGutter' 'leftGutter main rightGutter'",
       }}
     >
       <AppHeader activePage={activePage} setActivePage={(page) => setActivePage(page)} />
