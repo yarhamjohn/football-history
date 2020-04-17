@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { Divider, Dropdown, DropdownItemProps } from "semantic-ui-react";
+import { Divider, Dropdown, DropdownItemProps, Icon } from "semantic-ui-react";
 import { Club, useClubs } from "./useClubs";
 import { LeagueTable } from "../components/LeagueTable";
 import { Season, useSeasons } from "./useSeasons";
@@ -98,20 +98,36 @@ const ClubPage: FunctionComponent = () => {
             Football League or Premier League since 1992.
           </p>
         ) : (
-          <>
-            <h1>{selectedClub.name}</h1>
-            <LeagueTable club={selectedClub.name} seasonStartYear={selectedSeasonStartYear} />
+          <div
+            style={{
+              display: "grid",
+              gridTemplateRows: "auto auto auto",
+              gridTemplateColumns: "25px auto 25px",
+              gridTemplateAreas: "'name name name' 'left filter right' 'table table table'",
+            }}
+          >
+            <h1 style={{ gridArea: "name" }}>{selectedClub.name}</h1>
             {seasons !== undefined && (
-              <Dropdown
-                placeholder="Select Season"
-                fluid
-                selection
-                options={GetDropdownSeasons(seasons)}
-                onChange={(_, data) => selectSeasonStartYear(data.value)}
-                value={selectedSeasonStartYear}
-              />
+              <>
+                <Icon name="caret left" size="big" style={{ gridArea: "left" }} />
+                <Dropdown
+                  placeholder="Select Season"
+                  fluid
+                  selection
+                  options={GetDropdownSeasons(seasons)}
+                  onChange={(_, data) => selectSeasonStartYear(data.value)}
+                  value={selectedSeasonStartYear}
+                  style={{ gridArea: "filter" }}
+                />
+                <Icon name="caret right" size="big" style={{ gridArea: "right" }} />
+              </>
             )}
-          </>
+            <LeagueTable
+              club={selectedClub.name}
+              seasonStartYear={selectedSeasonStartYear}
+              style={{ gridArea: "table" }}
+            />
+          </div>
         )}
       </div>
     </div>
