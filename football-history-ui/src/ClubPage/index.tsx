@@ -1,10 +1,10 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import { Divider, Dropdown, DropdownItemProps } from "semantic-ui-react";
 import { Club, useClubs } from "./useClubs";
 import { LeagueTable } from "../components/LeagueTable";
-import { useSeasons } from "./useSeasons";
+import { Season, useSeasons } from "./useSeasons";
 
-function GetDropDownClubs(clubs: Club[]): DropdownItemProps[] {
+function GetDropdownClubs(clubs: Club[]): DropdownItemProps[] {
   return clubs.map((c) => {
     return {
       key: c.name,
@@ -14,14 +14,31 @@ function GetDropDownClubs(clubs: Club[]): DropdownItemProps[] {
   });
 }
 
+function GetDropdownSeasons(seasons: Season[]): DropdownItemProps[] {
+  return seasons.map((s) => {
+    return {
+      key: s.startYear,
+      text: `${s.startYear} - ${s.endYear}`,
+      value: s.startYear,
+    };
+  });
+}
+
 function isString(x: any): x is string {
   return typeof x === "string";
+}
+
+function isNumber(x: any): x is number {
+  return typeof x === "number";
 }
 
 const ClubPage: FunctionComponent = () => {
   const { clubs } = useClubs();
   const { seasons } = useSeasons();
   const [selectedClub, setSelectedClub] = useState<Club | undefined>(undefined);
+  const [selectedSeasonStartYear, setSelectedSeasonStartYear] = useState<number | undefined>(
+    undefined
+  );
 
   const selectClub = (selection: any) => {
     if (isString(selection)) {
@@ -39,13 +56,21 @@ const ClubPage: FunctionComponent = () => {
     }
   };
 
-  const getLastSeason = () => {
+  const selectSeasonStartYear = (selection: any) => {
+    if (isNumber(selection)) {
+      setSelectedSeasonStartYear(selection);
+    } else {
+      throw new Error("An unexpected error occurred. The selection could not be processed.");
+    }
+  };
+
+  useEffect(() => {
     if (seasons === undefined) {
       return undefined;
     }
 
-    return Math.max(...seasons.map((s) => s.startYear));
-  };
+    return setSelectedSeasonStartYear(Math.max(...seasons.map((s) => s.startYear)));
+  }, [selectedClub]);
 
   return (
     <div
@@ -61,7 +86,7 @@ const ClubPage: FunctionComponent = () => {
         placeholder="Select Club"
         search
         selection
-        options={GetDropDownClubs(clubs)}
+        options={GetDropdownClubs(clubs)}
         style={{ gridArea: "filter" }}
         onChange={(_, data) => selectClub(data.value)}
       />
@@ -75,7 +100,17 @@ const ClubPage: FunctionComponent = () => {
         ) : (
           <>
             <h1>{selectedClub.name}</h1>
-            <LeagueTable club={selectedClub.name} seasonStartYear={getLastSeason()} />
+            <LeagueTable club={selectedClub.name} seasonStartYear={selectedSeasonStartYear} />
+            {seasons !== undefined && (
+              <Dropdown
+                placeholder="Select Season"
+                fluid
+                selection
+                options={GetDropdownSeasons(seasons)}
+                onChange={(_, data) => selectSeasonStartYear(data.value)}
+                value={selectedSeasonStartYear}
+              />
+            )}
           </>
         )}
       </div>
