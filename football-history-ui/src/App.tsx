@@ -5,23 +5,21 @@ import { AppHeader } from "./components/AppHeader";
 import { ClubPage } from "./ClubPage";
 
 const App: FunctionComponent = () => {
-  const [ activePage, setActivePage ] = useState<"Home" | "Club">("Home");
+  const [activePage, setActivePage] = useState<"Home" | "Club">("Home");
 
   return (
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "25px 25px auto 25px",
-        gridTemplateRows: "50px auto ",
-        gridTemplateAreas: "'icon icon header header' 'leftGutter main main rightGutter'",
+        gridTemplateColumns: "100px auto 100px",
+        gridTemplateRows: "auto auto ",
+        gridTemplateAreas: "'icon header header' 'leftGutter main rightGutter'",
       }}
     >
-      <AppHeader activePage={activePage} setActivePage={(page) => setActivePage(page)}/>
-      <div style={{ gridArea: "main" }}>
-        {activePage === "Home" ? <HomePage /> : <ClubPage />}
-      </div>
+      <AppHeader activePage={activePage} setActivePage={(page) => setActivePage(page)} />
+      <div style={{ gridArea: "main" }}>{activePage === "Home" ? <HomePage /> : <ClubPage />}</div>
     </div>
   );
-}
+};
 
 export default App;

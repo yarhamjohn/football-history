@@ -24,28 +24,30 @@ const ClubPage: FunctionComponent = () => {
     if (isString(selection)) {
       const club = clubs.filter((c) => c.name === selection);
       if (club.length !== 1) {
-        throw " Incorrect number of clubs";
+        throw new Error(
+          `Clubs should be unique but there were ${
+            club.length
+          } clubs that matches the selection ${club.join(",")}.`
+        );
       }
       setSelectedClub(club[0]);
     } else {
-      throw "The selection was not a string type";
+      throw new Error("An unexpected error occurred. The selection could not be processed.");
     }
   };
 
   return (
     <div
       style={{
-        margin: "25px",
+        margin: "1rem",
         display: "grid",
-        gridTemplateColumns: "auto auto",
+        gridTemplateColumns: "auto minmax(100px, auto) auto",
         gridTemplateRows: "auto auto",
-        gridTemplateAreas: "'club filter' 'clubMain clubMain'",
+        gridTemplateAreas: "'clubTopLeft filter clubTopRight' 'clubMain clubMain clubMain'",
       }}
     >
-      <h1 style={{ margin: 0, gridArea: "club" }}>{selectedClub?.name}</h1>
       <Dropdown
         placeholder="Select Club"
-        fluid
         search
         selection
         options={GetDropDownClubs(clubs)}
@@ -54,6 +56,7 @@ const ClubPage: FunctionComponent = () => {
       />
       <div style={{ gridArea: "clubMain" }}>
         <Divider />
+        <h1 style={{ margin: 0, gridArea: "clubMain" }}>{selectedClub?.name}</h1>
       </div>
     </div>
   );
