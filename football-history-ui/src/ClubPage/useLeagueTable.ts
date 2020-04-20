@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export interface LeagueTableRow {
+export type Row = {
   position: number;
   team: string;
   played: number;
@@ -14,9 +14,9 @@ export interface LeagueTableRow {
   pointsDeducted: number;
   pointsDeductionReason: string | null;
   status: string | null;
-}
+};
 
-export interface LeagueTable {
+export type LeagueTable = {
   name: string | null;
   tier: number;
   totalPlaces: number;
@@ -25,8 +25,8 @@ export interface LeagueTable {
   relegationPlaces: number;
   pointsForWin: number;
   startYear: number;
-  table: LeagueTableRow[] | null;
-}
+  table: Row[] | null;
+};
 
 const useLeagueTable = () => {
   const [leagueTable, setLeagueTable] = useState<LeagueTable>();

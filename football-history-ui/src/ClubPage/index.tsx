@@ -13,7 +13,7 @@ const ClubPage: FunctionComponent = () => {
 
   useEffect(() => {
     if (seasons === undefined) {
-      return undefined;
+      return;
     }
 
     setSelectedSeason(Math.max(...seasons.map((s) => s.startYear)));

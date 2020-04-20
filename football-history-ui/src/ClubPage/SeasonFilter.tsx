@@ -1,6 +1,6 @@
 import { Dropdown, DropdownItemProps, Icon } from "semantic-ui-react";
-import React, { FunctionComponent, useEffect } from "react";
-import { Season, useSeasons } from "./useSeasons";
+import React, { FunctionComponent } from "react";
+import { Season } from "./useSeasons";
 import { isNumber } from "../shared/functions";
 
 const SeasonFilter: FunctionComponent<{
@@ -28,7 +28,7 @@ const SeasonFilter: FunctionComponent<{
   };
 
   const changeSeason = (nextSeason: number) => {
-    if (seasons.some((s) => s.startYear == nextSeason)) {
+    if (seasons.some((s) => s.startYear === nextSeason)) {
       setSelectedSeason(nextSeason);
     } else {
       return;

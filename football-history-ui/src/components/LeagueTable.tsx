@@ -1,6 +1,30 @@
 import React, { FunctionComponent, useEffect } from "react";
-import { useLeagueTable } from "../ClubPage/useLeagueTable";
+import { Row, useLeagueTable } from "../ClubPage/useLeagueTable";
 import { Table } from "semantic-ui-react";
+
+const LeagueTableRowCell: FunctionComponent<{ bold: boolean }> = ({ children, bold }) => {
+  return <Table.Cell style={bold ? { fontWeight: "bold" } : null}>{children}</Table.Cell>;
+};
+
+const LeagueTableRow: FunctionComponent<{ row: Row; club: string }> = ({ row, club }) => {
+  const bold = row.team === club;
+
+  return (
+    <Table.Row key={row.position}>
+      <LeagueTableRowCell bold={bold}>{row.position}</LeagueTableRowCell>
+      <LeagueTableRowCell bold={bold}>{row.team} </LeagueTableRowCell>
+      <LeagueTableRowCell bold={bold}>{row.played}</LeagueTableRowCell>
+      <LeagueTableRowCell bold={bold}>{row.won}</LeagueTableRowCell>
+      <LeagueTableRowCell bold={bold}>{row.drawn}</LeagueTableRowCell>
+      <LeagueTableRowCell bold={bold}>{row.lost}</LeagueTableRowCell>
+      <LeagueTableRowCell bold={bold}>{row.goalsFor}</LeagueTableRowCell>
+      <LeagueTableRowCell bold={bold}>{row.goalsAgainst}</LeagueTableRowCell>
+      <LeagueTableRowCell bold={bold}>{row.goalDifference}</LeagueTableRowCell>
+      <LeagueTableRowCell bold={bold}>{row.points}</LeagueTableRowCell>
+      <LeagueTableRowCell bold={bold}>{row.status}</LeagueTableRowCell>
+    </Table.Row>
+  );
+};
 
 const LeagueTable: FunctionComponent<{
   club: string;
@@ -32,39 +56,24 @@ const LeagueTable: FunctionComponent<{
           </p>
         </div>
       ) : (
-        <Table>
+        <Table basic={"very"} striped collapsing>
           <Table.Header>
             <Table.Row>
-              <Table.HeaderCell>Position</Table.HeaderCell>
-              <Table.HeaderCell>Team</Table.HeaderCell>
-              <Table.HeaderCell>Played</Table.HeaderCell>
-              <Table.HeaderCell>Won</Table.HeaderCell>
-              <Table.HeaderCell>Drawn</Table.HeaderCell>
-              <Table.HeaderCell>Lost</Table.HeaderCell>
+              <Table.HeaderCell></Table.HeaderCell>
+              <Table.HeaderCell></Table.HeaderCell>
+              <Table.HeaderCell>P</Table.HeaderCell>
+              <Table.HeaderCell>W</Table.HeaderCell>
+              <Table.HeaderCell>D</Table.HeaderCell>
+              <Table.HeaderCell>L</Table.HeaderCell>
               <Table.HeaderCell>GF</Table.HeaderCell>
               <Table.HeaderCell>GA</Table.HeaderCell>
               <Table.HeaderCell>Diff</Table.HeaderCell>
               <Table.HeaderCell>Points</Table.HeaderCell>
-              <Table.HeaderCell>Status</Table.HeaderCell>
+              <Table.HeaderCell></Table.HeaderCell>
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {leagueTable &&
-              leagueTable.table.map((r) => (
-                <Table.Row key={r.position}>
-                  <Table.HeaderCell>{r.position}</Table.HeaderCell>
-                  <Table.HeaderCell>{r.team}</Table.HeaderCell>
-                  <Table.HeaderCell>{r.played}</Table.HeaderCell>
-                  <Table.HeaderCell>{r.won}</Table.HeaderCell>
-                  <Table.HeaderCell>{r.drawn}</Table.HeaderCell>
-                  <Table.HeaderCell>{r.lost}</Table.HeaderCell>
-                  <Table.HeaderCell>{r.goalsFor}</Table.HeaderCell>
-                  <Table.HeaderCell>{r.goalsAgainst}</Table.HeaderCell>
-                  <Table.HeaderCell>{r.goalDifference}</Table.HeaderCell>
-                  <Table.HeaderCell>{r.points}</Table.HeaderCell>
-                  <Table.HeaderCell>{r.status}</Table.HeaderCell>
-                </Table.Row>
-              ))}
+            {leagueTable && leagueTable.table.map((r) => <LeagueTableRow row={r} club={club} />)}
           </Table.Body>
         </Table>
       )}

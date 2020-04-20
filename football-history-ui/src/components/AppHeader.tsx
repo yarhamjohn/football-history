@@ -1,6 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { Image, Menu } from "semantic-ui-react";
-import soccerBall from "../images/Soccer-Ball-icon.png";
+import { Menu } from "semantic-ui-react";
 
 const AppHeader: FunctionComponent<{
   activePage: "Home" | "Club";
