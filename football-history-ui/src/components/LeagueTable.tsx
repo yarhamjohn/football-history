@@ -2,26 +2,59 @@ import React, { FunctionComponent, useEffect } from "react";
 import { Row, useLeagueTable } from "../ClubPage/useLeagueTable";
 import { Table } from "semantic-ui-react";
 
-const LeagueTableRowCell: FunctionComponent<{ bold: boolean }> = ({ children, bold }) => {
-  return <Table.Cell style={bold ? { fontWeight: "bold" } : null}>{children}</Table.Cell>;
+const LeagueTableRowCell: FunctionComponent<{
+  bold: boolean;
+  color: string | null;
+}> = ({ children, bold, color }) => {
+  return (
+    <Table.Cell
+      style={bold ? { fontWeight: "bold", backgroundColor: color } : { backgroundColor: color }}
+    >
+      {children}
+    </Table.Cell>
+  );
 };
 
 const LeagueTableRow: FunctionComponent<{ row: Row; club: string }> = ({ row, club }) => {
   const bold = row.team === club;
+  const color =
+    row.status === "Champions" ? "#75B266" : row.status === "Relegated" ? "#B26694" : null;
 
   return (
     <Table.Row key={row.position}>
-      <LeagueTableRowCell bold={bold}>{row.position}</LeagueTableRowCell>
-      <LeagueTableRowCell bold={bold}>{row.team} </LeagueTableRowCell>
-      <LeagueTableRowCell bold={bold}>{row.played}</LeagueTableRowCell>
-      <LeagueTableRowCell bold={bold}>{row.won}</LeagueTableRowCell>
-      <LeagueTableRowCell bold={bold}>{row.drawn}</LeagueTableRowCell>
-      <LeagueTableRowCell bold={bold}>{row.lost}</LeagueTableRowCell>
-      <LeagueTableRowCell bold={bold}>{row.goalsFor}</LeagueTableRowCell>
-      <LeagueTableRowCell bold={bold}>{row.goalsAgainst}</LeagueTableRowCell>
-      <LeagueTableRowCell bold={bold}>{row.goalDifference}</LeagueTableRowCell>
-      <LeagueTableRowCell bold={bold}>{row.points}</LeagueTableRowCell>
-      <LeagueTableRowCell bold={bold}>{row.status}</LeagueTableRowCell>
+      <LeagueTableRowCell bold={bold} color={color}>
+        {row.position}
+      </LeagueTableRowCell>
+      <LeagueTableRowCell bold={bold} color={color}>
+        {row.team}{" "}
+      </LeagueTableRowCell>
+      <LeagueTableRowCell bold={bold} color={color}>
+        {row.played}
+      </LeagueTableRowCell>
+      <LeagueTableRowCell bold={bold} color={color}>
+        {row.won}
+      </LeagueTableRowCell>
+      <LeagueTableRowCell bold={bold} color={color}>
+        {row.drawn}
+      </LeagueTableRowCell>
+      <LeagueTableRowCell bold={bold} color={color}>
+        {row.lost}
+      </LeagueTableRowCell>
+      <LeagueTableRowCell bold={bold} color={color}>
+        {row.goalsFor}
+      </LeagueTableRowCell>
+      <LeagueTableRowCell bold={bold} color={color}>
+        {row.goalsAgainst}
+      </LeagueTableRowCell>
+      <LeagueTableRowCell bold={bold} color={color}>
+        {row.goalDifference}
+      </LeagueTableRowCell>
+      <LeagueTableRowCell bold={bold} color={color}>
+        {row.points}
+      </LeagueTableRowCell>
+      <LeagueTableRowCell bold={bold} color={color}>
+        {row.status}
+      </LeagueTableRowCell>
     </Table.Row>
   );
 };
