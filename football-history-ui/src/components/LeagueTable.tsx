@@ -5,8 +5,8 @@ import { Table } from "semantic-ui-react";
 const LeagueTable: FunctionComponent<{
   club: string;
   seasonStartYear: number | undefined;
-  style?: React.CSSProperties;
-}> = ({ club, seasonStartYear }) => {
+  style: React.CSSProperties;
+}> = ({ club, seasonStartYear, style }) => {
   const { leagueTable, getLeagueTable } = useLeagueTable();
 
   useEffect(() => {
@@ -16,12 +16,21 @@ const LeagueTable: FunctionComponent<{
   }, [club, seasonStartYear]);
 
   return (
-    <>
+    <div style={{ ...style }}>
       {leagueTable === undefined || leagueTable.table === null ? (
-        <p>
-          The selected club was not in the Football League or Premier League in the season
-          specified.
-        </p>
+        <div
+          style={{
+            height: "100px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <p style={{ fontWeight: "bold" }}>
+            The selected club was not in the Football League or Premier League in the season
+            specified.
+          </p>
+        </div>
       ) : (
         <Table>
           <Table.Header>
@@ -59,7 +68,7 @@ const LeagueTable: FunctionComponent<{
           </Table.Body>
         </Table>
       )}
-    </>
+    </div>
   );
 };
 

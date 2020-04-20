@@ -27,9 +27,30 @@ const SeasonFilter: FunctionComponent<{
     }
   };
 
+  const changeSeason = (nextSeason: number) => {
+    if (seasons.some((s) => s.startYear == nextSeason)) {
+      setSelectedSeason(nextSeason);
+    } else {
+      return;
+    }
+  };
+
+  const forwardOneSeason = () => {
+    selectedSeason !== undefined && changeSeason(selectedSeason + 1);
+  };
+
+  const backOneSeason = () => {
+    selectedSeason !== undefined && changeSeason(selectedSeason - 1);
+  };
+
   return (
     <div style={{ ...style, display: "flex", alignItems: "center", color: "#00B5AD" }}>
-      <Icon name="caret left" size="huge" />
+      <Icon
+        name="caret left"
+        size="huge"
+        onClick={() => backOneSeason()}
+        style={{ cursor: "pointer" }}
+      />
       <Dropdown
         placeholder="Select Season"
         fluid
@@ -39,7 +60,12 @@ const SeasonFilter: FunctionComponent<{
         value={selectedSeason}
         style={{ gridArea: "filter" }}
       />
-      <Icon name="caret right" size="huge" />
+      <Icon
+        name="caret right"
+        size="huge"
+        onClick={() => forwardOneSeason()}
+        style={{ cursor: "pointer" }}
+      />
     </div>
   );
 };
