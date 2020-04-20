@@ -5,24 +5,22 @@ import soccerBall from "../images/Soccer-Ball-icon.png";
 const AppHeader: FunctionComponent<{
   activePage: "Home" | "Club";
   setActivePage: (activePage: "Home" | "Club") => void;
-}> = ({ activePage, setActivePage }) => {
+  style: React.CSSProperties;
+}> = ({ activePage, setActivePage, style }) => {
   return (
-    <>
-      <Image src={soccerBall} fluid style={{ gridArea: "icon", padding: "10px" }} />
-      <Menu
-        color={"teal"}
-        pointing
-        secondary
-        style={{ fontSize: "1.5rem", alignSelf: "center", gridArea: "header", margin: 0 }}
-      >
-        <Menu.Item name="Home" active={activePage === "Home"} onClick={() => setActivePage("Home")}>
-          Home
-        </Menu.Item>
-        <Menu.Item name="Club" active={activePage === "Club"} onClick={() => setActivePage("Club")}>
-          Club
-        </Menu.Item>
-      </Menu>
-    </>
+    <Menu
+      color={"teal"}
+      pointing
+      secondary
+      style={{ ...style, fontSize: "1.5rem", alignSelf: "center", margin: 0 }}
+    >
+      <Menu.Item name="Home" active={activePage === "Home"} onClick={() => setActivePage("Home")}>
+        Home
+      </Menu.Item>
+      <Menu.Item name="Club" active={activePage === "Club"} onClick={() => setActivePage("Club")}>
+        Club
+      </Menu.Item>
+    </Menu>
   );
 };
 
