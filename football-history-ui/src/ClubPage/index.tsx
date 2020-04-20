@@ -4,42 +4,19 @@ import { Club, useClubs } from "./useClubs";
 import { LeagueTable } from "../components/LeagueTable";
 import { Season, useSeasons } from "./useSeasons";
 import { ClubFilter } from "./ClubFilter";
-
-function GetDropdownSeasons(seasons: Season[]): DropdownItemProps[] {
-  return seasons.map((s) => {
-    return {
-      key: s.startYear,
-      text: `${s.startYear} - ${s.endYear}`,
-      value: s.startYear,
-    };
-  });
-}
-
-function isNumber(x: any): x is number {
-  return typeof x === "number";
-}
+import { SeasonFilter } from "./SeasonFilter";
 
 const ClubPage: FunctionComponent = () => {
-  const { seasons } = useSeasons();
   const [selectedClub, setSelectedClub] = useState<Club | undefined>(undefined);
-  const [selectedSeasonStartYear, setSelectedSeasonStartYear] = useState<number | undefined>(
-    undefined
-  );
-
-  const selectSeasonStartYear = (selection: any) => {
-    if (isNumber(selection)) {
-      setSelectedSeasonStartYear(selection);
-    } else {
-      throw new Error("An unexpected error occurred. The selection could not be processed.");
-    }
-  };
+  const [selectedSeason, setSelectedSeason] = useState<number | undefined>(undefined);
+  const { seasons } = useSeasons();
 
   useEffect(() => {
     if (seasons === undefined) {
       return undefined;
     }
 
-    return setSelectedSeasonStartYear(Math.max(...seasons.map((s) => s.startYear)));
+    setSelectedSeason(Math.max(...seasons.map((s) => s.startYear)));
   }, [selectedClub]);
 
   return (
@@ -58,34 +35,25 @@ const ClubPage: FunctionComponent = () => {
       />
       <div style={{ gridArea: "clubMain" }}>
         <Divider />
-        {selectedClub !== undefined && (
+        {selectedClub !== undefined && seasons !== undefined && (
           <div
             style={{
               display: "grid",
-              gridTemplateRows: "auto auto auto",
-              gridTemplateColumns: "25px auto 25px",
-              gridTemplateAreas: "'name name name' 'left filter right' 'table table table'",
+              gridTemplateRows: "auto auto",
+              gridTemplateColumns: "auto",
+              gridTemplateAreas: "'seasonFilter' 'leagueTable'",
             }}
           >
-            {seasons !== undefined && (
-              <>
-                <Icon name="caret left" size="big" style={{ gridArea: "left" }} />
-                <Dropdown
-                  placeholder="Select Season"
-                  fluid
-                  selection
-                  options={GetDropdownSeasons(seasons)}
-                  onChange={(_, data) => selectSeasonStartYear(data.value)}
-                  value={selectedSeasonStartYear}
-                  style={{ gridArea: "filter" }}
-                />
-                <Icon name="caret right" size="big" style={{ gridArea: "right" }} />
-              </>
-            )}
+            <SeasonFilter
+              seasons={seasons}
+              selectedSeason={selectedSeason}
+              setSelectedSeason={(startYear) => setSelectedSeason(startYear)}
+              style={{ gridArea: "seasonFilter" }}
+            />
             <LeagueTable
               club={selectedClub.name}
-              seasonStartYear={selectedSeasonStartYear}
-              style={{ gridArea: "table" }}
+              seasonStartYear={selectedSeason}
+              style={{ gridArea: "leagueTable" }}
             />
           </div>
         )}{" "}

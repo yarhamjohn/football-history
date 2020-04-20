@@ -1,6 +1,7 @@
 import React, { FunctionComponent } from "react";
 import { Dropdown, DropdownItemProps } from "semantic-ui-react";
 import { Club, useClubs } from "./useClubs";
+import { isString } from "../shared/functions";
 
 const ClubFilter: FunctionComponent<{
   selectedClub: Club | undefined;
@@ -36,23 +37,28 @@ const ClubFilter: FunctionComponent<{
       }
       setSelectedClub(club[0]);
     } else {
-      throw new Error("An unexpected error occurred. The selection could not be processed.");
+      throw new Error(
+        `An unexpected error occurred. The selection (${selection.toString()}) could not be processed.`
+      );
     }
   };
 
-  function isString(x: any): x is string {
-    return typeof x === "string";
-  }
-
   return (
-    <div style={{ ...style, display: "flex", justifyContent: "space-between" }}>
+    <div
+      style={{
+        ...style,
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
       {selectedClub === undefined ? (
-        <p>
+        <p style={{ margin: "0 50px 0 0" }}>
           Select a club from the dropdown. The list contains all clubs to have featured in the
           Football League or Premier League since 1992.
         </p>
       ) : (
-        <h1>{selectedClub.name}</h1>
+        <h1 style={{ margin: 0 }}>{selectedClub.name}</h1>
       )}
       <Dropdown
         placeholder="Select Club"
