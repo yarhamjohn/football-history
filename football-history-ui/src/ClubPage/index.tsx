@@ -1,15 +1,16 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { Divider } from "semantic-ui-react";
-import { Club } from "./useClubs";
+import { Club, useClubs } from "./useClubs";
 import { LeagueTable } from "../components/LeagueTable";
 import { useSeasons } from "./useSeasons";
 import { ClubFilter } from "./ClubFilter";
 import { SeasonFilter } from "./SeasonFilter";
 
 const ClubPage: FunctionComponent = () => {
+  const { seasons } = useSeasons();
+  const { clubs } = useClubs();
   const [selectedClub, setSelectedClub] = useState<Club | undefined>(undefined);
   const [selectedSeason, setSelectedSeason] = useState<number | undefined>(undefined);
-  const { seasons } = useSeasons();
 
   useEffect(() => {
     if (seasons === undefined) {
@@ -29,11 +30,12 @@ const ClubPage: FunctionComponent = () => {
       }}
     >
       <ClubFilter
+        clubs={clubs}
         selectedClub={selectedClub}
         setSelectedClub={(selection: Club | undefined) => setSelectedClub(selection)}
         style={{ gridArea: "clubFilter" }}
       />
-      <div style={{ gridArea: "clubMain" }}>
+      <div style={{ gridArea: "clubMain", marginBottom: "1rem" }}>
         <Divider />
         {selectedClub !== undefined && seasons !== undefined && (
           <div
@@ -48,7 +50,7 @@ const ClubPage: FunctionComponent = () => {
               seasons={seasons}
               selectedSeason={selectedSeason}
               setSelectedSeason={(startYear) => setSelectedSeason(startYear)}
-              style={{ gridArea: "seasonFilter" }}
+              style={{ gridArea: "seasonFilter", marginBottom: "1rem" }}
             />
             <LeagueTable
               club={selectedClub.name}
@@ -56,7 +58,7 @@ const ClubPage: FunctionComponent = () => {
               style={{ gridArea: "leagueTable" }}
             />
           </div>
-        )}{" "}
+        )}
       </div>
     </div>
   );

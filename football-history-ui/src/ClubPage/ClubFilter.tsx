@@ -4,12 +4,11 @@ import { Club, useClubs } from "./useClubs";
 import { isString } from "../shared/functions";
 
 const ClubFilter: FunctionComponent<{
+  clubs: Club[];
   selectedClub: Club | undefined;
   setSelectedClub: (selectedClub: Club | undefined) => void;
   style: React.CSSProperties;
-}> = ({ selectedClub, setSelectedClub, style }) => {
-  const { clubs } = useClubs();
-
+}> = ({ clubs, selectedClub, setSelectedClub, style }) => {
   function GetDropdownClubs(clubs: Club[]): DropdownItemProps[] {
     return clubs.map((c) => {
       return {
