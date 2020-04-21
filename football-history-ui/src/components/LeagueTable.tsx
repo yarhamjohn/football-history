@@ -1,6 +1,7 @@
 import React, { FunctionComponent, useEffect } from "react";
 import { Row, useLeagueTable } from "../ClubPage/useLeagueTable";
 import { Table } from "semantic-ui-react";
+import { LeagueTableRow } from "./LeagueTableRow";
 
 const PointDeductionSummary: FunctionComponent<{ leagueTable: Row[] }> = ({ leagueTable }) => {
   const pointDeductionRows = leagueTable.filter((r) => r.pointsDeducted > 0);
@@ -16,90 +17,6 @@ const PointDeductionSummary: FunctionComponent<{ leagueTable: Row[] }> = ({ leag
   );
 };
 
-const LeagueTableRowCell: FunctionComponent<{
-  bold: boolean;
-  color: string | null;
-}> = ({ children, bold, color }) => {
-  return (
-    <Table.Cell
-      style={bold ? { fontWeight: "bold", backgroundColor: color } : { backgroundColor: color }}
-    >
-      {children}
-    </Table.Cell>
-  );
-};
-
-function getRowColor(row: Row, club: string) {
-  let color = row.team === club ? "#CCCCCC" : null;
-  switch (row.status) {
-    case "Champions": {
-      color = "#75B266";
-      break;
-    }
-    case "Relegated": {
-      color = "#B26694";
-      break;
-    }
-    case "Promoted": {
-      color = "#7FBFBF";
-      break;
-    }
-    case "PlayOff Winner": {
-      color = "#7FBFBF";
-      break;
-    }
-    case "PlayOffs": {
-      color = "#BFA67F";
-      break;
-    }
-  }
-  return color;
-}
-
-const LeagueTableRow: FunctionComponent<{ row: Row; club: string }> = ({ row, club }) => {
-  const bold = row.team === club;
-  const color = getRowColor(row, club);
-
-  return (
-    <Table.Row>
-      <LeagueTableRowCell bold={bold} color={color}>
-        {row.position}
-      </LeagueTableRowCell>
-      <LeagueTableRowCell bold={bold} color={color}>
-        {row.team}
-      </LeagueTableRowCell>
-      <LeagueTableRowCell bold={bold} color={color}>
-        {row.played}
-      </LeagueTableRowCell>
-      <LeagueTableRowCell bold={bold} color={color}>
-        {row.won}
-      </LeagueTableRowCell>
-      <LeagueTableRowCell bold={bold} color={color}>
-        {row.drawn}
-      </LeagueTableRowCell>
-      <LeagueTableRowCell bold={bold} color={color}>
-        {row.lost}
-      </LeagueTableRowCell>
-      <LeagueTableRowCell bold={bold} color={color}>
-        {row.goalsFor}
-      </LeagueTableRowCell>
-      <LeagueTableRowCell bold={bold} color={color}>
-        {row.goalsAgainst}
-      </LeagueTableRowCell>
-      <LeagueTableRowCell bold={bold} color={color}>
-        {row.goalDifference}
-      </LeagueTableRowCell>
-      <LeagueTableRowCell bold={bold} color={color}>
-        {row.points}
-        {row.pointsDeducted > 0 ? " *" : ""}
-      </LeagueTableRowCell>
-      <LeagueTableRowCell bold={bold} color={color}>
-        {row.status}
-      </LeagueTableRowCell>
-    </Table.Row>
-  );
-};
-
 const LeagueTable: FunctionComponent<{
   club: string;
   seasonStartYear: number | undefined;
@@ -112,6 +29,14 @@ const LeagueTable: FunctionComponent<{
       getLeagueTable(club, seasonStartYear);
     }
   }, [club, seasonStartYear]);
+
+  function getNumRows() {
+    if (leagueTable && leagueTable.table) {
+      return leagueTable.table.length;
+    }
+
+    return 0;
+  }
 
   return (
     <div style={{ ...style }}>
@@ -137,6 +62,7 @@ const LeagueTable: FunctionComponent<{
               <Table.Row>
                 <Table.HeaderCell></Table.HeaderCell>
                 <Table.HeaderCell></Table.HeaderCell>
+                <Table.HeaderCell></Table.HeaderCell>
                 <Table.HeaderCell>P</Table.HeaderCell>
                 <Table.HeaderCell>W</Table.HeaderCell>
                 <Table.HeaderCell>D</Table.HeaderCell>
@@ -150,8 +76,16 @@ const LeagueTable: FunctionComponent<{
             </Table.Header>
             <Table.Body>
               {leagueTable &&
+                seasonStartYear &&
                 leagueTable.table.map((r) => (
-                  <LeagueTableRow key={r.position} row={r} club={club} />
+                  <LeagueTableRow
+                    key={r.position}
+                    row={r}
+                    club={club}
+                    seasonStartYear={seasonStartYear}
+                    numRows={getNumRows()}
+                    relegationPosition={leagueTable.totalPlaces - leagueTable.relegationPlaces + 1}
+                  />
                 ))}
             </Table.Body>
           </Table>

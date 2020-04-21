@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using FootballHistoryTest.Api.Builders;
+using FootballHistoryTest.Api.Repositories.Tier;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FootballHistoryTest.Api.Controllers
@@ -8,16 +9,19 @@ namespace FootballHistoryTest.Api.Controllers
     public class PositionController : Controller
     {
         private readonly IPositionBuilder _positionBuilder;
+        private readonly ITierRepository _tierRepository;
 
-        public PositionController(IPositionBuilder leagueBuilder)
+        public PositionController(IPositionBuilder leagueBuilder, ITierRepository tierRepository)
         {
             _positionBuilder = leagueBuilder;
+            _tierRepository = tierRepository;
         }
 
         [HttpGet("[action]")]
-        public List<LeaguePosition> GetLeaguePositions(int seasonStartYear, int tier, string team)
+        public List<LeaguePosition> GetLeaguePositions(int seasonStartYear, string team)
         {
-            return _positionBuilder.GetLeaguePositions(seasonStartYear, tier, team);
+            var tier = _tierRepository.GetTierForTeamInYear(seasonStartYear, team);
+            return tier == null ? new List<LeaguePosition>() : _positionBuilder.GetLeaguePositions(seasonStartYear, (int) tier, team);
         }
 
         [HttpGet("[action]")]
