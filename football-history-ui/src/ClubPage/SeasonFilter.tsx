@@ -9,14 +9,16 @@ const SeasonFilter: FunctionComponent<{
   setSelectedSeason: (startYear: number) => void;
   style: React.CSSProperties;
 }> = ({ seasons, selectedSeason, setSelectedSeason, style }) => {
-  function GetDropdownSeasons(seasons: Season[]): DropdownItemProps[] {
-    return seasons.map((s) => {
-      return {
-        key: s.startYear,
-        text: `${s.startYear} - ${s.endYear}`,
-        value: s.startYear,
-      };
-    });
+  function GetDropdownSeasons(): DropdownItemProps[] {
+    return seasons
+      .sort((a, b) => b.startYear - a.startYear)
+      .map((s) => {
+        return {
+          key: s.startYear,
+          text: `${s.startYear} - ${s.endYear}`,
+          value: s.startYear,
+        };
+      });
   }
 
   const selectSeasonStartYear = (selection: any) => {
@@ -55,7 +57,7 @@ const SeasonFilter: FunctionComponent<{
         placeholder="Select Season"
         fluid
         selection
-        options={GetDropdownSeasons(seasons)}
+        options={GetDropdownSeasons()}
         onChange={(_, data) => selectSeasonStartYear(data.value)}
         value={selectedSeason}
         style={{ gridArea: "filter" }}
