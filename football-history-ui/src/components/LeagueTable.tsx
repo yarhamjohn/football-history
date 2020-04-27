@@ -84,7 +84,10 @@ const LeagueTable: FunctionComponent<{
                     club={club}
                     seasonStartYear={seasonStartYear}
                     numRows={getNumRows()}
-                    relegationPosition={leagueTable.totalPlaces - leagueTable.relegationPlaces + 1}
+                    totalPlaces={leagueTable.totalPlaces}
+                    promotionPlaces={leagueTable.promotionPlaces}
+                    playOffPlaces={leagueTable.playOffPlaces}
+                    relegationPlaces={leagueTable.relegationPlaces}
                   />
                 ))}
             </Table.Body>

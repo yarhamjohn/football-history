@@ -48,8 +48,19 @@ const LeagueTableDrillDown: FunctionComponent<{
   club: string;
   seasonStartYear: number;
   numRows: number;
-  relegationPosition: number;
-}> = ({ club, seasonStartYear, numRows, relegationPosition }) => {
+  totalPlaces: number;
+  promotionPlaces: number;
+  playOffPlaces: number;
+  relegationPlaces: number;
+}> = ({
+  club,
+  seasonStartYear,
+  numRows,
+  totalPlaces,
+  promotionPlaces,
+  playOffPlaces,
+  relegationPlaces,
+}) => {
   const { leaguePositions, getLeaguePositions } = useLeaguePositions();
 
   useEffect(() => {
@@ -82,7 +93,7 @@ const LeagueTableDrillDown: FunctionComponent<{
             leaguePositions.map((p) => new Date(p.date).valueOf())
           )
         )
-      : null;
+      : new Date();
   }
 
   function getMaxDate() {
@@ -93,10 +104,10 @@ const LeagueTableDrillDown: FunctionComponent<{
             leaguePositions.map((p) => new Date(p.date).valueOf())
           )
         )
-      : null;
+      : new Date();
   }
 
-  function getData() {
+  function getPositionData() {
     return leaguePositions
       ? leaguePositions
           .map((p) => {
@@ -106,19 +117,46 @@ const LeagueTableDrillDown: FunctionComponent<{
       : [];
   }
 
-  const data = [
-    {
-      id: "positions",
-      data: getData(),
-    },
-    {
-      id: "relegation",
-      data: [
-        { x: getMinDate(), y: relegationPosition },
-        { x: getMaxDate(), y: relegationPosition },
-      ],
-    },
-  ];
+  function getData() {
+    let data = [
+      {
+        id: "positions",
+        data: getPositionData(),
+      },
+    ];
+
+    if (promotionPlaces > 0) {
+      data.push({
+        id: "promotion",
+        data: [
+          { x: getMinDate(), y: promotionPlaces },
+          { x: getMaxDate(), y: promotionPlaces },
+        ],
+      });
+    }
+    if (playOffPlaces > 0) {
+      data.push({
+        id: "playOffs",
+        data: [
+          { x: getMinDate(), y: promotionPlaces + playOffPlaces },
+          { x: getMaxDate(), y: promotionPlaces + playOffPlaces },
+        ],
+      });
+    }
+    if (relegationPlaces > 0) {
+      data.push({
+        id: "relegation",
+        data: [
+          { x: getMinDate(), y: totalPlaces - relegationPlaces + 1 },
+          { x: getMaxDate(), y: totalPlaces - relegationPlaces + 1 },
+        ],
+      });
+    }
+
+    return data;
+  }
+
+  const data = getData();
 
   return (
     <tr>
@@ -148,8 +186,20 @@ const LeagueTableRow: FunctionComponent<{
   club: string;
   seasonStartYear: number;
   numRows: number;
-  relegationPosition: number;
-}> = ({ row, club, seasonStartYear, numRows, relegationPosition }) => {
+  totalPlaces: number;
+  promotionPlaces: number;
+  playOffPlaces: number;
+  relegationPlaces: number;
+}> = ({
+  row,
+  club,
+  seasonStartYear,
+  numRows,
+  totalPlaces,
+  promotionPlaces,
+  playOffPlaces,
+  relegationPlaces,
+}) => {
   const [showDrillDown, setShowDrillDown] = useState<boolean>(false);
   const bold = row.team === club;
   const color = getRowColor(row, club);
@@ -209,7 +259,10 @@ const LeagueTableRow: FunctionComponent<{
           club={row.team}
           seasonStartYear={seasonStartYear}
           numRows={numRows}
-          relegationPosition={relegationPosition}
+          totalPlaces={totalPlaces}
+          promotionPlaces={promotionPlaces}
+          playOffPlaces={playOffPlaces}
+          relegationPlaces={relegationPlaces}
         />
       ) : null}
     </>
