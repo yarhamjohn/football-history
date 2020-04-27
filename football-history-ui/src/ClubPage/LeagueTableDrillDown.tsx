@@ -2,6 +2,7 @@ import React, { FunctionComponent, useEffect } from "react";
 import { Card } from "semantic-ui-react";
 import { useLeaguePositions } from "./useLeaguePositions";
 import { ResponsiveLine } from "@nivo/line";
+import { LeagueMatch, useLeagueMatches } from "./useLeagueMatches";
 
 const LeagueTableDrillDown: FunctionComponent<{
   club: string;
@@ -21,9 +22,11 @@ const LeagueTableDrillDown: FunctionComponent<{
   relegationPlaces,
 }) => {
   const { leaguePositions, getLeaguePositions } = useLeaguePositions();
+  const { leagueMatches, getLeagueMatches } = useLeagueMatches();
 
   useEffect(() => {
     getLeaguePositions(club, seasonStartYear);
+    getLeagueMatches(club, seasonStartYear);
   }, [club, seasonStartYear]);
 
   function getTicks(numRows: number) {
@@ -118,6 +121,35 @@ const LeagueTableDrillDown: FunctionComponent<{
     return { data, colors };
   }
 
+  function GetForm(matches: LeagueMatch[]) {
+    let form = matches
+      .sort((a, b) => b.date.valueOf() - a.date.valueOf())
+      .map((m) =>
+        m.homeTeam === club && m.homeGoals > m.awayGoals
+          ? "W"
+          : m.awayTeam === club && m.awayGoals > m.homeGoals
+          ? "W"
+          : m.homeGoals === m.awayGoals
+          ? "D"
+          : "L"
+      );
+    return (
+      <div style={{ display: "flex", justifyContent: "space-evenly" }}>
+        {form.map((f, i) => (
+          <span
+            key={i}
+            style={{
+              fontWeight: "bold",
+              color: f === "W" ? "#75B266" : f === "L" ? "#B26694" : "black",
+            }}
+          >
+            {f}
+          </span>
+        ))}
+      </div>
+    );
+  }
+
   const { data, colors } = getData();
 
   return (
@@ -125,6 +157,7 @@ const LeagueTableDrillDown: FunctionComponent<{
       <td colSpan={12}>
         <Card fluid>
           <Card.Content className="drilldown-card-body">
+            {leagueMatches && <div>{GetForm(leagueMatches)}</div>}
             <div className="drilldown-card-content" style={{ height: "200px" }}>
               <ResponsiveLine
                 data={data}
