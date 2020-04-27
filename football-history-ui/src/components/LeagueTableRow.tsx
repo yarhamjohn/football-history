@@ -74,14 +74,49 @@ const LeagueTableDrillDown: FunctionComponent<{
     return [];
   }
 
+  function getMinDate() {
+    return leaguePositions
+      ? new Date(
+          Math.min.apply(
+            null,
+            leaguePositions.map((p) => new Date(p.date).valueOf())
+          )
+        )
+      : null;
+  }
+
+  function getMaxDate() {
+    return leaguePositions
+      ? new Date(
+          Math.max.apply(
+            null,
+            leaguePositions.map((p) => new Date(p.date).valueOf())
+          )
+        )
+      : null;
+  }
+
+  function getData() {
+    return leaguePositions
+      ? leaguePositions
+          .map((p) => {
+            return { x: new Date(p.date), y: p.position };
+          })
+          .sort()
+      : [];
+  }
+
   const data = [
     {
-      id: 1,
-      data: leaguePositions
-        ? leaguePositions.map((p) => {
-            return { x: p.date, y: p.position };
-          })
-        : [],
+      id: "positions",
+      data: getData(),
+    },
+    {
+      id: "relegation",
+      data: [
+        { x: getMinDate(), y: relegationPosition },
+        { x: getMaxDate(), y: relegationPosition },
+      ],
     },
   ];
 
@@ -93,7 +128,7 @@ const LeagueTableDrillDown: FunctionComponent<{
             <div className="drilldown-card-content" style={{ height: "200px" }}>
               <ResponsiveLine
                 data={data}
-                margin={{ left: 25, bottom: 10 }}
+                margin={{ left: 25, bottom: 10, top: 10 }}
                 yScale={{ type: "linear", min: 1, max: numRows, reverse: true }}
                 enablePoints={false}
                 gridYValues={getTicks(numRows)}
@@ -125,7 +160,12 @@ const LeagueTableRow: FunctionComponent<{
 
   return (
     <>
-      <Table.Row onClick={() => toggleDrillDown()}>
+      <Table.Row
+        style={{
+          cursor: "pointer",
+        }}
+        onClick={() => toggleDrillDown()}
+      >
         <LeagueTableRowCell bold={bold} color={color}>
           {showDrillDown ? <Icon name="chevron down" /> : <Icon name="chevron right" />}
         </LeagueTableRowCell>
