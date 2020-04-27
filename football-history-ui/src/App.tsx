@@ -15,7 +15,7 @@ const App: FunctionComponent = () => {
         height: "100%",
         display: "grid",
         gridTemplateColumns: "75px auto 75px",
-        gridTemplateRows: "auto 1fr 50px",
+        gridTemplateRows: "auto 1fr 100px",
         gridTemplateAreas: "'icon header .' 'leftGutter main rightGutter' 'footer footer footer",
       }}
     >
@@ -30,7 +30,7 @@ const App: FunctionComponent = () => {
         style={{
           gridArea: "footer",
           backgroundImage:
-            "linear-gradient(to bottom, #FFFFFF, #CCF0EE, #99E1DE, #66D2CD, #32C3BD, #00B5AD)",
+            "linear-gradient(to bottom, #CCF0EE, #99E1DE, #66D2CD, #32C3BD, #00B5AD)",
         }}
       ></div>
     </div>
