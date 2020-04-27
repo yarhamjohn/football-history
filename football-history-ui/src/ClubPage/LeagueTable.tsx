@@ -1,21 +1,8 @@
 import React, { FunctionComponent, useEffect } from "react";
-import { Row, useLeagueTable } from "../ClubPage/useLeagueTable";
+import { useLeagueTable } from "./useLeagueTable";
 import { Table } from "semantic-ui-react";
 import { LeagueTableRow } from "./LeagueTableRow";
-
-const PointDeductionSummary: FunctionComponent<{ leagueTable: Row[] }> = ({ leagueTable }) => {
-  const pointDeductionRows = leagueTable.filter((r) => r.pointsDeducted > 0);
-  return (
-    <div>
-      {pointDeductionRows.map((r) => (
-        <p key={r.position}>
-          * {r.team}: {r.pointsDeducted} point{r.pointsDeducted === 1 ? "" : "s"} deducted -{" "}
-          {r.pointsDeductionReason}
-        </p>
-      ))}
-    </div>
-  );
-};
+import { PointDeductionSummary } from "./PointDeductionSummary";
 
 const LeagueTable: FunctionComponent<{
   club: string;

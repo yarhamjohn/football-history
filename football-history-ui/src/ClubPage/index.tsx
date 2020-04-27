@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { Divider } from "semantic-ui-react";
 import { Club, useClubs } from "./useClubs";
-import { LeagueTable } from "../components/LeagueTable";
+import { LeagueTable } from "./LeagueTable";
 import { useSeasons } from "./useSeasons";
 import { ClubFilter } from "./ClubFilter";
 import { SeasonFilter } from "./SeasonFilter";
