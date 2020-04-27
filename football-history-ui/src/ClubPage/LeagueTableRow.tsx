@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import { Row } from "./useLeagueTable";
 import { Icon, Table } from "semantic-ui-react";
 import { LeagueTableDrillDown } from "./LeagueTableDrillDown";
@@ -57,6 +57,10 @@ const LeagueTableRow: FunctionComponent<{
   function toggleDrillDown() {
     setShowDrillDown(!showDrillDown);
   }
+
+  useEffect(() => {
+    setShowDrillDown(false);
+  }, [club, seasonStartYear]);
 
   return (
     <>
