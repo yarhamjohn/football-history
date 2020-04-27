@@ -35,13 +35,9 @@ const LeagueTableDrillDown: FunctionComponent<{
   }
 
   function getDates() {
-    if (leaguePositions) {
-      let r = leaguePositions.map((p) => p.date).filter((d) => new Date(d).getUTCDate() === 1);
-      console.log(r);
-      return r;
-    }
-
-    return [];
+    return leaguePositions
+      ? leaguePositions.map((p) => new Date(p.date)).filter((d) => d.getUTCDate() === 1)
+      : [];
   }
 
   function getMinDate() {
@@ -83,6 +79,7 @@ const LeagueTableDrillDown: FunctionComponent<{
         data: getPositionData(),
       },
     ];
+    let colors = ["black"];
 
     if (promotionPlaces > 0) {
       data.push({
@@ -92,6 +89,8 @@ const LeagueTableDrillDown: FunctionComponent<{
           { x: getMaxDate(), y: promotionPlaces },
         ],
       });
+
+      colors.push("#7FBFBF");
     }
     if (playOffPlaces > 0) {
       data.push({
@@ -101,6 +100,8 @@ const LeagueTableDrillDown: FunctionComponent<{
           { x: getMaxDate(), y: promotionPlaces + playOffPlaces },
         ],
       });
+
+      colors.push("#BFA67F");
     }
     if (relegationPlaces > 0) {
       data.push({
@@ -110,12 +111,14 @@ const LeagueTableDrillDown: FunctionComponent<{
           { x: getMaxDate(), y: totalPlaces - relegationPlaces + 1 },
         ],
       });
+
+      colors.push("#B26694");
     }
 
-    return data;
+    return { data, colors };
   }
 
-  const data = getData();
+  const { data, colors } = getData();
 
   return (
     <tr>
@@ -125,6 +128,7 @@ const LeagueTableDrillDown: FunctionComponent<{
             <div className="drilldown-card-content" style={{ height: "200px" }}>
               <ResponsiveLine
                 data={data}
+                colors={colors}
                 margin={{ left: 25, bottom: 10, top: 10 }}
                 yScale={{ type: "linear", min: 1, max: numRows, reverse: true }}
                 enablePoints={false}
