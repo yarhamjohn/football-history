@@ -7,7 +7,7 @@ import { PointDeductionSummary } from "./PointDeductionSummary";
 const LeagueTable: FunctionComponent<{
   club: string;
   seasonStartYear: number | undefined;
-  style: React.CSSProperties;
+  style?: React.CSSProperties;
 }> = ({ club, seasonStartYear, style }) => {
   const { leagueTable, getLeagueTable } = useLeagueTable();
 

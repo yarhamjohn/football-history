@@ -5,6 +5,7 @@ import { LeagueTable } from "./LeagueTable/LeagueTable";
 import { useSeasons } from "./useSeasons";
 import { ClubFilter } from "./ClubFilter";
 import { SeasonFilter } from "./SeasonFilter";
+import { PlayOffs } from "./PlayOffs";
 
 const ClubPage: FunctionComponent = () => {
   const { seasons } = useSeasons();
@@ -13,12 +14,12 @@ const ClubPage: FunctionComponent = () => {
   const [selectedSeason, setSelectedSeason] = useState<number | undefined>(undefined);
 
   useEffect(() => {
-    if (seasons === undefined) {
+    if (seasons === undefined || selectedClub === undefined) {
       return;
     }
 
     setSelectedSeason(Math.max(...seasons.map((s) => s.startYear)));
-  }, [selectedClub]);
+  }, [selectedClub, seasons]);
 
   return (
     <div
@@ -40,23 +41,26 @@ const ClubPage: FunctionComponent = () => {
         {selectedClub !== undefined && seasons !== undefined && (
           <div
             style={{
-              display: "grid",
-              gridTemplateRows: "auto auto",
-              gridTemplateColumns: "auto",
-              gridTemplateAreas: "'seasonFilter' 'leagueTable'",
+              display: "flex",
+              flexDirection: "column",
             }}
           >
             <SeasonFilter
               seasons={seasons}
               selectedSeason={selectedSeason}
               setSelectedSeason={(startYear) => setSelectedSeason(startYear)}
-              style={{ gridArea: "seasonFilter", marginBottom: "1rem" }}
+              style={{ marginBottom: "1rem" }}
             />
-            <LeagueTable
-              club={selectedClub.name}
-              seasonStartYear={selectedSeason}
-              style={{ gridArea: "leagueTable" }}
-            />
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(600px, 1fr))",
+                gridGap: "1rem",
+              }}
+            >
+              <LeagueTable club={selectedClub.name} seasonStartYear={selectedSeason} />
+              <PlayOffs club={selectedClub.name} seasonStartYear={selectedSeason} />
+            </div>
           </div>
         )}
       </div>
