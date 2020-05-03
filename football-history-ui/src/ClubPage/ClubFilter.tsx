@@ -7,8 +7,7 @@ const ClubFilter: FunctionComponent<{
   clubs: Club[];
   selectedClub: Club | undefined;
   setSelectedClub: (selectedClub: Club | undefined) => void;
-  style: React.CSSProperties;
-}> = ({ clubs, selectedClub, setSelectedClub, style }) => {
+}> = ({ clubs, selectedClub, setSelectedClub }) => {
   function GetDropdownClubs(clubs: Club[]): DropdownItemProps[] {
     return clubs.map((c) => {
       return {
@@ -45,7 +44,6 @@ const ClubFilter: FunctionComponent<{
   return (
     <div
       style={{
-        ...style,
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",

@@ -7,8 +7,7 @@ const SeasonFilter: FunctionComponent<{
   seasons: Season[];
   selectedSeason: number | undefined;
   setSelectedSeason: (startYear: number) => void;
-  style: React.CSSProperties;
-}> = ({ seasons, selectedSeason, setSelectedSeason, style }) => {
+}> = ({ seasons, selectedSeason, setSelectedSeason }) => {
   function GetDropdownSeasons(): DropdownItemProps[] {
     return seasons
       .sort((a, b) => b.startYear - a.startYear)
@@ -46,7 +45,7 @@ const SeasonFilter: FunctionComponent<{
   };
 
   return (
-    <div style={{ ...style, display: "flex", alignItems: "center", color: "#00B5AD" }}>
+    <div style={{ display: "flex", alignItems: "center", color: "#00B5AD" }}>
       <Icon
         name="caret left"
         size="huge"

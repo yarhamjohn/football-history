@@ -95,8 +95,7 @@ const PlayOffSemiFinal: FunctionComponent<{
 const PlayOffs: FunctionComponent<{
   club: string;
   seasonStartYear: number | undefined;
-  style?: React.CSSProperties;
-}> = ({ club, seasonStartYear, style }) => {
+}> = ({ club, seasonStartYear }) => {
   const { playOffMatches, getPlayOffMatches } = usePlayOffMatches();
   const { tier, getTier } = useTiers();
 
@@ -124,7 +123,6 @@ const PlayOffs: FunctionComponent<{
   return (
     <div
       style={{
-        ...style,
         display: "grid",
         gridTemplateRows: "auto auto 1fr",
         gridTemplateColumns: "auto auto 1rem auto auto",

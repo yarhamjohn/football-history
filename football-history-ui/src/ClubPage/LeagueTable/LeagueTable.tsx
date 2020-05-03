@@ -7,8 +7,7 @@ import { PointDeductionSummary } from "./PointDeductionSummary";
 const LeagueTable: FunctionComponent<{
   club: string;
   seasonStartYear: number | undefined;
-  style?: React.CSSProperties;
-}> = ({ club, seasonStartYear, style }) => {
+}> = ({ club, seasonStartYear }) => {
   const { leagueTable, getLeagueTable } = useLeagueTable();
 
   useEffect(() => {
@@ -26,7 +25,7 @@ const LeagueTable: FunctionComponent<{
   }
 
   return (
-    <div style={{ ...style }}>
+    <div>
       {leagueTable === undefined || leagueTable.table === null ? (
         <div
           style={{
@@ -44,7 +43,7 @@ const LeagueTable: FunctionComponent<{
       ) : (
         <>
           <h2>{leagueTable.name}</h2>
-          <Table basic compact collapsing>
+          <Table basic compact>
             <Table.Header>
               <Table.Row>
                 <Table.HeaderCell></Table.HeaderCell>
