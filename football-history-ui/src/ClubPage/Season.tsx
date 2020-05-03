@@ -4,8 +4,10 @@ import { LeagueTable } from "./LeagueTable/LeagueTable";
 import { useSeasons } from "./useSeasons";
 import { SeasonFilter } from "./SeasonFilter";
 import { PlayOffs } from "./PlayOffs";
+import { useTiers } from "./useTiers";
 
 const Season: FunctionComponent<{ selectedClub: Club }> = ({ selectedClub }) => {
+  const { tier, getTier } = useTiers();
   const { seasons } = useSeasons();
   const [selectedSeason, setSelectedSeason] = useState<number | undefined>(undefined);
 
@@ -16,6 +18,12 @@ const Season: FunctionComponent<{ selectedClub: Club }> = ({ selectedClub }) => 
 
     setSelectedSeason(Math.max(...seasons.map((s) => s.startYear)));
   }, [selectedClub, seasons]);
+
+  useEffect(() => {
+    if (selectedSeason !== undefined) {
+      getTier(selectedClub.name, selectedSeason);
+    }
+  }, [selectedClub, selectedSeason]);
 
   if (seasons === undefined) {
     return null;
@@ -36,7 +44,7 @@ const Season: FunctionComponent<{ selectedClub: Club }> = ({ selectedClub }) => 
         }}
       >
         <LeagueTable club={selectedClub.name} seasonStartYear={selectedSeason} />
-        <PlayOffs club={selectedClub.name} seasonStartYear={selectedSeason} />
+        <PlayOffs tier={tier} seasonStartYear={selectedSeason} />
       </div>
     </div>
   );

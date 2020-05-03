@@ -93,23 +93,16 @@ const PlayOffSemiFinal: FunctionComponent<{
 };
 
 const PlayOffs: FunctionComponent<{
-  club: string;
+  tier: number;
   seasonStartYear: number | undefined;
-}> = ({ club, seasonStartYear }) => {
+}> = ({ tier, seasonStartYear }) => {
   const { playOffMatches, getPlayOffMatches } = usePlayOffMatches();
-  const { tier, getTier } = useTiers();
 
   useEffect(() => {
     if (seasonStartYear !== undefined) {
       getPlayOffMatches(tier, seasonStartYear);
     }
   }, [tier, seasonStartYear]);
-
-  useEffect(() => {
-    if (seasonStartYear !== undefined) {
-      getTier(club, seasonStartYear);
-    }
-  }, [club, seasonStartYear]);
 
   if (playOffMatches.length === 0) {
     return null;
