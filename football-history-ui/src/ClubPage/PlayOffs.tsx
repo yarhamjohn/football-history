@@ -119,21 +119,15 @@ const PlayOffs: FunctionComponent<{
         display: "grid",
         gridTemplateRows: "auto auto 1fr",
         gridTemplateColumns: "auto auto 1rem auto auto",
-        gridTemplateAreas:
-          "'playOffSemiFinalOne playOffSemiFinalOne . playOffSemiFinalTwo playOffSemiFinalTwo' '. playOffFinal playOffFinal playOffFinal .'",
+        gridTemplateAreas: "'one one . two two' '. final final final .'",
       }}
     >
-      {<PlayOffSemiFinal semiFinal={semiFinalOne} style={{ gridArea: "playOffSemiFinalOne" }} />}
-      {
-        <PlayOffSemiFinal
-          semiFinal={semiFinalTwo}
-          style={{ gridArea: "playOffSemiFinalTwo", marginTop: 0 }}
-        />
-      }
+      {<PlayOffSemiFinal semiFinal={semiFinalOne} style={{ gridArea: "one" }} />}
+      {<PlayOffSemiFinal semiFinal={semiFinalTwo} style={{ gridArea: "two", marginTop: 0 }} />}
       {
         <PlayOffFinal
           final={playOffMatches.filter((m) => m.round === "Final")[0]}
-          style={{ gridArea: "playOffFinal" }}
+          style={{ gridArea: "final" }}
         />
       }
     </div>

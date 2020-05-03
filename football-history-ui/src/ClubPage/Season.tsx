@@ -25,6 +25,23 @@ const Season: FunctionComponent<{ selectedClub: Club }> = ({ selectedClub }) => 
     }
   }, [selectedClub, selectedSeason]);
 
+  const getDivisionName = () => {
+    if (seasons !== undefined) {
+      const season = seasons.filter((s) => s.startYear === selectedSeason);
+
+      if (season.length !== 1) {
+        return;
+      }
+
+      const division = season[0].divisions.filter((d) => d.tier === tier);
+      if (division.length !== 1) {
+        return null;
+      }
+
+      return division[0].name;
+    }
+  };
+
   if (seasons === undefined) {
     return null;
   }
@@ -36,6 +53,7 @@ const Season: FunctionComponent<{ selectedClub: Club }> = ({ selectedClub }) => 
         selectedSeason={selectedSeason}
         setSelectedSeason={(startYear) => setSelectedSeason(startYear)}
       />
+      <h2 style={{ margin: 0 }}>{getDivisionName()}</h2>
       <div
         style={{
           display: "grid",

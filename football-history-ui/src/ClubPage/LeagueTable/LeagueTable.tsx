@@ -42,7 +42,6 @@ const LeagueTable: FunctionComponent<{
         </div>
       ) : (
         <>
-          <h2>{leagueTable.name}</h2>
           <Table basic compact>
             <Table.Header>
               <Table.Row>
