@@ -19,7 +19,8 @@ namespace FootballHistoryTest.Api.Controllers
         [HttpGet("[action]")]
         public List<Season> GetSeasons()
         {
-            return _seasonBuilder.GetSeasons();
+            // TODO: This is a hack to limit the returned data - should be removed/updated as more data is added
+            return _seasonBuilder.GetSeasons().Where(s => s.StartYear >= 1992).ToList();
         }
     }
 }
