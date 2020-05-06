@@ -5,6 +5,7 @@ import { useSeasons } from "./useSeasons";
 import { SeasonFilter } from "./SeasonFilter";
 import { PlayOffs } from "./PlayOffs";
 import { useTiers } from "./useTiers";
+import { ResultsGrid } from "./ResultsGrid";
 
 const Season: FunctionComponent<{ selectedClub: Club }> = ({ selectedClub }) => {
   const { tier, getTier } = useTiers();
@@ -58,11 +59,12 @@ const Season: FunctionComponent<{ selectedClub: Club }> = ({ selectedClub }) => 
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(600px, 1fr))",
-          gridGap: "1rem",
+          gridGap: "1rem"
         }}
       >
         <LeagueTable club={selectedClub.name} seasonStartYear={selectedSeason} />
         <PlayOffs tier={tier} seasonStartYear={selectedSeason} />
+        <ResultsGrid tier={tier} seasonStartYear={selectedSeason} />
       </div>
     </div>
   );

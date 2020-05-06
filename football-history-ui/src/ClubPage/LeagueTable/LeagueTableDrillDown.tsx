@@ -2,7 +2,7 @@ import React, { FunctionComponent, useEffect } from "react";
 import { Card } from "semantic-ui-react";
 import { useLeaguePositions } from "./useLeaguePositions";
 import { ResponsiveLine } from "@nivo/line";
-import { LeagueMatch, useLeagueMatches } from "./useLeagueMatches";
+import { LeagueMatch, useLeagueMatches } from "../useLeagueMatches";
 
 const LeagueTableDrillDown: FunctionComponent<{
   club: string;

@@ -14,6 +14,7 @@ export interface LeagueMatch {
 
 const useLeagueMatches = () => {
   const [leagueMatches, setLeagueMatches] = useState<LeagueMatch[]>();
+  const [allLeagueMatches, setAllLeagueMatches] = useState<LeagueMatch[]>();
 
   const getLeagueMatches = (club: string, seasonStartYear: number) => {
     fetch(
@@ -24,7 +25,16 @@ const useLeagueMatches = () => {
       .catch(console.log);
   };
 
-  return { leagueMatches, getLeagueMatches };
+  const getAllLeagueMatches = (tier: number, seasonStartYear: number) => {
+    fetch(
+      `https://localhost:5001/api/Match/GetLeagueMatches?seasonStartYears=${seasonStartYear}&tiers=${tier}`
+    )
+      .then((response) => response.json())
+      .then((response) => setAllLeagueMatches(response))
+      .catch(console.log);
+  };
+
+  return { leagueMatches, allLeagueMatches, getLeagueMatches, getAllLeagueMatches };
 };
 
 export { useLeagueMatches };
