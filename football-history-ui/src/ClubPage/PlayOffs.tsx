@@ -8,10 +8,10 @@ const PlayOffFinal: FunctionComponent<{ final: PlayOffMatch; style: React.CSSPro
   style,
 }) => {
   return (
-    <Table striped size="small" compact style={{ ...style }}>
+    <Table striped size="small" compact style={{ ...style, margin: 0 }}>
       <Table.Header>
         <Table.Row>
-          <Table.HeaderCell>Team</Table.HeaderCell>
+          <Table.HeaderCell width={5}>Team</Table.HeaderCell>
           <Table.HeaderCell>Score</Table.HeaderCell>
           <Table.HeaderCell>A.E.T</Table.HeaderCell>
           <Table.HeaderCell>Pens</Table.HeaderCell>
@@ -19,13 +19,13 @@ const PlayOffFinal: FunctionComponent<{ final: PlayOffMatch; style: React.CSSPro
       </Table.Header>
       <Table.Body>
         <Table.Row>
-          <td>{final.homeTeam}</td>
-          <td>{final.homeGoals}</td>
-          <td>{final.homeGoalsExtraTime}</td>
-          <td>
+          <Table.Cell>{final.homeTeam}</Table.Cell>
+          <Table.Cell>{final.homeGoals}</Table.Cell>
+          <Table.Cell>{final.homeGoalsExtraTime}</Table.Cell>
+          <Table.Cell>
             {final.penaltyShootout === true &&
               `${final.awayPenaltiesScored} (${final.awayPenaltiesTaken})`}
-          </td>
+          </Table.Cell>
         </Table.Row>
         <Table.Row>
           <Table.Cell>{final.awayTeam}</Table.Cell>
@@ -56,10 +56,10 @@ const PlayOffSemiFinal: FunctionComponent<{
   const secondLeg = semiFinal[1];
 
   return (
-    <Table striped size="small" compact style={{ ...style }}>
+    <Table striped size="small" compact style={{ ...style, margin: 0 }}>
       <Table.Header>
         <Table.Row>
-          <Table.HeaderCell>Team</Table.HeaderCell>
+          <Table.HeaderCell width={5}>Team</Table.HeaderCell>
           <Table.HeaderCell>1st</Table.HeaderCell>
           <Table.HeaderCell>2nd</Table.HeaderCell>
           <Table.HeaderCell>A.E.T</Table.HeaderCell>
@@ -117,9 +117,10 @@ const PlayOffs: FunctionComponent<{
     <div
       style={{
         display: "grid",
-        gridTemplateRows: "auto auto 1fr",
+        gridTemplateRows: "auto auto 1rem auto auto",
         gridTemplateColumns: "auto auto 1rem auto auto",
-        gridTemplateAreas: "'one one . two two' '. final final final .'",
+        gridTemplateAreas:
+          "'. one . . .' '. one . final .' '. . . final .' '. two . final .' '. two . . .'",
       }}
     >
       {<PlayOffSemiFinal semiFinal={semiFinalOne} style={{ gridArea: "one" }} />}
