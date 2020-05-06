@@ -58,13 +58,15 @@ const Season: FunctionComponent<{ selectedClub: Club }> = ({ selectedClub }) => 
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(600px, 1fr))",
-          gridGap: "1rem"
+          gridTemplateColumns: "repeat(auto-fit, minmax(1100px, 1fr))",
+          gridGap: "1rem",
         }}
       >
         <LeagueTable club={selectedClub.name} seasonStartYear={selectedSeason} />
-        <PlayOffs tier={tier} seasonStartYear={selectedSeason} />
-        <ResultsGrid tier={tier} seasonStartYear={selectedSeason} />
+        <div style={{ display: "grid", gridTemplateRows: "repeat(auto-fit)", gridGap: "1rem" }}>
+          <PlayOffs tier={tier} seasonStartYear={selectedSeason} />
+          <ResultsGrid tier={tier} seasonStartYear={selectedSeason} />
+        </div>
       </div>
     </div>
   );
