@@ -6,14 +6,14 @@ import { useTiers } from "../hooks/useTiers";
 import { useLeagueTable } from "../hooks/useLeagueTable";
 import { LeagueTable } from "../components/LeagueTable/LeagueTable";
 
-const ClubSeason: FunctionComponent<{ selectedClub: Club }> = ({ selectedClub }) => {
+const ClubSeason: FunctionComponent<{ selectedClub: string }> = ({ selectedClub }) => {
   const { tier, getTier } = useTiers();
   const { seasons } = useSeasons();
   const [selectedSeason, setSelectedSeason] = useState<number | undefined>(undefined);
   const { leagueTableState, getLeagueTableForTeam } = useLeagueTable();
   useEffect(() => {
     if (selectedSeason !== undefined && selectedClub !== undefined) {
-      getLeagueTableForTeam(selectedClub.name, selectedSeason);
+      getLeagueTableForTeam(selectedClub, selectedSeason);
     }
   }, [selectedClub, selectedSeason]);
 
@@ -27,7 +27,7 @@ const ClubSeason: FunctionComponent<{ selectedClub: Club }> = ({ selectedClub })
 
   useEffect(() => {
     if (selectedSeason !== undefined) {
-      getTier(selectedClub.name, selectedSeason);
+      getTier(selectedClub, selectedSeason);
     }
   }, [selectedClub, selectedSeason]);
 
@@ -69,7 +69,7 @@ const ClubSeason: FunctionComponent<{ selectedClub: Club }> = ({ selectedClub })
           }}
         >
           <LeagueTable
-            club={selectedClub.name}
+            club={selectedClub}
             table={leagueTableState.leagueTable}
             seasonStartYear={selectedSeason}
           />
