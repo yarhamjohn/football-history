@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { Divider } from "semantic-ui-react";
-import { Division, useSeasons } from "../ClubPage/useSeasons";
-import { DivisionFilter } from "./LeagueFilter";
+import { Division, useSeasons } from "../hooks/useSeasons";
+import { DivisionFilter } from "../components/Filters/LeagueFilter";
 
 const LeaguePage: FunctionComponent = () => {
   const { divisions } = useSeasons();

@@ -1,13 +1,13 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { Club } from "./useClubs";
-import { LeagueTable } from "./LeagueTable/LeagueTable";
-import { useSeasons } from "./useSeasons";
-import { SeasonFilter } from "./SeasonFilter";
-import { PlayOffs } from "./PlayOffs";
-import { useTiers } from "./useTiers";
-import { ResultsGrid } from "./ResultsGrid";
+import { Club } from "../hooks/useClubs";
+import { LeagueTable } from "../components/LeagueTable/LeagueTable";
+import { useSeasons } from "../hooks/useSeasons";
+import { SeasonFilter } from "../components/Filters/SeasonFilter";
+import { PlayOffs } from "../components/PlayOffs";
+import { useTiers } from "../hooks/useTiers";
+import { ResultsGrid } from "../components/ResultsGrid";
 
-const Season: FunctionComponent<{ selectedClub: Club }> = ({ selectedClub }) => {
+const ClubSeason: FunctionComponent<{ selectedClub: Club }> = ({ selectedClub }) => {
   const { tier, getTier } = useTiers();
   const { seasons } = useSeasons();
   const [selectedSeason, setSelectedSeason] = useState<number | undefined>(undefined);
@@ -72,4 +72,4 @@ const Season: FunctionComponent<{ selectedClub: Club }> = ({ selectedClub }) => 
   );
 };
 
-export { Season };
+export { ClubSeason };

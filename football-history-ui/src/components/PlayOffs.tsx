@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useEffect } from "react";
-import { PlayOffMatch, usePlayOffMatches } from "./usePlayOffMatches";
-import { useTiers } from "./useTiers";
+import { PlayOffMatch, usePlayOffMatches } from "../hooks/usePlayOffMatches";
+import { useTiers } from "../hooks/useTiers";
 import { Table } from "semantic-ui-react";
 
 const PlayOffFinal: FunctionComponent<{ final: PlayOffMatch; style: React.CSSProperties }> = ({

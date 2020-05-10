@@ -1,7 +1,7 @@
 import { Dropdown, DropdownItemProps, Icon } from "semantic-ui-react";
 import React, { FunctionComponent } from "react";
-import { Season } from "./useSeasons";
-import { isNumber } from "../shared/functions";
+import { Season } from "../../hooks/useSeasons";
+import { isNumber } from "../../shared/functions";
 
 const SeasonFilter: FunctionComponent<{
   seasons: Season[];
