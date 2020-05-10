@@ -4,7 +4,7 @@ import { Icon, Table } from "semantic-ui-react";
 import { LeagueTableDrillDown } from "./LeagueTableDrillDown";
 import { LeagueTableRowCell } from "./LeagueTableRowCell";
 
-function getRowColor(row: Row, club: string) {
+function getRowColor(row: Row, club: string | undefined) {
   let color = row.team === club ? "#CCCCCC" : null;
   switch (row.status) {
     case "Champions": {
@@ -33,7 +33,7 @@ function getRowColor(row: Row, club: string) {
 
 const LeagueTableRow: FunctionComponent<{
   row: Row;
-  club: string;
+  club: string | undefined;
   seasonStartYear: number;
   numRows: number;
   totalPlaces: number;

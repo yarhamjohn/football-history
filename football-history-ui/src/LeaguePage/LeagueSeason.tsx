@@ -1,30 +1,23 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { Club } from "../hooks/useClubs";
 import { LeagueTable } from "../components/LeagueTable/LeagueTable";
 import { useSeasons } from "../hooks/useSeasons";
 import { SeasonFilter } from "../components/Filters/SeasonFilter";
-import { PlayOffs } from "../components/PlayOffs";
-import { useTiers } from "../hooks/useTiers";
 import { ResultsGrid } from "../components/ResultsGrid";
+import { PlayOffs } from "../components/PlayOffs";
 
-const ClubSeason: FunctionComponent<{ selectedClub: Club }> = ({ selectedClub }) => {
-  const { tier, getTier } = useTiers();
+const LeagueSeason: FunctionComponent<{ selectedTier: number | undefined }> = ({
+  selectedTier,
+}) => {
   const { seasons } = useSeasons();
   const [selectedSeason, setSelectedSeason] = useState<number | undefined>(undefined);
 
   useEffect(() => {
-    if (seasons === undefined || selectedClub === undefined) {
+    if (seasons === undefined || selectedTier === undefined) {
       return;
     }
 
     setSelectedSeason(Math.max(...seasons.map((s) => s.startYear)));
-  }, [selectedClub, seasons]);
-
-  useEffect(() => {
-    if (selectedSeason !== undefined) {
-      getTier(selectedClub.name, selectedSeason);
-    }
-  }, [selectedClub, selectedSeason]);
+  }, [selectedTier, seasons]);
 
   const getDivisionName = () => {
     if (seasons !== undefined) {
@@ -34,7 +27,7 @@ const ClubSeason: FunctionComponent<{ selectedClub: Club }> = ({ selectedClub })
         return;
       }
 
-      const division = season[0].divisions.filter((d) => d.tier === tier);
+      const division = season[0].divisions.filter((d) => d.tier === selectedTier);
       if (division.length !== 1) {
         return null;
       }
@@ -55,17 +48,23 @@ const ClubSeason: FunctionComponent<{ selectedClub: Club }> = ({ selectedClub })
         setSelectedSeason={(startYear) => setSelectedSeason(startYear)}
       />
       <h2 style={{ margin: 0 }}>{getDivisionName()}</h2>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(1100px, 1fr))",
-          gridGap: "1rem",
-        }}
-      >
-        <LeagueTable club={selectedClub.name} seasonStartYear={selectedSeason} />
-      </div>
+      {selectedTier && (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(1100px, 1fr))",
+            gridGap: "1rem",
+          }}
+        >
+          <LeagueTable tier={selectedTier} seasonStartYear={selectedSeason} />
+          <div style={{ display: "grid", gridTemplateRows: "auto auto", gridGap: "1rem" }}>
+            <PlayOffs tier={selectedTier} seasonStartYear={selectedSeason} />
+            <ResultsGrid tier={selectedTier} seasonStartYear={selectedSeason} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export { ClubSeason };
+export { LeagueSeason };

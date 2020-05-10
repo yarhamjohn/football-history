@@ -31,7 +31,7 @@ export type LeagueTable = {
 const useLeagueTable = () => {
   const [leagueTable, setLeagueTable] = useState<LeagueTable>();
 
-  const getLeagueTable = (club: string, seasonStartYear: number) => {
+  const getLeagueTableForTeam = (club: string, seasonStartYear: number) => {
     fetch(
       `https://localhost:5001/api/League/GetCompletedLeagueForTeam?seasonStartYear=${seasonStartYear}&team=${club}`
     )
@@ -40,7 +40,16 @@ const useLeagueTable = () => {
       .catch(console.log);
   };
 
-  return { leagueTable, getLeagueTable };
+  const getLeagueTable = (tier: number, seasonStartYear: number) => {
+    fetch(
+      `https://localhost:5001/api/League/GetCompletedLeague?seasonStartYear=${seasonStartYear}&tier=${tier}`
+    )
+      .then((response) => response.json())
+      .then((response) => setLeagueTable(response))
+      .catch(console.log);
+  };
+
+  return { leagueTable, getLeagueTable, getLeagueTableForTeam };
 };
 
 export { useLeagueTable };

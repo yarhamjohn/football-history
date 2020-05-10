@@ -5,14 +5,17 @@ import { LeagueTableRow } from "./LeagueTableRow";
 import { PointDeductionSummary } from "./PointDeductionSummary";
 
 const LeagueTable: FunctionComponent<{
-  club: string;
+  club?: string;
+  tier?: number;
   seasonStartYear: number | undefined;
-}> = ({ club, seasonStartYear }) => {
-  const { leagueTable, getLeagueTable } = useLeagueTable();
+}> = ({ club, tier, seasonStartYear }) => {
+  const { leagueTable, getLeagueTable, getLeagueTableForTeam } = useLeagueTable();
 
   useEffect(() => {
-    if (seasonStartYear !== undefined) {
-      getLeagueTable(club, seasonStartYear);
+    if (seasonStartYear !== undefined && club !== undefined) {
+      getLeagueTableForTeam(club, seasonStartYear);
+    } else if (seasonStartYear !== undefined && tier !== undefined) {
+      getLeagueTable(tier, seasonStartYear);
     }
   }, [club, seasonStartYear]);
 
