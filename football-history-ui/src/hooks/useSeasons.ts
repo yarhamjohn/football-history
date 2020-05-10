@@ -29,7 +29,38 @@ const useSeasons = () => {
       });
   };
 
-  return { seasonsState, getSeasons };
+  const getDivisions = () => {
+    if (seasonsState.type !== "SEASONS_LOADED") {
+      return [];
+    }
+
+    const tiers = Array.from(
+      new Set(
+        seasonsState.seasons
+          .map((s) => s.divisions)
+          .flat()
+          .map((d) => d.tier)
+      )
+    );
+
+    let divisions = [];
+    for (let tier of tiers) {
+      const divs = Array.from(
+        new Set(
+          seasonsState.seasons
+            .map((s) => s.divisions)
+            .flat()
+            .filter((d) => d.tier === tier)
+            .map((d) => d.name)
+        )
+      );
+      divisions.push({ name: divs.join(", "), tier: tier });
+    }
+
+    return divisions;
+  };
+
+  return { seasonsState, getSeasons, getDivisions };
 };
 
 export { useSeasons };
