@@ -7,8 +7,8 @@ import { useLeagueTable } from "../hooks/useLeagueTable";
 
 const ClubPage: FunctionComponent = () => {
   const { clubsState } = useClubs();
-  const [selectedClub, setSelectedClub] = useState<string | undefined>(undefined);
   const { clearLeagueTable } = useLeagueTable();
+  const [selectedClub, setSelectedClub] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     clearLeagueTable();

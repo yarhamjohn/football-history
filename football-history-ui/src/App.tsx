@@ -7,15 +7,18 @@ import { Image } from "semantic-ui-react";
 import soccerBall from "./images/Soccer-Ball-icon.png";
 import { LeaguePage } from "./LeaguePage";
 import { useClubs } from "./hooks/useClubs";
+import { useSeasons } from "./hooks/useSeasons";
 
 export type AppPage = "Home" | "Club" | "League";
 
 const App: FunctionComponent = () => {
   const { getClubs } = useClubs();
+  const { getSeasons } = useSeasons();
   const [activePage, setActivePage] = useState<AppPage>("Home");
 
   useEffect(() => {
     getClubs();
+    getSeasons();
   }, []);
 
   return (

@@ -5,10 +5,10 @@ import { Division } from "../../hooks/useSeasons";
 
 const DivisionFilter: FunctionComponent<{
   divisions: Division[];
-  selectedDivision: Division | undefined;
-  setSelectedDivision: (selectedDivision: Division | undefined) => void;
-}> = ({ divisions, selectedDivision, setSelectedDivision }) => {
-  function GetDropdownDivisions(divisions: Division[]): DropdownItemProps[] {
+  selectedDivision: string | undefined;
+  selectDivision: (name: string | undefined) => void;
+}> = ({ divisions, selectedDivision, selectDivision }) => {
+  function createDropdown(): DropdownItemProps[] {
     return divisions.map((c) => {
       return {
         key: c.name,
@@ -17,29 +17,6 @@ const DivisionFilter: FunctionComponent<{
       };
     });
   }
-
-  const selectDivision = (selection: any) => {
-    if (isString(selection)) {
-      if (selection === "") {
-        setSelectedDivision(undefined);
-        return;
-      }
-
-      const division = divisions.filter((c) => c.name === selection);
-      if (division.length !== 1) {
-        throw new Error(
-          `Divisions should be unique but there were ${
-            division.length
-          } divisions that match the selection ${division.join(",")}.`
-        );
-      }
-      setSelectedDivision(division[0]);
-    } else {
-      throw new Error(
-        `An unexpected error occurred. The selection (${selection.toString()}) could not be processed.`
-      );
-    }
-  };
 
   return (
     <div
@@ -52,15 +29,15 @@ const DivisionFilter: FunctionComponent<{
       {selectedDivision === undefined ? (
         <p style={{ margin: "0 50px 0 0" }}>Select a division from the dropdown.</p>
       ) : (
-        <h1 style={{ margin: 0 }}>{selectedDivision.name}</h1>
+        <h1 style={{ margin: 0 }}>{selectedDivision}</h1>
       )}
       <Dropdown
         placeholder="Select Division"
         clearable
         search
         selection
-        options={GetDropdownDivisions(divisions)}
-        onChange={(_, data) => selectDivision(data.value)}
+        options={createDropdown()}
+        onChange={(_, data) => selectDivision(data.value?.toString())}
         style={{ maxHeight: "25px" }}
       />
     </div>

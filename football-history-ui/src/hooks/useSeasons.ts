@@ -1,4 +1,7 @@
-import { useEffect, useState } from "react";
+import { Dispatch } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { AppState } from "../reducers/appReducer";
+import { SeasonsAction, SeasonsState } from "../reducers/SeasonsReducer";
 
 export interface Division {
   name: string;
@@ -12,47 +15,21 @@ export interface Season {
 }
 
 const useSeasons = () => {
-  const [seasons, setSeasons] = useState<Season[]>();
-  const [divisions, setDivisions] = useState<Division[]>([]);
+  const seasonsState = useSelector<AppState, SeasonsState>((s) => s.seasonsState);
+  const dispatch = useDispatch<Dispatch<SeasonsAction>>();
 
-  useEffect(() => {
+  const getSeasons = () => {
+    dispatch({ type: "SEASONS_LOAD_STARTED" });
+
     fetch(`https://localhost:5001/api/Season/GetSeasons`)
       .then((response) => response.json())
-      .then((response) => setSeasons(response))
-      .catch(console.log);
-  }, []);
+      .then((response) => dispatch({ type: "SEASONS_LOAD_COMPLETED", seasons: response }))
+      .catch((error) => {
+        dispatch({ type: "SEASONS_LOAD_FAILED", error });
+      });
+  };
 
-  useEffect(() => {
-    if (seasons === undefined) {
-      return;
-    }
-
-    const tiers = Array.from(
-      new Set(
-        seasons
-          .map((s) => s.divisions)
-          .flat()
-          .map((d) => d.tier)
-      )
-    );
-    let newDivisions = [];
-    for (let tier of tiers) {
-      const divs = Array.from(
-        new Set(
-          seasons
-            .map((s) => s.divisions)
-            .flat()
-            .filter((d) => d.tier === tier)
-            .map((d) => d.name)
-        )
-      );
-      newDivisions.push({ name: divs.join(", "), tier: tier });
-    }
-
-    setDivisions(newDivisions);
-  }, [seasons]);
-
-  return { seasons, divisions };
+  return { seasonsState, getSeasons };
 };
 
 export { useSeasons };

@@ -1,59 +1,57 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { LeagueTable } from "../components/LeagueTable/LeagueTable";
-import { useSeasons } from "../hooks/useSeasons";
+import { Season, useSeasons } from "../hooks/useSeasons";
 import { SeasonFilter } from "../components/Filters/SeasonFilter";
 import { ResultsGrid } from "../components/ResultsGrid";
 import { PlayOffs } from "../components/PlayOffs";
 import { useLeagueTable } from "../hooks/useLeagueTable";
 
-const LeagueSeason: FunctionComponent<{ selectedTier: number | undefined }> = ({
-  selectedTier,
-}) => {
-  const { seasons } = useSeasons();
-  const [selectedSeason, setSelectedSeason] = useState<number | undefined>(undefined);
+const LeagueSeason: FunctionComponent<{ selectedTier: number }> = ({ selectedTier }) => {
+  const { seasonsState } = useSeasons();
   const { leagueTableState, getLeagueTable } = useLeagueTable();
+  const [selectedSeason, setSelectedSeason] = useState<number | undefined>(undefined);
+
   useEffect(() => {
-    if (selectedSeason !== undefined && selectedTier !== undefined) {
-      getLeagueTable(selectedTier, selectedSeason);
-    }
-  }, [selectedTier, selectedSeason]);
-  useEffect(() => {
-    if (seasons === undefined || selectedTier === undefined) {
+    if (seasonsState.type !== "SEASONS_LOADED") {
       return;
     }
 
-    setSelectedSeason(Math.max(...seasons.map((s) => s.startYear)));
-  }, [selectedTier, seasons]);
+    setSelectedSeason(Math.max(...seasonsState.seasons.map((s) => s.startYear)));
+  }, [selectedTier, seasonsState]);
 
-  const getDivisionName = () => {
-    if (seasons !== undefined) {
-      const season = seasons.filter((s) => s.startYear === selectedSeason);
-
-      if (season.length !== 1) {
-        return;
-      }
-
-      const division = season[0].divisions.filter((d) => d.tier === selectedTier);
-      if (division.length !== 1) {
-        return null;
-      }
-
-      return division[0].name;
+  useEffect(() => {
+    if (selectedSeason !== undefined) {
+      getLeagueTable(selectedTier, selectedSeason);
     }
+  }, [selectedTier, selectedSeason]);
+
+  const getDivisionName = (seasons: Season[]) => {
+    const season = seasons.filter((s) => s.startYear === selectedSeason);
+
+    if (season.length !== 1) {
+      return;
+    }
+
+    const division = season[0].divisions.filter((d) => d.tier === selectedTier);
+    if (division.length !== 1) {
+      return null;
+    }
+
+    return division[0].name;
   };
 
-  if (seasons === undefined) {
+  if (seasonsState.type !== "SEASONS_LOADED") {
     return null;
   }
 
   return (
     <div style={{ display: "grid", gridGap: "1rem" }}>
       <SeasonFilter
-        seasons={seasons}
+        seasons={seasonsState.seasons}
         selectedSeason={selectedSeason}
-        setSelectedSeason={(startYear) => setSelectedSeason(startYear)}
+        selectSeason={(startYear) => setSelectedSeason(startYear)}
       />
-      <h2 style={{ margin: 0 }}>{getDivisionName()}</h2>
+      <h2 style={{ margin: 0 }}>{getDivisionName(seasonsState.seasons)}</h2>
       {leagueTableState.type === "LEAGUE_TABLE_LOADED" && selectedTier && (
         <div
           style={{

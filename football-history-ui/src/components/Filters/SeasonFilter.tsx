@@ -1,14 +1,13 @@
 import { Dropdown, DropdownItemProps, Icon } from "semantic-ui-react";
 import React, { FunctionComponent } from "react";
 import { Season } from "../../hooks/useSeasons";
-import { isNumber } from "../../shared/functions";
 
 const SeasonFilter: FunctionComponent<{
   seasons: Season[];
   selectedSeason: number | undefined;
-  setSelectedSeason: (startYear: number) => void;
-}> = ({ seasons, selectedSeason, setSelectedSeason }) => {
-  function GetDropdownSeasons(): DropdownItemProps[] {
+  selectSeason: (startYear: number | undefined) => void;
+}> = ({ seasons, selectedSeason, selectSeason }) => {
+  function createDropdown(): DropdownItemProps[] {
     return seasons
       .sort((a, b) => b.startYear - a.startYear)
       .map((s) => {
@@ -20,17 +19,9 @@ const SeasonFilter: FunctionComponent<{
       });
   }
 
-  const selectSeasonStartYear = (selection: any) => {
-    if (isNumber(selection)) {
-      setSelectedSeason(selection);
-    } else {
-      throw new Error("An unexpected error occurred. The selection could not be processed.");
-    }
-  };
-
   const changeSeason = (nextSeason: number) => {
     if (seasons.some((s) => s.startYear === nextSeason)) {
-      setSelectedSeason(nextSeason);
+      selectSeason(nextSeason);
     } else {
       return;
     }
@@ -56,8 +47,10 @@ const SeasonFilter: FunctionComponent<{
         placeholder="Select Season"
         fluid
         selection
-        options={GetDropdownSeasons()}
-        onChange={(_, data) => selectSeasonStartYear(data.value)}
+        options={createDropdown()}
+        onChange={(_, data) =>
+          selectSeason(isNaN(Number(data.value)) ? undefined : Number(data.value))
+        }
         value={selectedSeason}
         style={{ gridArea: "filter" }}
       />
