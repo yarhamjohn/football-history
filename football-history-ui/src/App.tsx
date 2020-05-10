@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import "./App.css";
 import { HomePage } from "./HomePage";
 import { AppHeader } from "./components/AppHeader";
@@ -6,11 +6,17 @@ import { ClubPage } from "./ClubPage";
 import { Image } from "semantic-ui-react";
 import soccerBall from "./images/Soccer-Ball-icon.png";
 import { LeaguePage } from "./LeaguePage";
+import { useClubs } from "./hooks/useClubs";
 
 export type AppPage = "Home" | "Club" | "League";
 
 const App: FunctionComponent = () => {
+  const { getClubs } = useClubs();
   const [activePage, setActivePage] = useState<AppPage>("Home");
+
+  useEffect(() => {
+    getClubs();
+  }, []);
 
   return (
     <div

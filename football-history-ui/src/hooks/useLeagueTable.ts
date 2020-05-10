@@ -36,21 +36,29 @@ const useLeagueTable = () => {
   const dispatch = useDispatch<Dispatch<LeagueTableAction>>();
 
   const getLeagueTableForTeam = (club: string, seasonStartYear: number) => {
+    dispatch({ type: "LEAGUE_TABLE_LOAD_STARTED" });
+
     fetch(
       `https://localhost:5001/api/League/GetCompletedLeagueForTeam?seasonStartYear=${seasonStartYear}&team=${club}`
     )
       .then((response) => response.json())
       .then((response) => dispatch({ type: "LEAGUE_TABLE_LOAD_COMPLETED", leagueTable: response }))
-      .catch(console.log);
+      .catch((error) => {
+        dispatch({ type: "LEAGUE_TABLE_LOAD_FAILED", error });
+      });
   };
 
   const getLeagueTable = (tier: number, seasonStartYear: number) => {
+    dispatch({ type: "LEAGUE_TABLE_LOAD_STARTED" });
+
     fetch(
       `https://localhost:5001/api/League/GetCompletedLeague?seasonStartYear=${seasonStartYear}&tier=${tier}`
     )
       .then((response) => response.json())
       .then((response) => dispatch({ type: "LEAGUE_TABLE_LOAD_COMPLETED", leagueTable: response }))
-      .catch(console.log);
+      .catch((error) => {
+        dispatch({ type: "LEAGUE_TABLE_LOAD_FAILED", error });
+      });
   };
 
   const clearLeagueTable = () => {

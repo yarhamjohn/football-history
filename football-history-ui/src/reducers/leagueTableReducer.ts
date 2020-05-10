@@ -9,6 +9,10 @@ export type LeagueTableState =
       type: "LOADING_LEAGUE_TABLE";
     }
   | {
+      type: "LOADING_LEAGUE_TABLE_FAILED";
+      error: string;
+    }
+  | {
       type: "LEAGUE_TABLE_LOADED";
       leagueTable: League;
     };
@@ -20,6 +24,10 @@ export type LeagueTableAction =
   | {
       type: "LEAGUE_TABLE_LOAD_COMPLETED";
       leagueTable: League;
+    }
+  | {
+      type: "LEAGUE_TABLE_LOAD_FAILED";
+      error: string;
     }
   | {
       type: "CLEAR_LEAGUE_TABLE";
@@ -38,9 +46,13 @@ const leagueTableReducer = (
       return { type: "LOADING_LEAGUE_TABLE" };
     case "LEAGUE_TABLE_LOAD_COMPLETED":
       return { type: "LEAGUE_TABLE_LOADED", leagueTable: action.leagueTable };
+    case "LEAGUE_TABLE_LOAD_FAILED":
+      return { type: "LOADING_LEAGUE_TABLE_FAILED", error: action.error };
     case "CLEAR_LEAGUE_TABLE":
       return { type: "NO_LEAGUE_TABLE_LOADED" };
   }
+
+  return prevState;
 };
 
 export { leagueTableReducer };

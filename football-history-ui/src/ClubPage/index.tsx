@@ -6,9 +6,9 @@ import { ClubSeason } from "./ClubSeason";
 import { useLeagueTable } from "../hooks/useLeagueTable";
 
 const ClubPage: FunctionComponent = () => {
-  const { clubs } = useClubs();
   const [selectedClub, setSelectedClub] = useState<Club | undefined>(undefined);
   const { clearLeagueTable } = useLeagueTable();
+
   useEffect(() => {
     clearLeagueTable();
   }, []);
@@ -16,7 +16,6 @@ const ClubPage: FunctionComponent = () => {
   return (
     <>
       <ClubFilter
-        clubs={clubs}
         selectedClub={selectedClub}
         setSelectedClub={(selection: Club | undefined) => setSelectedClub(selection)}
       />

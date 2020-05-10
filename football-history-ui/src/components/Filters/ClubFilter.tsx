@@ -1,13 +1,14 @@
 import React, { FunctionComponent } from "react";
 import { Dropdown, DropdownItemProps } from "semantic-ui-react";
-import { Club } from "../../hooks/useClubs";
+import { Club, useClubs } from "../../hooks/useClubs";
 import { isString } from "../../shared/functions";
 
 const ClubFilter: FunctionComponent<{
-  clubs: Club[];
   selectedClub: Club | undefined;
   setSelectedClub: (selectedClub: Club | undefined) => void;
-}> = ({ clubs, selectedClub, setSelectedClub }) => {
+}> = ({ selectedClub, setSelectedClub }) => {
+  const { clubsState } = useClubs();
+
   function GetDropdownClubs(clubs: Club[]): DropdownItemProps[] {
     return clubs.map((c) => {
       return {
@@ -19,13 +20,17 @@ const ClubFilter: FunctionComponent<{
   }
 
   const selectClub = (selection: any) => {
+    if (clubsState.type !== "CLUBS_LOADED") {
+      return;
+    }
+
     if (isString(selection)) {
       if (selection === "") {
         setSelectedClub(undefined);
         return;
       }
 
-      const club = clubs.filter((c) => c.name === selection);
+      const club = clubsState.clubs.filter((c) => c.name === selection);
       if (club.length !== 1) {
         throw new Error(
           `Clubs should be unique but there were ${
@@ -40,6 +45,10 @@ const ClubFilter: FunctionComponent<{
       );
     }
   };
+
+  if (clubsState.type !== "CLUBS_LOADED") {
+    return null;
+  }
 
   return (
     <div
@@ -62,7 +71,7 @@ const ClubFilter: FunctionComponent<{
         clearable
         search
         selection
-        options={GetDropdownClubs(clubs)}
+        options={GetDropdownClubs(clubsState.clubs)}
         onChange={(_, data) => selectClub(data.value)}
         style={{ maxHeight: "25px" }}
       />
