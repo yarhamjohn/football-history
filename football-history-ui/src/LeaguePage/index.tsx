@@ -3,7 +3,7 @@ import { Divider } from "semantic-ui-react";
 import { Division, useSeasons } from "../hooks/useSeasons";
 import { DivisionFilter } from "../components/Filters/LeagueFilter";
 import { LeagueSeason } from "./LeagueSeason";
-import { useLeagueTable } from "../components/LeagueTable/useLeagueTable";
+import { useLeagueTable } from "../hooks/useLeagueTable";
 
 const LeaguePage: FunctionComponent = () => {
   const { divisions } = useSeasons();

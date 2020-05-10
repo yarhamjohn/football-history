@@ -7,8 +7,10 @@ import { Image } from "semantic-ui-react";
 import soccerBall from "./images/Soccer-Ball-icon.png";
 import { LeaguePage } from "./LeaguePage";
 
+export type AppPage = "Home" | "Club" | "League";
+
 const App: FunctionComponent = () => {
-  const [activePage, setActivePage] = useState<"Home" | "Club" | "League">("Home");
+  const [activePage, setActivePage] = useState<AppPage>("Home");
 
   return (
     <div

@@ -1,7 +1,7 @@
 import { Dispatch } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { LeagueTableAction, LeagueTableState } from "./leagueTableReducer";
-import { ApplicationState } from "../../index";
+import { LeagueTableAction, LeagueTableState } from "../reducers/leagueTableReducer";
+import { AppState } from "../reducers/appReducer";
 
 export type Row = {
   position: number;
@@ -32,9 +32,7 @@ export type League = {
 };
 
 const useLeagueTable = () => {
-  const leagueTableState = useSelector<ApplicationState, LeagueTableState>(
-    (s) => s.leagueTableState
-  );
+  const leagueTableState = useSelector<AppState, LeagueTableState>((s) => s.leagueTableState);
   const dispatch = useDispatch<Dispatch<LeagueTableAction>>();
 
   const getLeagueTableForTeam = (club: string, seasonStartYear: number) => {

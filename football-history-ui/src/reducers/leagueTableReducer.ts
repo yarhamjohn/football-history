@@ -1,5 +1,5 @@
-import { ApplicationAction } from "../../index";
-import { League } from "./useLeagueTable";
+import { League } from "../hooks/useLeagueTable";
+import { AppAction } from "./appReducer";
 
 export type LeagueTableState =
   | {
@@ -27,7 +27,7 @@ export type LeagueTableAction =
 
 const leagueTableReducer = (
   prevState: LeagueTableState | undefined,
-  action: ApplicationAction
+  action: AppAction
 ): LeagueTableState => {
   if (!prevState) {
     return { type: "NO_LEAGUE_TABLE_LOADED" };

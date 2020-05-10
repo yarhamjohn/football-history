@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { Row } from "./useLeagueTable";
+import { Row } from "../../hooks/useLeagueTable";
 import { Icon, Table } from "semantic-ui-react";
 import { LeagueTableDrillDown } from "./LeagueTableDrillDown";
 import { LeagueTableRowCell } from "./LeagueTableRowCell";

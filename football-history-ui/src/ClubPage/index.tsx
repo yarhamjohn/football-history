@@ -3,7 +3,7 @@ import { Divider } from "semantic-ui-react";
 import { Club, useClubs } from "../hooks/useClubs";
 import { ClubFilter } from "../components/Filters/ClubFilter";
 import { ClubSeason } from "./ClubSeason";
-import { useLeagueTable } from "../components/LeagueTable/useLeagueTable";
+import { useLeagueTable } from "../hooks/useLeagueTable";
 
 const ClubPage: FunctionComponent = () => {
   const { clubs } = useClubs();

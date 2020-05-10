@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useEffect } from "react";
 import { Card } from "semantic-ui-react";
-import { useLeaguePositions } from "./useLeaguePositions";
+import { useLeaguePositions } from "../../hooks/useLeaguePositions";
 import { ResponsiveLine } from "@nivo/line";
 import { LeagueMatch, useLeagueMatches } from "../../hooks/useLeagueMatches";
 

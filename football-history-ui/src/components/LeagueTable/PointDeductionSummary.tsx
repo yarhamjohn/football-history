@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { Row } from "./useLeagueTable";
+import { Row } from "../../hooks/useLeagueTable";
 
 const PointDeductionSummary: FunctionComponent<{ leagueTable: Row[] }> = ({ leagueTable }) => {
   const pointDeductionRows = leagueTable.filter((r) => r.pointsDeducted > 0);

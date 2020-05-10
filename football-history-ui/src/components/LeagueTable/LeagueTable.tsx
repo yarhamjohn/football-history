@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useEffect } from "react";
-import { League } from "./useLeagueTable";
+import { League } from "../../hooks/useLeagueTable";
 import { Table } from "semantic-ui-react";
 import { LeagueTableRow } from "./LeagueTableRow";
 import { PointDeductionSummary } from "./PointDeductionSummary";

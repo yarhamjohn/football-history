@@ -3,7 +3,7 @@ import { Club } from "../hooks/useClubs";
 import { useSeasons } from "../hooks/useSeasons";
 import { SeasonFilter } from "../components/Filters/SeasonFilter";
 import { useTiers } from "../hooks/useTiers";
-import { useLeagueTable } from "../components/LeagueTable/useLeagueTable";
+import { useLeagueTable } from "../hooks/useLeagueTable";
 import { LeagueTable } from "../components/LeagueTable/LeagueTable";
 
 const ClubSeason: FunctionComponent<{ selectedClub: Club }> = ({ selectedClub }) => {

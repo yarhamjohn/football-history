@@ -4,7 +4,7 @@ import { useSeasons } from "../hooks/useSeasons";
 import { SeasonFilter } from "../components/Filters/SeasonFilter";
 import { ResultsGrid } from "../components/ResultsGrid";
 import { PlayOffs } from "../components/PlayOffs";
-import { useLeagueTable } from "../components/LeagueTable/useLeagueTable";
+import { useLeagueTable } from "../hooks/useLeagueTable";
 
 const LeagueSeason: FunctionComponent<{ selectedTier: number | undefined }> = ({
   selectedTier,

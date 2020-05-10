@@ -6,29 +6,9 @@ import * as serviceWorker from "./serviceWorker";
 import { AppContainer } from "react-hot-loader";
 import { createStore } from "redux";
 import { Provider } from "react-redux";
-import {
-  LeagueTableAction,
-  leagueTableReducer,
-  LeagueTableState,
-} from "./components/LeagueTable/leagueTableReducer";
+import { AppAction, appReducer, AppState } from "./reducers/appReducer";
 
-export interface ApplicationState {
-  leagueTableState: LeagueTableState;
-}
-export type ApplicationAction = LeagueTableAction;
-
-const applicationReducer = (
-  prevState: ApplicationState | undefined,
-  action: ApplicationAction
-): ApplicationState => {
-  return {
-    leagueTableState: leagueTableReducer(prevState?.leagueTableState, action),
-  };
-};
-
-const store = createStore<ApplicationState, ApplicationAction, unknown, unknown>(
-  applicationReducer
-);
+const store = createStore<AppState, AppAction, unknown, unknown>(appReducer);
 
 ReactDOM.render(
   <AppContainer>
