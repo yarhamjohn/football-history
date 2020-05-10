@@ -5,9 +5,10 @@ import { AppHeader } from "./components/AppHeader";
 import { ClubPage } from "./ClubPage";
 import { Image } from "semantic-ui-react";
 import soccerBall from "./images/Soccer-Ball-icon.png";
+import { LeaguePage } from "./LeaguePage";
 
 const App: FunctionComponent = () => {
-  const [activePage, setActivePage] = useState<"Home" | "Club">("Home");
+  const [activePage, setActivePage] = useState<"Home" | "Club" | "League">("Home");
 
   return (
     <div
@@ -25,7 +26,15 @@ const App: FunctionComponent = () => {
         setActivePage={(page) => setActivePage(page)}
         style={{ gridArea: "header" }}
       />
-      <div style={{ gridArea: "main" }}>{activePage === "Home" ? <HomePage /> : <ClubPage />}</div>
+      <div style={{ gridArea: "main" }}>
+        {activePage === "Home" ? (
+          <HomePage />
+        ) : activePage === "Club" ? (
+          <ClubPage />
+        ) : (
+          <LeaguePage />
+        )}
+      </div>
       <div
         style={{
           gridArea: "footer",

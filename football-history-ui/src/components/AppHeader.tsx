@@ -2,8 +2,8 @@ import React, { FunctionComponent } from "react";
 import { Menu } from "semantic-ui-react";
 
 const AppHeader: FunctionComponent<{
-  activePage: "Home" | "Club";
-  setActivePage: (activePage: "Home" | "Club") => void;
+  activePage: "Home" | "Club" | "League";
+  setActivePage: (activePage: "Home" | "Club" | "League") => void;
   style: React.CSSProperties;
 }> = ({ activePage, setActivePage, style }) => {
   return (
@@ -18,6 +18,13 @@ const AppHeader: FunctionComponent<{
       </Menu.Item>
       <Menu.Item name="Club" active={activePage === "Club"} onClick={() => setActivePage("Club")}>
         Club
+      </Menu.Item>
+      <Menu.Item
+        name="League"
+        active={activePage === "League"}
+        onClick={() => setActivePage("League")}
+      >
+        League
       </Menu.Item>
     </Menu>
   );
