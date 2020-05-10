@@ -1,27 +1,17 @@
 import React, { FunctionComponent, useEffect } from "react";
-import { useLeagueTable } from "./useLeagueTable";
+import { League } from "./useLeagueTable";
 import { Table } from "semantic-ui-react";
 import { LeagueTableRow } from "./LeagueTableRow";
 import { PointDeductionSummary } from "./PointDeductionSummary";
 
 const LeagueTable: FunctionComponent<{
   club?: string;
-  tier?: number;
+  table: League;
   seasonStartYear: number | undefined;
-}> = ({ club, tier, seasonStartYear }) => {
-  const { leagueTable, getLeagueTable, getLeagueTableForTeam } = useLeagueTable();
-
-  useEffect(() => {
-    if (seasonStartYear !== undefined && club !== undefined) {
-      getLeagueTableForTeam(club, seasonStartYear);
-    } else if (seasonStartYear !== undefined && tier !== undefined) {
-      getLeagueTable(tier, seasonStartYear);
-    }
-  }, [club, seasonStartYear]);
-
+}> = ({ club, table, seasonStartYear }) => {
   function getNumRows() {
-    if (leagueTable && leagueTable.table) {
-      return leagueTable.table.length;
+    if (table && table.table) {
+      return table.table.length;
     }
 
     return 0;
@@ -29,7 +19,7 @@ const LeagueTable: FunctionComponent<{
 
   return (
     <div>
-      {leagueTable === undefined || leagueTable.table === null ? (
+      {table === undefined || table.table === null ? (
         <div
           style={{
             height: "100px",
@@ -63,24 +53,24 @@ const LeagueTable: FunctionComponent<{
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {leagueTable &&
+              {table &&
                 seasonStartYear &&
-                leagueTable.table.map((r) => (
+                table.table.map((r) => (
                   <LeagueTableRow
                     key={r.position}
                     row={r}
                     club={club}
                     seasonStartYear={seasonStartYear}
                     numRows={getNumRows()}
-                    totalPlaces={leagueTable.totalPlaces}
-                    promotionPlaces={leagueTable.promotionPlaces}
-                    playOffPlaces={leagueTable.playOffPlaces}
-                    relegationPlaces={leagueTable.relegationPlaces}
+                    totalPlaces={table.totalPlaces}
+                    promotionPlaces={table.promotionPlaces}
+                    playOffPlaces={table.playOffPlaces}
+                    relegationPlaces={table.relegationPlaces}
                   />
                 ))}
             </Table.Body>
           </Table>
-          <PointDeductionSummary leagueTable={leagueTable.table} />
+          <PointDeductionSummary leagueTable={table.table} />
         </>
       )}
     </div>

@@ -27,15 +27,29 @@ const useSeasons = () => {
       return;
     }
 
-    const tiers = Array.from(new Set(seasons.map(s => s.divisions).flat().map(d => d.tier)));
+    const tiers = Array.from(
+      new Set(
+        seasons
+          .map((s) => s.divisions)
+          .flat()
+          .map((d) => d.tier)
+      )
+    );
     let newDivisions = [];
     for (let tier of tiers) {
-      const divs = Array.from(new Set(seasons.map(s => s.divisions).flat().filter(d => d.tier === tier).map(d => d.name)));
-      newDivisions.push({name: divs.join(", "), tier: tier})
+      const divs = Array.from(
+        new Set(
+          seasons
+            .map((s) => s.divisions)
+            .flat()
+            .filter((d) => d.tier === tier)
+            .map((d) => d.name)
+        )
+      );
+      newDivisions.push({ name: divs.join(", "), tier: tier });
     }
 
     setDivisions(newDivisions);
-
   }, [seasons]);
 
   return { seasons, divisions };

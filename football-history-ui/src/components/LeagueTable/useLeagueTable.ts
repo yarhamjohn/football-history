@@ -1,4 +1,7 @@
-import { useState } from "react";
+import { Dispatch } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { LeagueTableAction, LeagueTableState } from "./leagueTableReducer";
+import { ApplicationState } from "../../index";
 
 export type Row = {
   position: number;
@@ -16,7 +19,7 @@ export type Row = {
   status: string | null;
 };
 
-export type LeagueTable = {
+export type League = {
   name: string | null;
   tier: number;
   totalPlaces: number;
@@ -29,14 +32,17 @@ export type LeagueTable = {
 };
 
 const useLeagueTable = () => {
-  const [leagueTable, setLeagueTable] = useState<LeagueTable>();
+  const leagueTableState = useSelector<ApplicationState, LeagueTableState>(
+    (s) => s.leagueTableState
+  );
+  const dispatch = useDispatch<Dispatch<LeagueTableAction>>();
 
   const getLeagueTableForTeam = (club: string, seasonStartYear: number) => {
     fetch(
       `https://localhost:5001/api/League/GetCompletedLeagueForTeam?seasonStartYear=${seasonStartYear}&team=${club}`
     )
       .then((response) => response.json())
-      .then((response) => setLeagueTable(response))
+      .then((response) => dispatch({ type: "LEAGUE_TABLE_LOAD_COMPLETED", leagueTable: response }))
       .catch(console.log);
   };
 
@@ -45,11 +51,15 @@ const useLeagueTable = () => {
       `https://localhost:5001/api/League/GetCompletedLeague?seasonStartYear=${seasonStartYear}&tier=${tier}`
     )
       .then((response) => response.json())
-      .then((response) => setLeagueTable(response))
+      .then((response) => dispatch({ type: "LEAGUE_TABLE_LOAD_COMPLETED", leagueTable: response }))
       .catch(console.log);
   };
 
-  return { leagueTable, getLeagueTable, getLeagueTableForTeam };
+  const clearLeagueTable = () => {
+    dispatch({ type: "CLEAR_LEAGUE_TABLE" });
+  };
+
+  return { leagueTableState, getLeagueTable, getLeagueTableForTeam, clearLeagueTable };
 };
 
 export { useLeagueTable };

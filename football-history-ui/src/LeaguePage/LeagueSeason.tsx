@@ -4,13 +4,19 @@ import { useSeasons } from "../hooks/useSeasons";
 import { SeasonFilter } from "../components/Filters/SeasonFilter";
 import { ResultsGrid } from "../components/ResultsGrid";
 import { PlayOffs } from "../components/PlayOffs";
+import { useLeagueTable } from "../components/LeagueTable/useLeagueTable";
 
 const LeagueSeason: FunctionComponent<{ selectedTier: number | undefined }> = ({
   selectedTier,
 }) => {
   const { seasons } = useSeasons();
   const [selectedSeason, setSelectedSeason] = useState<number | undefined>(undefined);
-
+  const { leagueTableState, getLeagueTable } = useLeagueTable();
+  useEffect(() => {
+    if (selectedSeason !== undefined && selectedTier !== undefined) {
+      getLeagueTable(selectedTier, selectedSeason);
+    }
+  }, [selectedTier, selectedSeason]);
   useEffect(() => {
     if (seasons === undefined || selectedTier === undefined) {
       return;
@@ -48,7 +54,7 @@ const LeagueSeason: FunctionComponent<{ selectedTier: number | undefined }> = ({
         setSelectedSeason={(startYear) => setSelectedSeason(startYear)}
       />
       <h2 style={{ margin: 0 }}>{getDivisionName()}</h2>
-      {selectedTier && (
+      {leagueTableState.type === "LEAGUE_TABLE_LOADED" && selectedTier && (
         <div
           style={{
             display: "grid",
@@ -56,7 +62,7 @@ const LeagueSeason: FunctionComponent<{ selectedTier: number | undefined }> = ({
             gridGap: "1rem",
           }}
         >
-          <LeagueTable tier={selectedTier} seasonStartYear={selectedSeason} />
+          <LeagueTable table={leagueTableState.leagueTable} seasonStartYear={selectedSeason} />
           <div style={{ display: "grid", gridTemplateRows: "auto auto", gridGap: "1rem" }}>
             <PlayOffs tier={selectedTier} seasonStartYear={selectedSeason} />
             <ResultsGrid tier={selectedTier} seasonStartYear={selectedSeason} />

@@ -1,16 +1,21 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { Club } from "../hooks/useClubs";
-import { LeagueTable } from "../components/LeagueTable/LeagueTable";
 import { useSeasons } from "../hooks/useSeasons";
 import { SeasonFilter } from "../components/Filters/SeasonFilter";
-import { PlayOffs } from "../components/PlayOffs";
 import { useTiers } from "../hooks/useTiers";
-import { ResultsGrid } from "../components/ResultsGrid";
+import { useLeagueTable } from "../components/LeagueTable/useLeagueTable";
+import { LeagueTable } from "../components/LeagueTable/LeagueTable";
 
 const ClubSeason: FunctionComponent<{ selectedClub: Club }> = ({ selectedClub }) => {
   const { tier, getTier } = useTiers();
   const { seasons } = useSeasons();
   const [selectedSeason, setSelectedSeason] = useState<number | undefined>(undefined);
+  const { leagueTableState, getLeagueTableForTeam } = useLeagueTable();
+  useEffect(() => {
+    if (selectedSeason !== undefined && selectedClub !== undefined) {
+      getLeagueTableForTeam(selectedClub.name, selectedSeason);
+    }
+  }, [selectedClub, selectedSeason]);
 
   useEffect(() => {
     if (seasons === undefined || selectedClub === undefined) {
@@ -55,15 +60,21 @@ const ClubSeason: FunctionComponent<{ selectedClub: Club }> = ({ selectedClub })
         setSelectedSeason={(startYear) => setSelectedSeason(startYear)}
       />
       <h2 style={{ margin: 0 }}>{getDivisionName()}</h2>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(1100px, 1fr))",
-          gridGap: "1rem",
-        }}
-      >
-        <LeagueTable club={selectedClub.name} seasonStartYear={selectedSeason} />
-      </div>
+      {leagueTableState.type !== "LEAGUE_TABLE_LOADED" ? null : (
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(1100px, 1fr))",
+            gridGap: "1rem",
+          }}
+        >
+          <LeagueTable
+            club={selectedClub.name}
+            table={leagueTableState.leagueTable}
+            seasonStartYear={selectedSeason}
+          />
+        </div>
+      )}
     </div>
   );
 };
