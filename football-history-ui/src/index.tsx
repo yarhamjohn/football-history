@@ -6,37 +6,23 @@ import * as serviceWorker from "./serviceWorker";
 import { AppContainer } from "react-hot-loader";
 import { createStore } from "redux";
 import { Provider } from "react-redux";
+import {
+  LeagueTableAction,
+  leagueTableReducer,
+  LeagueTableState,
+} from "./components/LeagueTable/leagueTableReducer";
 
-type ProjectState = {
-  type: "LOADING_PROJECT";
-};
-
-type ProjectAction = {
-  type: "PROJECT_LOAD_STARTED";
-};
-
-interface ApplicationState {
-  projectState: ProjectState;
+export interface ApplicationState {
+  leagueTableState: LeagueTableState;
 }
-type ApplicationAction = ProjectAction;
-
-const projectReducer = (
-  prevState: ProjectState | undefined,
-  action: ApplicationAction
-): ProjectState => {
-  if (!prevState) {
-    return { type: "LOADING_PROJECT" };
-  }
-
-  return prevState;
-};
+export type ApplicationAction = LeagueTableAction;
 
 const applicationReducer = (
   prevState: ApplicationState | undefined,
   action: ApplicationAction
 ): ApplicationState => {
   return {
-    projectState: projectReducer(prevState?.projectState, action),
+    leagueTableState: leagueTableReducer(prevState?.leagueTableState, action),
   };
 };
 
