@@ -1,9 +1,9 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent, useState } from "react";
 import { Divider } from "semantic-ui-react";
 import { useClubs } from "../hooks/useClubs";
 import { ClubFilter } from "../components/Filters/ClubFilter";
-import { ClubSeason } from "./ClubSeason";
 import { SeasonState } from "../hooks/useSeasons";
+import { Season } from "../components/Season";
 
 const ClubPage: FunctionComponent<{ seasonState: SeasonState }> = ({ seasonState }) => {
   const { clubState } = useClubs();
@@ -21,7 +21,7 @@ const ClubPage: FunctionComponent<{ seasonState: SeasonState }> = ({ seasonState
         selectClub={(name) => setSelectedClub(name)}
       />
       <Divider />
-      {selectedClub && <ClubSeason selectedClub={selectedClub} seasonState={seasonState} />}
+      {selectedClub && <Season selectedClub={selectedClub} seasonState={seasonState} />}
     </>
   );
 };

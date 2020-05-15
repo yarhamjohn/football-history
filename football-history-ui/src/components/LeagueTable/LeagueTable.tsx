@@ -1,16 +1,14 @@
-import React, { FunctionComponent, useEffect } from "react";
+import React, { FunctionComponent } from "react";
 import { Table } from "semantic-ui-react";
 import { LeagueTableRow } from "./LeagueTableRow";
 import { PointDeductionSummary } from "./PointDeductionSummary";
-import { useLeague } from "../../hooks/useLeagueTable";
+import { LeagueState } from "../../hooks/useLeagueTable";
 
 const LeagueTable: FunctionComponent<{
+  leagueState: LeagueState;
   seasonStartYear: number;
-  club?: string;
-  tier?: number;
-}> = ({ seasonStartYear, club, tier }) => {
-  const { leagueState } = useLeague(seasonStartYear, club, tier);
-
+  selectedClub?: string;
+}> = ({ leagueState, seasonStartYear, selectedClub }) => {
   function getNumRows() {
     if (leagueState.type === "LEAGUE_LOAD_SUCCEEDED" && leagueState.league.table) {
       return leagueState.league.table.length;
@@ -64,7 +62,7 @@ const LeagueTable: FunctionComponent<{
                   <LeagueTableRow
                     key={r.position}
                     row={r}
-                    club={club}
+                    club={selectedClub}
                     seasonStartYear={seasonStartYear}
                     numRows={getNumRows()}
                     totalPlaces={leagueState.league.totalPlaces}

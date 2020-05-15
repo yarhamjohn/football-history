@@ -2,7 +2,7 @@ import React, { FunctionComponent, useState } from "react";
 import { Divider } from "semantic-ui-react";
 import { SeasonState } from "../hooks/useSeasons";
 import { DivisionFilter } from "../components/Filters/LeagueFilter";
-import { LeagueSeason } from "./LeagueSeason";
+import { Season } from "../components/Season";
 
 const LeaguePage: FunctionComponent<{ seasonState: SeasonState }> = ({ seasonState }) => {
   const [selectedDivision, setSelectedDivision] = useState<string | undefined>(undefined);
@@ -63,7 +63,7 @@ const LeaguePage: FunctionComponent<{ seasonState: SeasonState }> = ({ seasonSta
       />
       <Divider />
       {selectedDivision && (
-        <LeagueSeason selectedTier={getDivisionTier(selectedDivision)} seasonState={seasonState} />
+        <Season selectedTier={getDivisionTier(selectedDivision)} seasonState={seasonState} />
       )}
     </>
   );

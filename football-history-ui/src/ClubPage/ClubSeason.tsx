@@ -1,44 +1,26 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
-import { SeasonState } from "../hooks/useSeasons";
-import { SeasonFilter } from "../components/Filters/SeasonFilter";
+import React, { FunctionComponent } from "react";
 import { LeagueTable } from "../components/LeagueTable/LeagueTable";
+import { useLeague } from "../hooks/useLeagueTable";
 
-const ClubSeason: FunctionComponent<{ selectedClub: string; seasonState: SeasonState }> = ({
+const ClubSeason: FunctionComponent<{ selectedClub: string; selectedSeason: number }> = ({
   selectedClub,
-  seasonState,
+  selectedSeason,
 }) => {
-  const [selectedSeason, setSelectedSeason] = useState<number | undefined>(undefined);
-
-  useEffect(() => {
-    if (seasonState.type !== "SEASONS_LOAD_SUCCEEDED") {
-      return;
-    }
-
-    setSelectedSeason(Math.max(...seasonState.seasons.map((s) => s.startYear)));
-  }, [selectedClub, seasonState]);
-
-  if (seasonState.type !== "SEASONS_LOAD_SUCCEEDED") {
-    return null;
-  }
+  const { leagueState } = useLeague(selectedSeason, selectedClub);
 
   return (
-    <div style={{ display: "grid", gridGap: "1rem" }}>
-      <SeasonFilter
-        seasons={seasonState.seasons}
-        selectedSeason={selectedSeason}
-        selectSeason={(startYear) => setSelectedSeason(startYear)}
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(1100px, 1fr))",
+        gridGap: "1rem",
+      }}
+    >
+      <LeagueTable
+        leagueState={leagueState}
+        seasonStartYear={selectedSeason}
+        selectedClub={selectedClub}
       />
-      {selectedSeason && (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(1100px, 1fr))",
-            gridGap: "1rem",
-          }}
-        >
-          <LeagueTable seasonStartYear={selectedSeason} club={selectedClub} />
-        </div>
-      )}
     </div>
   );
 };
