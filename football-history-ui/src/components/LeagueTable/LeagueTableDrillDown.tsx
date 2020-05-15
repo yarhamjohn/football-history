@@ -22,11 +22,10 @@ const LeagueTableDrillDown: FunctionComponent<{
   relegationPlaces,
 }) => {
   const { leaguePositions, getLeaguePositions } = useLeaguePositions();
-  const { leagueMatches, getLeagueMatches } = useLeagueMatches();
+  const { leagueMatchesState } = useLeagueMatches(seasonStartYear, club);
 
   useEffect(() => {
     getLeaguePositions(club, seasonStartYear);
-    getLeagueMatches(club, seasonStartYear);
   }, [club, seasonStartYear]);
 
   function getTicks(numRows: number) {
@@ -157,7 +156,9 @@ const LeagueTableDrillDown: FunctionComponent<{
       <td colSpan={12}>
         <Card fluid>
           <Card.Content className="drilldown-card-body">
-            {leagueMatches && <div>{GetForm(leagueMatches)}</div>}
+            {leagueMatchesState.type === "LEAGUE_MATCHES_LOAD_SUCCEEDED" && (
+              <div>{GetForm(leagueMatchesState.matches)}</div>
+            )}
             <div className="drilldown-card-content" style={{ height: "200px" }}>
               <ResponsiveLine
                 data={data}

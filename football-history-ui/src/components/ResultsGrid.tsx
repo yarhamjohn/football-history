@@ -1,37 +1,16 @@
-import React, { FunctionComponent, useEffect } from "react";
-import { LeagueMatch, useLeagueMatches } from "../hooks/useLeagueMatches";
+import React, { FunctionComponent } from "react";
+import { LeagueMatch } from "../hooks/useLeagueMatches";
 import { Table } from "semantic-ui-react";
 import moment from "moment";
 
 const EmptyCell: FunctionComponent = () => {
   return <Table.Cell style={{ background: "rgba(0,0,0,.03)" }}></Table.Cell>;
 };
-const ResultsGrid: FunctionComponent<{ tier: number; seasonStartYear: number | undefined }> = ({
-  tier,
-  seasonStartYear,
-}) => {
-  const { allLeagueMatches, getAllLeagueMatches } = useLeagueMatches();
-
-  useEffect(() => {
-    if (seasonStartYear !== undefined) {
-      getAllLeagueMatches(tier, seasonStartYear);
-    }
-  }, [tier, seasonStartYear]);
-
-  if (allLeagueMatches == undefined) {
-    return null;
-  }
-
-  const abbreviations = Array.from(
-    new Set(allLeagueMatches.map((m) => m.homeTeamAbbreviation))
-  ).sort();
+const ResultsGrid: FunctionComponent<{ matches: LeagueMatch[] }> = ({ matches }) => {
+  const abbreviations = Array.from(new Set(matches.map((m) => m.homeTeamAbbreviation))).sort();
 
   function getRow(teamAbbreviation: string) {
-    if (allLeagueMatches == undefined) {
-      return null;
-    }
-
-    const homeGames = allLeagueMatches.filter((m) => m.homeTeamAbbreviation === teamAbbreviation);
+    const homeGames = matches.filter((m) => m.homeTeamAbbreviation === teamAbbreviation);
     homeGames.push({ awayTeamAbbreviation: teamAbbreviation } as LeagueMatch);
     homeGames.sort((a, b) => {
       if (a.awayTeamAbbreviation > b.awayTeamAbbreviation) {
