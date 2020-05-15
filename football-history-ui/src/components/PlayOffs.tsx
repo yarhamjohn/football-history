@@ -1,6 +1,5 @@
 import React, { FunctionComponent, useEffect } from "react";
-import { PlayOffMatch, usePlayOffMatches } from "../hooks/usePlayOffMatches";
-import { useTiers } from "../hooks/useTiers";
+import { PlayOffMatch, PlayOffMatchesState, usePlayOffMatches } from "../hooks/usePlayOffMatches";
 import { Table } from "semantic-ui-react";
 
 const PlayOffFinal: FunctionComponent<{ final: PlayOffMatch; style: React.CSSProperties }> = ({
@@ -93,22 +92,13 @@ const PlayOffSemiFinal: FunctionComponent<{
 };
 
 const PlayOffs: FunctionComponent<{
-  tier: number;
-  seasonStartYear: number | undefined;
-}> = ({ tier, seasonStartYear }) => {
-  const { playOffMatches, getPlayOffMatches } = usePlayOffMatches();
-
-  useEffect(() => {
-    if (seasonStartYear !== undefined) {
-      getPlayOffMatches(tier, seasonStartYear);
-    }
-  }, [tier, seasonStartYear]);
-
-  if (playOffMatches.length === 0) {
+  matches: PlayOffMatch[];
+}> = ({ matches }) => {
+  if (matches.length === 0) {
     return null;
   }
 
-  const semiFinals = playOffMatches.filter((m) => m.round === "Semi-Final");
+  const semiFinals = matches.filter((m) => m.round === "Semi-Final");
   const teams = semiFinals.map((m) => m.homeTeam);
   const semiFinalOne = semiFinals.filter((m) => m.homeTeam === teams[0] || m.awayTeam === teams[0]);
   const semiFinalTwo = semiFinals.filter((m) => m.homeTeam !== teams[0] && m.awayTeam !== teams[0]);
@@ -127,7 +117,7 @@ const PlayOffs: FunctionComponent<{
       {<PlayOffSemiFinal semiFinal={semiFinalTwo} style={{ gridArea: "two", marginTop: 0 }} />}
       {
         <PlayOffFinal
-          final={playOffMatches.filter((m) => m.round === "Final")[0]}
+          final={matches.filter((m) => m.round === "Final")[0]}
           style={{ gridArea: "final" }}
         />
       }

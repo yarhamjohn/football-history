@@ -39,9 +39,7 @@ const LeaguePage: FunctionComponent<{ seasonState: SeasonState }> = ({ seasonSta
   };
 
   const getDivisionTier = (divisionName: string) => {
-    console.log(divisionName);
     const divisions = getDivisions().filter((d) => d.name === divisionName);
-    console.log(divisions);
 
     if (divisions.length !== 1) {
       throw new Error(`The division name (${divisionName}) provided matches more than one tier.`);
