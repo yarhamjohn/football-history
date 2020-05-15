@@ -1,7 +1,4 @@
-import { Dispatch } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { LeagueTableAction, LeagueTableState } from "../reducers/leagueTableReducer";
-import { AppState } from "../reducers/appReducer";
+import { Reducer, useEffect, useReducer } from "react";
 
 export type Row = {
   position: number;
@@ -28,44 +25,60 @@ export type League = {
   relegationPlaces: number;
   pointsForWin: number;
   startYear: number;
-  table: Row[] | null;
+  table: Row[] | null; // TODO: This shouldn't be how its done
 };
 
-const useLeagueTable = () => {
-  const leagueTableState = useSelector<AppState, LeagueTableState>((s) => s.leagueTableState);
-  const dispatch = useDispatch<Dispatch<LeagueTableAction>>();
+export type LeagueState =
+  | { type: "LEAGUE_UNLOADED" }
+  | { type: "LEAGUE_LOADING" }
+  | { type: "LEAGUE_LOAD_SUCCEEDED"; league: League }
+  | { type: "LEAGUE_LOAD_FAILED"; error: string };
 
-  const getLeagueTableForTeam = (club: string, seasonStartYear: number) => {
-    dispatch({ type: "LEAGUE_TABLE_LOAD_STARTED" });
+type LeagueAction =
+  | { type: "LOAD_LEAGUE" }
+  | { type: "LOAD_LEAGUE_SUCCEEDED"; league: League }
+  | { type: "LOAD_LEAGUE_FAILED"; error: string };
 
-    fetch(
-      `https://localhost:5001/api/League/GetCompletedLeagueForTeam?seasonStartYear=${seasonStartYear}&team=${club}`
-    )
-      .then((response) => response.json())
-      .then((response) => dispatch({ type: "LEAGUE_TABLE_LOAD_COMPLETED", leagueTable: response }))
-      .catch((error) => {
-        dispatch({ type: "LEAGUE_TABLE_LOAD_FAILED", error });
-      });
-  };
-
-  const getLeagueTable = (tier: number, seasonStartYear: number) => {
-    dispatch({ type: "LEAGUE_TABLE_LOAD_STARTED" });
-
-    fetch(
-      `https://localhost:5001/api/League/GetCompletedLeague?seasonStartYear=${seasonStartYear}&tier=${tier}`
-    )
-      .then((response) => response.json())
-      .then((response) => dispatch({ type: "LEAGUE_TABLE_LOAD_COMPLETED", leagueTable: response }))
-      .catch((error) => {
-        dispatch({ type: "LEAGUE_TABLE_LOAD_FAILED", error });
-      });
-  };
-
-  const clearLeagueTable = () => {
-    dispatch({ type: "CLEAR_LEAGUE_TABLE" });
-  };
-
-  return { leagueTableState, getLeagueTable, getLeagueTableForTeam, clearLeagueTable };
+const leagueReducer = (state: LeagueState, action: LeagueAction): LeagueState => {
+  switch (action.type) {
+    case "LOAD_LEAGUE":
+      return { type: "LEAGUE_LOADING" };
+    case "LOAD_LEAGUE_SUCCEEDED":
+      return { type: "LEAGUE_LOAD_SUCCEEDED", league: action.league };
+    case "LOAD_LEAGUE_FAILED":
+      return { type: "LEAGUE_LOAD_FAILED", error: action.error };
+    default:
+      return { type: "LEAGUE_UNLOADED" };
+  }
 };
 
-export { useLeagueTable };
+const useLeague = (seasonStartYear: number, club?: string, tier?: number) => {
+  const [leagueState, dispatch] = useReducer<Reducer<LeagueState, LeagueAction>>(leagueReducer, {
+    type: "LEAGUE_UNLOADED",
+  });
+
+  useEffect(() => {
+    if (!!club && !!tier) {
+      throw new Error(
+        `Neither a tier nor a club was specified when requesting the league table for season starting: ${seasonStartYear}`
+      );
+    }
+
+    dispatch({ type: "LOAD_LEAGUE" });
+
+    let url = club
+      ? `https://localhost:5001/api/League/GetCompletedLeagueForTeam?seasonStartYear=${seasonStartYear}&team=${club}`
+      : `https://localhost:5001/api/League/GetCompletedLeague?seasonStartYear=${seasonStartYear}&tier=${tier}`;
+
+    fetch(url)
+      .then((response) => response.json())
+      .then((response) => dispatch({ type: "LOAD_LEAGUE_SUCCEEDED", league: response }))
+      .catch((error) => {
+        dispatch({ type: "LOAD_LEAGUE_FAILED", error });
+      });
+  }, [seasonStartYear, club, tier]);
+
+  return { leagueState };
+};
+
+export { useLeague };

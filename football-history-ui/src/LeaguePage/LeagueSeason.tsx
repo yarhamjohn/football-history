@@ -1,44 +1,37 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { LeagueTable } from "../components/LeagueTable/LeagueTable";
-import { useSeasons } from "../hooks/useSeasons";
+import { SeasonState, useSeasons } from "../hooks/useSeasons";
 import { SeasonFilter } from "../components/Filters/SeasonFilter";
 import { ResultsGrid } from "../components/ResultsGrid";
 import { PlayOffs } from "../components/PlayOffs";
-import { useLeagueTable } from "../hooks/useLeagueTable";
 
-const LeagueSeason: FunctionComponent<{ selectedTier: number }> = ({ selectedTier }) => {
-  const { seasonsState } = useSeasons();
-  const { leagueTableState, getLeagueTable } = useLeagueTable();
+const LeagueSeason: FunctionComponent<{ selectedTier: number; seasonState: SeasonState }> = ({
+  selectedTier,
+  seasonState,
+}) => {
   const [selectedSeason, setSelectedSeason] = useState<number | undefined>(undefined);
 
   useEffect(() => {
-    if (seasonsState.type !== "SEASONS_LOADED") {
+    if (seasonState.type !== "SEASONS_LOAD_SUCCEEDED") {
       return;
     }
 
-    setSelectedSeason(Math.max(...seasonsState.seasons.map((s) => s.startYear)));
-  }, [selectedTier, seasonsState]);
+    setSelectedSeason(Math.max(...seasonState.seasons.map((s) => s.startYear)));
+  }, [selectedTier, seasonState]);
 
-  useEffect(() => {
-    if (selectedSeason !== undefined) {
-      getLeagueTable(selectedTier, selectedSeason);
-    }
-  }, [selectedTier, selectedSeason]);
-
-  if (seasonsState.type !== "SEASONS_LOADED") {
+  if (seasonState.type !== "SEASONS_LOAD_SUCCEEDED") {
     return null;
   }
 
   return (
     <div style={{ display: "grid", gridGap: "1rem" }}>
       <SeasonFilter
-        seasons={seasonsState.seasons}
+        seasons={seasonState.seasons}
         selectedSeason={selectedSeason}
         selectSeason={(startYear) => setSelectedSeason(startYear)}
       />
-      {leagueTableState.type === "LEAGUE_TABLE_LOADED" && selectedTier && (
+      {selectedTier && selectedSeason && (
         <>
-          <h2 style={{ margin: 0 }}>{leagueTableState.leagueTable.name}</h2>
           <div
             style={{
               display: "grid",
@@ -46,7 +39,7 @@ const LeagueSeason: FunctionComponent<{ selectedTier: number }> = ({ selectedTie
               gridGap: "1rem",
             }}
           >
-            <LeagueTable table={leagueTableState.leagueTable} seasonStartYear={selectedSeason} />
+            <LeagueTable seasonStartYear={selectedSeason} tier={selectedTier} />
             <div style={{ display: "grid", gridTemplateRows: "auto auto", gridGap: "1rem" }}>
               <PlayOffs tier={selectedTier} seasonStartYear={selectedSeason} />
               <ResultsGrid tier={selectedTier} seasonStartYear={selectedSeason} />

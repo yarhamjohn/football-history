@@ -1,21 +1,47 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent, useState } from "react";
 import { Divider } from "semantic-ui-react";
-import { Season, useSeasons } from "../hooks/useSeasons";
+import { SeasonState } from "../hooks/useSeasons";
 import { DivisionFilter } from "../components/Filters/LeagueFilter";
 import { LeagueSeason } from "./LeagueSeason";
-import { useLeagueTable } from "../hooks/useLeagueTable";
 
-const LeaguePage: FunctionComponent = () => {
-  const { seasonsState, getDivisions } = useSeasons();
-  const { clearLeagueTable } = useLeagueTable();
+const LeaguePage: FunctionComponent<{ seasonState: SeasonState }> = ({ seasonState }) => {
   const [selectedDivision, setSelectedDivision] = useState<string | undefined>(undefined);
 
-  useEffect(() => {
-    clearLeagueTable();
-  }, []);
+  const getDivisions = () => {
+    if (seasonState.type !== "SEASONS_LOAD_SUCCEEDED") {
+      return [];
+    }
+
+    const tiers = Array.from(
+      new Set(
+        seasonState.seasons
+          .map((s) => s.divisions)
+          .flat()
+          .map((d) => d.tier)
+      )
+    );
+
+    let divisions = [];
+    for (let tier of tiers) {
+      const divs = Array.from(
+        new Set(
+          seasonState.seasons
+            .map((s) => s.divisions)
+            .flat()
+            .filter((d) => d.tier === tier)
+            .map((d) => d.name)
+        )
+      );
+      divisions.push({ name: divs.join(", "), tier: tier });
+    }
+
+    return divisions;
+  };
 
   const getDivisionTier = (divisionName: string) => {
+    console.log(divisionName);
     const divisions = getDivisions().filter((d) => d.name === divisionName);
+    console.log(divisions);
 
     if (divisions.length !== 1) {
       throw new Error(`The division name (${divisionName}) provided matches more than one tier.`);
@@ -24,7 +50,7 @@ const LeaguePage: FunctionComponent = () => {
     return divisions[0].tier;
   };
 
-  if (seasonsState.type !== "SEASONS_LOADED") {
+  if (seasonState.type !== "SEASONS_LOAD_SUCCEEDED") {
     return null;
   }
 
@@ -36,7 +62,9 @@ const LeaguePage: FunctionComponent = () => {
         selectDivision={(name) => setSelectedDivision(name)}
       />
       <Divider />
-      {selectedDivision && <LeagueSeason selectedTier={getDivisionTier(selectedDivision)} />}
+      {selectedDivision && (
+        <LeagueSeason selectedTier={getDivisionTier(selectedDivision)} seasonState={seasonState} />
+      )}
     </>
   );
 };

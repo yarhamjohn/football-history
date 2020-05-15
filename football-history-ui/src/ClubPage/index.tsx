@@ -3,30 +3,25 @@ import { Divider } from "semantic-ui-react";
 import { useClubs } from "../hooks/useClubs";
 import { ClubFilter } from "../components/Filters/ClubFilter";
 import { ClubSeason } from "./ClubSeason";
-import { useLeagueTable } from "../hooks/useLeagueTable";
+import { SeasonState } from "../hooks/useSeasons";
 
-const ClubPage: FunctionComponent = () => {
-  const { clubsState } = useClubs();
-  const { clearLeagueTable } = useLeagueTable();
+const ClubPage: FunctionComponent<{ seasonState: SeasonState }> = ({ seasonState }) => {
+  const { clubState } = useClubs();
   const [selectedClub, setSelectedClub] = useState<string | undefined>(undefined);
 
-  useEffect(() => {
-    clearLeagueTable();
-  }, []);
-
-  if (clubsState.type !== "CLUBS_LOADED") {
+  if (clubState.type !== "CLUBS_LOAD_SUCCEEDED") {
     return null;
   }
 
   return (
     <>
       <ClubFilter
-        clubs={clubsState.clubs}
+        clubs={clubState.clubs}
         selectedClub={selectedClub}
         selectClub={(name) => setSelectedClub(name)}
       />
       <Divider />
-      {selectedClub && <ClubSeason selectedClub={selectedClub} />}
+      {selectedClub && <ClubSeason selectedClub={selectedClub} seasonState={seasonState} />}
     </>
   );
 };

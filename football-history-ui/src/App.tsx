@@ -12,14 +12,8 @@ import { useSeasons } from "./hooks/useSeasons";
 export type AppPage = "Home" | "Club" | "League";
 
 const App: FunctionComponent = () => {
-  const { getClubs } = useClubs();
-  const { getSeasons } = useSeasons();
+  const { seasonState } = useSeasons();
   const [activePage, setActivePage] = useState<AppPage>("Home");
-
-  useEffect(() => {
-    getClubs();
-    getSeasons();
-  }, []);
 
   return (
     <div
@@ -41,9 +35,9 @@ const App: FunctionComponent = () => {
         {activePage === "Home" ? (
           <HomePage />
         ) : activePage === "Club" ? (
-          <ClubPage />
+          <ClubPage seasonState={seasonState} />
         ) : (
-          <LeaguePage />
+          <LeaguePage seasonState={seasonState} />
         )}
       </div>
       <div

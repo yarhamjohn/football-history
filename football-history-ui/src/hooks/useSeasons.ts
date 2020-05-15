@@ -1,7 +1,4 @@
-import { Dispatch } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AppState } from "../reducers/appReducer";
-import { SeasonsAction, SeasonsState } from "../reducers/seasonsReducer";
+import { Reducer, useEffect, useReducer } from "react";
 
 export interface Division {
   name: string;
@@ -14,53 +11,47 @@ export interface Season {
   divisions: Division[];
 }
 
-const useSeasons = () => {
-  const seasonsState = useSelector<AppState, SeasonsState>((s) => s.seasonsState);
-  const dispatch = useDispatch<Dispatch<SeasonsAction>>();
+export type SeasonState =
+  | { type: "SEASONS_UNLOADED" }
+  | { type: "SEASONS_LOADING" }
+  | { type: "SEASONS_LOAD_SUCCEEDED"; seasons: Season[] }
+  | { type: "SEASONS_LOAD_FAILED"; error: string };
 
-  const getSeasons = () => {
-    dispatch({ type: "SEASONS_LOAD_STARTED" });
+type SeasonAction =
+  | { type: "LOAD_SEASONS" }
+  | { type: "LOAD_SEASONS_SUCCEEDED"; seasons: Season[] }
+  | { type: "LOAD_SEASONS_FAILED"; error: string };
+
+const seasonsReducer = (state: SeasonState, action: SeasonAction): SeasonState => {
+  switch (action.type) {
+    case "LOAD_SEASONS":
+      return { type: "SEASONS_LOADING" };
+    case "LOAD_SEASONS_SUCCEEDED":
+      return { type: "SEASONS_LOAD_SUCCEEDED", seasons: action.seasons };
+    case "LOAD_SEASONS_FAILED":
+      return { type: "SEASONS_LOAD_FAILED", error: action.error };
+    default:
+      return { type: "SEASONS_UNLOADED" };
+  }
+};
+
+const useSeasons = () => {
+  const [seasonState, dispatch] = useReducer<Reducer<SeasonState, SeasonAction>>(seasonsReducer, {
+    type: "SEASONS_UNLOADED",
+  });
+
+  useEffect(() => {
+    dispatch({ type: "LOAD_SEASONS" });
 
     fetch(`https://localhost:5001/api/Season/GetSeasons`)
       .then((response) => response.json())
-      .then((response) => dispatch({ type: "SEASONS_LOAD_COMPLETED", seasons: response }))
+      .then((response) => dispatch({ type: "LOAD_SEASONS_SUCCEEDED", seasons: response }))
       .catch((error) => {
-        dispatch({ type: "SEASONS_LOAD_FAILED", error });
+        dispatch({ type: "LOAD_SEASONS_FAILED", error });
       });
-  };
+  }, []);
 
-  const getDivisions = () => {
-    if (seasonsState.type !== "SEASONS_LOADED") {
-      return [];
-    }
-
-    const tiers = Array.from(
-      new Set(
-        seasonsState.seasons
-          .map((s) => s.divisions)
-          .flat()
-          .map((d) => d.tier)
-      )
-    );
-
-    let divisions = [];
-    for (let tier of tiers) {
-      const divs = Array.from(
-        new Set(
-          seasonsState.seasons
-            .map((s) => s.divisions)
-            .flat()
-            .filter((d) => d.tier === tier)
-            .map((d) => d.name)
-        )
-      );
-      divisions.push({ name: divs.join(", "), tier: tier });
-    }
-
-    return divisions;
-  };
-
-  return { seasonsState, getSeasons, getDivisions };
+  return { seasonState };
 };
 
 export { useSeasons };
