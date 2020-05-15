@@ -1,7 +1,7 @@
 import { Dispatch } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppState } from "../reducers/appReducer";
-import { SeasonsAction, SeasonsState } from "../reducers/SeasonsReducer";
+import { SeasonsAction, SeasonsState } from "../reducers/seasonsReducer";
 
 export interface Division {
   name: string;

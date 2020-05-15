@@ -1,6 +1,6 @@
 import { LeagueTableAction, leagueTableReducer, LeagueTableState } from "./leagueTableReducer";
 import { ClubsAction, clubsReducer, ClubsState } from "./clubsReducer";
-import { SeasonsAction, seasonsReducer, SeasonsState } from "./SeasonsReducer";
+import { SeasonsAction, seasonsReducer, SeasonsState } from "./seasonsReducer";
 
 export interface AppState {
   leagueTableState: LeagueTableState;
