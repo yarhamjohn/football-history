@@ -21,12 +21,8 @@ const LeagueTableDrillDown: FunctionComponent<{
   playOffPlaces,
   relegationPlaces,
 }) => {
-  const { leaguePositions, getLeaguePositions } = useLeaguePositions();
+  const { leaguePositionsState } = useLeaguePositions(club, seasonStartYear);
   const { leagueMatchesState } = useLeagueMatches(seasonStartYear, club);
-
-  useEffect(() => {
-    getLeaguePositions(club, seasonStartYear);
-  }, [club, seasonStartYear]);
 
   function getTicks(numRows: number) {
     if (numRows === 20) {
@@ -37,36 +33,38 @@ const LeagueTableDrillDown: FunctionComponent<{
   }
 
   function getDates() {
-    return leaguePositions
-      ? leaguePositions.map((p) => new Date(p.date)).filter((d) => d.getUTCDate() === 1)
+    return leaguePositionsState.type === "LEAGUE_POSITIONS_LOAD_SUCCEEDED"
+      ? leaguePositionsState.positions
+          .map((p) => new Date(p.date))
+          .filter((d) => d.getUTCDate() === 1)
       : [];
   }
 
   function getMinDate() {
-    return leaguePositions
+    return leaguePositionsState.type === "LEAGUE_POSITIONS_LOAD_SUCCEEDED"
       ? new Date(
           Math.min.apply(
             null,
-            leaguePositions.map((p) => new Date(p.date).valueOf())
+            leaguePositionsState.positions.map((p) => new Date(p.date).valueOf())
           )
         )
       : new Date();
   }
 
   function getMaxDate() {
-    return leaguePositions
+    return leaguePositionsState.type === "LEAGUE_POSITIONS_LOAD_SUCCEEDED"
       ? new Date(
           Math.max.apply(
             null,
-            leaguePositions.map((p) => new Date(p.date).valueOf())
+            leaguePositionsState.positions.map((p) => new Date(p.date).valueOf())
           )
         )
       : new Date();
   }
 
   function getPositionData() {
-    return leaguePositions
-      ? leaguePositions
+    return leaguePositionsState.type === "LEAGUE_POSITIONS_LOAD_SUCCEEDED"
+      ? leaguePositionsState.positions
           .map((p) => {
             return { x: new Date(p.date), y: p.position };
           })
