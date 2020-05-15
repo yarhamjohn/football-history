@@ -17,7 +17,8 @@ const LeagueSeason: FunctionComponent<{ selectedTier: number; selectedSeason: nu
 
   if (
     leagueState.type === "LEAGUE_LOADING" ||
-    playOffMatchesState.type === "PLAY_OFF_MATCHES_LOADING"
+    playOffMatchesState.type === "PLAY_OFF_MATCHES_LOADING" ||
+    leagueMatchesState.type === "LEAGUE_MATCHES_LOADING"
   ) {
     return <Loader active />;
   }

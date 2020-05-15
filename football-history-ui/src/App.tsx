@@ -34,10 +34,13 @@ const App: FunctionComponent = () => {
       <div style={{ gridArea: "main" }}>
         {activePage === "Home" ? (
           <HomePage />
-        ) : activePage === "Club" ? (
-          <ClubPage seasonState={seasonState} />
         ) : (
-          <LeaguePage seasonState={seasonState} />
+          seasonState.type === "SEASONS_LOAD_SUCCEEDED" &&
+          (activePage === "Club" ? (
+            <ClubPage seasons={seasonState.seasons} />
+          ) : (
+            <LeaguePage seasons={seasonState.seasons} />
+          ))
         )}
       </div>
       <div

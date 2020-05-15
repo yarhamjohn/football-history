@@ -1,20 +1,16 @@
 import React, { FunctionComponent, useState } from "react";
 import { Divider } from "semantic-ui-react";
-import { SeasonState } from "../hooks/useSeasons";
+import { Season as SeasonType } from "../hooks/useSeasons";
 import { DivisionFilter } from "../components/Filters/LeagueFilter";
 import { Season } from "../components/Season";
 
-const LeaguePage: FunctionComponent<{ seasonState: SeasonState }> = ({ seasonState }) => {
+const LeaguePage: FunctionComponent<{ seasons: SeasonType[] }> = ({ seasons }) => {
   const [selectedDivision, setSelectedDivision] = useState<string | undefined>(undefined);
 
   const getDivisions = () => {
-    if (seasonState.type !== "SEASONS_LOAD_SUCCEEDED") {
-      return [];
-    }
-
     const tiers = Array.from(
       new Set(
-        seasonState.seasons
+        seasons
           .map((s) => s.divisions)
           .flat()
           .map((d) => d.tier)
@@ -25,7 +21,7 @@ const LeaguePage: FunctionComponent<{ seasonState: SeasonState }> = ({ seasonSta
     for (let tier of tiers) {
       const divs = Array.from(
         new Set(
-          seasonState.seasons
+          seasons
             .map((s) => s.divisions)
             .flat()
             .filter((d) => d.tier === tier)
@@ -48,7 +44,7 @@ const LeaguePage: FunctionComponent<{ seasonState: SeasonState }> = ({ seasonSta
     return divisions[0].tier;
   };
 
-  if (seasonState.type !== "SEASONS_LOAD_SUCCEEDED") {
+  if (seasons.length === 0) {
     return null;
   }
 
@@ -61,7 +57,7 @@ const LeaguePage: FunctionComponent<{ seasonState: SeasonState }> = ({ seasonSta
       />
       <Divider />
       {selectedDivision && (
-        <Season selectedTier={getDivisionTier(selectedDivision)} seasonState={seasonState} />
+        <Season selectedTier={getDivisionTier(selectedDivision)} seasons={seasons} />
       )}
     </>
   );
