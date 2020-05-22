@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from "react";
 import { useHistoricalPositions } from "../hooks/useHistoricalPositions";
-import { ResponsiveLine, Layer } from "@nivo/line";
+import { ResponsiveLine, Layer, Serie } from "@nivo/line";
 
 const HistoricalPositions: FunctionComponent<{ selectedClub: string }> = ({ selectedClub }) => {
   const { historicalPositionsState } = useHistoricalPositions(selectedClub, 2000, 2015);
@@ -19,30 +19,37 @@ const HistoricalPositions: FunctionComponent<{ selectedClub: string }> = ({ sele
     Array.from({ length: end - start }, (v, k) => k + start);
 
   function getData() {
-    const dates = getDates(1999, 2016);
-    const annotatedPositions = getPositionData();
+    let series: Serie[] = [];
+    let colors = ["black", "red", "blue", "green"];
 
-    const positions = dates.map((d) => {
+    if (historicalPositionsState.type !== "HISTORICAL_POSITIONS_LOAD_SUCCEEDED") {
+      return { series, colors };
+    }
+
+    const allDates = getDates(1999, 2016);
+    const tiers = Array.from(new Set(historicalPositionsState.positions.map((p) => p.tier)));
+    series = tiers.map((t) => {
       return {
-        x: d,
-        y: annotatedPositions.some((p) => p.year === d)
-          ? annotatedPositions.filter((p) => p.year === d)[0].position
-          : null,
+        id: `tier${t}Positions`,
+        data: allDates.map((d) => {
+          return {
+            x: d,
+            y: historicalPositionsState.positions.some(
+              (p) => p.seasonStartYear === d && p.tier === t
+            )
+              ? historicalPositionsState.positions.filter(
+                  (p) => p.seasonStartYear === d && p.tier === t
+                )[0].absolutePosition
+              : null,
+          };
+        }),
       };
     });
 
-    let data = [
-      {
-        id: "positions",
-        data: positions,
-      },
-    ];
-    let colors = ["black"];
-
-    return { data, colors };
+    return { series, colors };
   }
 
-  const { data, colors } = getData();
+  const { series, colors } = getData();
 
   function getTicks() {
     return [1, 21, 45, 69, 92];
@@ -51,7 +58,7 @@ const HistoricalPositions: FunctionComponent<{ selectedClub: string }> = ({ sele
   return (
     <div style={{ height: "500px" }}>
       <ResponsiveLine
-        data={data}
+        data={series}
         colors={colors}
         margin={{ left: 25, bottom: 25, top: 10 }}
         yScale={{ type: "linear", min: 1, max: 92, reverse: true }}
