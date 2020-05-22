@@ -27,7 +27,7 @@ const LeagueSeason: FunctionComponent<{ selectedTier: number; selectedSeason: nu
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fit, minmax(1100px, 1fr))",
+        gridTemplateRows: "auto auto",
         gridGap: "1rem",
       }}
     >

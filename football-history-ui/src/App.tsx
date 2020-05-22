@@ -20,9 +20,10 @@ const App: FunctionComponent = () => {
       style={{
         height: "100%",
         display: "grid",
-        gridTemplateColumns: "75px auto 75px",
+        gridTemplateColumns: "minmax(0, 1fr) 75px 5fr 75px minmax(0, 1fr)",
         gridTemplateRows: "auto 1fr 100px",
-        gridTemplateAreas: "'icon header .' 'leftGutter main rightGutter' 'footer footer footer",
+        gridTemplateAreas:
+          "'. icon header . .' 'leftGutter leftGutter main rightGutter rightGutter' 'footer footer footer footer footer",
       }}
     >
       <Image src={soccerBall} fluid style={{ gridArea: "icon", padding: "10px" }} />
