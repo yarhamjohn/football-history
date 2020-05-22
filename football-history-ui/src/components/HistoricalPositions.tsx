@@ -1,9 +1,24 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useState } from "react";
 import { useHistoricalPositions } from "../hooks/useHistoricalPositions";
 import { ResponsiveLine, Serie } from "@nivo/line";
+import { Season as SeasonType } from "../hooks/useSeasons";
 
-const HistoricalPositions: FunctionComponent<{ selectedClub: string }> = ({ selectedClub }) => {
-  const { historicalPositionsState } = useHistoricalPositions(selectedClub, 2000, 2015);
+const HistoricalPositions: FunctionComponent<{
+  selectedClub: string;
+  seasons: SeasonType[];
+}> = ({ selectedClub, seasons }) => {
+  const [seasonFilter, setSeasonFilter] = useState<{
+    firstSeasonStartYear: number;
+    lastSeasonEndYear: number;
+  }>({
+    firstSeasonStartYear: Math.max(...seasons.map((s) => s.startYear)) - 10,
+    lastSeasonEndYear: Math.max(...seasons.map((s) => s.endYear)),
+  });
+  const { historicalPositionsState } = useHistoricalPositions(
+    selectedClub,
+    seasonFilter.firstSeasonStartYear,
+    seasonFilter.lastSeasonEndYear
+  );
 
   const getDates = (start: number, end: number) =>
     Array.from({ length: end - start }, (v, k) => k + start);
@@ -16,7 +31,10 @@ const HistoricalPositions: FunctionComponent<{ selectedClub: string }> = ({ sele
       return { series, colors };
     }
 
-    const allDates = getDates(1999, 2016);
+    const allDates = getDates(
+      seasonFilter.firstSeasonStartYear - 1,
+      seasonFilter.lastSeasonEndYear + 1
+    );
 
     series = [
       {

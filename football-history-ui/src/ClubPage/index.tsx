@@ -22,7 +22,7 @@ const ClubPage: FunctionComponent<{ seasons: SeasonType[] }> = ({ seasons }) => 
         selectClub={(name) => setSelectedClub(name)}
       />
       <Divider />
-      {selectedClub && <HistoricalPositions selectedClub={selectedClub} />}
+      {selectedClub && <HistoricalPositions selectedClub={selectedClub} seasons={seasons} />}
       {selectedClub && <Season selectedClub={selectedClub} seasons={seasons} />}
     </>
   );
