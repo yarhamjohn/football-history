@@ -1,6 +1,5 @@
 import React, { FunctionComponent } from "react";
 import { Dropdown, DropdownItemProps } from "semantic-ui-react";
-import { isString } from "../../shared/functions";
 import { Division } from "../../hooks/useSeasons";
 
 const DivisionFilter: FunctionComponent<{

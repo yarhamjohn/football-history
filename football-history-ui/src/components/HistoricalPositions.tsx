@@ -2,23 +2,31 @@ import React, { FunctionComponent, useState } from "react";
 import { useHistoricalPositions } from "../hooks/useHistoricalPositions";
 import { ResponsiveLine, Serie } from "@nivo/line";
 import { Season as SeasonType } from "../hooks/useSeasons";
+import { Example } from "./Filters/YearSlider";
+
+export type SeasonFilterRange = {
+  firstSeasonStartYear: number;
+  lastSeasonEndYear: number;
+};
 
 const HistoricalPositions: FunctionComponent<{
   selectedClub: string;
   seasons: SeasonType[];
 }> = ({ selectedClub, seasons }) => {
-  const [seasonFilter, setSeasonFilter] = useState<{
-    firstSeasonStartYear: number;
-    lastSeasonEndYear: number;
-  }>({
-    firstSeasonStartYear: Math.max(...seasons.map((s) => s.startYear)) - 10,
-    lastSeasonEndYear: Math.max(...seasons.map((s) => s.endYear)),
-  });
-  const { historicalPositionsState } = useHistoricalPositions(
-    selectedClub,
-    seasonFilter.firstSeasonStartYear,
-    seasonFilter.lastSeasonEndYear
-  );
+  function getFirstSeasonStartYear() {
+    return Math.min(...seasons.map((s) => s.startYear));
+  }
+
+  function getLastSeasonEndYear() {
+    return Math.max(...seasons.map((s) => s.endYear));
+  }
+
+  const [selectedFilterRange, setSelectedFilterRange] = useState<number[]>([
+    getFirstSeasonStartYear(),
+    getLastSeasonEndYear(),
+  ]);
+
+  const { historicalPositionsState } = useHistoricalPositions(selectedClub, selectedFilterRange);
 
   const getDates = (start: number, end: number) =>
     Array.from({ length: end - start }, (v, k) => k + start);
@@ -31,10 +39,7 @@ const HistoricalPositions: FunctionComponent<{
       return { series, colors };
     }
 
-    const allDates = getDates(
-      seasonFilter.firstSeasonStartYear - 1,
-      seasonFilter.lastSeasonEndYear + 1
-    );
+    const allDates = getDates(selectedFilterRange[0] - 1, selectedFilterRange[1] + 1);
 
     series = [
       {
@@ -82,20 +87,29 @@ const HistoricalPositions: FunctionComponent<{
   }
 
   return (
-    <div style={{ height: "500px" }}>
-      <ResponsiveLine
-        data={series}
-        colors={colors}
-        margin={{ left: 25, bottom: 25, top: 10 }}
-        yScale={{ type: "linear", min: 1, max: 92, reverse: true }}
-        gridYValues={getTicks()}
-        axisBottom={{
-          orient: "bottom",
-          tickSize: 5,
-          tickPadding: 5,
-          tickRotation: 0,
-        }}
-      />
+    <div>
+      <div>
+        <Example
+          sliderRange={[getFirstSeasonStartYear(), getLastSeasonEndYear()]}
+          selectedFilterRange={selectedFilterRange}
+          setSelectedFilterRange={setSelectedFilterRange}
+        />
+      </div>
+      <div style={{ height: "500px" }}>
+        <ResponsiveLine
+          data={series}
+          colors={colors}
+          margin={{ left: 25, bottom: 25, top: 10 }}
+          yScale={{ type: "linear", min: 1, max: 92, reverse: true }}
+          gridYValues={getTicks()}
+          axisBottom={{
+            orient: "bottom",
+            tickSize: 5,
+            tickPadding: 5,
+            tickRotation: 0,
+          }}
+        />
+      </div>
     </div>
   );
 };

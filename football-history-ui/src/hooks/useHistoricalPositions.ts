@@ -35,11 +35,7 @@ const historicalPositionsReducer = (
   }
 };
 
-const useHistoricalPositions = (
-  club: string,
-  firstSeasonStartYear: number,
-  lastSeasonEndYear: number
-) => {
+const useHistoricalPositions = (club: string, selectedFilterRange: number[]) => {
   const [historicalPositionsState, dispatch] = useReducer<
     Reducer<HistoricalPositionsState, HistoricalPositionsAction>
   >(historicalPositionsReducer, {
@@ -48,7 +44,7 @@ const useHistoricalPositions = (
 
   useEffect(() => {
     fetch(
-      `https://localhost:5001/api/Position/GetHistoricalPositions?startYear=${firstSeasonStartYear}&endYear=${lastSeasonEndYear}&team=${club}`
+      `https://localhost:5001/api/Position/GetHistoricalPositions?startYear=${selectedFilterRange[0]}&endYear=${selectedFilterRange[1]}&team=${club}`
     )
       .then((response) => response.json())
       .then((response) =>
@@ -57,7 +53,7 @@ const useHistoricalPositions = (
       .catch((error) => {
         dispatch({ type: "LOAD_HISTORICAL_POSITIONS_FAILED", error });
       });
-  }, [club, firstSeasonStartYear, lastSeasonEndYear]);
+  }, [club, selectedFilterRange]);
 
   return { historicalPositionsState };
 };
