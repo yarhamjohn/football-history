@@ -58,7 +58,8 @@ namespace FootballHistoryTest.Api.Builders
             var playOffMatches = _matchRepository.GetPlayOffMatchModels(seasonStartYears, tiers);
             var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(seasonStartYears, tiers);
 
-            var leagueModels = _leagueRepository.GetLeagueModels(seasonStartYears, tiers);
+            // Get all tiers
+            var leagueModels = _leagueRepository.GetLeagueModels(seasonStartYears, new List<int>());
 
             return GetPositions(team, tierModels, leagueMatches, playOffMatches, pointsDeductions, leagueModels);
         }

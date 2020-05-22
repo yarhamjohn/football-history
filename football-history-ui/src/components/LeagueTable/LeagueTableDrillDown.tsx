@@ -153,11 +153,11 @@ const LeagueTableDrillDown: FunctionComponent<{
     <tr>
       <td colSpan={12}>
         <Card fluid>
-          <Card.Content className="drilldown-card-body">
+          <Card.Content>
             {leagueMatchesState.type === "LEAGUE_MATCHES_LOAD_SUCCEEDED" && (
               <div>{GetForm(leagueMatchesState.matches)}</div>
             )}
-            <div className="drilldown-card-content" style={{ height: "200px" }}>
+            <div style={{ height: "200px" }}>
               <ResponsiveLine
                 data={data}
                 colors={colors}

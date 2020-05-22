@@ -4,6 +4,7 @@ import { useClubs } from "../hooks/useClubs";
 import { ClubFilter } from "../components/Filters/ClubFilter";
 import { Season } from "../components/Season";
 import { Season as SeasonType } from "../hooks/useSeasons";
+import { HistoricalPositions } from "../components/HistoricalPositions";
 
 const ClubPage: FunctionComponent<{ seasons: SeasonType[] }> = ({ seasons }) => {
   const { clubState } = useClubs();
@@ -21,6 +22,7 @@ const ClubPage: FunctionComponent<{ seasons: SeasonType[] }> = ({ seasons }) => 
         selectClub={(name) => setSelectedClub(name)}
       />
       <Divider />
+      {selectedClub && <HistoricalPositions selectedClub={selectedClub} />}
       {selectedClub && <Season selectedClub={selectedClub} seasons={seasons} />}
     </>
   );
