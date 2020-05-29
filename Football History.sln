@@ -3,11 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.271
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FootballHistory.Api", "FootballHistory.Api\FootballHistory.Api.csproj", "{66830267-A13B-4C6E-8243-2D4F3C241343}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "football-history-api", "football-history-api\football-history-api.csproj", "{B6B14D39-8CD6-44DE-99E7-4E4C0E80A287}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootballHistory.UI", "FootballHistory.UI\FootballHistory.UI.csproj", "{50785B87-DB5E-45ED-94DD-78D83BA8CA50}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootballHistory.Api.UnitTests", "FootballHistory.Api.UnitTests\FootballHistory.Api.UnitTests.csproj", "{9D9649AF-10CB-4A90-8B7B-1DEB14D61B66}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "football-history-api.Tests", "football-history-api.Tests\football-history-api.Tests.csproj", "{AE2CEBCE-1951-40B9-B3DD-C750683EB8DA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,18 +13,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{66830267-A13B-4C6E-8243-2D4F3C241343}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{66830267-A13B-4C6E-8243-2D4F3C241343}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{66830267-A13B-4C6E-8243-2D4F3C241343}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{66830267-A13B-4C6E-8243-2D4F3C241343}.Release|Any CPU.Build.0 = Release|Any CPU
-		{50785B87-DB5E-45ED-94DD-78D83BA8CA50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{50785B87-DB5E-45ED-94DD-78D83BA8CA50}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{50785B87-DB5E-45ED-94DD-78D83BA8CA50}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{50785B87-DB5E-45ED-94DD-78D83BA8CA50}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9D9649AF-10CB-4A90-8B7B-1DEB14D61B66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9D9649AF-10CB-4A90-8B7B-1DEB14D61B66}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9D9649AF-10CB-4A90-8B7B-1DEB14D61B66}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9D9649AF-10CB-4A90-8B7B-1DEB14D61B66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6B14D39-8CD6-44DE-99E7-4E4C0E80A287}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6B14D39-8CD6-44DE-99E7-4E4C0E80A287}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6B14D39-8CD6-44DE-99E7-4E4C0E80A287}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6B14D39-8CD6-44DE-99E7-4E4C0E80A287}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE2CEBCE-1951-40B9-B3DD-C750683EB8DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE2CEBCE-1951-40B9-B3DD-C750683EB8DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE2CEBCE-1951-40B9-B3DD-C750683EB8DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE2CEBCE-1951-40B9-B3DD-C750683EB8DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

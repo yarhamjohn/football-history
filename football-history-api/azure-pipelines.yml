@@ -1,0 +1,36 @@
+# Build ASP.NET Core project using Azure Pipelines
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core?view=vsts
+
+pool:
+  vmImage: 'vs2017-win2016'
+  
+variables:
+  buildConfiguration: 'Release'
+
+steps:
+- script: |
+    dotnet build football-history-api --configuration $(buildConfiguration)
+    dotnet build football-history-api.Tests --configuration $(buildConfiguration)
+    dotnet test dotnetcore-tests --configuration $(buildConfiguration) --logger trx
+    dotnet publish football-history-api --configuration $(buildConfiguration)
+  displayName: 'dotnet build $(buildConfiguration)'
+
+- task: VSTest@2
+  inputs:
+    testSelector: 'testAssemblies' # Options: testAssemblies, testPlan, testRun
+    testAssemblyVer2: "**\\*tests.dll\n!**\\obj\\**" # Required when testSelector == TestAssemblies
+    testPlan: # Required when testSelector == TestPlan
+    testSuite: # Required when testSelector == TestPlan
+    testConfiguration: # Required when testSelector == TestPlan
+    searchFolder: '$(System.DefaultWorkingDirectory)'
+    customRunTimePerBatchValue: '60' # Required when distributionBatchType == BasedOnExecutionTime && BatchingBasedOnExecutionTimeOption == CustomTimeBatchSize
+    customBatchSizeValue: '10' # Required when distributionBatchType == BasedOnTestCases && BatchingBasedOnAgentsOption == CustomBatchSize
+
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
+  inputs:
+    SourceFolder: '$(System.DefaultWorkingDirectory)'
+    Contents: '**\bin\$(BuildConfiguration)\**'
+    TargetFolder: $(Build.ArtifactStagingDirectory)
+
+- task: PublishBuildArtifacts@1

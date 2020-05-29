@@ -1,0 +1,33 @@
+# Node.js with React
+
+# Build a Node.js project that uses React.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '10.x'
+  displayName: 'Install Node.js'
+
+- task: Npm@1
+  inputs:
+    workingDir: 'football-history-ui/'
+    command: 'install'
+    verbose: true
+
+- task: Npm@1
+  inputs:
+    workingDir: 'football-history-ui/'
+    command: 'custom'
+    customCommand: 'run build'
+    verbose: true
+    
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'football-history-ui/build/'
+    ArtifactName: 'app'
+    publishLocation: 'Container'
