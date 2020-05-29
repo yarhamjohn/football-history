@@ -1,5 +1,5 @@
-import React, { FunctionComponent, useEffect } from "react";
-import { PlayOffMatch, PlayOffMatchesState, usePlayOffMatches } from "../hooks/usePlayOffMatches";
+import React, { FunctionComponent } from "react";
+import { PlayOffMatch } from "../hooks/usePlayOffMatches";
 import { Table } from "semantic-ui-react";
 
 const PlayOffFinal: FunctionComponent<{ final: PlayOffMatch; style: React.CSSProperties }> = ({

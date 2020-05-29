@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from "react";
 import { Dropdown, DropdownItemProps } from "semantic-ui-react";
-import { Club, useClubs } from "../../hooks/useClubs";
+import { Club } from "../../hooks/useClubs";
 
 const ClubFilter: FunctionComponent<{
   clubs: Club[];

@@ -1,4 +1,4 @@
-import { Reducer, useEffect, useReducer, useState } from "react";
+import { Reducer, useEffect, useReducer } from "react";
 
 export interface PlayOffMatch {
   tier: number;

@@ -13,7 +13,7 @@ const SideBar: FunctionComponent<{
 
   if (activePage === "Club") {
     return (
-      <Menu compact icon="labeled" vertical>
+      <Menu compact icon="labeled" vertical pointing>
         <Menu.Item
           name="Positions"
           active={activeSubPage === "Positions"}
@@ -37,7 +37,7 @@ const SideBar: FunctionComponent<{
 
   if (activePage === "League") {
     return (
-      <Menu compact icon="labeled" vertical>
+      <Menu compact icon="labeled" vertical pointing>
         <Menu.Item
           name="Table"
           active={activeSubPage === "Table"}

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent } from "react";
 import { Handles, Rail, Slider, Ticks, Tracks } from "react-compound-slider";
 import { Handle, Tick, Track } from "./Components";
 

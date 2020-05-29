@@ -3,10 +3,8 @@ import "./App.css";
 import { HomePage } from "./HomePage";
 import { AppHeader } from "./components/AppHeader";
 import { ClubPage } from "./ClubPage";
-import { Icon, Image, Menu } from "semantic-ui-react";
-import soccerBall from "./images/Soccer-Ball-icon.png";
+import { Icon } from "semantic-ui-react";
 import { LeaguePage } from "./LeaguePage";
-import { useClubs } from "./hooks/useClubs";
 import { useSeasons } from "./hooks/useSeasons";
 import { SideBar } from "./components/SideBar";
 

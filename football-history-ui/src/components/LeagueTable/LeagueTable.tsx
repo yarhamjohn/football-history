@@ -2,7 +2,7 @@ import React, { FunctionComponent } from "react";
 import { Table } from "semantic-ui-react";
 import { LeagueTableRow } from "./LeagueTableRow";
 import { PointDeductionSummary } from "./PointDeductionSummary";
-import { LeagueState, useLeague } from "../../hooks/useLeagueTable";
+import { useLeague } from "../../hooks/useLeagueTable";
 
 const LeagueTable: FunctionComponent<{
   selectedSeason: number;

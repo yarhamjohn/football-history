@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect } from "react";
+import React, { FunctionComponent } from "react";
 import { Card } from "semantic-ui-react";
 import { useLeaguePositions } from "../../hooks/useLeaguePositions";
 import { ResponsiveLine } from "@nivo/line";

@@ -4,7 +4,8 @@ import { Season } from "../hooks/useSeasons";
 import { DivisionFilter } from "../components/Filters/LeagueFilter";
 import { AppSubPage } from "../App";
 import { SeasonFilter } from "../components/Filters/SeasonFilter";
-import { LeagueSeason } from "./LeagueSeason";
+import { Matches } from "../components/Matches";
+import { LeagueTable } from "../components/LeagueTable/LeagueTable";
 
 const LeaguePage: FunctionComponent<{
   seasons: Season[];
@@ -60,12 +61,21 @@ const LeaguePage: FunctionComponent<{
 
   let body;
   if (activeSubPage === "Table") {
-    body = (
-      <SeasonFilter
-        seasons={seasons}
-        selectedSeason={selectedSeason}
-        selectSeason={(startYear) => setSelectedSeason(startYear)}
-      />
+    body = selectedDivision && (
+      <>
+        {" "}
+        <SeasonFilter
+          seasons={seasons}
+          selectedSeason={selectedSeason}
+          selectSeason={(startYear) => setSelectedSeason(startYear)}
+        />
+        {selectedSeason && (
+          <LeagueTable
+            selectedSeason={selectedSeason}
+            selectedTier={getDivisionTier(selectedDivision)}
+          />
+        )}
+      </>
     );
   } else if (activeSubPage === "Results") {
     body = selectedDivision && (
@@ -76,7 +86,7 @@ const LeaguePage: FunctionComponent<{
           selectSeason={(startYear) => setSelectedSeason(startYear)}
         />
         {selectedSeason && getDivisionTier(selectedDivision) ? (
-          <LeagueSeason
+          <Matches
             selectedSeason={selectedSeason}
             selectedTier={getDivisionTier(selectedDivision)}
           />
