@@ -1,4 +1,5 @@
 # Node.js with React
+
 # Build a Node.js project that uses React.
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
@@ -24,3 +25,9 @@ steps:
     command: 'custom'
     customCommand: 'run build'
     verbose: true
+    
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'football-history-api/build/'
+    ArtifactName: 'app'
+    publishLocation: 'Container'
