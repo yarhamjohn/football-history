@@ -14,13 +14,13 @@ steps:
 
 - task: Npm@1
   inputs:
-    workingDir: '/football-history-ui/'
+    workingDir: 'football-history-ui/'
     command: 'install'
     verbose: true
 
 - task: Npm@1
   inputs:
-    workingDir: '/football-history-ui/'
+    workingDir: 'football-history-ui/'
     command: 'custom'
     customCommand: 'run build'
     verbose: true
