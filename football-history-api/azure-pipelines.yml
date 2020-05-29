@@ -9,10 +9,10 @@ variables:
 
 steps:
 - script: |
-    dotnet build FootballHistory.Api --configuration $(buildConfiguration)
-    dotnet build FootballHistory.Api.UnitTests --configuration $(buildConfiguration)
+    dotnet build football-history-api --configuration $(buildConfiguration)
+    dotnet build football-history-api.Tests --configuration $(buildConfiguration)
     dotnet test dotnetcore-tests --configuration $(buildConfiguration) --logger trx
-    dotnet publish FootballHistory.Api --configuration $(buildConfiguration)
+    dotnet publish football-history-api --configuration $(buildConfiguration)
   displayName: 'dotnet build $(buildConfiguration)'
 
 - task: VSTest@2
