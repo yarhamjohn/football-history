@@ -27,19 +27,24 @@ const App: FunctionComponent = () => {
       style={{
         height: "100%",
         display: "grid",
-        gridTemplateColumns: "1fr 75px 10fr minmax(75px, 1fr)",
-        gridTemplateRows: "auto 1fr 100px",
-        gridTemplateAreas:
-          "'. icon header .' 'leftGutter leftGutter main rightGutter' 'footer footer footer footer",
+        gridTemplateColumns: "minmax(100px, 1fr) minmax(500px, 10fr) minmax(75px, 1fr)",
+        gridTemplateRows: "80px 1fr 100px",
+        gridTemplateAreas: "'icon header .' 'leftGutter main rightGutter' 'footer footer footer",
       }}
     >
-      <Image src={soccerBall} fluid style={{ gridArea: "icon", padding: "10px" }} />
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <Icon
+          size="huge"
+          name="futbol"
+          style={{ gridArea: "icon", padding: "5px", marginRight: "23px" }}
+        />
+      </div>
       <AppHeader
         activePage={activePage}
         setActivePage={(page) => setActivePage(page)}
         style={{ gridArea: "header" }}
       />
-      <div style={{ gridArea: "leftGutter" }}>
+      <div style={{ gridArea: "leftGutter", marginTop: "100px" }}>
         <SideBar
           activePage={activePage}
           activeSubPage={activeSubPage}

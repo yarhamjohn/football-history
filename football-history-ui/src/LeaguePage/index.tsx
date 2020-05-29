@@ -1,17 +1,22 @@
-import React, { FunctionComponent, useState } from "react";
+import React, { FunctionComponent, useEffect, useState } from "react";
 import { Divider } from "semantic-ui-react";
-import { Season as SeasonType } from "../hooks/useSeasons";
+import { Season } from "../hooks/useSeasons";
 import { DivisionFilter } from "../components/Filters/LeagueFilter";
-import { Season } from "../components/Season";
 import { AppSubPage } from "../App";
-import { HistoricalPositions } from "../components/HistoricalPositions";
+import { SeasonFilter } from "../components/Filters/SeasonFilter";
+import { LeagueSeason } from "./LeagueSeason";
 
 const LeaguePage: FunctionComponent<{
-  seasons: SeasonType[];
+  seasons: Season[];
   activeSubPage: AppSubPage;
   setActiveSubPage: (subPage: AppSubPage) => void;
 }> = ({ seasons, activeSubPage, setActiveSubPage }) => {
   const [selectedDivision, setSelectedDivision] = useState<string | undefined>(undefined);
+  const [selectedSeason, setSelectedSeason] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    setSelectedSeason(Math.max(...seasons.map((s) => s.startYear)));
+  }, [seasons]);
 
   const getDivisions = () => {
     const tiers = Array.from(
@@ -42,7 +47,6 @@ const LeaguePage: FunctionComponent<{
 
   const getDivisionTier = (divisionName: string) => {
     const divisions = getDivisions().filter((d) => d.name === divisionName);
-    console.log(divisions);
     if (divisions.length !== 1) {
       throw new Error(`The division name (${divisionName}) provided matches more than one tier.`);
     }
@@ -56,12 +60,29 @@ const LeaguePage: FunctionComponent<{
 
   let body;
   if (activeSubPage === "Table") {
-    console.log(selectedDivision);
-    body = selectedDivision && (
-      <Season selectedTier={getDivisionTier(selectedDivision)} seasons={seasons} />
+    body = (
+      <SeasonFilter
+        seasons={seasons}
+        selectedSeason={selectedSeason}
+        selectSeason={(startYear) => setSelectedSeason(startYear)}
+      />
     );
   } else if (activeSubPage === "Results") {
-    body = null;
+    body = selectedDivision && (
+      <div style={{ display: "grid", gridGap: "1rem" }}>
+        <SeasonFilter
+          seasons={seasons}
+          selectedSeason={selectedSeason}
+          selectSeason={(startYear) => setSelectedSeason(startYear)}
+        />
+        {selectedSeason && getDivisionTier(selectedDivision) ? (
+          <LeagueSeason
+            selectedSeason={selectedSeason}
+            selectedTier={getDivisionTier(selectedDivision)}
+          />
+        ) : null}
+      </div>
+    );
   }
 
   return (

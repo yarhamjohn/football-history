@@ -31,7 +31,7 @@ const LeagueSeason: FunctionComponent<{ selectedTier: number; selectedSeason: nu
         gridGap: "1rem",
       }}
     >
-      <LeagueTable leagueState={leagueState} seasonStartYear={selectedSeason} />
+      <LeagueTable selectedSeason={selectedSeason} selectedTier={selectedTier} />
       <div style={{ display: "grid", gridTemplateRows: "auto auto", gridGap: "1rem" }}>
         {playOffMatchesState.type === "PLAY_OFF_MATCHES_LOAD_SUCCEEDED" && (
           <PlayOffs matches={playOffMatchesState.matches} />
