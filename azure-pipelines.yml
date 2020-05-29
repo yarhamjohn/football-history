@@ -12,7 +12,12 @@ steps:
     versionSpec: '10.x'
   displayName: 'Install Node.js'
 
+- task: Npm@1
+  inputs:
+    workingDir: '/football-history-ui/'
+    command: 'install'
+    verbose: true
+
 - script: |
-    npm install
     npm run build
-  displayName: 'npm install and build'
+  displayName: 'npm build'
