@@ -1,4 +1,5 @@
 import { Reducer, useEffect, useReducer } from "react";
+import { useApi } from "./useApi";
 
 export type HistoricalPosition = {
   seasonStartYear: number;
@@ -36,6 +37,7 @@ const historicalPositionsReducer = (
 };
 
 const useHistoricalPositions = (club: string, selectedFilterRange: number[]) => {
+  const { api } = useApi();
   const [historicalPositionsState, dispatch] = useReducer<
     Reducer<HistoricalPositionsState, HistoricalPositionsAction>
   >(historicalPositionsReducer, {
@@ -44,7 +46,7 @@ const useHistoricalPositions = (club: string, selectedFilterRange: number[]) => 
 
   useEffect(() => {
     fetch(
-      `https://localhost:5001/api/Position/GetHistoricalPositions?startYear=${selectedFilterRange[0]}&endYear=${selectedFilterRange[1]}&team=${club}`
+      `${api}/api/Position/GetHistoricalPositions?startYear=${selectedFilterRange[0]}&endYear=${selectedFilterRange[1]}&team=${club}`
     )
       .then((response) => response.json())
       .then((response) =>

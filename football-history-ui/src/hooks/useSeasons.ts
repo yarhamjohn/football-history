@@ -1,4 +1,5 @@
 import { Reducer, useEffect, useReducer } from "react";
+import { useApi } from "./useApi";
 
 export interface Division {
   name: string;
@@ -36,6 +37,7 @@ const seasonsReducer = (state: SeasonState, action: SeasonAction): SeasonState =
 };
 
 const useSeasons = () => {
+  const { api } = useApi();
   const [seasonState, dispatch] = useReducer<Reducer<SeasonState, SeasonAction>>(seasonsReducer, {
     type: "SEASONS_UNLOADED",
   });
@@ -43,7 +45,7 @@ const useSeasons = () => {
   useEffect(() => {
     dispatch({ type: "LOAD_SEASONS" });
 
-    fetch(`https://localhost:5001/api/Season/GetSeasons`)
+    fetch(`${api}/api/Season/GetSeasons`)
       .then((response) => response.json())
       .then((response) => dispatch({ type: "LOAD_SEASONS_SUCCEEDED", seasons: response }))
       .catch((error) => {

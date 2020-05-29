@@ -1,4 +1,5 @@
 import { Reducer, useEffect, useReducer } from "react";
+import { useApi } from "./useApi";
 
 export type Row = {
   position: number;
@@ -53,6 +54,7 @@ const leagueReducer = (state: LeagueState, action: LeagueAction): LeagueState =>
 };
 
 const useLeague = (seasonStartYear: number, club?: string, tier?: number) => {
+  const { api } = useApi();
   const [leagueState, dispatch] = useReducer<Reducer<LeagueState, LeagueAction>>(leagueReducer, {
     type: "LEAGUE_UNLOADED",
   });
@@ -67,8 +69,8 @@ const useLeague = (seasonStartYear: number, club?: string, tier?: number) => {
     dispatch({ type: "LOAD_LEAGUE" });
 
     let url = club
-      ? `https://localhost:5001/api/League/GetCompletedLeagueForTeam?seasonStartYear=${seasonStartYear}&team=${club}`
-      : `https://localhost:5001/api/League/GetCompletedLeague?seasonStartYear=${seasonStartYear}&tier=${tier}`;
+      ? `${api}/api/League/GetCompletedLeagueForTeam?seasonStartYear=${seasonStartYear}&team=${club}`
+      : `${api}/api/League/GetCompletedLeague?seasonStartYear=${seasonStartYear}&tier=${tier}`;
 
     fetch(url)
       .then((response) => response.json())

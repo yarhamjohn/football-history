@@ -1,4 +1,5 @@
 import { Reducer, useEffect, useReducer } from "react";
+import { useApi } from "./useApi";
 
 export interface Club {
   name: string;
@@ -30,6 +31,7 @@ const clubsReducer = (state: ClubState, action: ClubAction): ClubState => {
 };
 
 const useClubs = () => {
+  const { api } = useApi();
   const [clubState, dispatch] = useReducer<Reducer<ClubState, ClubAction>>(clubsReducer, {
     type: "CLUBS_UNLOADED",
   });
@@ -37,7 +39,7 @@ const useClubs = () => {
   useEffect(() => {
     dispatch({ type: "LOAD_CLUBS" });
 
-    fetch(`https://localhost:5001/api/Team/GetAllTeams`)
+    fetch(`${api}/api/Team/GetAllTeams`)
       .then((response) => response.json())
       .then((response) => dispatch({ type: "LOAD_CLUBS_SUCCEEDED", clubs: response }))
       .catch((error) => {

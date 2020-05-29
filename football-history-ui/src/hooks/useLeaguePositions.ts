@@ -1,4 +1,5 @@
 import { Reducer, useEffect, useReducer } from "react";
+import { useApi } from "./useApi";
 
 export type LeaguePosition = {
   date: string;
@@ -33,6 +34,7 @@ const leaguePositionsReducer = (
 };
 
 const useLeaguePositions = (club: string, seasonStartYear: number) => {
+  const { api } = useApi();
   const [leaguePositionsState, dispatch] = useReducer<
     Reducer<LeaguePositionsState, LeaguePositionsAction>
   >(leaguePositionsReducer, {
@@ -40,9 +42,7 @@ const useLeaguePositions = (club: string, seasonStartYear: number) => {
   });
 
   useEffect(() => {
-    fetch(
-      `https://localhost:5001/api/Position/GetLeaguePositions?seasonStartYear=${seasonStartYear}&team=${club}`
-    )
+    fetch(`${api}/api/Position/GetLeaguePositions?seasonStartYear=${seasonStartYear}&team=${club}`)
       .then((response) => response.json())
       .then((response) =>
         dispatch({ type: "LOAD_LEAGUE_POSITIONS_SUCCEEDED", positions: response })

@@ -1,4 +1,5 @@
 import { Reducer, useEffect, useReducer } from "react";
+import { useApi } from "./useApi";
 
 export interface PlayOffMatch {
   tier: number;
@@ -49,6 +50,7 @@ const playOffMatchesReducer = (
 };
 
 const usePlayOffMatches = (tier: number, seasonStartYear: number) => {
+  const { api } = useApi();
   const [playOffMatchesState, dispatch] = useReducer<
     Reducer<PlayOffMatchesState, PlayOffMatchesAction>
   >(playOffMatchesReducer, {
@@ -56,9 +58,7 @@ const usePlayOffMatches = (tier: number, seasonStartYear: number) => {
   });
 
   useEffect(() => {
-    fetch(
-      `https://localhost:5001/api/Match/getPlayOffMatches?seasonStartYears=${seasonStartYear}&tiers=${tier}`
-    )
+    fetch(`${api}/api/Match/getPlayOffMatches?seasonStartYears=${seasonStartYear}&tiers=${tier}`)
       .then((response) => response.json())
       .then((response) => dispatch({ type: "LOAD_PLAY_OFF_MATCHES_SUCCEEDED", matches: response }))
       .catch((error) => {

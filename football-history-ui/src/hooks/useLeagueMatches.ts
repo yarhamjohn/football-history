@@ -1,4 +1,5 @@
 import { Reducer, useEffect, useReducer } from "react";
+import { useApi } from "./useApi";
 
 export interface LeagueMatch {
   tier: number;
@@ -40,6 +41,7 @@ const leagueMatchesReducer = (
 };
 
 const useLeagueMatches = (seasonStartYear: number, club?: string, tier?: number) => {
+  const { api } = useApi();
   const [leagueMatchesState, dispatch] = useReducer<
     Reducer<LeagueMatchesState, LeagueMatchesAction>
   >(leagueMatchesReducer, {
@@ -48,8 +50,8 @@ const useLeagueMatches = (seasonStartYear: number, club?: string, tier?: number)
 
   useEffect(() => {
     let url = club
-      ? `https://localhost:5001/api/Match/GetLeagueMatches?seasonStartYears=${seasonStartYear}&teams=${club}`
-      : `https://localhost:5001/api/Match/GetLeagueMatches?seasonStartYears=${seasonStartYear}&tiers=${tier}`;
+      ? `${api}/api/Match/GetLeagueMatches?seasonStartYears=${seasonStartYear}&teams=${club}`
+      : `${api}/api/Match/GetLeagueMatches?seasonStartYears=${seasonStartYear}&tiers=${tier}`;
 
     fetch(url)
       .then((response) => response.json())
