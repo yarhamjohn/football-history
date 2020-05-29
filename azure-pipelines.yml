@@ -28,6 +28,6 @@ steps:
     
 - task: PublishBuildArtifacts@1
   inputs:
-    PathtoPublish: 'football-history-api/build/'
+    PathtoPublish: 'football-history-ui/build/'
     ArtifactName: 'app'
     publishLocation: 'Container'
