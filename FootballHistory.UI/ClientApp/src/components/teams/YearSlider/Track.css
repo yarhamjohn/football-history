@@ -1,8 +1,0 @@
-.track--bar {
-    position: absolute;
-    height: 14px;
-    z-index: 1;
-    background-color: #007bff;
-    border-radius: 7px;
-    cursor: pointer;
-}
