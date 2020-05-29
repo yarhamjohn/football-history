@@ -18,6 +18,9 @@ steps:
     command: 'install'
     verbose: true
 
-- script: |
-    npm run build
-  displayName: 'npm build'
+- task: Npm@1
+  inputs:
+    workingDir: '/football-history-ui/'
+    command: 'custom'
+    customCommand: 'run build'
+    verbose: true
