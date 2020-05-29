@@ -14,12 +14,29 @@ const LeaguePage: FunctionComponent<{
 }> = ({ seasons, activeSubPage, setActiveSubPage }) => {
   const [selectedDivision, setSelectedDivision] = useState<string | undefined>(undefined);
   const [selectedSeason, setSelectedSeason] = useState<number | undefined>(undefined);
+  const [selectedTier, setSelectedTier] = useState<number | undefined>(undefined);
+  const [divisions, setDivisions] = useState<{ name: string; tier: number }[]>([]);
+
+  useEffect(() => {
+    if (divisions.length === 0 || !selectedDivision) {
+      return;
+    }
+
+    const divs = divisions.filter((d) => d.name === selectedDivision);
+    if (divs.length !== 1) {
+      throw new Error(
+        `The division name (${selectedDivision}) provided matches more than one tier.`
+      );
+    }
+
+    setSelectedTier(divs[0].tier);
+  }, [selectedDivision, divisions]);
 
   useEffect(() => {
     setSelectedSeason(Math.max(...seasons.map((s) => s.startYear)));
   }, [seasons]);
 
-  const getDivisions = () => {
+  useEffect(() => {
     const tiers = Array.from(
       new Set(
         seasons
@@ -43,17 +60,8 @@ const LeaguePage: FunctionComponent<{
       divisions.push({ name: divs.join(", "), tier: tier });
     }
 
-    return divisions;
-  };
-
-  const getDivisionTier = (divisionName: string) => {
-    const divisions = getDivisions().filter((d) => d.name === divisionName);
-    if (divisions.length !== 1) {
-      throw new Error(`The division name (${divisionName}) provided matches more than one tier.`);
-    }
-
-    return divisions[0].tier;
-  };
+    setDivisions(divisions);
+  }, [seasons]);
 
   if (seasons.length === 0) {
     return null;
@@ -63,17 +71,13 @@ const LeaguePage: FunctionComponent<{
   if (activeSubPage === "Table") {
     body = selectedDivision && (
       <>
-        {" "}
         <SeasonFilter
           seasons={seasons}
           selectedSeason={selectedSeason}
           selectSeason={(startYear) => setSelectedSeason(startYear)}
         />
-        {selectedSeason && (
-          <LeagueTable
-            selectedSeason={selectedSeason}
-            selectedTier={getDivisionTier(selectedDivision)}
-          />
+        {selectedSeason && selectedTier && (
+          <LeagueTable selectedSeason={selectedSeason} selectedTier={selectedTier} />
         )}
       </>
     );
@@ -85,11 +89,8 @@ const LeaguePage: FunctionComponent<{
           selectedSeason={selectedSeason}
           selectSeason={(startYear) => setSelectedSeason(startYear)}
         />
-        {selectedSeason && getDivisionTier(selectedDivision) ? (
-          <Matches
-            selectedSeason={selectedSeason}
-            selectedTier={getDivisionTier(selectedDivision)}
-          />
+        {selectedSeason && selectedTier ? (
+          <Matches selectedSeason={selectedSeason} selectedTier={selectedTier} />
         ) : null}
       </div>
     );
@@ -98,7 +99,7 @@ const LeaguePage: FunctionComponent<{
   return (
     <>
       <DivisionFilter
-        divisions={getDivisions()}
+        divisions={divisions}
         selectedDivision={selectedDivision}
         selectDivision={(name) => {
           setActiveSubPage(name ? "Table" : "None");
