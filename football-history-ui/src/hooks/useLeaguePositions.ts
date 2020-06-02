@@ -34,7 +34,7 @@ const leaguePositionsReducer = (
 };
 
 const useLeaguePositions = (club: string, seasonStartYear: number) => {
-  const { api } = useApi();
+  const api = useApi();
   const [leaguePositionsState, dispatch] = useReducer<
     Reducer<LeaguePositionsState, LeaguePositionsAction>
   >(leaguePositionsReducer, {

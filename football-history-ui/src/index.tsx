@@ -3,10 +3,13 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
+import { ApiProvider } from "./hooks/useApi";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <ApiProvider>
+      <App />
+    </ApiProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );

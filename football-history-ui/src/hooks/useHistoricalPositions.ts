@@ -37,7 +37,7 @@ const historicalPositionsReducer = (
 };
 
 const useHistoricalPositions = (club: string, selectedFilterRange: number[]) => {
-  const { api } = useApi();
+  const api = useApi();
   const [historicalPositionsState, dispatch] = useReducer<
     Reducer<HistoricalPositionsState, HistoricalPositionsAction>
   >(historicalPositionsReducer, {

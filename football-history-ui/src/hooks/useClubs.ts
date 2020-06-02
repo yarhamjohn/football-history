@@ -31,7 +31,7 @@ const clubsReducer = (state: ClubState, action: ClubAction): ClubState => {
 };
 
 const useClubs = () => {
-  const { api } = useApi();
+  const api = useApi();
   const [clubState, dispatch] = useReducer<Reducer<ClubState, ClubAction>>(clubsReducer, {
     type: "CLUBS_UNLOADED",
   });

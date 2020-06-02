@@ -37,7 +37,7 @@ const seasonsReducer = (state: SeasonState, action: SeasonAction): SeasonState =
 };
 
 const useSeasons = () => {
-  const { api } = useApi();
+  const api = useApi();
   const [seasonState, dispatch] = useReducer<Reducer<SeasonState, SeasonAction>>(seasonsReducer, {
     type: "SEASONS_UNLOADED",
   });

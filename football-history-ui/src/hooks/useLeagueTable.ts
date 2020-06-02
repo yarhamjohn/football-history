@@ -54,7 +54,7 @@ const leagueReducer = (state: LeagueState, action: LeagueAction): LeagueState =>
 };
 
 const useLeague = (seasonStartYear: number, club?: string, tier?: number) => {
-  const { api } = useApi();
+  const api = useApi();
   const [leagueState, dispatch] = useReducer<Reducer<LeagueState, LeagueAction>>(leagueReducer, {
     type: "LEAGUE_UNLOADED",
   });

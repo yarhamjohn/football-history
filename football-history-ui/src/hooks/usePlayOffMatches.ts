@@ -50,7 +50,7 @@ const playOffMatchesReducer = (
 };
 
 const usePlayOffMatches = (tier: number, seasonStartYear: number) => {
-  const { api } = useApi();
+  const api = useApi();
   const [playOffMatchesState, dispatch] = useReducer<
     Reducer<PlayOffMatchesState, PlayOffMatchesAction>
   >(playOffMatchesReducer, {
