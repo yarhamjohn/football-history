@@ -16,7 +16,7 @@ const Example: FunctionComponent<{
   };
 
   return (
-    <div style={{ height: 120, width: "100%" }}>
+    <div style={{ height: "75px", width: "100%" }}>
       <Slider
         mode={1}
         step={1}

@@ -5,13 +5,18 @@ const useApi = () => {
   const prodApiUrl = "https://footballhistoryapi.azurewebsites.net";
 
   const [api, setApi] = useState<string>(devApiUrl);
-
+  console.log(api);
   useEffect(() => {
+    console.log("NODE_ENV");
+    console.log(process.env.NODE_ENV);
+
     if (process.env.NODE_ENV === "development") {
       setApi(devApiUrl);
     } else {
       setApi(prodApiUrl);
     }
+
+    console.log(api);
   }, []);
 
   return { api };
