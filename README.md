@@ -1,3 +1,6 @@
+Football History UI: [![Build Status](https://dev.azure.com/JohnYarham/FootballHistory/_apis/build/status/Football%20History%20UI?branchName=master)](https://dev.azure.com/JohnYarham/FootballHistory/_build/latest?definitionId=12&branchName=master)
+Football History API: [![Build Status](https://dev.azure.com/JohnYarham/FootballHistory/_apis/build/status/Football%20History%20API?branchName=master)](https://dev.azure.com/JohnYarham/FootballHistory/_build/latest?definitionId=4&branchName=master)
+
 # Football History
 This is a web application built using React with a C# api and backend SQL Server database. The application can be found here: https://footballhistoryui.azurewebsites.net/.
 
