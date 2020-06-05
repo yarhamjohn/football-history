@@ -1,7 +1,7 @@
-| Football History | Build Status 
-|------------------|-------------
-| UI               | [![Build Status](https://dev.azure.com/JohnYarham/FootballHistory/_apis/build/status/Football%20History%20UI?branchName=master)](https://dev.azure.com/JohnYarham/FootballHistory/_build/latest?definitionId=12&branchName=master)
-| API              | [![Build Status](https://dev.azure.com/JohnYarham/FootballHistory/_apis/build/status/Football%20History%20API?branchName=master)](https://dev.azure.com/JohnYarham/FootballHistory/_build/latest?definitionId=4&branchName=master)
+| Football History | Build Status |
+|------------------|------------- |
+| [UI](https://footballhistoryui.azurewebsites.net/)   | [![Build Status](https://dev.azure.com/JohnYarham/FootballHistory/_apis/build/status/Football%20History%20UI?branchName=master)](https://dev.azure.com/JohnYarham/FootballHistory/_build/latest?definitionId=12&branchName=master) |
+| [API](https://footballhistoryapi.azurewebsites.net/) | [![Build Status](https://dev.azure.com/JohnYarham/FootballHistory/_apis/build/status/Football%20History%20API?branchName=master)](https://dev.azure.com/JohnYarham/FootballHistory/_build/latest?definitionId=4&branchName=master) |
 
 
 # Football History
