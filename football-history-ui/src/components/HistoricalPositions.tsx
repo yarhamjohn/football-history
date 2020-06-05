@@ -2,12 +2,7 @@ import React, { FunctionComponent, useState } from "react";
 import { useHistoricalPositions } from "../hooks/useHistoricalPositions";
 import { ResponsiveLine, Serie } from "@nivo/line";
 import { Season as SeasonType } from "../hooks/useSeasons";
-import { Example } from "./Filters/YearSlider";
-
-export type SeasonFilterRange = {
-  firstSeasonStartYear: number;
-  lastSeasonEndYear: number;
-};
+import { YearSlider } from "./Filters/YearSlider";
 
 const HistoricalPositions: FunctionComponent<{
   selectedClub: string;
@@ -89,7 +84,7 @@ const HistoricalPositions: FunctionComponent<{
   return (
     <div>
       <div>
-        <Example
+        <YearSlider
           sliderRange={[getFirstSeasonStartYear(), getLastSeasonEndYear()]}
           selectedFilterRange={selectedFilterRange}
           setSelectedFilterRange={setSelectedFilterRange}

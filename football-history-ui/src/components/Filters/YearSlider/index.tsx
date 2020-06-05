@@ -3,7 +3,7 @@ import { FunctionComponent } from "react";
 import { Handles, Rail, Slider, Ticks, Tracks } from "react-compound-slider";
 import { Handle, Tick, Track } from "./Components";
 
-const Example: FunctionComponent<{
+const YearSlider: FunctionComponent<{
   sliderRange: number[];
   selectedFilterRange: number[];
   setSelectedFilterRange: (range: number[]) => void;
@@ -81,4 +81,4 @@ const Example: FunctionComponent<{
   );
 };
 
-export { Example };
+export { YearSlider };
