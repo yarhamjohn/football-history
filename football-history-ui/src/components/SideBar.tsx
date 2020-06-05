@@ -22,7 +22,6 @@ const SideBar: FunctionComponent<{
           <Icon name="chart line" />
           Positions
         </Menu.Item>
-
         <Menu.Item
           name="Table"
           active={activeSubPage === "Table"}
@@ -30,6 +29,14 @@ const SideBar: FunctionComponent<{
         >
           <Icon name="table" />
           Table
+        </Menu.Item>
+        <Menu.Item
+          name="Results"
+          active={activeSubPage === "Results"}
+          onClick={() => setActiveSubPage("Results")}
+        >
+          <Icon name="calendar alternate" />
+          Results
         </Menu.Item>
       </Menu>
     );

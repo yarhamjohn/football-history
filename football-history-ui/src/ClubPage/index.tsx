@@ -7,6 +7,7 @@ import { HistoricalPositions } from "../components/HistoricalPositions";
 import { AppSubPage } from "../App";
 import { LeagueTable } from "../components/LeagueTable/LeagueTable";
 import { SeasonFilter } from "../components/Filters/SeasonFilter";
+import { Matches } from "./Matches";
 
 const ClubPage: FunctionComponent<{
   seasons: Season[];
@@ -39,6 +40,17 @@ const ClubPage: FunctionComponent<{
         {selectedSeason && (
           <LeagueTable selectedSeason={selectedSeason} selectedClub={selectedClub} />
         )}
+      </>
+    );
+  } else if (activeSubPage === "Results") {
+    body = selectedClub && (
+      <>
+        <SeasonFilter
+          seasons={seasons}
+          selectedSeason={selectedSeason}
+          selectSeason={(startYear) => setSelectedSeason(startYear)}
+        />
+        {selectedSeason && <Matches selectedSeason={selectedSeason} selectedClub={selectedClub} />}
       </>
     );
   }
