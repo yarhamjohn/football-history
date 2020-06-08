@@ -16,13 +16,21 @@ const YearSlider: FunctionComponent<{
   };
 
   return (
-    <div style={{ height: "75px", width: "100%" }}>
+    <div
+      style={{
+        height: "75px",
+        width: "100%",
+        display: "flex",
+        justifyContent: "center",
+        marginBottom: "2rem",
+      }}
+    >
       <Slider
         mode={1}
         step={1}
         domain={sliderRange}
         rootStyle={{
-          margin: "5%",
+          margin: "2rem",
           position: "relative",
           width: "90%",
         }}
