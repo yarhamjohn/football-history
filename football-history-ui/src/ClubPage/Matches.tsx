@@ -1,6 +1,6 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useState } from "react";
 import { LeagueMatch, useLeagueMatches } from "../hooks/useLeagueMatches";
-import { Divider, Card, Message } from "semantic-ui-react";
+import { Divider, Card, Message, Checkbox } from "semantic-ui-react";
 import _ from "lodash";
 
 const Matches: FunctionComponent<{ selectedSeason: number; selectedClub: string }> = ({
@@ -8,6 +8,10 @@ const Matches: FunctionComponent<{ selectedSeason: number; selectedClub: string 
   selectedClub,
 }) => {
   const { leagueMatchesState } = useLeagueMatches(selectedSeason, selectedClub);
+  const [matches, setMatches] = useState<{ homeMatches: boolean; awayMatches: boolean }>({
+    homeMatches: true,
+    awayMatches: true,
+  });
 
   if (leagueMatchesState.type !== "LEAGUE_MATCHES_LOAD_SUCCEEDED") {
     return null;
@@ -27,7 +31,12 @@ const Matches: FunctionComponent<{ selectedSeason: number; selectedClub: string 
     return teamGoals < oppositionGoals;
   };
 
-  let dictionary = _.groupBy(leagueMatchesState.matches, (m) => new Date(m.date).getMonth());
+  let collection = leagueMatchesState.matches.filter(
+    (m) =>
+      (matches.homeMatches && m.homeTeam === selectedClub) ||
+      (matches.awayMatches && m.awayTeam === selectedClub)
+  );
+  let dictionary = _.groupBy(collection, (m) => new Date(m.date).getMonth());
   let array = _.map(dictionary, (v, k) => v).sort(
     (a, b) =>
       Math.min(...a.map((m) => new Date(m.date).valueOf())) -
@@ -35,6 +44,11 @@ const Matches: FunctionComponent<{ selectedSeason: number; selectedClub: string 
   );
   return (
     <div>
+      <MatchesFilter
+        matches={matches}
+        setMatches={(homeMatches, awayMatches) => setMatches({ homeMatches, awayMatches })}
+      />
+      <Divider />
       {leagueMatchesState.matches.length > 0 ? (
         array.map((month) => (
           <>
@@ -78,6 +92,28 @@ const Matches: FunctionComponent<{ selectedSeason: number; selectedClub: string 
           {selectedSeason + 1} season.
         </Message>
       )}
+    </div>
+  );
+};
+
+const MatchesFilter: FunctionComponent<{
+  matches: { homeMatches: boolean; awayMatches: boolean };
+  setMatches: (homeMatches: boolean, awayMatches: boolean) => void;
+}> = ({ matches, setMatches }) => {
+  return (
+    <div style={{ marginBottom: "1rem" }}>
+      <Checkbox
+        label="Home matches"
+        checked={matches.homeMatches}
+        onClick={() => setMatches(!matches.homeMatches, matches.awayMatches)}
+        style={{ marginRight: "2rem" }}
+      />
+      <Checkbox
+        label="Away matches"
+        checked={matches.awayMatches}
+        onClick={() => setMatches(matches.homeMatches, !matches.awayMatches)}
+        style={{ marginRight: "2rem" }}
+      />
     </div>
   );
 };

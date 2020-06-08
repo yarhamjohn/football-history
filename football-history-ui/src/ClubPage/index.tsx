@@ -1,5 +1,5 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
-import { Divider } from "semantic-ui-react";
+import { Checkbox, Divider } from "semantic-ui-react";
 import { useClubs } from "../hooks/useClubs";
 import { ClubFilter } from "../components/Filters/ClubFilter";
 import { Season } from "../hooks/useSeasons";
