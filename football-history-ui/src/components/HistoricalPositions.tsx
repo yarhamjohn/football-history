@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useState } from "react";
-import { useHistoricalPositions } from "../hooks/useHistoricalPositions";
-import { ResponsiveLine, Serie } from "@nivo/line";
+import { HistoricalPosition, useHistoricalPositions } from "../hooks/useHistoricalPositions";
+import { Point, ResponsiveLine, Serie } from "@nivo/line";
 import { Season as SeasonType } from "../hooks/useSeasons";
 import { YearSlider } from "./Filters/YearSlider";
 
@@ -97,6 +97,20 @@ const HistoricalPositions: FunctionComponent<{
           margin={{ left: 25, bottom: 25, top: 10 }}
           yScale={{ type: "linear", min: 1, max: 92, reverse: true }}
           gridYValues={getTicks()}
+          enableSlices="x"
+          sliceTooltip={({ slice }) => {
+            return (
+              <Tooltip
+                points={slice.points}
+                seasons={seasons}
+                positions={
+                  historicalPositionsState.type === "HISTORICAL_POSITIONS_LOAD_SUCCEEDED"
+                    ? historicalPositionsState.positions
+                    : []
+                }
+              />
+            );
+          }}
           axisBottom={{
             orient: "bottom",
             tickSize: 5,
@@ -105,6 +119,98 @@ const HistoricalPositions: FunctionComponent<{
           }}
         />
       </div>
+    </div>
+  );
+};
+
+const Tooltip: FunctionComponent<{
+  points: Point[];
+  seasons: SeasonType[];
+  positions: HistoricalPosition[];
+}> = ({ points, seasons, positions }) => {
+  const getPosition = (absolutePosition: number) => {
+    if (absolutePosition <= 20) {
+      return absolutePosition;
+    } else if (absolutePosition <= 44) {
+      return absolutePosition - 20;
+    } else if (absolutePosition <= 68) {
+      return absolutePosition - 44;
+    } else {
+      return absolutePosition - 68;
+    }
+  };
+
+  const getLeagueName = (absolutePosition: number, season: number) => {
+    let seasons1 = seasons.filter((s) => s.startYear === season);
+    if (seasons1.length !== 1) {
+      return "";
+    }
+    if (absolutePosition <= 20) {
+      let divisions = seasons1[0].divisions.filter((d) => d.tier === 1);
+      return divisions.length === 1 ? divisions[0].name : "";
+    } else if (absolutePosition <= 44) {
+      let divisions = seasons1[0].divisions.filter((d) => d.tier === 2);
+      return divisions.length === 1 ? divisions[0].name : "";
+    } else if (absolutePosition <= 68) {
+      let divisions = seasons1[0].divisions.filter((d) => d.tier === 3);
+      return divisions.length === 1 ? divisions[0].name : "";
+    } else {
+      let divisions = seasons1[0].divisions.filter((d) => d.tier === 4);
+      return divisions.length === 1 ? divisions[0].name : "";
+    }
+  };
+
+  const getStatus = (absolutePosition: number, season: number) => {
+    let historicalPositions = positions.filter((p) => p.seasonStartYear === season);
+    const status = historicalPositions.length === 1 ? historicalPositions[0].status : "";
+
+    switch (status) {
+      case "Champions":
+        return <h3 style={{ color: "#75B266" }}>{status}</h3>;
+      case "Promoted":
+        return <h3 style={{ color: "#7FBFBF" }}>{status}</h3>;
+      case "Relegated":
+        return <h3 style={{ color: "#B26694" }}>{status}</h3>;
+      case "PlayOffs":
+        return <h3 style={{ color: "#BFA67F" }}>{status}</h3>;
+      case "PlayOff Winner":
+        return <h3 style={{ color: "#7FBFBF" }}>{status}</h3>;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div
+      style={{
+        background: "white",
+        padding: "9px 12px",
+        border: "1px solid #ccc",
+        borderRadius: "5px",
+      }}
+    >
+      {points.map((point) => (
+        <div
+          key={point.id}
+          style={{
+            color: point.serieColor,
+            padding: "3px 0",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <>{getStatus(point.data.yFormatted as number, point.data.xFormatted as number)}</>
+          <strong>
+            {getLeagueName(point.data.yFormatted as number, point.data.xFormatted as number)}
+          </strong>
+          <span>
+            <strong>Position</strong>: {getPosition(point.data.yFormatted as number)}
+          </span>
+          <span>
+            <strong>Season</strong>: {point.data.xFormatted}-{(point.data.xFormatted as number) + 1}
+          </span>
+        </div>
+      ))}
     </div>
   );
 };
