@@ -3,6 +3,7 @@ import { HistoricalPosition, useHistoricalPositions } from "../hooks/useHistoric
 import { Point, ResponsiveLine, Serie } from "@nivo/line";
 import { Season as SeasonType } from "../hooks/useSeasons";
 import { YearSlider } from "./Filters/YearSlider";
+import { getLeagueStatusColor } from "../shared/functions";
 
 const HistoricalPositions: FunctionComponent<{
   selectedClub: string;
@@ -161,30 +162,25 @@ const Tooltip: FunctionComponent<{
   };
 
   const getStatus = (absolutePosition: number, season: number) => {
-    let historicalPositions = positions.filter((p) => p.seasonStartYear === season);
+    const historicalPositions = positions.filter((p) => p.seasonStartYear === season);
     const status = historicalPositions.length === 1 ? historicalPositions[0].status : "";
+    return status;
+  };
 
-    switch (status) {
-      case "Champions":
-        return <h3 style={{ color: "#75B266" }}>{status}</h3>;
-      case "Promoted":
-        return <h3 style={{ color: "#7FBFBF" }}>{status}</h3>;
-      case "Relegated":
-        return <h3 style={{ color: "#B26694" }}>{status}</h3>;
-      case "PlayOffs":
-        return <h3 style={{ color: "#BFA67F" }}>{status}</h3>;
-      case "PlayOff Winner":
-        return <h3 style={{ color: "#7FBFBF" }}>{status}</h3>;
-      default:
-        return null;
+  const getStatusComponent = (absolutePosition: number, season: number) => {
+    const status = getStatus(absolutePosition, season);
+
+    const color = getLeagueStatusColor(status);
+    if (color === null) {
+      return null;
     }
+    return <h3 style={{ color: color.toString() }}>{status}</h3>;
   };
 
   return (
     <div
       style={{
         background: "white",
-        padding: "9px 12px",
         border: "1px solid #ccc",
         borderRadius: "5px",
       }}
@@ -194,12 +190,15 @@ const Tooltip: FunctionComponent<{
           key={point.id}
           style={{
             color: point.serieColor,
-            padding: "3px 0",
+            padding: "12px 12px",
             display: "flex",
             flexDirection: "column",
+            boxShadow: `0px 0px 10px ${getLeagueStatusColor(
+              getStatus(point.data.yFormatted as number, point.data.xFormatted as number)
+            )} inset`,
           }}
         >
-          <>{getStatus(point.data.yFormatted as number, point.data.xFormatted as number)}</>
+          {getStatusComponent(point.data.yFormatted as number, point.data.xFormatted as number)}
           <strong>
             {getLeagueName(point.data.yFormatted as number, point.data.xFormatted as number)}
           </strong>

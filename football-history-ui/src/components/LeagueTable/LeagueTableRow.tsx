@@ -3,30 +3,12 @@ import { Row } from "../../hooks/useLeagueTable";
 import { Icon, Table } from "semantic-ui-react";
 import { LeagueTableDrillDown } from "./LeagueTableDrillDown";
 import { LeagueTableRowCell } from "./LeagueTableRowCell";
+import { Color, getLeagueStatusColor } from "../../shared/functions";
 
 function getRowColor(row: Row, club: string | undefined) {
-  let color = row.team === club ? "#CCCCCC" : null;
-  switch (row.status) {
-    case "Champions": {
-      color = "#75B266";
-      break;
-    }
-    case "Relegated": {
-      color = "#B26694";
-      break;
-    }
-    case "Promoted": {
-      color = "#7FBFBF";
-      break;
-    }
-    case "PlayOff Winner": {
-      color = "#7FBFBF";
-      break;
-    }
-    case "PlayOffs": {
-      color = "#BFA67F";
-      break;
-    }
+  let color = getLeagueStatusColor(row.status);
+  if (color === null && row.team === club) {
+    color = Color.Grey;
   }
   return color;
 }
