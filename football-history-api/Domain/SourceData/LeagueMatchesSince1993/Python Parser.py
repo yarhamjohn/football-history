@@ -12,10 +12,10 @@ def parser():
             for row in readCSV:   
                 div = row[0]
                 date = row[1]
-                home = CleanseTeams(row[2])
-                away = CleanseTeams(row[3])
-                gf = row[4]
-                ga = row[5]
+                home = CleanseTeams(row[3])
+                away = CleanseTeams(row[4])
+                gf = row[5]
+                ga = row[6]
 
                 cleansedDate = CleanseDate(date)
                     
@@ -134,6 +134,8 @@ def CleanseTeams(team):
         return "Rotherham United"
     elif team == "Rushden & D":
         return "Rushden and Diamonds"
+    elif team == "Salford":
+        return "Salford City"
     elif team == "Scunthorpe":
         return "Scunthorpe United"
     elif team == "Sheffield Weds":
