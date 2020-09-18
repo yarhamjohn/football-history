@@ -29,7 +29,7 @@ namespace football.history.api.Builders
 
         public League GetLeagueOnDate(int tier, DateTime date)
         {
-            var seasonStartYear = date.Month > 6 ? date.Year : date.Year - 1;
+            var seasonStartYear = GetSeasonStartYear(date);
 
             var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(seasonStartYear, tier);
             var leagueModel = _leagueRepository.GetLeagueModel(seasonStartYear, tier);
@@ -49,7 +49,18 @@ namespace football.history.api.Builders
                 Table = GetLeagueTable(date, playOffMatches, leagueMatches, leagueModel, pointsDeductions)
             };
         }
-
+        
+        private static int GetSeasonStartYear(DateTime date)
+        {
+            /*
+             * Originally the season start date was set to be July 1st as this was roughly half-way between seasons.
+             * Due to COVID-19, there was a delay in the fixtures meaning 2019-2020 actually finished in July
+             * except for the Championship play-off final which was in August (handled elsewhere).
+             * This date may need revising further with the addition of more leagues over time.
+             */
+            return date.Month > 7 ? date.Year : date.Year - 1;
+        }
+        
         private static List<LeagueTableRow> GetLeagueTable(DateTime date, List<MatchModel> playOffMatches,
             List<MatchModel> leagueMatches, LeagueModel leagueModel,
             List<PointsDeductionModel> pointsDeductions)
