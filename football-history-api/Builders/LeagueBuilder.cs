@@ -89,6 +89,7 @@ namespace football.history.api.Builders
         public int GoalsAgainst { get; set; }
         public int GoalDifference { get; set; }
         public int Points { get; set; }
+        public double PointsPerGame { get; set; }
         public int PointsDeducted { get; set; }
         public string PointsDeductionReason { get; set; }
         public string Status { get; set; }

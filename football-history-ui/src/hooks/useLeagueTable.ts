@@ -12,6 +12,7 @@ export type Row = {
   goalsAgainst: number;
   goalDifference: number;
   points: number;
+  pointsPerGame: number;
   pointsDeducted: number;
   pointsDeductionReason: string | null;
   status: string | null;

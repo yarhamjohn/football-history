@@ -22,6 +22,7 @@ const LeagueTableRow: FunctionComponent<{
   promotionPlaces: number;
   playOffPlaces: number;
   relegationPlaces: number;
+  tier: number;
 }> = ({
   row,
   club,
@@ -31,6 +32,7 @@ const LeagueTableRow: FunctionComponent<{
   promotionPlaces,
   playOffPlaces,
   relegationPlaces,
+    tier
 }) => {
   const [showDrillDown, setShowDrillDown] = useState<boolean>(false);
   const bold = row.team === club;
@@ -86,6 +88,7 @@ const LeagueTableRow: FunctionComponent<{
           {row.points}
           {row.pointsDeducted > 0 ? " *" : ""}
         </LeagueTableRowCell>
+        {seasonStartYear == 2019 && (tier == 3 || tier == 4) ? <LeagueTableRowCell bold={bold} color={color}>{row.pointsPerGame}</LeagueTableRowCell> : null}
         <LeagueTableRowCell bold={bold} color={color}>
           {row.status}
         </LeagueTableRowCell>

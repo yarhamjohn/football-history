@@ -55,6 +55,7 @@ const LeagueTable: FunctionComponent<{
                 <Table.HeaderCell>GA</Table.HeaderCell>
                 <Table.HeaderCell>Diff</Table.HeaderCell>
                 <Table.HeaderCell>Points</Table.HeaderCell>
+                {selectedSeason == 2019 && (leagueState.league.tier == 3 || leagueState.league.tier == 4) ? <Table.HeaderCell>PPG</Table.HeaderCell> : null}
                 <Table.HeaderCell></Table.HeaderCell>
               </Table.Row>
             </Table.Header>
@@ -71,6 +72,7 @@ const LeagueTable: FunctionComponent<{
                     promotionPlaces={leagueState.league.promotionPlaces}
                     playOffPlaces={leagueState.league.playOffPlaces}
                     relegationPlaces={leagueState.league.relegationPlaces}
+                    tier={leagueState.league.tier}
                   />
                 ))}
             </Table.Body>

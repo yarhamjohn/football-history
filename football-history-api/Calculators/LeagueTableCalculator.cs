@@ -14,14 +14,6 @@ namespace football.history.api.Calculators
             List<MatchModel> playOffMatches, LeagueModel leagueModel, List<PointsDeductionModel> pointsDeductions)
         {
             var leagueTable = GetTable(leagueMatches, leagueModel, pointsDeductions);
-
-            // Due to COVID-19, tiers 3 and 4 were abandoned in 2019-202 and average points per game was used instead
-            var covidAbandoned = leagueModel.StartYear == 2019 && (leagueModel.Tier == 3 || leagueModel.Tier == 4);
-            if (covidAbandoned)
-            {
-                AdjustToAveragePoints(leagueTable); // TODO: Consider returning points and average points per game?
-            }
-
             var sortedLeagueTable = SortTable(leagueTable, leagueModel);
             return AddStatuses(sortedLeagueTable, playOffMatches, leagueModel);
         }
@@ -34,14 +26,6 @@ namespace football.history.api.Calculators
             var expandedLeagueTable =
                 AddMissingTeams(leagueTable, leagueMatches.Select(m => m.HomeTeam).Distinct().ToList());
             return SortTable(expandedLeagueTable, leagueModel);
-        }
-
-        private static void AdjustToAveragePoints(List<LeagueTableRow> leagueTable)
-        {
-            foreach (var row in leagueTable)
-            {
-                row.Points /= row.Played;
-            }
         }
 
         private static List<LeagueTableRow> GetTable(List<MatchModel> leagueMatches, LeagueModel leagueModel,
@@ -64,7 +48,7 @@ namespace football.history.api.Calculators
                 var pointsDeductionModel = pointDeductions.SingleOrDefault(p => p.Team == team);
                 var pointsDeducted = pointsDeductionModel?.PointsDeducted ?? 0;
 
-                leagueTable.Add(new LeagueTableRow
+                var leagueTableRow = new LeagueTableRow
                 {
                     Team = team,
                     Played = teamMatches.Count,
@@ -77,7 +61,11 @@ namespace football.history.api.Calculators
                     Points = numWins * leagueModel.PointsForWin + numDraws - pointsDeducted,
                     PointsDeducted = pointsDeducted,
                     PointsDeductionReason = pointsDeductionModel?.Reason
-                });
+                };
+
+                leagueTableRow.PointsPerGame = (leagueTableRow.Points - leagueTableRow.PointsDeducted) / (double) leagueTableRow.Played;
+                
+                leagueTable.Add(leagueTableRow);
             }
 
             return leagueTable;
@@ -126,7 +114,7 @@ namespace football.history.api.Calculators
             if (PremierLeague_Or_FootballLeagueFrom1999(leagueModel))
             {
                 sortedLeagueTable = leagueTable
-                    .OrderByDescending(t => t.Points)
+                    .OrderByDescending(t => IsCovidAffectedLeague(leagueModel) ? t.PointsPerGame : t.Points)
                     .ThenByDescending(t => t.GoalDifference) // Goal ratio was used prior to 1976-77
                     .ThenByDescending(t => t.GoalsFor)
                     // head to head
@@ -152,6 +140,11 @@ namespace football.history.api.Calculators
             }
 
             return sortedLeagueTable;
+        }
+
+        private static bool IsCovidAffectedLeague(LeagueModel leagueModel)
+        {
+            return leagueModel.StartYear == 2019 && (leagueModel.Tier == 3 || leagueModel.Tier == 4);
         }
 
         private static List<LeagueTableRow> AddMissingTeams(List<LeagueTableRow> leagueTable, List<string> teams)
