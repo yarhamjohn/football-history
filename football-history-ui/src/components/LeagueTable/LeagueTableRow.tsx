@@ -88,7 +88,11 @@ const LeagueTableRow: FunctionComponent<{
           {row.points}
           {row.pointsDeducted > 0 ? " *" : ""}
         </LeagueTableRowCell>
-        {seasonStartYear == 2019 && (tier == 3 || tier == 4) ? <LeagueTableRowCell bold={bold} color={color}>{row.pointsPerGame}</LeagueTableRowCell> : null}
+        {seasonStartYear == 2019 && (tier == 3 || tier == 4)
+            ? <LeagueTableRowCell bold={bold} color={color}>{
+              Number(Math.round(parseFloat(row.pointsPerGame+'e2'))+'e-2')
+            }</LeagueTableRowCell>
+            : null}
         <LeagueTableRowCell bold={bold} color={color}>
           {row.status}
         </LeagueTableRowCell>
