@@ -252,7 +252,21 @@ INNER JOIN [dbo].[Clubs] AS ac
             var seasonClauses = new List<string>();
             for (var i = 0; i < seasonStartYears.Count; i++)
             {
-                seasonClauses.Add($"m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear{i}, 7, 1) AND DATEFROMPARTS(@SeasonEndYear{i}, 6, 30)");
+                switch (seasonStartYears[i])
+                {
+                    case 2019:
+                        seasonClauses.Add(
+                            $"m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear{i}, 7, 1) AND DATEFROMPARTS(@SeasonEndYear{i}, 8, 20)");
+                        break;
+                    case 2020:
+                        seasonClauses.Add(
+                            $"m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear{i}, 8, 21) AND DATEFROMPARTS(@SeasonEndYear{i}, 6, 30)");
+                        break;
+                    default:
+                        seasonClauses.Add(
+                            $"m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear{i}, 7, 1) AND DATEFROMPARTS(@SeasonEndYear{i}, 6, 30)");
+                        break;
+                }
             }
 
             if (seasonClauses.Count > 1)

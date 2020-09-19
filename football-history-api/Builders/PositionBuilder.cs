@@ -97,6 +97,20 @@ namespace football.history.api.Builders
 
         private static List<MatchModel> GetMatchesInSeason(List<MatchModel> matches, TierModel tierModel)
         {
+            if (tierModel.SeasonStartYear == 2019)
+            {
+                return matches.Where(m => m.Date >= new DateTime(tierModel.SeasonStartYear, 7, 1) &&
+                                          m.Date <= new DateTime(tierModel.SeasonStartYear + 1, 8, 20) &&
+                                          m.Tier == tierModel.Tier).ToList();
+            } 
+            
+            if (tierModel.SeasonStartYear == 2020)
+            {
+                return matches.Where(m => m.Date >= new DateTime(tierModel.SeasonStartYear, 8, 21) &&
+                                          m.Date <= new DateTime(tierModel.SeasonStartYear + 1, 6, 30) &&
+                                          m.Tier == tierModel.Tier).ToList();
+            }
+            
             return matches.Where(m => m.Date >= new DateTime(tierModel.SeasonStartYear, 7, 1) &&
                                       m.Date <= new DateTime(tierModel.SeasonStartYear + 1, 6, 30) &&
                                       m.Tier == tierModel.Tier).ToList();

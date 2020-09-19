@@ -39,11 +39,38 @@ LEFT JOIN dbo.Clubs AS hc
 LEFT JOIN dbo.Clubs AS ac
   ON ac.Id = m.AwayClubId
 WHERE (hc.Name = @Team OR ac.Name = @Team) AND m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonStartYear + 1, 6, 30)";
+            
+            const string sqlFor20192020 = @"
+SELECT DISTINCT d.Tier
+  FROM [dbo].[LeagueMatches] AS m
+LEFT JOIN dbo.Divisions AS d
+  ON d.Id = m.DivisionId
+LEFT JOIN dbo.Clubs AS hc
+  ON hc.Id = m.HomeClubId
+LEFT JOIN dbo.Clubs AS ac
+  ON ac.Id = m.AwayClubId
+WHERE (hc.Name = @Team OR ac.Name = @Team) AND m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonStartYear + 1, 8, 20)";
+            
+            const string sqlFor20202021 = @"
+SELECT DISTINCT d.Tier
+  FROM [dbo].[LeagueMatches] AS m
+LEFT JOIN dbo.Divisions AS d
+  ON d.Id = m.DivisionId
+LEFT JOIN dbo.Clubs AS hc
+  ON hc.Id = m.HomeClubId
+LEFT JOIN dbo.Clubs AS ac
+  ON ac.Id = m.AwayClubId
+WHERE (hc.Name = @Team OR ac.Name = @Team) AND m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 8, 21) AND DATEFROMPARTS(@SeasonStartYear + 1, 6, 30)";
 
             conn.Open();
             
             var cmd = conn.CreateCommand();
-            cmd.CommandText = sql;
+            cmd.CommandText = seasonStartYear switch
+            {
+                2019 => sqlFor20192020,
+                2020 => sqlFor20202021,
+                _ => sql
+            };
             
             var teamParameter = new SqlParameter {ParameterName = "@Team", Value = team};
             cmd.Parameters.Add(teamParameter);
