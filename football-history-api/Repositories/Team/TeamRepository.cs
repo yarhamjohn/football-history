@@ -23,7 +23,7 @@ namespace football.history.api.Repositories.Team
             conn.Close();
             return result;
         }
-        
+
         public List<TeamModel> GetTeamModels(int seasonStartYear, int tier)
         {
             var conn = _context.Database.GetDbConnection();
@@ -33,16 +33,21 @@ namespace football.history.api.Repositories.Team
             conn.Close();
             return result;
         }
-        
+
         private static List<TeamModel> SelectAllTeams(DbCommand cmd)
         {
             var teams = new List<TeamModel>();
-            
+
             using (var reader = cmd.ExecuteReader())
             {
                 while (reader.Read())
                 {
-                    teams.Add(new TeamModel { Name = reader.GetString(0), Abbreviation = reader.GetString(1)});
+                    teams.Add(
+                        new TeamModel
+                        {
+                            Name = reader.GetString(0),
+                            Abbreviation = reader.GetString(1)
+                        });
                 }
             }
 
@@ -54,13 +59,13 @@ namespace football.history.api.Repositories.Team
             const string sql = @"SELECT Name, Abbreviation FROM dbo.Clubs";
 
             conn.Open();
-            
+
             var cmd = conn.CreateCommand();
             cmd.CommandText = sql;
-            
+
             return cmd;
         }
-        
+
         private static DbCommand GetDbCommand(DbConnection conn, int seasonStartYear, int tier)
         {
             const string sql = @"
@@ -74,7 +79,7 @@ LEFT JOIN dbo.Divisions AS d
   ON d.Id = m.DivisionId
 WHERE d.Tier = @Tier AND m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 6, 30)
 ";
-            
+
             const string sqlFor20192020 = @"
 SELECT DISTINCT hc.Name, hc.Abbreviation
   FROM dbo.LeagueMatches AS m
@@ -86,7 +91,7 @@ LEFT JOIN dbo.Divisions AS d
   ON d.Id = m.DivisionId
 WHERE d.Tier = @Tier AND m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonEndYear, 8, 20)
 ";
-            
+
             const string sqlFor20202021 = @"
 SELECT DISTINCT hc.Name, hc.Abbreviation
   FROM dbo.LeagueMatches AS m
@@ -100,7 +105,7 @@ WHERE d.Tier = @Tier AND m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 8, 
 ";
 
             conn.Open();
-            
+
             var cmd = conn.CreateCommand();
             cmd.CommandText = seasonStartYear switch
             {
@@ -109,9 +114,24 @@ WHERE d.Tier = @Tier AND m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 8, 
                 _ => sql
             };
 
-            cmd.Parameters.Add(new SqlParameter {ParameterName = "@Tier", Value = tier});
-            cmd.Parameters.Add(new SqlParameter {ParameterName = "@SeasonStartYear", Value = seasonStartYear});
-            cmd.Parameters.Add(new SqlParameter {ParameterName = "@SeasonEndYear", Value = seasonStartYear + 1});
+            cmd.Parameters.Add(
+                new SqlParameter
+                {
+                    ParameterName = "@Tier",
+                    Value = tier
+                });
+            cmd.Parameters.Add(
+                new SqlParameter
+                {
+                    ParameterName = "@SeasonStartYear",
+                    Value = seasonStartYear
+                });
+            cmd.Parameters.Add(
+                new SqlParameter
+                {
+                    ParameterName = "@SeasonEndYear",
+                    Value = seasonStartYear + 1
+                });
 
             return cmd;
         }

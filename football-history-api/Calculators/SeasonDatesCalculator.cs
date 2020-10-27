@@ -32,7 +32,7 @@ namespace football.history.api.Calculators
             {
                 return date.Month >= 8 && date.Day > 20 ? date.Year : date.Year - 1;
             }
-            
+
             return date.Month > 6 ? date.Year : date.Year - 1;
         }
     }

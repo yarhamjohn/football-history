@@ -7,9 +7,10 @@ namespace football.history.api.Builders
     public interface ITeamBuilder
     {
         List<Team> GetAllTeams();
+
         List<Team> GetTeamsInLeague(int seasonStartYear, int tier);
     }
-    
+
     public class TeamBuilder : ITeamBuilder
     {
         private readonly ITeamRepository _teamRepository;
@@ -18,18 +19,28 @@ namespace football.history.api.Builders
         {
             _teamRepository = teamRepository;
         }
-        
+
         public List<Team> GetAllTeams()
         {
             return _teamRepository.GetTeamModels()
-                .Select(t => new Team {Name = t.Name, Abbreviation = t.Abbreviation})
+                .Select(
+                    t => new Team
+                    {
+                        Name = t.Name,
+                        Abbreviation = t.Abbreviation
+                    })
                 .ToList();
         }
-        
+
         public List<Team> GetTeamsInLeague(int seasonStartYear, int tier)
         {
             return _teamRepository.GetTeamModels(seasonStartYear, tier)
-                .Select(t => new Team {Name = t.Name, Abbreviation = t.Abbreviation})
+                .Select(
+                    t => new Team
+                    {
+                        Name = t.Name,
+                        Abbreviation = t.Abbreviation
+                    })
                 .ToList();
         }
     }

@@ -13,23 +13,24 @@ namespace football.history.api.Controllers
         {
             _matchBuilder = matchBuilder;
         }
-    
+
         [HttpGet("[action]")]
-        public List<Match> GetLeagueMatches(List<int> seasonStartYears, List<int> tiers, List<string> teams)
-        {
-            return _matchBuilder.GetLeagueMatches(seasonStartYears, tiers, teams);
-        }
-    
+        public List<Match> GetLeagueMatches(
+            List<int> seasonStartYears,
+            List<int> tiers,
+            List<string> teams) =>
+            _matchBuilder.GetLeagueMatches(seasonStartYears, tiers, teams);
+
         [HttpGet("[action]")]
-        public List<Match> GetHeadToHeadLeagueMatches(List<int> seasonStartYears, List<int> tiers, string teamOne, string teamTwo)
-        {
-            return _matchBuilder.GetHeadToHeadLeagueMatches(seasonStartYears, tiers, teamOne, teamTwo);
-        }
-    
+        public List<Match> GetHeadToHeadLeagueMatches(
+            List<int> seasonStartYears,
+            List<int> tiers,
+            string teamOne,
+            string teamTwo) =>
+            _matchBuilder.GetHeadToHeadLeagueMatches(seasonStartYears, tiers, teamOne, teamTwo);
+
         [HttpGet("[action]")]
-        public List<KnockoutMatch> GetPlayOffMatches(List<int> seasonStartYears, List<int> tiers)
-        {
-            return _matchBuilder.GetPlayOffMatches(seasonStartYears, tiers);
-        }
+        public List<KnockoutMatch> GetPlayOffMatches(List<int> seasonStartYears, List<int> tiers) =>
+            _matchBuilder.GetPlayOffMatches(seasonStartYears, tiers);
     }
 }

@@ -16,12 +16,12 @@ namespace football.history.api.Repositories.PointDeductions
             _context = context;
         }
 
-        public List<PointsDeductionModel> GetPointsDeductionModels(int seasonStartYear, int tier)
-        {
-            return GetPointsDeductionModels(new List<int> {seasonStartYear}, new List<int> {tier});
-        }
-        
-        public List<PointsDeductionModel> GetPointsDeductionModels(List<int> seasonStartYears, List<int> tiers)
+        public List<PointsDeductionModel> GetPointsDeductionModels(int seasonStartYear, int tier) =>
+            GetPointsDeductionModels(new List<int> { seasonStartYear }, new List<int> { tier });
+
+        public List<PointsDeductionModel> GetPointsDeductionModels(
+            List<int> seasonStartYears,
+            List<int> tiers)
         {
             var conn = _context.Database.GetDbConnection();
             var cmd = GetDbCommand(conn, seasonStartYears, tiers);
@@ -29,7 +29,7 @@ namespace football.history.api.Repositories.PointDeductions
             conn.Close();
             return result;
         }
-        
+
         private static List<PointsDeductionModel> GetPointDeductions(DbCommand cmd)
         {
             var pointsDeductionModels = new List<PointsDeductionModel>();
@@ -45,14 +45,16 @@ namespace football.history.api.Repositories.PointDeductions
                         PointsDeducted = reader.GetByte(2),
                         Reason = reader.GetString(3),
                         Tier = reader.GetByte(4)
-                    }
-                );
+                    });
             }
 
             return pointsDeductionModels;
         }
 
-        private static DbCommand GetDbCommand(DbConnection conn, List<int> seasonStartYears, List<int> tiers)
+        private static DbCommand GetDbCommand(
+            DbConnection conn,
+            List<int> seasonStartYears,
+            List<int> tiers)
         {
             var whereClause = BuildWhereClause(seasonStartYears, tiers);
 
@@ -71,26 +73,34 @@ INNER JOIN dbo.Divisions AS d ON d.Id = pd.DivisionId
 
             var cmd = conn.CreateCommand();
             cmd.CommandText = sql;
-            
+
             for (var i = 0; i < tiers.Count; i++)
             {
-                var tierParameter = new SqlParameter {ParameterName = $"@Tier{i}", Value = tiers[i]};
+                var tierParameter = new SqlParameter
+                {
+                    ParameterName = $"@Tier{i}",
+                    Value = tiers[i]
+                };
                 cmd.Parameters.Add(tierParameter);
             }
-                        
+
             for (var i = 0; i < seasonStartYears.Count; i++)
             {
-                var seasonStartYearParameter = new SqlParameter {ParameterName = $"@SeasonStartYear{i}", Value = seasonStartYears[i]};
+                var seasonStartYearParameter = new SqlParameter
+                {
+                    ParameterName = $"@SeasonStartYear{i}",
+                    Value = seasonStartYears[i]
+                };
                 cmd.Parameters.Add(seasonStartYearParameter);
             }
-            
+
             return cmd;
         }
-               
+
         private static string BuildWhereClause(List<int> seasonStartYears, List<int> tiers)
         {
             var clauses = new List<string>();
-            
+
             var tierClauses = new List<string>();
             for (var i = 0; i < tiers.Count; i++)
             {
@@ -122,7 +132,7 @@ INNER JOIN dbo.Divisions AS d ON d.Id = pd.DivisionId
             {
                 clauses.Add(seasonClauses.Single());
             }
-            
+
             return clauses.Count > 0 ? $"WHERE {string.Join(" AND ", clauses)}" : "";
         }
     }

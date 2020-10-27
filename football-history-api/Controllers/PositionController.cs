@@ -21,19 +21,22 @@ namespace football.history.api.Controllers
         public List<LeaguePosition> GetLeaguePositions(int seasonStartYear, string team)
         {
             var tier = _tierRepository.GetTierForTeamInYear(seasonStartYear, team);
-            return tier == null ? new List<LeaguePosition>() : _positionBuilder.GetLeaguePositions(seasonStartYear, (int) tier, team);
+            return tier == null
+                ? new List<LeaguePosition>()
+                : _positionBuilder.GetLeaguePositions(seasonStartYear, (int) tier, team);
         }
 
         [HttpGet("[action]")]
-        public List<HistoricalPosition> GetHistoricalPositions(int startYear, int endYear, string team)
-        {
-            return _positionBuilder.GetHistoricalPositions(startYear, endYear, team);
-        }
+        public List<HistoricalPosition> GetHistoricalPositions(
+            int startYear,
+            int endYear,
+            string team) =>
+            _positionBuilder.GetHistoricalPositions(startYear, endYear, team);
 
         [HttpGet("[action]")]
-        public List<HistoricalPosition> GetHistoricalPositionsForSeasons(List<int> seasonStartYears, string team)
-        {
-            return _positionBuilder.GetHistoricalPositionsForSeasons(seasonStartYears, team);
-        }
+        public List<HistoricalPosition> GetHistoricalPositionsForSeasons(
+            List<int> seasonStartYears,
+            string team) =>
+            _positionBuilder.GetHistoricalPositionsForSeasons(seasonStartYears, team);
     }
 }

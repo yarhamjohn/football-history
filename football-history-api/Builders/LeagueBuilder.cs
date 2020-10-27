@@ -19,7 +19,9 @@ namespace football.history.api.Builders
         private readonly IMatchRepository _matchRepository;
         private readonly IPointsDeductionRepository _pointDeductionsRepository;
 
-        public LeagueBuilder(ILeagueRepository leagueRepository, IMatchRepository matchRepository,
+        public LeagueBuilder(
+            ILeagueRepository leagueRepository,
+            IMatchRepository matchRepository,
             IPointsDeductionRepository pointDeductionsRepository)
         {
             _leagueRepository = leagueRepository;
@@ -45,19 +47,34 @@ namespace football.history.api.Builders
                 Table = leagueTable
             };
         }
-        
-        private List<LeagueTableRow> GetLeagueTable(int tier, int seasonStartYear, DateTime date, LeagueModel leagueModel)
+
+        private List<LeagueTableRow> GetLeagueTable(
+            int tier,
+            int seasonStartYear,
+            DateTime date,
+            LeagueModel leagueModel)
         {
-            var pointsDeductions = _pointDeductionsRepository.GetPointsDeductionModels(seasonStartYear, tier);
+            var pointsDeductions =
+                _pointDeductionsRepository.GetPointsDeductionModels(seasonStartYear, tier);
             var playOffMatches = _matchRepository.GetPlayOffMatchModels(seasonStartYear, tier);
             var leagueMatches = _matchRepository.GetLeagueMatchModels(seasonStartYear, tier);
-            
+
             return AllMatchesHaveBeenPlayed(date, playOffMatches, leagueMatches)
-                ? LeagueTableCalculator.GetFullLeagueTable(leagueMatches, playOffMatches, leagueModel, pointsDeductions)
-                : LeagueTableCalculator.GetPartialLeagueTable(leagueMatches, leagueModel, pointsDeductions, date);
+                ? LeagueTableCalculator.GetFullLeagueTable(
+                    leagueMatches,
+                    playOffMatches,
+                    leagueModel,
+                    pointsDeductions)
+                : LeagueTableCalculator.GetPartialLeagueTable(
+                    leagueMatches,
+                    leagueModel,
+                    pointsDeductions,
+                    date);
         }
 
-        private static bool AllMatchesHaveBeenPlayed(DateTime date, IEnumerable<MatchModel> playOffMatches,
+        private static bool AllMatchesHaveBeenPlayed(
+            DateTime date,
+            IEnumerable<MatchModel> playOffMatches,
             IEnumerable<MatchModel> leagueMatches)
         {
             var playOffMatchesAfterDate = playOffMatches.Any(match => match.Date >= date);

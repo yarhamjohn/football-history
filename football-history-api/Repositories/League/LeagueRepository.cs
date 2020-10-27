@@ -16,11 +16,9 @@ namespace football.history.api.Repositories.League
             _context = context;
         }
 
-        public LeagueModel GetLeagueModel(int seasonStartYear, int tier)
-        {
-            return GetLeagueModels( new List<int> {seasonStartYear}, new List<int> { tier }).Single();
-        }
-        
+        public LeagueModel GetLeagueModel(int seasonStartYear, int tier) =>
+            GetLeagueModels(new List<int> { seasonStartYear }, new List<int> { tier }).Single();
+
         public List<LeagueModel> GetLeagueModels(List<int> seasonStartYears, List<int> tiers)
         {
             var conn = _context.Database.GetDbConnection();
@@ -36,26 +34,30 @@ namespace football.history.api.Repositories.League
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                result.Add(new LeagueModel
-                {
-                    Name = reader.GetString(0),
-                    Tier = reader.GetByte(1),
-                    TotalPlaces = reader.GetByte(2),
-                    PromotionPlaces = reader.GetByte(3),
-                    PlayOffPlaces = reader.GetByte(4),
-                    RelegationPlaces = reader.GetByte(5),
-                    PointsForWin = reader.GetByte(6),
-                    StartYear = reader.GetInt32(7)
-                });
+                result.Add(
+                    new LeagueModel
+                    {
+                        Name = reader.GetString(0),
+                        Tier = reader.GetByte(1),
+                        TotalPlaces = reader.GetByte(2),
+                        PromotionPlaces = reader.GetByte(3),
+                        PlayOffPlaces = reader.GetByte(4),
+                        RelegationPlaces = reader.GetByte(5),
+                        PointsForWin = reader.GetByte(6),
+                        StartYear = reader.GetInt32(7)
+                    });
             }
 
             return result;
         }
 
-        private static DbCommand GetDbCommand(DbConnection conn, List<int> seasonStartYears, List<int> tiers)
+        private static DbCommand GetDbCommand(
+            DbConnection conn,
+            List<int> seasonStartYears,
+            List<int> tiers)
         {
             var whereClause = BuildWhereClause(tiers, seasonStartYears);
-            
+
             var sql = $@"
 SELECT d.Name
       ,d.Tier
@@ -70,25 +72,33 @@ SELECT d.Name
   {whereClause}
 ";
             conn.Open();
-            
+
             var cmd = conn.CreateCommand();
             cmd.CommandText = sql;
 
             for (var i = 0; i < tiers.Count; i++)
             {
-                var tierParameter = new SqlParameter {ParameterName = $"@Tier{i}", Value = tiers[i]};
+                var tierParameter = new SqlParameter
+                {
+                    ParameterName = $"@Tier{i}",
+                    Value = tiers[i]
+                };
                 cmd.Parameters.Add(tierParameter);
             }
-                        
+
             for (var i = 0; i < seasonStartYears.Count; i++)
             {
-                var seasonStartYearParameter = new SqlParameter {ParameterName = $"@SeasonStartYear{i}", Value = seasonStartYears[i]};
+                var seasonStartYearParameter = new SqlParameter
+                {
+                    ParameterName = $"@SeasonStartYear{i}",
+                    Value = seasonStartYears[i]
+                };
                 cmd.Parameters.Add(seasonStartYearParameter);
             }
 
             return cmd;
         }
-        
+
         private static string BuildWhereClause(List<int> tiers, List<int> seasonStartYears)
         {
             var clauses = new List<string>();
@@ -123,7 +133,7 @@ SELECT d.Name
             {
                 clauses.Add(seasonClauses.Single());
             }
-            
+
             return clauses.Count > 0 ? $"WHERE {string.Join(" AND ", clauses)}" : "";
         }
     }

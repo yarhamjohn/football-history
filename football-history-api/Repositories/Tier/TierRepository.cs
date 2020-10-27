@@ -21,8 +21,20 @@ namespace football.history.api.Repositories.Tier
         {
             var conn = _context.Database.GetDbConnection();
 
-            var cmd = GetDbCommand(conn,  team, seasonStartYear);
+            var cmd = GetDbCommand(conn, team, seasonStartYear);
             var result = GetTier(cmd);
+            conn.Close();
+            return result;
+        }
+
+        public List<TierModel> GetTierModels(List<int> seasonStartYears, string team)
+        {
+            var conn = _context.Database.GetDbConnection();
+
+            var cmd = GetDbCommand(conn, team);
+            var result = GetTiers(cmd)
+                .Where(t => seasonStartYears.Contains(t.SeasonStartYear))
+                .ToList();
             conn.Close();
             return result;
         }
@@ -39,7 +51,7 @@ LEFT JOIN dbo.Clubs AS hc
 LEFT JOIN dbo.Clubs AS ac
   ON ac.Id = m.AwayClubId
 WHERE (hc.Name = @Team OR ac.Name = @Team) AND m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonStartYear + 1, 6, 30)";
-            
+
             const string sqlFor20192020 = @"
 SELECT DISTINCT d.Tier
   FROM [dbo].[LeagueMatches] AS m
@@ -50,7 +62,7 @@ LEFT JOIN dbo.Clubs AS hc
 LEFT JOIN dbo.Clubs AS ac
   ON ac.Id = m.AwayClubId
 WHERE (hc.Name = @Team OR ac.Name = @Team) AND m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 7, 1) AND DATEFROMPARTS(@SeasonStartYear + 1, 8, 20)";
-            
+
             const string sqlFor20202021 = @"
 SELECT DISTINCT d.Tier
   FROM [dbo].[LeagueMatches] AS m
@@ -63,7 +75,7 @@ LEFT JOIN dbo.Clubs AS ac
 WHERE (hc.Name = @Team OR ac.Name = @Team) AND m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear, 8, 21) AND DATEFROMPARTS(@SeasonStartYear + 1, 6, 30)";
 
             conn.Open();
-            
+
             var cmd = conn.CreateCommand();
             cmd.CommandText = seasonStartYear switch
             {
@@ -71,24 +83,22 @@ WHERE (hc.Name = @Team OR ac.Name = @Team) AND m.MatchDate BETWEEN DATEFROMPARTS
                 2020 => sqlFor20202021,
                 _ => sql
             };
-            
-            var teamParameter = new SqlParameter {ParameterName = "@Team", Value = team};
+
+            var teamParameter = new SqlParameter
+            {
+                ParameterName = "@Team",
+                Value = team
+            };
             cmd.Parameters.Add(teamParameter);
 
-            var seasonStartYearParameter = new SqlParameter {ParameterName = "@SeasonStartYear", Value = seasonStartYear};
+            var seasonStartYearParameter = new SqlParameter
+            {
+                ParameterName = "@SeasonStartYear",
+                Value = seasonStartYear
+            };
             cmd.Parameters.Add(seasonStartYearParameter);
-            
+
             return cmd;
-        }
-
-        public List<TierModel> GetTierModels(List<int> seasonStartYears, string team)
-        {
-            var conn = _context.Database.GetDbConnection();
-
-            var cmd = GetDbCommand(conn,  team);
-            var result = GetTiers(cmd).Where(t => seasonStartYears.Contains(t.SeasonStartYear)).ToList();
-            conn.Close();
-            return result;
         }
 
         private static int? GetTier(DbCommand cmd)
@@ -98,19 +108,24 @@ WHERE (hc.Name = @Team OR ac.Name = @Team) AND m.MatchDate BETWEEN DATEFROMPARTS
             {
                 return null;
             }
-            
+
             return Convert.ToInt32(cmd.ExecuteScalar());
         }
-        
+
         private static List<TierModel> GetTiers(DbCommand cmd)
         {
             var tiers = new List<TierModel>();
-            
+
             using (var reader = cmd.ExecuteReader())
             {
                 while (reader.Read())
                 {
-                    tiers.Add(new TierModel { SeasonStartYear = reader.GetInt32(0), Tier = reader.GetByte(1)});
+                    tiers.Add(
+                        new TierModel
+                        {
+                            SeasonStartYear = reader.GetInt32(0),
+                            Tier = reader.GetByte(1)
+                        });
                 }
             }
 
@@ -132,14 +147,17 @@ WHERE (hc.Name = @Team OR ac.Name = @Team) AND MONTH(m.MatchDate) >= 7
 ORDER BY ROW_NUMBER() OVER (PARTITION BY YEAR(m.MatchDate) ORDER BY YEAR(m.MatchDate))";
 
             conn.Open();
-            
+
             var cmd = conn.CreateCommand();
             cmd.CommandText = sql;
-            
+
             var teamParameter = new SqlParameter
-                {ParameterName = "@Team", Value = team};
+            {
+                ParameterName = "@Team",
+                Value = team
+            };
             cmd.Parameters.Add(teamParameter);
-            
+
             return cmd;
         }
     }

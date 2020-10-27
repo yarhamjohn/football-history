@@ -16,17 +16,19 @@ namespace football.history.api.Repositories.Match
             _context = context;
         }
 
-        public List<MatchModel> GetLeagueMatchModels(int seasonStartYear, int tier)
-        {
-            return GetLeagueMatchModels(new List<int> {seasonStartYear}, new List<int> {tier}, new List<string>());
-        }
-        
-        public List<MatchModel> GetLeagueMatchModels(List<int> seasonStartYears, List<int> tiers)
-        {
-            return GetLeagueMatchModels(seasonStartYears, tiers, new List<string>());
-        }
+        public List<MatchModel> GetLeagueMatchModels(int seasonStartYear, int tier) =>
+            GetLeagueMatchModels(
+                new List<int> { seasonStartYear },
+                new List<int> { tier },
+                new List<string>());
 
-        public List<MatchModel> GetLeagueMatchModels(List<int> seasonStartYears, List<int> tiers, List<string> teams)
+        public List<MatchModel> GetLeagueMatchModels(List<int> seasonStartYears, List<int> tiers) =>
+            GetLeagueMatchModels(seasonStartYears, tiers, new List<string>());
+
+        public List<MatchModel> GetLeagueMatchModels(
+            List<int> seasonStartYears,
+            List<int> tiers,
+            List<string> teams)
         {
             var conn = _context.Database.GetDbConnection();
             var cmd = GetLeagueMatchDbCommand(conn, seasonStartYears, tiers, teams);
@@ -35,10 +37,8 @@ namespace football.history.api.Repositories.Match
             return result;
         }
 
-        public List<MatchModel> GetPlayOffMatchModels(int seasonStartYear, int tier)
-        {
-            return GetPlayOffMatchModels(new List<int> { seasonStartYear }, new List<int> {tier});
-        }
+        public List<MatchModel> GetPlayOffMatchModels(int seasonStartYear, int tier) =>
+            GetPlayOffMatchModels(new List<int> { seasonStartYear }, new List<int> { tier });
 
         public List<MatchModel> GetPlayOffMatchModels(List<int> seasonStartYears, List<int> tiers)
         {
@@ -49,14 +49,28 @@ namespace football.history.api.Repositories.Match
             return result;
         }
 
-        public List<MatchModel> GetLeagueHeadToHeadMatchModels(List<int> seasonStartYears, List<int> tiers, string teamOne, string teamTwo)
+        public List<MatchModel> GetLeagueHeadToHeadMatchModels(
+            List<int> seasonStartYears,
+            List<int> tiers,
+            string teamOne,
+            string teamTwo)
         {
             var conn = _context.Database.GetDbConnection();
-            var cmd = GetLeagueMatchDbCommand(conn, seasonStartYears, tiers, new List<string> {teamOne, teamTwo});
+            var cmd = GetLeagueMatchDbCommand(
+                conn,
+                seasonStartYears,
+                tiers,
+                new List<string>
+                {
+                    teamOne,
+                    teamTwo
+                });
             var result = GetLeagueMatches(cmd)
-                .Where(m => m.HomeTeam == teamOne && m.AwayTeam == teamTwo || m.HomeTeam == teamTwo && m.AwayTeam == teamOne)
+                .Where(
+                    m => m.HomeTeam == teamOne && m.AwayTeam == teamTwo
+                        || m.HomeTeam == teamTwo && m.AwayTeam == teamOne)
                 .ToList();
-            
+
             conn.Close();
             return result;
         }
@@ -67,60 +81,66 @@ namespace football.history.api.Repositories.Match
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                result.Add(new MatchModel
-                {
-                    Tier = reader.GetByte(0),
-                    Division = reader.GetString(1),
-                    Date = reader.GetDateTime(2),
-                    HomeTeam = reader.GetString(3),
-                    HomeTeamAbbreviation = reader.GetString(4),
-                    AwayTeam = reader.GetString(5),
-                    AwayTeamAbbreviation = reader.GetString(6),
-                    HomeGoals = reader.GetByte(7),
-                    AwayGoals = reader.GetByte(8)
-                });
+                result.Add(
+                    new MatchModel
+                    {
+                        Tier = reader.GetByte(0),
+                        Division = reader.GetString(1),
+                        Date = reader.GetDateTime(2),
+                        HomeTeam = reader.GetString(3),
+                        HomeTeamAbbreviation = reader.GetString(4),
+                        AwayTeam = reader.GetString(5),
+                        AwayTeamAbbreviation = reader.GetString(6),
+                        HomeGoals = reader.GetByte(7),
+                        AwayGoals = reader.GetByte(8)
+                    });
             }
 
             return result;
         }
-        
+
         private List<MatchModel> GetPlayOffMatches(DbCommand cmd)
         {
             var result = new List<MatchModel>();
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                result.Add(new MatchModel
-                {
-                    Tier = reader.GetByte(0),
-                    Division = reader.GetString(1),
-                    Date = reader.GetDateTime(2),
-                    Round = reader.GetString(3),
-                    HomeTeam = reader.GetString(4),
-                    HomeTeamAbbreviation = reader.GetString(5),
-                    AwayTeam = reader.GetString(6),
-                    AwayTeamAbbreviation = reader.GetString(7),
-                    HomeGoals = reader.GetByte(8),
-                    AwayGoals = reader.GetByte(9),
-                    ExtraTime = reader.GetBoolean(10),
-                    HomeGoalsExtraTime = reader.GetByte(11),
-                    AwayGoalsExtraTime = reader.GetByte(12),
-                    PenaltyShootout = reader.GetBoolean(13),
-                    HomePenaltiesTaken = reader.GetByte(14),
-                    HomePenaltiesScored = reader.GetByte(15),
-                    AwayPenaltiesTaken = reader.GetByte(16),
-                    AwayPenaltiesScored = reader.GetByte(17)
-                });
+                result.Add(
+                    new MatchModel
+                    {
+                        Tier = reader.GetByte(0),
+                        Division = reader.GetString(1),
+                        Date = reader.GetDateTime(2),
+                        Round = reader.GetString(3),
+                        HomeTeam = reader.GetString(4),
+                        HomeTeamAbbreviation = reader.GetString(5),
+                        AwayTeam = reader.GetString(6),
+                        AwayTeamAbbreviation = reader.GetString(7),
+                        HomeGoals = reader.GetByte(8),
+                        AwayGoals = reader.GetByte(9),
+                        ExtraTime = reader.GetBoolean(10),
+                        HomeGoalsExtraTime = reader.GetByte(11),
+                        AwayGoalsExtraTime = reader.GetByte(12),
+                        PenaltyShootout = reader.GetBoolean(13),
+                        HomePenaltiesTaken = reader.GetByte(14),
+                        HomePenaltiesScored = reader.GetByte(15),
+                        AwayPenaltiesTaken = reader.GetByte(16),
+                        AwayPenaltiesScored = reader.GetByte(17)
+                    });
             }
 
             return result;
         }
 
-        private static DbCommand GetLeagueMatchDbCommand(DbConnection conn, List<int> seasonStartYears, List<int> tiers, List<string> teams)
-        {            
+        private static DbCommand GetLeagueMatchDbCommand(
+            DbConnection conn,
+            List<int> seasonStartYears,
+            List<int> tiers,
+            List<string> teams)
+        {
             conn.Open();
             var cmd = conn.CreateCommand();
-            
+
             var whereClause = BuildWhereClause(seasonStartYears, tiers, teams);
             var sql = $@"
 SELECT d.Tier
@@ -146,28 +166,51 @@ INNER JOIN [dbo].[Clubs] AS ac
 
             for (var i = 0; i < tiers.Count; i++)
             {
-                cmd.Parameters.Add(new SqlParameter {ParameterName = $"@Tier{i}", Value = tiers[i]});
+                cmd.Parameters.Add(
+                    new SqlParameter
+                    {
+                        ParameterName = $"@Tier{i}",
+                        Value = tiers[i]
+                    });
             }
 
             for (var i = 0; i < teams.Count; i++)
             {
-                cmd.Parameters.Add(new SqlParameter {ParameterName = $"@Team{i}", Value = teams[i]});
+                cmd.Parameters.Add(
+                    new SqlParameter
+                    {
+                        ParameterName = $"@Team{i}",
+                        Value = teams[i]
+                    });
             }
-            
+
             for (var i = 0; i < seasonStartYears.Count; i++)
             {
-                cmd.Parameters.Add(new SqlParameter {ParameterName = $"@SeasonStartYear{i}", Value = seasonStartYears[i]});
-                cmd.Parameters.Add(new SqlParameter {ParameterName = $"@SeasonEndYear{i}", Value = seasonStartYears[i] + 1});
+                cmd.Parameters.Add(
+                    new SqlParameter
+                    {
+                        ParameterName = $"@SeasonStartYear{i}",
+                        Value = seasonStartYears[i]
+                    });
+                cmd.Parameters.Add(
+                    new SqlParameter
+                    {
+                        ParameterName = $"@SeasonEndYear{i}",
+                        Value = seasonStartYears[i] + 1
+                    });
             }
 
             return cmd;
         }
-        
-        private static DbCommand GetPlayOffMatchDbCommand(DbConnection conn, List<int> seasonStartYears, List<int> tiers)
-        {            
+
+        private static DbCommand GetPlayOffMatchDbCommand(
+            DbConnection conn,
+            List<int> seasonStartYears,
+            List<int> tiers)
+        {
             conn.Open();
             var cmd = conn.CreateCommand();
-            
+
             var whereClause = BuildWhereClause(seasonStartYears, tiers, new List<string>());
             var sql = $@"
 SELECT d.Tier
@@ -202,19 +245,37 @@ INNER JOIN [dbo].[Clubs] AS ac
 
             for (var i = 0; i < tiers.Count; i++)
             {
-                cmd.Parameters.Add(new SqlParameter {ParameterName = $"@Tier{i}", Value = tiers[i]});
+                cmd.Parameters.Add(
+                    new SqlParameter
+                    {
+                        ParameterName = $"@Tier{i}",
+                        Value = tiers[i]
+                    });
             }
-            
+
             for (var i = 0; i < seasonStartYears.Count; i++)
             {
-                cmd.Parameters.Add(new SqlParameter {ParameterName = $"@SeasonStartYear{i}", Value = seasonStartYears[i]});
-                cmd.Parameters.Add(new SqlParameter {ParameterName = $"@SeasonEndYear{i}", Value = seasonStartYears[i] + 1});
+                cmd.Parameters.Add(
+                    new SqlParameter
+                    {
+                        ParameterName = $"@SeasonStartYear{i}",
+                        Value = seasonStartYears[i]
+                    });
+                cmd.Parameters.Add(
+                    new SqlParameter
+                    {
+                        ParameterName = $"@SeasonEndYear{i}",
+                        Value = seasonStartYears[i] + 1
+                    });
             }
 
             return cmd;
         }
-        
-        private static string BuildWhereClause(List<int> seasonStartYears, List<int> tiers, List<string> teams)
+
+        private static string BuildWhereClause(
+            List<int> seasonStartYears,
+            List<int> tiers,
+            List<string> teams)
         {
             var clauses = new List<string>();
             var tierClauses = new List<string>();
@@ -248,7 +309,7 @@ INNER JOIN [dbo].[Clubs] AS ac
             {
                 clauses.Add(teamClauses.Single());
             }
-            
+
             var seasonClauses = new List<string>();
             for (var i = 0; i < seasonStartYears.Count; i++)
             {
@@ -278,7 +339,7 @@ INNER JOIN [dbo].[Clubs] AS ac
             {
                 clauses.Add(seasonClauses.Single());
             }
-            
+
             return clauses.Count > 0 ? $"WHERE {string.Join(" AND ", clauses)}" : "";
         }
     }

@@ -16,23 +16,16 @@ namespace football.history.api.Controllers
             _teamBuilder = teamBuilder;
             _tierRepository = tierRepository;
         }
-        
-        [HttpGet("[action]")]
-        public List<Team> GetAllTeams()
-        {
-            return _teamBuilder.GetAllTeams();
-        }
-        
-        [HttpGet("[action]")]
-        public List<Team> GetTeamsInLeague(int seasonStartYear, int tier)
-        {
-            return _teamBuilder.GetTeamsInLeague(seasonStartYear, tier);
-        }
 
         [HttpGet("[action]")]
-        public int GetTier(int seasonStartYear, string team)
-        {
-            return _tierRepository.GetTierForTeamInYear(seasonStartYear, team) ?? -1;
-        }
+        public List<Team> GetAllTeams() => _teamBuilder.GetAllTeams();
+
+        [HttpGet("[action]")]
+        public List<Team> GetTeamsInLeague(int seasonStartYear, int tier) =>
+            _teamBuilder.GetTeamsInLeague(seasonStartYear, tier);
+
+        [HttpGet("[action]")]
+        public int GetTier(int seasonStartYear, string team) =>
+            _tierRepository.GetTierForTeamInYear(seasonStartYear, team) ?? -1;
     }
 }

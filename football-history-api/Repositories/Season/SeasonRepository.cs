@@ -23,20 +23,21 @@ namespace football.history.api.Repositories.Season
             conn.Close();
             return result;
         }
-        
+
         private static List<SeasonModel> GetTierBySeason(DbCommand cmd)
         {
             var result = new List<SeasonModel>();
-            
+
             using (var reader = cmd.ExecuteReader())
             {
                 while (reader.Read())
                 {
-                    result.Add(new SeasonModel
+                    result.Add(
+                        new SeasonModel
                         {
-                            SeasonStartYear = reader.GetInt32(0), 
-                            SeasonEndYear = reader.GetInt32(1), 
-                            Tier = reader.GetByte(2), 
+                            SeasonStartYear = reader.GetInt32(0),
+                            SeasonEndYear = reader.GetInt32(1),
+                            Tier = reader.GetByte(2),
                             Name = reader.GetString(3)
                         });
                 }
@@ -52,7 +53,7 @@ SELECT s.StartYear, s.EndYear, d.Tier, d.Name FROM [dbo].[LeagueStatuses] AS s
 INNER JOIN dbo.Divisions AS d ON s.DivisionId = d.Id
 ";
             conn.Open();
-            
+
             var cmd = conn.CreateCommand();
             cmd.CommandText = sql;
 

@@ -28,13 +28,21 @@ namespace football.history.api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(option => option.EnableEndpointRouting = false).SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddMvc(option => option.EnableEndpointRouting = false)
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Football History API", Version = "v1" });
-            });
-            
+            services.AddSwaggerGen(
+                c =>
+                    {
+                        c.SwaggerDoc(
+                            "v1",
+                            new OpenApiInfo
+                            {
+                                Title = "Football History API",
+                                Version = "v1"
+                            });
+                    });
+
             services.AddTransient<ITeamBuilder, TeamBuilder>();
             services.AddTransient<ISeasonBuilder, SeasonBuilder>();
             services.AddTransient<IMatchBuilder, MatchBuilder>();
@@ -57,14 +65,14 @@ namespace football.history.api
         {
             if (env.IsDevelopment())
             {
-
-                app.UseCors(builder =>
-                {
-                    builder.WithOrigins(Configuration.GetSection("WhitelistedUrls").Get<string[]>());
-                });
+                app.UseCors(
+                    builder =>
+                        {
+                            builder.WithOrigins(
+                                Configuration.GetSection("WhitelistedUrls").Get<string[]>());
+                        });
                 app.UseMiddleware<MiddlewareExtensions>();
                 app.UseDeveloperExceptionPage();
-                
             }
             else
             {
@@ -72,11 +80,9 @@ namespace football.history.api
             }
 
             app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Football History API v1");
-            });
-            
+            app.UseSwaggerUI(
+                c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Football History API v1"); });
+
             app.UseHttpsRedirection();
             app.UseMvc();
         }

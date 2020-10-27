@@ -17,7 +17,7 @@ namespace football.history.api.Tests
         private List<MatchModel> _leagueMatches;
         private List<MatchModel> _playOffMatches;
         private List<PointsDeductionModel> _pointsDeductions;
-        
+
         [SetUp]
         public void Setup()
         {
@@ -26,9 +26,10 @@ namespace football.history.api.Tests
 
             var playOffMatchesJson = File.ReadAllText("./TestSource/PlayOffMatches.json");
             _playOffMatches = JsonConvert.DeserializeObject<List<MatchModel>>(playOffMatchesJson);
-            
+
             var pointsDeductionsJson = File.ReadAllText("./TestSource/PointsDeductions.json");
-            _pointsDeductions = JsonConvert.DeserializeObject<List<PointsDeductionModel>>(pointsDeductionsJson);
+            _pointsDeductions =
+                JsonConvert.DeserializeObject<List<PointsDeductionModel>>(pointsDeductionsJson);
         }
 
         [Test]
@@ -48,11 +49,15 @@ namespace football.history.api.Tests
                 StartYear = league.StartYear
             };
 
-            var actualLeagueTable = LeagueTableCalculator.GetFullLeagueTable(_leagueMatches, _playOffMatches, leagueModel, _pointsDeductions);
+            var actualLeagueTable = LeagueTableCalculator.GetFullLeagueTable(
+                _leagueMatches,
+                _playOffMatches,
+                leagueModel,
+                _pointsDeductions);
 
             AssertLeagueTablesMatch(actualLeagueTable, league.Table);
         }
-        
+
         [Test]
         public void GetPartialLeagueTable_with_points_deductions_returns_partial_league_table()
         {
@@ -69,17 +74,24 @@ namespace football.history.api.Tests
                 PointsForWin = league.PointsForWin,
                 StartYear = league.StartYear
             };
-            
-            var actualLeagueTable = LeagueTableCalculator.GetPartialLeagueTable(_leagueMatches, leagueModel, _pointsDeductions, new DateTime(2012, 1, 1));
+
+            var actualLeagueTable = LeagueTableCalculator.GetPartialLeagueTable(
+                _leagueMatches,
+                leagueModel,
+                _pointsDeductions,
+                new DateTime(2012, 1, 1));
 
             AssertLeagueTablesMatch(actualLeagueTable, league.Table);
         }
 
-        private void AssertLeagueTablesMatch(List<LeagueTableRow> actualLeagueTable, List<LeagueTableRow> expectedLeagueTable)
+        private void AssertLeagueTablesMatch(
+            List<LeagueTableRow> actualLeagueTable,
+            List<LeagueTableRow> expectedLeagueTable)
         {
             foreach (var actualRow in actualLeagueTable)
             {
-                var expectedRow = expectedLeagueTable.Single(exp => actualRow.Position == exp.Position);
+                var expectedRow =
+                    expectedLeagueTable.Single(exp => actualRow.Position == exp.Position);
 
                 Assert.That(actualRow.Team, Is.EqualTo(expectedRow.Team));
                 Assert.That(actualRow.Played, Is.EqualTo(expectedRow.Played));
@@ -92,7 +104,9 @@ namespace football.history.api.Tests
                 Assert.That(actualRow.GoalDifference, Is.EqualTo(expectedRow.GoalDifference));
                 Assert.That(actualRow.Status, Is.EqualTo(expectedRow.Status));
                 Assert.That(actualRow.PointsDeducted, Is.EqualTo(expectedRow.PointsDeducted));
-                Assert.That(actualRow.PointsDeductionReason, Is.EqualTo(expectedRow.PointsDeductionReason));
+                Assert.That(
+                    actualRow.PointsDeductionReason,
+                    Is.EqualTo(expectedRow.PointsDeductionReason));
             }
         }
     }

@@ -8,7 +8,7 @@ namespace football.history.api.Builders
     {
         List<Season> GetSeasons();
     }
-    
+
     public class SeasonBuilder : ISeasonBuilder
     {
         private readonly ISeasonRepository _seasonRepository;
@@ -17,16 +17,25 @@ namespace football.history.api.Builders
         {
             _seasonRepository = seasonRepository;
         }
-            
+
         public List<Season> GetSeasons()
         {
             var seasonModels = _seasonRepository.GetSeasonModels();
-            return seasonModels.GroupBy(s => s.SeasonStartYear,
-                (startYear, models) => new Season
-                {
-                    StartYear = startYear, EndYear = startYear + 1,
-                    Divisions = models.Select(m => new Division {Name = m.Name, Tier = m.Tier}).ToList()
-                }).ToList();
+            return seasonModels.GroupBy(
+                    s => s.SeasonStartYear,
+                    (startYear, models) => new Season
+                    {
+                        StartYear = startYear,
+                        EndYear = startYear + 1,
+                        Divisions = models.Select(
+                                m => new Division
+                                {
+                                    Name = m.Name,
+                                    Tier = m.Tier
+                                })
+                            .ToList()
+                    })
+                .ToList();
         }
     }
 

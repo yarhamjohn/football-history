@@ -7,14 +7,20 @@ namespace football.history.api.Builders
 {
     public interface IMatchBuilder
     {
-        List<Match> GetLeagueMatches(List<int> seasonStartYears, List<int> tiers, List<string> teams);
+        List<Match> GetLeagueMatches(
+            List<int> seasonStartYears,
+            List<int> tiers,
+            List<string> teams);
 
-        List<Match> GetHeadToHeadLeagueMatches(List<int> seasonStartYears, List<int> tiers, string teamOne,
+        List<Match> GetHeadToHeadLeagueMatches(
+            List<int> seasonStartYears,
+            List<int> tiers,
+            string teamOne,
             string teamTwo);
 
         List<KnockoutMatch> GetPlayOffMatches(List<int> seasonStartYears, List<int> tiers);
     }
-    
+
     public class MatchBuilder : IMatchBuilder
     {
         private readonly IMatchRepository _matchRepository;
@@ -23,64 +29,73 @@ namespace football.history.api.Builders
         {
             _matchRepository = matchRepository;
         }
-    
-        public List<Match> GetLeagueMatches(List<int> seasonStartYears, List<int> tiers, List<string> teams)
+
+        public List<Match> GetLeagueMatches(
+            List<int> seasonStartYears,
+            List<int> tiers,
+            List<string> teams)
         {
             var matchModels = _matchRepository.GetLeagueMatchModels(seasonStartYears, tiers, teams);
             return GetMatches(matchModels);
         }
-    
-        public List<Match> GetHeadToHeadLeagueMatches(List<int> seasonStartYears, List<int> tiers, string teamOne, string teamTwo)
+
+        public List<Match> GetHeadToHeadLeagueMatches(
+            List<int> seasonStartYears,
+            List<int> tiers,
+            string teamOne,
+            string teamTwo)
         {
-            var matchModels = _matchRepository.GetLeagueHeadToHeadMatchModels(seasonStartYears, tiers, teamOne, teamTwo);
+            var matchModels = _matchRepository.GetLeagueHeadToHeadMatchModels(
+                seasonStartYears,
+                tiers,
+                teamOne,
+                teamTwo);
             return GetMatches(matchModels);
         }
-    
+
         public List<KnockoutMatch> GetPlayOffMatches(List<int> seasonStartYears, List<int> tiers)
         {
             var matchModels = _matchRepository.GetPlayOffMatchModels(seasonStartYears, tiers);
-            return matchModels
-                .Select(m => new KnockoutMatch
-                {
-                    Tier = m.Tier,
-                    Division = m.Division,
-                    Date = m.Date,
-                    HomeTeam = m.HomeTeam,
-                    HomeTeamAbbreviation = m.HomeTeamAbbreviation,
-                    AwayTeam = m.AwayTeam,
-                    AwayTeamAbbreviation = m.AwayTeamAbbreviation,
-                    HomeGoals = m.HomeGoals,
-                    AwayGoals = m.AwayGoals,
-                    Round = m.Round,
-                    ExtraTime = m.ExtraTime,
-                    HomeGoalsExtraTime = m.HomeGoalsExtraTime,
-                    AwayGoalsExtraTime = m.AwayGoalsExtraTime,
-                    PenaltyShootout = m.PenaltyShootout,
-                    HomePenaltiesTaken = m.HomePenaltiesTaken,
-                    HomePenaltiesScored = m.HomePenaltiesScored,
-                    AwayPenaltiesTaken = m.AwayPenaltiesTaken,
-                    AwayPenaltiesScored = m.AwayPenaltiesScored
-
-                })
+            return matchModels.Select(
+                    m => new KnockoutMatch
+                    {
+                        Tier = m.Tier,
+                        Division = m.Division,
+                        Date = m.Date,
+                        HomeTeam = m.HomeTeam,
+                        HomeTeamAbbreviation = m.HomeTeamAbbreviation,
+                        AwayTeam = m.AwayTeam,
+                        AwayTeamAbbreviation = m.AwayTeamAbbreviation,
+                        HomeGoals = m.HomeGoals,
+                        AwayGoals = m.AwayGoals,
+                        Round = m.Round,
+                        ExtraTime = m.ExtraTime,
+                        HomeGoalsExtraTime = m.HomeGoalsExtraTime,
+                        AwayGoalsExtraTime = m.AwayGoalsExtraTime,
+                        PenaltyShootout = m.PenaltyShootout,
+                        HomePenaltiesTaken = m.HomePenaltiesTaken,
+                        HomePenaltiesScored = m.HomePenaltiesScored,
+                        AwayPenaltiesTaken = m.AwayPenaltiesTaken,
+                        AwayPenaltiesScored = m.AwayPenaltiesScored
+                    })
                 .ToList();
         }
 
         private List<Match> GetMatches(List<MatchModel> matchModels)
         {
-            return matchModels
-                .Select(m => new Match
-                {
-                    Tier = m.Tier,
-                    Division = m.Division,
-                    Date = m.Date, 
-                    HomeTeam = m.HomeTeam,
-                    HomeTeamAbbreviation = m.HomeTeamAbbreviation,
-                    AwayTeam = m.AwayTeam,
-                    AwayTeamAbbreviation = m.AwayTeamAbbreviation,
-                    HomeGoals = m.HomeGoals,
-                    AwayGoals = m.AwayGoals
-                    
-                })
+            return matchModels.Select(
+                    m => new Match
+                    {
+                        Tier = m.Tier,
+                        Division = m.Division,
+                        Date = m.Date,
+                        HomeTeam = m.HomeTeam,
+                        HomeTeamAbbreviation = m.HomeTeamAbbreviation,
+                        AwayTeam = m.AwayTeam,
+                        AwayTeamAbbreviation = m.AwayTeamAbbreviation,
+                        HomeGoals = m.HomeGoals,
+                        AwayGoals = m.AwayGoals
+                    })
                 .ToList();
         }
     }

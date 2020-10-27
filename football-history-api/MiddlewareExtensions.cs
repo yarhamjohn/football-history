@@ -27,23 +27,25 @@ namespace football.history.api
             }
 
             // Bind to the OnStarting event so that we can make sure these CORS headers are still included going to the client
-            httpContext.Response.OnStarting(o =>
-            {
-                var ctx = (HttpContext) o;
-                var headers = ctx.Response.Headers;
-                // Ensure all CORS headers remain or else add them back in ...
-                foreach (var pair in corsHeaders)
-                {
-                    if (headers.ContainsKey(pair.Key))
+            httpContext.Response.OnStarting(
+                o =>
                     {
-                        continue;
-                    } // Still there!
+                        var ctx = (HttpContext) o;
+                        var headers = ctx.Response.Headers;
+                        // Ensure all CORS headers remain or else add them back in ...
+                        foreach (var pair in corsHeaders)
+                        {
+                            if (headers.ContainsKey(pair.Key))
+                            {
+                                continue;
+                            } // Still there!
 
-                    headers.Add(pair.Key, pair.Value);
-                }
+                            headers.Add(pair.Key, pair.Value);
+                        }
 
-                return Task.CompletedTask;
-            }, httpContext);
+                        return Task.CompletedTask;
+                    },
+                httpContext);
 
             // Call the pipeline ...
             await _next(httpContext);
