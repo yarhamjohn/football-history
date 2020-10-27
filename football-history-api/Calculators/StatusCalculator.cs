@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using football.history.api.Builders;
@@ -8,83 +9,86 @@ namespace football.history.api.Calculators
 {
     public static class StatusCalculator
     {
-        public static List<LeagueTableRow> AddStatuses(List<LeagueTableRow> leagueTable,
-            List<MatchModel> playOffMatches, LeagueModel leagueModel)
+        public static string? AddStatuses(LeagueTableRow row,
+            IEnumerable<MatchModel> playOffMatches, LeagueModel leagueModel)
         {
-            var playOffWinner = GetPlayOffWinner(playOffMatches);
-
-            leagueTable.ForEach(r =>
+            if (row.Position == 1)
             {
-                if (r.Position == 1)
-                {
-                    r.Status = "Champions";
-                }
+                return "Champions";
+            }
 
-                if (r.Position > leagueTable.Count - leagueModel.RelegationPlaces)
-                {
-                    r.Status = "Relegated";
-                }
+            if (InPromotionPlaces(row, leagueModel))
+            {
+                return "Promoted";
+            }
 
-                if (r.Position > 1 && r.Position <= leagueModel.PromotionPlaces)
-                {
-                    r.Status = "Promoted";
-                }
+            if (InPlayOffPlaces(row, leagueModel))
+            {
+                return PlayOffWinner(row, playOffMatches) ? "PlayOff Winner" : "PlayOffs";
+            }
 
-                if (r.Position > leagueModel.PromotionPlaces &&
-                    r.Position <= leagueModel.PromotionPlaces + leagueModel.PlayOffPlaces)
-                {
-                    r.Status = "PlayOffs";
-                }
+            if (InRelegationZone(row, leagueModel))
+            {
+                return "Relegated";
+            }
 
-                if (r.Team == playOffWinner)
-                {
-                    r.Status = "PlayOff Winner";
-                }
-            });
-
-            return leagueTable;
+            return null;
         }
-        
-        
-        private static string? GetPlayOffWinner(List<MatchModel> playOffMatches)
+
+        private static bool PlayOffWinner(LeagueTableRow row, IEnumerable<MatchModel> playOffMatches)
+        {
+            return row.Team == GetPlayOffWinner(playOffMatches);
+        }
+
+        private static bool InPlayOffPlaces(LeagueTableRow row, LeagueModel leagueModel)
+        {
+            return row.Position > leagueModel.PromotionPlaces &&
+                   row.Position <= leagueModel.PromotionPlaces + leagueModel.PlayOffPlaces;
+        }
+
+        private static bool InPromotionPlaces(LeagueTableRow row, LeagueModel leagueModel)
+        {
+            return row.Position > 1 && row.Position <= leagueModel.PromotionPlaces;
+        }
+
+        private static bool InRelegationZone(LeagueTableRow r, LeagueModel leagueModel)
+        {
+            return r.Position > leagueModel.TotalPlaces - leagueModel.RelegationPlaces;
+        }
+
+        private static string? GetPlayOffWinner(IEnumerable<MatchModel> playOffMatches)
         {
             var playOffFinal = playOffMatches.SingleOrDefault(m => m.Round == "Final");
             return playOffFinal == null ? null : GetMatchWinner(playOffFinal);
         }
 
-        private static string? GetMatchWinner(MatchModel matchModel)
+        private static string GetMatchWinner(MatchModel playOffFinal)
         {
-            if (matchModel.HomeGoals > matchModel.AwayGoals)
+            if (HomeTeamWon(playOffFinal))
             {
-                return matchModel.HomeTeam;
+                return playOffFinal.HomeTeam;
             }
 
-            if (matchModel.HomeGoals < matchModel.AwayGoals)
+            if (AwayTeamWon(playOffFinal))
             {
-                return matchModel.AwayTeam;
+                return playOffFinal.AwayTeam;
             }
 
-            if (matchModel.HomeGoalsExtraTime > matchModel.AwayGoalsExtraTime)
-            {
-                return matchModel.HomeTeam;
-            }
+            throw new InvalidOperationException("The specified play off final had no winner.");
+        }
 
-            if (matchModel.HomeGoalsExtraTime < matchModel.AwayGoalsExtraTime)
-            {
-                return matchModel.AwayTeam;
-            }
+        private static bool AwayTeamWon(MatchModel playOffFinal)
+        {
+            return playOffFinal.HomeGoals < playOffFinal.AwayGoals ||
+                   playOffFinal.HomeGoalsExtraTime > playOffFinal.AwayGoalsExtraTime ||
+                   playOffFinal.HomePenaltiesScored > playOffFinal.AwayPenaltiesScored;
+        }
 
-            if (matchModel.HomePenaltiesScored > matchModel.AwayPenaltiesScored)
-            {
-                return matchModel.HomeTeam;
-            }
-
-            if (matchModel.HomePenaltiesScored < matchModel.AwayPenaltiesScored)
-            {
-                return matchModel.AwayTeam;
-            }
-
-            return null;
+        private static bool HomeTeamWon(MatchModel playOffFinal)
+        {
+            return playOffFinal.HomeGoals > playOffFinal.AwayGoals ||
+                   playOffFinal.HomeGoalsExtraTime < playOffFinal.AwayGoalsExtraTime ||
+                   playOffFinal.HomePenaltiesScored < playOffFinal.AwayPenaltiesScored;
         }
     }
 }

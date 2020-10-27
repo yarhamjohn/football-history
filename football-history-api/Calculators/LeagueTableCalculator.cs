@@ -15,7 +15,7 @@ namespace football.history.api.Calculators
         {
             var leagueTable = GetTable(leagueMatches, leagueModel, pointsDeductions);
             var sortedLeagueTable = LeagueTableSorter.SortTable(leagueTable, leagueModel);
-            return StatusCalculator.AddStatuses(sortedLeagueTable, playOffMatches, leagueModel);
+            return AddStatuses(sortedLeagueTable, playOffMatches, leagueModel);
         }
 
         public static List<LeagueTableRow> GetPartialLeagueTable(List<MatchModel> leagueMatches,
@@ -35,47 +35,69 @@ namespace football.history.api.Calculators
             return leagueMatches.SelectMany(m => new[] {m.HomeTeam, m.AwayTeam}).Distinct().ToList();
         }
 
-        private static List<LeagueTableRow> GetTable(List<MatchModel> matches, LeagueModel leagueModel,
-            List<PointsDeductionModel> pointDeductions)
+        private static List<LeagueTableRow> AddStatuses(IEnumerable<LeagueTableRow> table, IReadOnlyCollection<MatchModel> playOffMatches, LeagueModel leagueModel)
         {
-            var leagueTable = new List<LeagueTableRow>();
-
-            var teams = GetTeamsInvolvedInMatches(matches);
-            foreach (var team in teams)
+            return table.Select(row =>
             {
-                var teamMatches = matches.Where(m => MatchInvolvesTeam(m, team)).ToList();
-                var numWins = CountWins(teamMatches, team);
-                var numDefeats = CountDefeats(teamMatches, team);
-                var numDraws = CountDraws(teamMatches, team);
+                row.Status = StatusCalculator.AddStatuses(row, playOffMatches, leagueModel);
+                return row;
+            }).ToList();
+        }
 
-                var homeTeamMatches = matches.Where(m => m.HomeTeam == team).ToList();
-                var awayTeamMatches = matches.Where(m => m.AwayTeam == team).ToList();
-                var goalsFor = homeTeamMatches.Sum(m => m.HomeGoals) + awayTeamMatches.Sum(m => m.AwayGoals);
-                var goalsAgainst = homeTeamMatches.Sum(m => m.AwayGoals) + awayTeamMatches.Sum(m => m.HomeGoals);
-                var pointsDeductionModel = pointDeductions.SingleOrDefault(p => p.Team == team);
-                var pointsDeducted = pointsDeductionModel?.PointsDeducted ?? 0;
+        private static List<LeagueTableRow> GetTable(List<MatchModel> matches, LeagueModel leagueModel,
+            IReadOnlyCollection<PointsDeductionModel> pointDeductions)
+        {
+            var teams = GetTeamsInvolvedInMatches(matches);
+            return teams.Select(team => CreateRowForTeam(matches, leagueModel, pointDeductions, team)).ToList();
+        }
 
-                var leagueTableRow = new LeagueTableRow
-                {
-                    Team = team,
-                    Played = teamMatches.Count,
-                    Won = numWins,
-                    Lost = numDefeats,
-                    Drawn = numDraws,
-                    GoalsFor = goalsFor,
-                    GoalsAgainst = goalsAgainst,
-                    GoalDifference = goalsFor - goalsAgainst,
-                    Points = numWins * leagueModel.PointsForWin + numDraws - pointsDeducted,
-                    PointsDeducted = pointsDeducted,
-                    PointsDeductionReason = pointsDeductionModel?.Reason
-                };
+        private static LeagueTableRow CreateRowForTeam(IEnumerable<MatchModel> matches, LeagueModel leagueModel, IEnumerable<PointsDeductionModel> pointDeductions,
+            string team)
+        {
+            var allMatches = matches.Where(m => MatchInvolvesTeam(m, team)).ToList();
+            var homeMatches = allMatches.Where(m => m.HomeTeam == team).ToList();
+            var awayMatches = allMatches.Where(m => m.AwayTeam == team).ToList();
 
-                leagueTableRow.PointsPerGame = (leagueTableRow.Points - leagueTableRow.PointsDeducted) / (double) leagueTableRow.Played;
-                
-                leagueTable.Add(leagueTableRow);
-            }
+            var pointsDeductionModel = pointDeductions.SingleOrDefault(p => p.Team == team);
+            var pointsDeducted = pointsDeductionModel?.PointsDeducted ?? 0;
 
-            return leagueTable;
+            var leagueTableRow = new LeagueTableRow
+            {
+                Team = team,
+                Played = allMatches.Count,
+                Won = CountWins(allMatches, team),
+                Lost = CountDefeats(allMatches, team),
+                Drawn = CountDraws(allMatches, team),
+                GoalsFor = CalculateGoalsFor(homeMatches, awayMatches),
+                GoalsAgainst = CalculateGoalsAgainst(homeMatches, awayMatches),
+                GoalDifference = CalculateGoalsFor(homeMatches, awayMatches) - CalculateGoalsAgainst(homeMatches, awayMatches),
+                Points = CalculatePoints(leagueModel, team, allMatches, pointsDeducted),
+                PointsDeducted = pointsDeducted,
+                PointsDeductionReason = pointsDeductionModel?.Reason
+            };
+
+            leagueTableRow.PointsPerGame = CalculatePointsPerGame(leagueTableRow);
+            return leagueTableRow;
+        }
+
+        private static double CalculatePointsPerGame(LeagueTableRow leagueTableRow)
+        {
+            return (leagueTableRow.Points - leagueTableRow.PointsDeducted) / (double) leagueTableRow.Played;
+        }
+
+        private static int CalculateGoalsAgainst(IEnumerable<MatchModel> homeMatches, IEnumerable<MatchModel> awayMatches)
+        {
+            return homeMatches.Sum(m => m.AwayGoals) + awayMatches.Sum(m => m.HomeGoals);
+        }
+
+        private static int CalculateGoalsFor(IEnumerable<MatchModel> homeMatches, IEnumerable<MatchModel> awayMatches)
+        {
+            return homeMatches.Sum(m => m.HomeGoals) + awayMatches.Sum(m => m.AwayGoals);
+        }
+
+        private static int CalculatePoints(LeagueModel leagueModel, string team, List<MatchModel> matches, int pointsDeducted)
+        {
+            return CountWins(matches, team) * leagueModel.PointsForWin + CountDraws(matches, team) - pointsDeducted;
         }
 
         private static List<LeagueTableRow> AddMissingTeams(List<LeagueTableRow> leagueTable, List<string> teams)
