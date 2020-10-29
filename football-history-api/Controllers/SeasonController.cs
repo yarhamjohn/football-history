@@ -19,7 +19,7 @@ namespace football.history.api.Controllers
         public List<Season> GetSeasons()
         {
             // TODO: This is a hack to limit the returned data - should be removed/updated as more data is added
-            return _seasonBuilder.GetSeasons().Where(s => s.StartYear >= 1992).ToList();
+            return _seasonBuilder.GetSeasons().Where(s => s.StartYear >= 1989).ToList();
         }
     }
 }
