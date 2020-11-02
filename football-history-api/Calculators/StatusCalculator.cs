@@ -26,7 +26,7 @@ namespace football.history.api.Calculators
 
             if (InPlayOffPlaces(row, leagueModel))
             {
-                return PlayOffWinner(row, playOffMatches) ? "PlayOff Winner" : "PlayOffs";
+                return IsPlayOffWinner(row, playOffMatches) ? "PlayOff Winner" : "PlayOffs";
             }
 
             if (InRelegationZone(row, leagueModel))
@@ -37,10 +37,49 @@ namespace football.history.api.Calculators
             return null;
         }
 
-        private static bool PlayOffWinner(
+        private static bool IsPlayOffWinner(
             LeagueTableRow row,
-            IEnumerable<MatchModel> playOffMatches) =>
-            row.Team == GetPlayOffWinner(playOffMatches);
+            IEnumerable<MatchModel> playOffMatches)
+        {
+            var playOffFinalMatches = playOffMatches.Where(m => m.Round == "Final").ToList();
+            return playOffFinalMatches.Count switch
+            {
+                1 => row.Team == GetOneLeggedFinalWinner(playOffFinalMatches.Single()),
+                2 => row.Team == GetTwoLeggedFinalWinner(playOffFinalMatches),
+                3 => row.Team == GetReplayFinalWinner(playOffFinalMatches),
+                _ => false,
+            };
+        }
+
+        private static string GetTwoLeggedFinalWinner(List<MatchModel> matches)
+        {
+            if (matches.Count != 2)
+            {
+                throw new InvalidOperationException($"Expected 2 matches but got {matches.Count}.");
+            }
+            var firstLeg = matches.OrderBy(m => m.Date).First();
+            var secondLeg = matches.OrderBy(m => m.Date).Last();
+
+            var teamOneGoals = firstLeg.HomeGoals + secondLeg.AwayGoals + secondLeg.AwayGoalsExtraTime + secondLeg.AwayPenaltiesScored;
+            var teamTwoGoals = firstLeg.AwayGoals + secondLeg.HomeGoals + secondLeg.HomeGoalsExtraTime + secondLeg.HomePenaltiesScored;
+            if (teamOneGoals > teamTwoGoals)
+            {
+                return firstLeg.HomeTeam;
+            }
+
+            if (teamOneGoals > teamTwoGoals)
+            {
+                return firstLeg.AwayTeam;
+            }
+
+            throw new InvalidOperationException("The specified two legged matches had no winner.");
+        }
+
+        private static string GetReplayFinalWinner(List<MatchModel> matches)
+        {
+            var replayMatch = matches.OrderBy(m => m.Date).Last();
+            return GetOneLeggedFinalWinner(replayMatch);
+        }
 
         private static bool InPlayOffPlaces(LeagueTableRow row, LeagueModel leagueModel) =>
             row.Position > leagueModel.PromotionPlaces
@@ -52,25 +91,19 @@ namespace football.history.api.Calculators
         private static bool InRelegationZone(LeagueTableRow r, LeagueModel leagueModel) =>
             r.Position > leagueModel.TotalPlaces - leagueModel.RelegationPlaces;
 
-        private static string? GetPlayOffWinner(IEnumerable<MatchModel> playOffMatches)
+        private static string GetOneLeggedFinalWinner(MatchModel match)
         {
-            var playOffFinal = playOffMatches.SingleOrDefault(m => m.Round == "Final");
-            return playOffFinal == null ? null : GetMatchWinner(playOffFinal);
-        }
-
-        private static string GetMatchWinner(MatchModel playOffFinal)
-        {
-            if (HomeTeamWon(playOffFinal))
+            if (HomeTeamWon(match))
             {
-                return playOffFinal.HomeTeam;
+                return match.HomeTeam;
             }
 
-            if (AwayTeamWon(playOffFinal))
+            if (AwayTeamWon(match))
             {
-                return playOffFinal.AwayTeam;
+                return match.AwayTeam;
             }
 
-            throw new InvalidOperationException("The specified play off final had no winner.");
+            throw new InvalidOperationException("The specified match had no winner.");
         }
 
         private static bool AwayTeamWon(MatchModel playOffFinal) =>

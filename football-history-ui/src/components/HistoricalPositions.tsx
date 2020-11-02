@@ -54,7 +54,9 @@ const HistoricalPositions: FunctionComponent<{
             {
                 id: "tier1-tier2",
                 data: [
-                    { x: 1989, y: 20.5 },
+                    { x: 1986, y: 22.5 },
+                    { x: 1987, y: 21.5 },
+                    { x: 1988, y: 20.5 },
                     { x: 1990, y: 20.5 },
                     { x: 1991, y: 22.5 },
                     { x: 1994, y: 22.5 },
@@ -65,7 +67,7 @@ const HistoricalPositions: FunctionComponent<{
             {
                 id: "tier2-tier3",
                 data: [
-                    { x: 1989, y: 44.5 },
+                    { x: 1986, y: 44.5 },
                     { x: 1990, y: 44.5 },
                     { x: 1991, y: 46.5 },
                     { x: 1994, y: 46.5 },
@@ -76,7 +78,7 @@ const HistoricalPositions: FunctionComponent<{
             {
                 id: "tier3-tier4",
                 data: [
-                    { x: 1989, y: 68.5 },
+                    { x: 1986, y: 68.5 },
                     { x: 1990, y: 68.5 },
                     { x: 1991, y: 70.5 },
                     { x: 1994, y: 70.5 },

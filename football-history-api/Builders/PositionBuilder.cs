@@ -72,58 +72,52 @@ namespace football.history.api.Builders
             var pointsDeductions =
                 _pointDeductionsRepository.GetPointsDeductionModels(seasonStartYears, tiers);
 
-            // Get all tiers
             var leagueModels = _leagueRepository.GetLeagueModels(seasonStartYears, new List<int>());
 
-            return GetPositions(
-                team,
-                tierModels,
-                leagueMatches,
-                playOffMatches,
-                pointsDeductions,
-                leagueModels);
+            return tierModels.Select(
+                    t => GetPositions(
+                        team,
+                        t,
+                        leagueMatches,
+                        playOffMatches,
+                        pointsDeductions,
+                        leagueModels))
+                .ToList();
         }
 
-        private static List<HistoricalPosition> GetPositions(
+        private static HistoricalPosition GetPositions(
             string team,
-            List<TierModel> tierModels,
+            TierModel tierModel,
             List<MatchModel> leagueMatches,
             List<MatchModel> playOffMatches,
             List<PointsDeductionModel> pointsDeductions,
             List<LeagueModel> leagueModels)
         {
-            var historicalPositions = new List<HistoricalPosition>();
-            foreach (var tierModel in tierModels)
+            var leagueMatchesInSeason = GetMatchesInSeason(leagueMatches, tierModel);
+            var playOffMatchesInSeason = GetMatchesInSeason(playOffMatches, tierModel);
+
+            var pointsDeductionsInSeason = pointsDeductions.Where(
+                    pd => pd.SeasonStartYear == tierModel.SeasonStartYear
+                        && pd.Tier == tierModel.Tier)
+                .ToList();
+            var leagueModel = leagueModels.Single(
+                l => l.StartYear == tierModel.SeasonStartYear && l.Tier == tierModel.Tier);
+
+            var leagueTable = LeagueTableCalculator.GetFullLeagueTable(
+                leagueMatchesInSeason,
+                playOffMatchesInSeason,
+                leagueModel,
+                pointsDeductionsInSeason);
+            var teamRow = leagueTable.Single(r => r.Team == team);
+
+            return new HistoricalPosition
             {
-                var leagueMatchesInSeason = GetMatchesInSeason(leagueMatches, tierModel);
-                var playOffMatchesInSeason = GetMatchesInSeason(playOffMatches, tierModel);
-
-                var pointsDeductionsInSeason = pointsDeductions.Where(
-                        pd => pd.SeasonStartYear == tierModel.SeasonStartYear
-                            && pd.Tier == tierModel.Tier)
-                    .ToList();
-                var leagueModel = leagueModels.Single(
-                    l => l.StartYear == tierModel.SeasonStartYear && l.Tier == tierModel.Tier);
-
-                var leagueTable = LeagueTableCalculator.GetFullLeagueTable(
-                    leagueMatchesInSeason,
-                    playOffMatchesInSeason,
-                    leagueModel,
-                    pointsDeductionsInSeason);
-                var teamRow = leagueTable.Single(r => r.Team == team);
-
-                historicalPositions.Add(
-                    new HistoricalPosition
-                    {
-                        SeasonStartYear = tierModel.SeasonStartYear,
-                        Tier = tierModel.Tier,
-                        Position = teamRow.Position,
-                        AbsolutePosition = GetAbsolutePosition(leagueModels, tierModel, teamRow),
-                        Status = teamRow.Status
-                    });
-            }
-
-            return historicalPositions;
+                SeasonStartYear = tierModel.SeasonStartYear,
+                Tier = tierModel.Tier,
+                Position = teamRow.Position,
+                AbsolutePosition = GetAbsolutePosition(leagueModels, tierModel, teamRow),
+                Status = teamRow.Status
+            };
         }
 
         private static List<MatchModel> GetMatchesInSeason(
@@ -214,6 +208,6 @@ namespace football.history.api.Builders
         public int Tier { get; set; }
         public int Position { get; set; }
         public int AbsolutePosition { get; set; }
-        public string Status { get; set; }
+        public string? Status { get; set; }
     }
 }
