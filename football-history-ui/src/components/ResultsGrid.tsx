@@ -8,9 +8,7 @@ const EmptyCell: FunctionComponent = () => {
 };
 
 const ResultsGrid: FunctionComponent<{ matches: LeagueMatch[] }> = ({ matches }) => {
-    console.log(matches);
     const abbreviations = Array.from(new Set(matches.map((m) => m.homeTeamAbbreviation))).sort();
-    console.log(abbreviations);
     function getRow(teamAbbreviation: string) {
         const homeGames = matches.filter((m) => m.homeTeamAbbreviation === teamAbbreviation);
         homeGames.push({ awayTeamAbbreviation: teamAbbreviation } as LeagueMatch);
