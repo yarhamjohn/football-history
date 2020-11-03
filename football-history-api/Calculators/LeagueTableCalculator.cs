@@ -13,12 +13,13 @@ namespace football.history.api.Calculators
         public static List<LeagueTableRow> GetFullLeagueTable(
             List<MatchModel> leagueMatches,
             List<MatchModel> playOffMatches,
+            List<MatchModel> relegationPlayOffMatches,
             LeagueModel leagueModel,
             List<PointsDeductionModel> pointsDeductions)
         {
             var leagueTable = GetTable(leagueMatches, leagueModel, pointsDeductions);
             var sortedLeagueTable = LeagueTableSorter.SortTable(leagueTable, leagueModel);
-            return AddStatuses(sortedLeagueTable, playOffMatches, leagueModel);
+            return AddStatuses(sortedLeagueTable, playOffMatches, relegationPlayOffMatches, leagueModel);
         }
 
         public static List<LeagueTableRow> GetPartialLeagueTable(
@@ -51,6 +52,7 @@ namespace football.history.api.Calculators
         private static List<LeagueTableRow> AddStatuses(
             IEnumerable<LeagueTableRow> table,
             IReadOnlyCollection<MatchModel> playOffMatches,
+            IReadOnlyCollection<MatchModel> relegationPlayOffMatches,
             LeagueModel leagueModel)
         {
             return table.Select(
@@ -59,6 +61,7 @@ namespace football.history.api.Calculators
                             row.Status = StatusCalculator.AddStatuses(
                                 row,
                                 playOffMatches,
+                                relegationPlayOffMatches,
                                 leagueModel);
                             return row;
                         })

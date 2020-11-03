@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using football.history.api.Builders;
 using football.history.api.Repositories.League;
 using football.history.api.Repositories.Match;
@@ -12,6 +13,7 @@ namespace football.history.api.Calculators
         public static string? AddStatuses(
             LeagueTableRow row,
             IEnumerable<MatchModel> playOffMatches,
+            IEnumerable<MatchModel> relegationPlayOffMatches,
             LeagueModel leagueModel)
         {
             if (row.Position == 1)
@@ -27,6 +29,15 @@ namespace football.history.api.Calculators
             if (InPlayOffPlaces(row, leagueModel))
             {
                 return IsPlayOffWinner(row, playOffMatches) ? "PlayOff Winner" : "PlayOffs";
+            }
+
+            if (InRelegationPlayOffPlaces(row, leagueModel))
+            {
+                Console.WriteLine(JsonSerializer.Serialize(row));
+                Console.WriteLine(JsonSerializer.Serialize(relegationPlayOffMatches));
+                return IsPlayOffWinner(row, relegationPlayOffMatches)
+                    ? "Relegation PlayOffs"
+                    : "Relegated - PlayOffs";
             }
 
             if (InRelegationZone(row, leagueModel))
@@ -57,17 +68,24 @@ namespace football.history.api.Calculators
             {
                 throw new InvalidOperationException($"Expected 2 matches but got {matches.Count}.");
             }
+
             var firstLeg = matches.OrderBy(m => m.Date).First();
             var secondLeg = matches.OrderBy(m => m.Date).Last();
 
-            var teamOneGoals = firstLeg.HomeGoals + secondLeg.AwayGoals + secondLeg.AwayGoalsExtraTime + secondLeg.AwayPenaltiesScored;
-            var teamTwoGoals = firstLeg.AwayGoals + secondLeg.HomeGoals + secondLeg.HomeGoalsExtraTime + secondLeg.HomePenaltiesScored;
+            var teamOneGoals = firstLeg.HomeGoals
+                + secondLeg.AwayGoals
+                + secondLeg.AwayGoalsExtraTime
+                + secondLeg.AwayPenaltiesScored;
+            var teamTwoGoals = firstLeg.AwayGoals
+                + secondLeg.HomeGoals
+                + secondLeg.HomeGoalsExtraTime
+                + secondLeg.HomePenaltiesScored;
             if (teamOneGoals > teamTwoGoals)
             {
                 return firstLeg.HomeTeam;
             }
 
-            if (teamOneGoals > teamTwoGoals)
+            if (teamOneGoals < teamTwoGoals)
             {
                 return firstLeg.AwayTeam;
             }
@@ -88,8 +106,15 @@ namespace football.history.api.Calculators
         private static bool InPromotionPlaces(LeagueTableRow row, LeagueModel leagueModel) =>
             row.Position > 1 && row.Position <= leagueModel.PromotionPlaces;
 
-        private static bool InRelegationZone(LeagueTableRow r, LeagueModel leagueModel) =>
-            r.Position > leagueModel.TotalPlaces - leagueModel.RelegationPlaces;
+        private static bool InRelegationZone(LeagueTableRow row, LeagueModel leagueModel) =>
+            row.Position > leagueModel.TotalPlaces - leagueModel.RelegationPlaces;
+
+        private static bool
+            InRelegationPlayOffPlaces(LeagueTableRow row, LeagueModel leagueModel) =>
+            !InRelegationZone(row, leagueModel)
+            && row.Position
+            > leagueModel.TotalPlaces
+            - (leagueModel.RelegationPlaces + leagueModel.RelegationPlayOffPlaces);
 
         private static string GetOneLeggedFinalWinner(MatchModel match)
         {
@@ -108,12 +133,12 @@ namespace football.history.api.Calculators
 
         private static bool AwayTeamWon(MatchModel playOffFinal) =>
             playOffFinal.HomeGoals < playOffFinal.AwayGoals
-            || playOffFinal.HomeGoalsExtraTime > playOffFinal.AwayGoalsExtraTime
-            || playOffFinal.HomePenaltiesScored > playOffFinal.AwayPenaltiesScored;
+            || playOffFinal.HomeGoalsExtraTime < playOffFinal.AwayGoalsExtraTime
+            || playOffFinal.HomePenaltiesScored < playOffFinal.AwayPenaltiesScored;
 
         private static bool HomeTeamWon(MatchModel playOffFinal) =>
             playOffFinal.HomeGoals > playOffFinal.AwayGoals
-            || playOffFinal.HomeGoalsExtraTime < playOffFinal.AwayGoalsExtraTime
-            || playOffFinal.HomePenaltiesScored < playOffFinal.AwayPenaltiesScored;
+            || playOffFinal.HomeGoalsExtraTime > playOffFinal.AwayGoalsExtraTime
+            || playOffFinal.HomePenaltiesScored > playOffFinal.AwayPenaltiesScored;
     }
 }

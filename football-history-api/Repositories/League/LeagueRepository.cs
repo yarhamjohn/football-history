@@ -43,8 +43,9 @@ namespace football.history.api.Repositories.League
                         PromotionPlaces = reader.GetByte(3),
                         PlayOffPlaces = reader.GetByte(4),
                         RelegationPlaces = reader.GetByte(5),
-                        PointsForWin = reader.GetByte(6),
-                        StartYear = reader.GetInt32(7)
+                        RelegationPlayOffPlaces = reader.GetByte(6),
+                        PointsForWin = reader.GetByte(7),
+                        StartYear = reader.GetInt32(8)
                     });
             }
 
@@ -65,6 +66,7 @@ SELECT d.Name
       ,[PromotionPlaces]
       ,[PlayOffPlaces]
       ,[RelegationPlaces]
+      ,[RelegationPlayOffPlaces]
       ,[PointsForWin]
       ,[StartYear]
   FROM [dbo].[LeagueStatuses] AS ls

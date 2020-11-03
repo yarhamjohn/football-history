@@ -57,12 +57,14 @@ namespace football.history.api.Builders
             var pointsDeductions =
                 _pointDeductionsRepository.GetPointsDeductionModels(seasonStartYear, tier);
             var playOffMatches = _matchRepository.GetPlayOffMatchModels(seasonStartYear, tier);
+            var relegationPlayOffMatches = _matchRepository.GetPlayOffMatchModels(seasonStartYear, tier + 1);
             var leagueMatches = _matchRepository.GetLeagueMatchModels(seasonStartYear, tier);
 
             return AllMatchesHaveBeenPlayed(date, playOffMatches, leagueMatches)
                 ? LeagueTableCalculator.GetFullLeagueTable(
                     leagueMatches,
                     playOffMatches,
+                    relegationPlayOffMatches,
                     leagueModel,
                     pointsDeductions)
                 : LeagueTableCalculator.GetPartialLeagueTable(

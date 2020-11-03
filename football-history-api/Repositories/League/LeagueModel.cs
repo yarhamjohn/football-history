@@ -8,6 +8,7 @@ namespace football.history.api.Repositories.League
         public int PromotionPlaces { get; set; }
         public int PlayOffPlaces { get; set; }
         public int RelegationPlaces { get; set; }
+        public int RelegationPlayOffPlaces { get; set; }
         public int PointsForWin { get; set; }
         public int StartYear { get; set; }
     }
