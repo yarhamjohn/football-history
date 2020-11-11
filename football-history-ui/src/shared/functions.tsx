@@ -24,6 +24,10 @@ function getLeagueStatusColor(status: string | null) {
             return Color.Yellow;
         case "Relegated - PlayOffs":
             return Color.Red;
+        case "Failed Re-election":
+            return Color.Red;
+        case "Re-elected":
+            return Color.Yellow;
         default:
             return null;
     }

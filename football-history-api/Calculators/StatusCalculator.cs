@@ -45,6 +45,11 @@ namespace football.history.api.Calculators
                 return "Relegated";
             }
 
+            if (InReElectionPlaces(row, leagueModel))
+            {
+                return FailedReElection(row, leagueModel) ? "Failed Re-election" : "Re-elected";
+            }
+
             return null;
         }
 
@@ -108,6 +113,12 @@ namespace football.history.api.Calculators
 
         private static bool InRelegationZone(LeagueTableRow row, LeagueModel leagueModel) =>
             row.Position > leagueModel.TotalPlaces - leagueModel.RelegationPlaces;
+
+        private static bool InReElectionPlaces(LeagueTableRow row, LeagueModel leagueModel) =>
+            row.Position > leagueModel.TotalPlaces - leagueModel.ReElectionPlaces;
+
+        private static bool FailedReElection(LeagueTableRow row, LeagueModel leagueModel) =>
+            leagueModel.FailedReElectionPosition == row.Position;
 
         private static bool
             InRelegationPlayOffPlaces(LeagueTableRow row, LeagueModel leagueModel) =>

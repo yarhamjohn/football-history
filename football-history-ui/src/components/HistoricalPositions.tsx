@@ -54,6 +54,7 @@ const HistoricalPositions: FunctionComponent<{
             {
                 id: "tier1-tier2",
                 data: [
+                    { x: 1981, y: 22.5 },
                     { x: 1986, y: 22.5 },
                     { x: 1987, y: 21.5 },
                     { x: 1988, y: 20.5 },
@@ -67,6 +68,7 @@ const HistoricalPositions: FunctionComponent<{
             {
                 id: "tier2-tier3",
                 data: [
+                    { x: 1981, y: 44.5 },
                     { x: 1986, y: 44.5 },
                     { x: 1990, y: 44.5 },
                     { x: 1991, y: 46.5 },
@@ -78,6 +80,7 @@ const HistoricalPositions: FunctionComponent<{
             {
                 id: "tier3-tier4",
                 data: [
+                    { x: 1981, y: 68.5 },
                     { x: 1986, y: 68.5 },
                     { x: 1990, y: 68.5 },
                     { x: 1991, y: 70.5 },
@@ -140,43 +143,108 @@ const HistoricalPositions: FunctionComponent<{
     );
 };
 
+const getPositionFromAbsolute = (absolutePosition: number, startYear: number) => {
+    // We need to do this because the graph can only be constructed using absolute positions so we don't have the position data available at this point.
+    const buckets = {
+        1: [
+            { year: 1981, size: 22 },
+            { year: 1987, size: 21 },
+            { year: 1988, size: 20 },
+            { year: 1991, size: 22 },
+            { year: 1995, size: 20 },
+        ],
+        2: [
+            { year: 1981, size: 22 },
+            { year: 1987, size: 23 },
+            { year: 1988, size: 24 },
+        ],
+        3: [{ year: 1981, size: 24 }],
+        4: [
+            { year: 1981, size: 24 },
+            { year: 1991, size: 22 },
+            { year: 1995, size: 24 },
+        ],
+    };
+
+    const tierOneSize = buckets["1"]
+        .filter((x) => x.year <= startYear)
+        .sort((a, b) => a.year - b.year)[0].size;
+    const tierTwoSize = buckets["2"]
+        .filter((x) => x.year <= startYear)
+        .sort((a, b) => a.year - b.year)[0].size;
+    const tierThreeSize = buckets["3"]
+        .filter((x) => x.year <= startYear)
+        .sort((a, b) => a.year - b.year)[0].size;
+    const tierFourSize = buckets["4"]
+        .filter((x) => x.year <= startYear)
+        .sort((a, b) => a.year - b.year)[0].size;
+
+    if (absolutePosition <= tierOneSize) {
+        return absolutePosition;
+    } else if (absolutePosition <= tierOneSize + tierTwoSize) {
+        return absolutePosition - tierOneSize;
+    } else if (absolutePosition <= tierOneSize + tierTwoSize + tierThreeSize) {
+        return absolutePosition - tierOneSize - tierTwoSize;
+    } else {
+        return absolutePosition - tierOneSize - tierTwoSize - tierThreeSize;
+    }
+};
+
+const getLeagueName = (absolutePosition: number, season: SeasonType) => {
+    const buckets = {
+        1: [
+            { year: 1981, size: 22 },
+            { year: 1987, size: 21 },
+            { year: 1988, size: 20 },
+            { year: 1991, size: 22 },
+            { year: 1995, size: 20 },
+        ],
+        2: [
+            { year: 1981, size: 22 },
+            { year: 1987, size: 23 },
+            { year: 1988, size: 24 },
+        ],
+        3: [{ year: 1981, size: 24 }],
+        4: [
+            { year: 1981, size: 24 },
+            { year: 1991, size: 22 },
+            { year: 1995, size: 24 },
+        ],
+    };
+
+    const tierOneSize = buckets["1"]
+        .filter((x) => x.year <= season.startYear)
+        .sort((a, b) => a.year - b.year)[0].size;
+    const tierTwoSize = buckets["2"]
+        .filter((x) => x.year <= season.startYear)
+        .sort((a, b) => a.year - b.year)[0].size;
+    const tierThreeSize = buckets["3"]
+        .filter((x) => x.year <= season.startYear)
+        .sort((a, b) => a.year - b.year)[0].size;
+    const tierFourSize = buckets["4"]
+        .filter((x) => x.year <= season.startYear)
+        .sort((a, b) => a.year - b.year)[0].size;
+
+    if (absolutePosition <= tierOneSize) {
+        let divisions = season.divisions.filter((d) => d.tier === 1);
+        return divisions.length === 1 ? divisions[0].name : "";
+    } else if (absolutePosition <= tierOneSize + tierTwoSize) {
+        let divisions = season.divisions.filter((d) => d.tier === 2);
+        return divisions.length === 1 ? divisions[0].name : "";
+    } else if (absolutePosition <= tierOneSize + tierTwoSize + tierThreeSize) {
+        let divisions = season.divisions.filter((d) => d.tier === 3);
+        return divisions.length === 1 ? divisions[0].name : "";
+    } else {
+        let divisions = season.divisions.filter((d) => d.tier === 4);
+        return divisions.length === 1 ? divisions[0].name : "";
+    }
+};
+
 const Tooltip: FunctionComponent<{
     points: Point[];
     seasons: SeasonType[];
     positions: HistoricalPosition[];
 }> = ({ points, seasons, positions }) => {
-    const getPosition = (absolutePosition: number) => {
-        if (absolutePosition <= 20) {
-            return absolutePosition;
-        } else if (absolutePosition <= 44) {
-            return absolutePosition - 20;
-        } else if (absolutePosition <= 68) {
-            return absolutePosition - 44;
-        } else {
-            return absolutePosition - 68;
-        }
-    };
-
-    const getLeagueName = (absolutePosition: number, season: number) => {
-        let seasons1 = seasons.filter((s) => s.startYear === season);
-        if (seasons1.length !== 1) {
-            return "";
-        }
-        if (absolutePosition <= 20) {
-            let divisions = seasons1[0].divisions.filter((d) => d.tier === 1);
-            return divisions.length === 1 ? divisions[0].name : "";
-        } else if (absolutePosition <= 44) {
-            let divisions = seasons1[0].divisions.filter((d) => d.tier === 2);
-            return divisions.length === 1 ? divisions[0].name : "";
-        } else if (absolutePosition <= 68) {
-            let divisions = seasons1[0].divisions.filter((d) => d.tier === 3);
-            return divisions.length === 1 ? divisions[0].name : "";
-        } else {
-            let divisions = seasons1[0].divisions.filter((d) => d.tier === 4);
-            return divisions.length === 1 ? divisions[0].name : "";
-        }
-    };
-
     const getStatus = (absolutePosition: number, season: number) => {
         const historicalPositions = positions.filter((p) => p.seasonStartYear === season);
         const status = historicalPositions.length === 1 ? historicalPositions[0].status : "";
@@ -198,7 +266,10 @@ const Tooltip: FunctionComponent<{
     }
 
     function getContent(point: Point) {
-        let position = getPosition(point.data.yFormatted as number);
+        let position = getPositionFromAbsolute(
+            point.data.yFormatted as number,
+            point.data.xFormatted as number
+        );
         return isLeagueBoundaryPoint(position) ? null : (
             <div
                 key={point.id}
@@ -219,7 +290,7 @@ const Tooltip: FunctionComponent<{
                 <strong>
                     {getLeagueName(
                         point.data.yFormatted as number,
-                        point.data.xFormatted as number
+                        seasons.filter((s) => s.startYear === (point.data.xFormatted as number))[0]
                     )}
                 </strong>
                 <span>

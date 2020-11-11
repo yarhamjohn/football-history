@@ -44,8 +44,10 @@ namespace football.history.api.Repositories.League
                         PlayOffPlaces = reader.GetByte(4),
                         RelegationPlaces = reader.GetByte(5),
                         RelegationPlayOffPlaces = reader.GetByte(6),
-                        PointsForWin = reader.GetByte(7),
-                        StartYear = reader.GetInt32(8)
+                        ReElectionPlaces = reader.GetByte(7),
+                        FailedReElectionPosition = reader.IsDBNull(8) ? (byte?) null : reader.GetByte(8),
+                        PointsForWin = reader.GetByte(9),
+                        StartYear = reader.GetInt32(10)
                     });
             }
 
@@ -67,6 +69,8 @@ SELECT d.Name
       ,[PlayOffPlaces]
       ,[RelegationPlaces]
       ,[RelegationPlayOffPlaces]
+      ,[ReElectionPlaces]
+      ,[FailedReElectionPosition]
       ,[PointsForWin]
       ,[StartYear]
   FROM [dbo].[LeagueStatuses] AS ls
