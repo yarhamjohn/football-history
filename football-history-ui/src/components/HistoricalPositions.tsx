@@ -168,16 +168,16 @@ const getPositionFromAbsolute = (absolutePosition: number, startYear: number) =>
 
     const tierOneSize = buckets["1"]
         .filter((x) => x.year <= startYear)
-        .sort((a, b) => a.year - b.year)[0].size;
+        .sort((a, b) => b.year - a.year)[0].size;
     const tierTwoSize = buckets["2"]
         .filter((x) => x.year <= startYear)
-        .sort((a, b) => a.year - b.year)[0].size;
+        .sort((a, b) => b.year - a.year)[0].size;
     const tierThreeSize = buckets["3"]
         .filter((x) => x.year <= startYear)
-        .sort((a, b) => a.year - b.year)[0].size;
+        .sort((a, b) => b.year - a.year)[0].size;
     const tierFourSize = buckets["4"]
         .filter((x) => x.year <= startYear)
-        .sort((a, b) => a.year - b.year)[0].size;
+        .sort((a, b) => b.year - a.year)[0].size;
 
     if (absolutePosition <= tierOneSize) {
         return absolutePosition;
@@ -214,16 +214,16 @@ const getLeagueName = (absolutePosition: number, season: SeasonType) => {
 
     const tierOneSize = buckets["1"]
         .filter((x) => x.year <= season.startYear)
-        .sort((a, b) => a.year - b.year)[0].size;
+        .sort((a, b) => b.year - a.year)[0].size;
     const tierTwoSize = buckets["2"]
         .filter((x) => x.year <= season.startYear)
-        .sort((a, b) => a.year - b.year)[0].size;
+        .sort((a, b) => b.year - a.year)[0].size;
     const tierThreeSize = buckets["3"]
         .filter((x) => x.year <= season.startYear)
-        .sort((a, b) => a.year - b.year)[0].size;
+        .sort((a, b) => b.year - a.year)[0].size;
     const tierFourSize = buckets["4"]
         .filter((x) => x.year <= season.startYear)
-        .sort((a, b) => a.year - b.year)[0].size;
+        .sort((a, b) => b.year - a.year)[0].size;
 
     if (absolutePosition <= tierOneSize) {
         let divisions = season.divisions.filter((d) => d.tier === 1);
