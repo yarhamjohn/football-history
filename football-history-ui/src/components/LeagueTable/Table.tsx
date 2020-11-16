@@ -1,8 +1,8 @@
 import React, { FunctionComponent } from "react";
 import { Table } from "semantic-ui-react";
-import { LeagueTableRow } from "./LeagueTableRow";
 import { PointDeductionSummary } from "./PointDeductionSummary";
 import { useLeague } from "../../hooks/useLeagueTable";
+import { LeagueTableRow } from "./Row";
 
 const LeagueTable: FunctionComponent<{
     selectedSeason: number;

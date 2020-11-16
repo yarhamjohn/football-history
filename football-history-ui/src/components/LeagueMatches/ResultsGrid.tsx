@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { LeagueMatch } from "../hooks/useLeagueMatches";
+import { LeagueMatch } from "../../hooks/useLeagueMatches";
 import { Table } from "semantic-ui-react";
 import moment from "moment";
 

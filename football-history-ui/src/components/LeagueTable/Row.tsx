@@ -1,8 +1,8 @@
 import React, { FunctionComponent, useEffect, useState } from "react";
 import { Row } from "../../hooks/useLeagueTable";
 import { Icon, Table } from "semantic-ui-react";
-import { LeagueTableDrillDown } from "./LeagueTableDrillDown";
-import { LeagueTableRowCell } from "./LeagueTableRowCell";
+import { LeagueTableDrillDown } from "./DrillDown";
+import { LeagueTableRowCell } from "./Cell";
 import { Color, getLeagueStatusColor } from "../../shared/functions";
 
 function getRowColor(row: Row, club: string | undefined) {

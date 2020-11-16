@@ -1,0 +1,148 @@
+import React, { FunctionComponent, useState } from "react";
+import { HistoricalPosition, useHistoricalPositions } from "../../hooks/useHistoricalPositions";
+import { Point, ResponsiveLine, Serie } from "@nivo/line";
+import { Season as SeasonType } from "../../hooks/useSeasons";
+import { YearSlider } from "../Filters/YearSlider";
+import { getLeagueStatusColor } from "../../shared/functions";
+import { Tooltip } from "./Tooltip";
+
+const HistoricalPositionsGraph: FunctionComponent<{
+    selectedClub: string;
+    seasons: SeasonType[];
+}> = ({ selectedClub, seasons }) => {
+    function getFirstSeasonStartYear() {
+        return Math.min(...seasons.map((s) => s.startYear));
+    }
+
+    function getLastSeasonEndYear() {
+        return Math.max(...seasons.map((s) => s.endYear));
+    }
+
+    const [selectedFilterRange, setSelectedFilterRange] = useState<number[]>([
+        getFirstSeasonStartYear(),
+        getLastSeasonEndYear(),
+    ]);
+
+    const { historicalPositionsState } = useHistoricalPositions(selectedClub, selectedFilterRange);
+
+    const getDates = (start: number, end: number) =>
+        Array.from({ length: end - start }, (v, k) => k + start);
+
+    function getData() {
+        let series: Serie[] = [];
+        let colors = ["black", "#75B266", "#BFA67F", "#B26694"];
+
+        if (historicalPositionsState.type !== "HISTORICAL_POSITIONS_LOAD_SUCCEEDED") {
+            return { series, colors };
+        }
+
+        const allDates = getDates(selectedFilterRange[0] - 1, selectedFilterRange[1] + 1);
+
+        series = [
+            {
+                id: "positions",
+                data: allDates.map((d) => {
+                    return {
+                        x: d,
+                        y: historicalPositionsState.positions.some((p) => p.seasonStartYear === d)
+                            ? historicalPositionsState.positions.filter(
+                                  (p) => p.seasonStartYear === d
+                              )[0].absolutePosition
+                            : null,
+                    };
+                }),
+            },
+            {
+                //TODO: This data needs to be dynamically created based on the dates actually shown on the graph
+                id: "tier1-tier2",
+                data: [
+                    { x: 1976, y: 22.5 },
+                    { x: 1986, y: 22.5 },
+                    { x: 1987, y: 21.5 },
+                    { x: 1988, y: 20.5 },
+                    { x: 1990, y: 20.5 },
+                    { x: 1991, y: 22.5 },
+                    { x: 1994, y: 22.5 },
+                    { x: 1995, y: 20.5 },
+                    { x: 2019, y: 20.5 },
+                ],
+            },
+            {
+                id: "tier2-tier3",
+                data: [
+                    { x: 1976, y: 44.5 },
+                    { x: 1986, y: 44.5 },
+                    { x: 1990, y: 44.5 },
+                    { x: 1991, y: 46.5 },
+                    { x: 1994, y: 46.5 },
+                    { x: 1995, y: 44.5 },
+                    { x: 2019, y: 44.5 },
+                ],
+            },
+            {
+                id: "tier3-tier4",
+                data: [
+                    { x: 1976, y: 68.5 },
+                    { x: 1986, y: 68.5 },
+                    { x: 1990, y: 68.5 },
+                    { x: 1991, y: 70.5 },
+                    { x: 1994, y: 70.5 },
+                    { x: 1995, y: 68.5 },
+                    { x: 2019, y: 68.5 },
+                ],
+            },
+        ];
+
+        return { series, colors };
+    }
+
+    const { series, colors } = getData();
+
+    function getTicks() {
+        return [1, 16, 31, 46, 61, 76, 92];
+    }
+
+    return (
+        <div>
+            <div>
+                <YearSlider
+                    sliderRange={[getFirstSeasonStartYear(), getLastSeasonEndYear()]}
+                    selectedFilterRange={selectedFilterRange}
+                    setSelectedFilterRange={setSelectedFilterRange}
+                />
+            </div>
+            <div style={{ height: "500px" }}>
+                <ResponsiveLine
+                    data={series}
+                    colors={colors}
+                    margin={{ left: 25, bottom: 25, top: 10 }}
+                    yScale={{ type: "linear", min: 1, max: 92, reverse: true }}
+                    gridYValues={getTicks()}
+                    enableSlices="x"
+                    sliceTooltip={({ slice }) => {
+                        return (
+                            <Tooltip
+                                points={slice.points}
+                                seasons={seasons}
+                                positions={
+                                    historicalPositionsState.type ===
+                                    "HISTORICAL_POSITIONS_LOAD_SUCCEEDED"
+                                        ? historicalPositionsState.positions
+                                        : []
+                                }
+                            />
+                        );
+                    }}
+                    axisBottom={{
+                        orient: "bottom",
+                        tickSize: 5,
+                        tickPadding: 5,
+                        tickRotation: 0,
+                    }}
+                />
+            </div>
+        </div>
+    );
+};
+
+export { HistoricalPositionsGraph };

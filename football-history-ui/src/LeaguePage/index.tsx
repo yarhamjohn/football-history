@@ -4,8 +4,8 @@ import { Season } from "../hooks/useSeasons";
 import { DivisionFilter } from "../components/Filters/LeagueFilter";
 import { AppSubPage } from "../App";
 import { SeasonFilter } from "../components/Filters/SeasonFilter";
-import { Matches } from "../components/Matches";
-import { LeagueTable } from "../components/LeagueTable/LeagueTable";
+import { Matches } from "../components/LeagueMatches/Matches";
+import { LeagueTable } from "../components/LeagueTable/Table";
 
 const LeaguePage: FunctionComponent<{
     seasons: Season[];
