@@ -114,8 +114,7 @@ namespace football.history.api.Calculators
         }
 
         private static double CalculatePointsPerGame(LeagueTableRow leagueTableRow) =>
-            (leagueTableRow.Points - leagueTableRow.PointsDeducted)
-            / (double) leagueTableRow.Played;
+            leagueTableRow.Points / (double) leagueTableRow.Played;
 
         private static int CalculateGoalsAgainst(
             IEnumerable<MatchModel> homeMatches,

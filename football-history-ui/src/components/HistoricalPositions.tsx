@@ -52,9 +52,10 @@ const HistoricalPositions: FunctionComponent<{
                 }),
             },
             {
+                //TODO: This data needs to be dynamically created based on the dates actually shown on the graph
                 id: "tier1-tier2",
                 data: [
-                    { x: 1981, y: 22.5 },
+                    { x: 1976, y: 22.5 },
                     { x: 1986, y: 22.5 },
                     { x: 1987, y: 21.5 },
                     { x: 1988, y: 20.5 },
@@ -68,7 +69,7 @@ const HistoricalPositions: FunctionComponent<{
             {
                 id: "tier2-tier3",
                 data: [
-                    { x: 1981, y: 44.5 },
+                    { x: 1976, y: 44.5 },
                     { x: 1986, y: 44.5 },
                     { x: 1990, y: 44.5 },
                     { x: 1991, y: 46.5 },
@@ -80,7 +81,7 @@ const HistoricalPositions: FunctionComponent<{
             {
                 id: "tier3-tier4",
                 data: [
-                    { x: 1981, y: 68.5 },
+                    { x: 1976, y: 68.5 },
                     { x: 1986, y: 68.5 },
                     { x: 1990, y: 68.5 },
                     { x: 1991, y: 70.5 },
@@ -147,20 +148,20 @@ const getPositionFromAbsolute = (absolutePosition: number, startYear: number) =>
     // We need to do this because the graph can only be constructed using absolute positions so we don't have the position data available at this point.
     const buckets = {
         1: [
-            { year: 1981, size: 22 },
+            { year: 1976, size: 22 },
             { year: 1987, size: 21 },
             { year: 1988, size: 20 },
             { year: 1991, size: 22 },
             { year: 1995, size: 20 },
         ],
         2: [
-            { year: 1981, size: 22 },
+            { year: 1976, size: 22 },
             { year: 1987, size: 23 },
             { year: 1988, size: 24 },
         ],
-        3: [{ year: 1981, size: 24 }],
+        3: [{ year: 1976, size: 24 }],
         4: [
-            { year: 1981, size: 24 },
+            { year: 1976, size: 24 },
             { year: 1991, size: 22 },
             { year: 1995, size: 24 },
         ],
@@ -193,20 +194,20 @@ const getPositionFromAbsolute = (absolutePosition: number, startYear: number) =>
 const getLeagueName = (absolutePosition: number, season: SeasonType) => {
     const buckets = {
         1: [
-            { year: 1981, size: 22 },
+            { year: 1976, size: 22 },
             { year: 1987, size: 21 },
             { year: 1988, size: 20 },
             { year: 1991, size: 22 },
             { year: 1995, size: 20 },
         ],
         2: [
-            { year: 1981, size: 22 },
+            { year: 1976, size: 22 },
             { year: 1987, size: 23 },
             { year: 1988, size: 24 },
         ],
-        3: [{ year: 1981, size: 24 }],
+        3: [{ year: 1976, size: 24 }],
         4: [
-            { year: 1981, size: 24 },
+            { year: 1976, size: 24 },
             { year: 1991, size: 22 },
             { year: 1995, size: 24 },
         ],
