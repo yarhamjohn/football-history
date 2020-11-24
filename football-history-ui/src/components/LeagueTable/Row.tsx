@@ -84,6 +84,11 @@ const LeagueTableRow: FunctionComponent<{
                 <LeagueTableRowCell bold={bold} color={color}>
                     {row.goalDifference}
                 </LeagueTableRowCell>
+                {seasonStartYear < 1976 ? (
+                    <LeagueTableRowCell bold={bold} color={color}>
+                        {Number(Math.round(parseFloat(row.goalAverage + "e4")) + "e-4")}
+                    </LeagueTableRowCell>
+                ) : null}
                 <LeagueTableRowCell bold={bold} color={color}>
                     {row.points}
                     {row.pointsDeducted > 0 ? " *" : ""}

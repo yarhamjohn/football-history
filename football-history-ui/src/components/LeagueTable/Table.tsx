@@ -54,9 +54,12 @@ const LeagueTable: FunctionComponent<{
                                 <Table.HeaderCell>GF</Table.HeaderCell>
                                 <Table.HeaderCell>GA</Table.HeaderCell>
                                 <Table.HeaderCell>Diff</Table.HeaderCell>
+                                {selectedSeason < 1976 ? (
+                                    <Table.HeaderCell>GAv</Table.HeaderCell>
+                                ) : null}{" "}
                                 <Table.HeaderCell>Points</Table.HeaderCell>
-                                {selectedSeason == 2019 &&
-                                (leagueState.league.tier == 3 || leagueState.league.tier == 4) ? (
+                                {selectedSeason === 2019 &&
+                                (leagueState.league.tier === 3 || leagueState.league.tier === 4) ? (
                                     <Table.HeaderCell>PPG</Table.HeaderCell>
                                 ) : null}
                                 <Table.HeaderCell></Table.HeaderCell>

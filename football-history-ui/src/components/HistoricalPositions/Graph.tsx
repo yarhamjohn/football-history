@@ -37,7 +37,7 @@ function getTierBottomBoundary(tier: 1 | 2 | 3, selectedFilterRange: number[]) {
     let result = [];
     if (tier === 1) {
         for (let i = selectedFilterRange[0]; i < selectedFilterRange[1]; i++) {
-            if ((i >= 1976 && i <= 1986) || (i >= 1991 && i <= 1994)) {
+            if ((i >= 1958 && i <= 1986) || (i >= 1991 && i <= 1994)) {
                 result.push({ x: i, y: 22.5 });
             } else if (i === 1987) {
                 result.push({ x: i, y: 21.5 });

@@ -19,7 +19,11 @@ namespace football.history.api.Calculators
         {
             var leagueTable = GetTable(leagueMatches, leagueModel, pointsDeductions);
             var sortedLeagueTable = LeagueTableSorter.SortTable(leagueTable, leagueModel);
-            return AddStatuses(sortedLeagueTable, playOffMatches, relegationPlayOffMatches, leagueModel);
+            return AddStatuses(
+                sortedLeagueTable,
+                playOffMatches,
+                relegationPlayOffMatches,
+                leagueModel);
         }
 
         public static List<LeagueTableRow> GetPartialLeagueTable(
@@ -92,6 +96,8 @@ namespace football.history.api.Calculators
             var pointsDeductionModel = pointDeductions.SingleOrDefault(p => p.Team == team);
             var pointsDeducted = pointsDeductionModel?.PointsDeducted ?? 0;
 
+            var goalsFor = CalculateGoalsFor(homeMatches, awayMatches);
+            var goalsAgainst = CalculateGoalsAgainst(homeMatches, awayMatches);
             var leagueTableRow = new LeagueTableRow
             {
                 Team = team,
@@ -99,11 +105,10 @@ namespace football.history.api.Calculators
                 Won = CountWins(allMatches, team),
                 Lost = CountDefeats(allMatches, team),
                 Drawn = CountDraws(allMatches, team),
-                GoalsFor = CalculateGoalsFor(homeMatches, awayMatches),
-                GoalsAgainst = CalculateGoalsAgainst(homeMatches, awayMatches),
-                GoalDifference =
-                    CalculateGoalsFor(homeMatches, awayMatches)
-                    - CalculateGoalsAgainst(homeMatches, awayMatches),
+                GoalsFor = goalsFor,
+                GoalsAgainst = goalsAgainst,
+                GoalDifference = goalsFor - goalsAgainst,
+                GoalAverage = goalsFor / (double) goalsAgainst,
                 Points = CalculatePoints(leagueModel, team, allMatches, pointsDeducted),
                 PointsDeducted = pointsDeducted,
                 PointsDeductionReason = pointsDeductionModel?.Reason

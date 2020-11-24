@@ -20,7 +20,16 @@ namespace football.history.api.Calculators
                     // head to head
                     .ThenBy(t => t.Team)
                     .ToList();
-            } else
+            }
+            else if (FootballLeagueBefore1976(leagueModel))
+            {
+                sortedLeagueTable = leagueTable.OrderByDescending(t => t.Points)
+                    .ThenByDescending(t => t.GoalAverage)
+                    // head to head
+                    .ThenBy(t => t.Team)
+                    .ToList();
+            }
+            else
             {
                 sortedLeagueTable = leagueTable
                     .OrderByDescending(
@@ -28,7 +37,8 @@ namespace football.history.api.Calculators
                     .ThenByDescending(t => t.GoalDifference)
                     .ThenByDescending(t => t.GoalsFor)
                     // head to head
-                    .ThenBy(t => t.Team) // unless it affects a promotion/relegation spot at the end of the season in which case a play-off occurs (this has never happened)
+                    .ThenBy(
+                        t => t.Team) // unless it affects a promotion/relegation spot at the end of the season in which case a play-off occurs (this has never happened)
                     .ToList();
             }
 
@@ -44,6 +54,11 @@ namespace football.history.api.Calculators
             leagueModel.StartYear == 2019 && (leagueModel.Tier == 3 || leagueModel.Tier == 4);
 
         private static bool FootballLeagueBetween1992And1998(LeagueModel leagueModel) =>
-            leagueModel.StartYear >= 1992 && leagueModel.StartYear <= 1998 && leagueModel.Name != "Premier League";
+            leagueModel.StartYear >= 1992
+            && leagueModel.StartYear <= 1998
+            && leagueModel.Name != "Premier League";
+
+        private static bool FootballLeagueBefore1976(LeagueModel leagueModel) =>
+            leagueModel.StartYear < 1976;
     }
 }
