@@ -7,7 +7,8 @@ const EmptyCell: FunctionComponent = () => {
     return <Table.Cell style={{ background: "rgba(0,0,0,.03)" }}></Table.Cell>;
 };
 
-//TODO: This is broken for 2019-202 due to Covid as not all games were played
+//TODO: This is broken for 2019-2020 due to Covid as not all games were played
+//TODO: Also broken in 1973-74 Division 4 as Scunthorpe - Exeter was never played
 const ResultsGrid: FunctionComponent<{ matches: LeagueMatch[] }> = ({ matches }) => {
     const abbreviations = Array.from(new Set(matches.map((m) => m.homeTeamAbbreviation))).sort();
     function getRow(teamAbbreviation: string) {

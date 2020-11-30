@@ -28,14 +28,14 @@ namespace football.history.api.Calculators
 
             if (InPlayOffPlaces(row, leagueModel))
             {
-                return IsPlayOffWinner(row, playOffMatches) ? "PlayOff Winner" : "PlayOffs";
+                return IsPlayOffWinner(row, playOffMatches, leagueModel) ? "PlayOff Winner" : "PlayOffs";
             }
 
             if (InRelegationPlayOffPlaces(row, leagueModel))
             {
                 Console.WriteLine(JsonSerializer.Serialize(row));
                 Console.WriteLine(JsonSerializer.Serialize(relegationPlayOffMatches));
-                return IsPlayOffWinner(row, relegationPlayOffMatches)
+                return IsPlayOffWinner(row, relegationPlayOffMatches, leagueModel)
                     ? "Relegation PlayOffs"
                     : "Relegated - PlayOffs";
             }
@@ -55,15 +55,28 @@ namespace football.history.api.Calculators
 
         private static bool IsPlayOffWinner(
             LeagueTableRow row,
-            IEnumerable<MatchModel> playOffMatches)
+            IEnumerable<MatchModel> playOffMatches,
+            LeagueModel leagueModel)
         {
             var playOffFinalMatches = playOffMatches.Where(m => m.Round == "Final").ToList();
-            return playOffFinalMatches.Count switch
+            var result = playOffFinalMatches.Count switch
             {
                 1 => row.Team == GetOneLeggedFinalWinner(playOffFinalMatches.Single()),
                 2 => row.Team == GetTwoLeggedFinalWinner(playOffFinalMatches),
                 3 => row.Team == GetReplayFinalWinner(playOffFinalMatches),
                 _ => false,
+            };
+
+            return leagueModel.StartYear == 1989 && leagueModel.Tier == 2 ? FixPlayOffWinnerFor1989(row) : result;
+        }
+
+        private static bool FixPlayOffWinnerFor1989(LeagueTableRow row)
+        {
+            return row.Team switch
+            {
+                // Sunderland were promoted instead of Swindon Town despite Swindon winning the play-offs due to financial irregularities.
+                "Sunderland" => true,
+                _ => false
             };
         }
 
