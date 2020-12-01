@@ -7,13 +7,17 @@ const EmptyCell: FunctionComponent = () => {
     return <Table.Cell style={{ background: "rgba(0,0,0,.03)" }}></Table.Cell>;
 };
 
-//TODO: This is broken for 2019-2020 due to Covid as not all games were played
-//TODO: Also broken in 1973-74 Division 4 as Scunthorpe - Exeter was never played
 const ResultsGrid: FunctionComponent<{ matches: LeagueMatch[] }> = ({ matches }) => {
     const abbreviations = Array.from(new Set(matches.map((m) => m.homeTeamAbbreviation))).sort();
-    function getRow(teamAbbreviation: string) {
+    const getRow = (teamAbbreviation: string) => {
         const homeGames = matches.filter((m) => m.homeTeamAbbreviation === teamAbbreviation);
-        homeGames.push({ awayTeamAbbreviation: teamAbbreviation } as LeagueMatch);
+        const awayAbbreviations = homeGames.map((g) => g.awayTeamAbbreviation);
+        const missingAbbreviations = abbreviations.filter((x) => !awayAbbreviations.includes(x));
+
+        for (let abb of missingAbbreviations) {
+            homeGames.push({ awayTeamAbbreviation: abb } as LeagueMatch);
+        }
+
         homeGames.sort((a, b) => {
             if (a.awayTeamAbbreviation > b.awayTeamAbbreviation) {
                 return 1;
@@ -37,7 +41,7 @@ const ResultsGrid: FunctionComponent<{ matches: LeagueMatch[] }> = ({ matches })
         };
 
         const cells = homeGames.map((x) => {
-            if (x.awayTeamAbbreviation === teamAbbreviation) {
+            if (missingAbbreviations.includes(x.awayTeamAbbreviation)) {
                 return (
                     <EmptyCell key={`Cell: ${x.homeTeamAbbreviation}-${x.awayTeamAbbreviation}`} />
                 );
@@ -65,7 +69,7 @@ const ResultsGrid: FunctionComponent<{ matches: LeagueMatch[] }> = ({ matches })
                 {cells}
             </Table.Row>
         );
-    }
+    };
 
     return (
         <Table compact celled definition size="small" style={{ margin: 0 }}>
