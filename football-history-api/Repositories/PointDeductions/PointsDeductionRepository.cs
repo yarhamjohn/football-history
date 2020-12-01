@@ -42,7 +42,7 @@ namespace football.history.api.Repositories.PointDeductions
                     {
                         Team = reader.GetString(0),
                         SeasonStartYear = reader.GetInt32(1),
-                        PointsDeducted = reader.GetInt32(2),
+                        PointsDeducted = reader.GetInt16(2),
                         Reason = reader.GetString(3),
                         Tier = reader.GetByte(4)
                     });
