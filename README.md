@@ -3,8 +3,8 @@ This is an application for reviewing historical data from the top 4 flights of E
 
 | Football History | Build Status |
 |------------------|------------- |
-| **[UI](https://football-history.azurewebsites.net/ "Football History")** | [![Build Status](https://dev.azure.com/yarhamjohn/Football%20History/_apis/build/status/Football%20History%20UI?branchName=main)](https://dev.azure.com/yarhamjohn/Football%20History/_build/latest?definitionId=1&branchName=main) |
-| **[API](https://football-history-api.azurewebsites.net/swagger/index.html "Football History API")** | [![Build Status](https://dev.azure.com/yarhamjohn/Football%20History/_apis/build/status/Football%20History%20API?branchName=main)](https://dev.azure.com/yarhamjohn/Football%20History/_build/latest?definitionId=2&branchName=main) |
+| **[UI](https://football-history.azurewebsites.net/ "Football History")** | [![Build Status](https://vsrm.dev.azure.com/yarhamjohn/_apis/public/Release/badge/5f6918ca-ec33-4bc8-8589-9fdcb3d9a9fe/1/1)](https://dev.azure.com/yarhamjohn/Football%20History/_build/latest?definitionId=1&branchName=main) |
+| **[API](https://football-history-api.azurewebsites.net/swagger/index.html "Football History API")** | [![Build Status](https://vsrm.dev.azure.com/yarhamjohn/_apis/public/Release/badge/5f6918ca-ec33-4bc8-8589-9fdcb3d9a9fe/2/2)](https://dev.azure.com/yarhamjohn/Football%20History/_build/latest?definitionId=2&branchName=main) |
 
 
 ## Project status
