@@ -6,7 +6,7 @@ const ApiProvider: FunctionComponent = (props) => {
   const api =
     process.env.NODE_ENV === "development"
       ? "https://localhost:5001"
-      : "https://footballhistoryapi.azurewebsites.net";
+      : "https://football-history-api.azurewebsites.net";
 
   return <ApiContext.Provider value={api}>{props.children}</ApiContext.Provider>;
 };

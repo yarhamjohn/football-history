@@ -3,8 +3,8 @@ This is an application for reviewing historical data from the top 4 flights of E
 
 | Football History | Build Status |
 |------------------|------------- |
-| **[UI](https://footballhistoryui.azurewebsites.net/ "Football History UI")** | [![Build Status](https://dev.azure.com/JohnYarham/FootballHistory/_apis/build/status/Football%20History%20UI?branchName=master)](https://dev.azure.com/JohnYarham/FootballHistory/_build/latest?definitionId=12&branchName=master) |
-| **[API](https://footballhistoryapi.azurewebsites.net/swagger/index.html "Football History API")** | [![Build Status](https://dev.azure.com/JohnYarham/FootballHistory/_apis/build/status/Football%20History%20API?branchName=master)](https://dev.azure.com/JohnYarham/FootballHistory/_build/latest?definitionId=4&branchName=master) |
+| **[UI](https://football-history.azurewebsites.net/ "Football History")** | [![Build Status](https://dev.azure.com/yarhamjohn/Football%20History/_apis/build/status/Football%20History%20UI?branchName=main)](https://dev.azure.com/yarhamjohn/Football%20History/_build/latest?definitionId=1&branchName=main) |
+| **[API](https://football-history-api.azurewebsites.net/swagger/index.html "Football History API")** | [![Build Status](https://dev.azure.com/yarhamjohn/Football%20History/_apis/build/status/Football%20History%20API?branchName=main)](https://dev.azure.com/yarhamjohn/Football%20History/_build/latest?definitionId=2&branchName=main) |
 
 
 ## Project status
