@@ -36,7 +36,7 @@ namespace football.history.api.Tests
         public void GetFullLeagueTable_returns_complete_league_table()
         {
             var leagueJson = File.ReadAllText("./TestSource/FinalLeague.json");
-            var league = JsonConvert.DeserializeObject<League>(leagueJson);
+            var league = JsonConvert.DeserializeObject<LeagueDto>(leagueJson);
             var leagueModel = new LeagueModel
             {
                 Name = league.Name,
@@ -63,7 +63,7 @@ namespace football.history.api.Tests
         public void GetPartialLeagueTable_with_points_deductions_returns_partial_league_table()
         {
             var leagueJson = File.ReadAllText("./TestSource/PartialLeague.json");
-            var league = JsonConvert.DeserializeObject<League>(leagueJson);
+            var league = JsonConvert.DeserializeObject<LeagueDto>(leagueJson);
             var leagueModel = new LeagueModel
             {
                 Name = league.Name,
@@ -86,8 +86,8 @@ namespace football.history.api.Tests
         }
 
         private void AssertLeagueTablesMatch(
-            List<LeagueTableRow> actualLeagueTable,
-            List<LeagueTableRow> expectedLeagueTable)
+            List<LeagueTableRowDto> actualLeagueTable,
+            List<LeagueTableRowDto> expectedLeagueTable)
         {
             foreach (var actualRow in actualLeagueTable)
             {

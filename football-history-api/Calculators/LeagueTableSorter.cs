@@ -7,11 +7,11 @@ namespace football.history.api.Calculators
 {
     public static class LeagueTableSorter
     {
-        public static List<LeagueTableRow> SortTable(
-            List<LeagueTableRow> leagueTable,
+        public static List<LeagueTableRowDto> SortTable(
+            List<LeagueTableRowDto> leagueTable,
             LeagueModel leagueModel)
         {
-            List<LeagueTableRow> sortedLeagueTable;
+            List<LeagueTableRowDto> sortedLeagueTable;
             if (FootballLeagueBetween1992And1998(leagueModel))
             {
                 sortedLeagueTable = leagueTable.OrderByDescending(t => t.Points)

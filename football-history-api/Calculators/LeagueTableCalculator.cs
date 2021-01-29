@@ -10,7 +10,7 @@ namespace football.history.api.Calculators
 {
     public static class LeagueTableCalculator
     {
-        public static List<LeagueTableRow> GetFullLeagueTable(
+        public static List<LeagueTableRowDto> GetFullLeagueTable(
             List<MatchModel> leagueMatches,
             List<MatchModel> playOffMatches,
             List<MatchModel> relegationPlayOffMatches,
@@ -26,7 +26,7 @@ namespace football.history.api.Calculators
                 leagueModel);
         }
 
-        public static List<LeagueTableRow> GetPartialLeagueTable(
+        public static List<LeagueTableRowDto> GetPartialLeagueTable(
             List<MatchModel> leagueMatches,
             LeagueModel leagueModel,
             List<PointsDeductionModel> pointsDeductions,
@@ -53,8 +53,8 @@ namespace football.history.api.Calculators
                 .ToList();
         }
 
-        private static List<LeagueTableRow> AddStatuses(
-            IEnumerable<LeagueTableRow> table,
+        private static List<LeagueTableRowDto> AddStatuses(
+            IEnumerable<LeagueTableRowDto> table,
             IReadOnlyCollection<MatchModel> playOffMatches,
             IReadOnlyCollection<MatchModel> relegationPlayOffMatches,
             LeagueModel leagueModel)
@@ -72,7 +72,7 @@ namespace football.history.api.Calculators
                 .ToList();
         }
 
-        private static List<LeagueTableRow> GetTable(
+        private static List<LeagueTableRowDto> GetTable(
             List<MatchModel> matches,
             LeagueModel leagueModel,
             IReadOnlyCollection<PointsDeductionModel> pointDeductions)
@@ -83,7 +83,7 @@ namespace football.history.api.Calculators
                 .ToList();
         }
 
-        private static LeagueTableRow CreateRowForTeam(
+        private static LeagueTableRowDto CreateRowForTeam(
             IEnumerable<MatchModel> matches,
             LeagueModel leagueModel,
             IEnumerable<PointsDeductionModel> pointDeductions,
@@ -98,7 +98,7 @@ namespace football.history.api.Calculators
 
             var goalsFor = CalculateGoalsFor(homeMatches, awayMatches);
             var goalsAgainst = CalculateGoalsAgainst(homeMatches, awayMatches);
-            var leagueTableRow = new LeagueTableRow
+            var leagueTableRow = new LeagueTableRowDto
             {
                 Team = team,
                 Played = allMatches.Count,
@@ -118,8 +118,8 @@ namespace football.history.api.Calculators
             return leagueTableRow;
         }
 
-        private static double CalculatePointsPerGame(LeagueTableRow leagueTableRow) =>
-            leagueTableRow.Points / (double) leagueTableRow.Played;
+        private static double CalculatePointsPerGame(LeagueTableRowDto leagueTableRowDto) =>
+            leagueTableRowDto.Points / (double) leagueTableRowDto.Played;
 
         private static int CalculateGoalsAgainst(
             IEnumerable<MatchModel> homeMatches,
@@ -144,14 +144,14 @@ namespace football.history.api.Calculators
             + CountDraws(matches, team)
             - pointsDeducted;
 
-        private static List<LeagueTableRow> AddMissingTeams(
-            List<LeagueTableRow> leagueTable,
+        private static List<LeagueTableRowDto> AddMissingTeams(
+            List<LeagueTableRowDto> leagueTable,
             List<string> teams)
         {
             var existingTeams = leagueTable.Select(r => r.Team);
             var missingTeams = teams.Except(existingTeams);
 
-            leagueTable.AddRange(missingTeams.Select(team => new LeagueTableRow { Team = team }));
+            leagueTable.AddRange(missingTeams.Select(team => new LeagueTableRowDto { Team = team }));
             return leagueTable;
         }
 

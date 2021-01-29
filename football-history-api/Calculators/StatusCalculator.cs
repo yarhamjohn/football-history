@@ -11,68 +11,68 @@ namespace football.history.api.Calculators
     public static class StatusCalculator
     {
         public static string? AddStatuses(
-            LeagueTableRow row,
+            LeagueTableRowDto rowDto,
             IEnumerable<MatchModel> playOffMatches,
             IEnumerable<MatchModel> relegationPlayOffMatches,
             LeagueModel leagueModel)
         {
-            if (row.Position == 1)
+            if (rowDto.Position == 1)
             {
                 return "Champions";
             }
 
-            if (InPromotionPlaces(row, leagueModel))
+            if (InPromotionPlaces(rowDto, leagueModel))
             {
                 return "Promoted";
             }
 
-            if (InPlayOffPlaces(row, leagueModel))
+            if (InPlayOffPlaces(rowDto, leagueModel))
             {
-                return IsPlayOffWinner(row, playOffMatches, leagueModel) ? "PlayOff Winner" : "PlayOffs";
+                return IsPlayOffWinner(rowDto, playOffMatches, leagueModel) ? "PlayOff Winner" : "PlayOffs";
             }
 
-            if (InRelegationPlayOffPlaces(row, leagueModel))
+            if (InRelegationPlayOffPlaces(rowDto, leagueModel))
             {
-                Console.WriteLine(JsonSerializer.Serialize(row));
+                Console.WriteLine(JsonSerializer.Serialize(rowDto));
                 Console.WriteLine(JsonSerializer.Serialize(relegationPlayOffMatches));
-                return IsPlayOffWinner(row, relegationPlayOffMatches, leagueModel)
+                return IsPlayOffWinner(rowDto, relegationPlayOffMatches, leagueModel)
                     ? "Relegation PlayOffs"
                     : "Relegated - PlayOffs";
             }
 
-            if (InRelegationZone(row, leagueModel))
+            if (InRelegationZone(rowDto, leagueModel))
             {
                 return "Relegated";
             }
 
-            if (InReElectionPlaces(row, leagueModel))
+            if (InReElectionPlaces(rowDto, leagueModel))
             {
-                return FailedReElection(row, leagueModel) ? "Failed Re-election" : "Re-elected";
+                return FailedReElection(rowDto, leagueModel) ? "Failed Re-election" : "Re-elected";
             }
 
             return null;
         }
 
         private static bool IsPlayOffWinner(
-            LeagueTableRow row,
+            LeagueTableRowDto rowDto,
             IEnumerable<MatchModel> playOffMatches,
             LeagueModel leagueModel)
         {
             var playOffFinalMatches = playOffMatches.Where(m => m.Round == "Final").ToList();
             var result = playOffFinalMatches.Count switch
             {
-                1 => row.Team == GetOneLeggedFinalWinner(playOffFinalMatches.Single()),
-                2 => row.Team == GetTwoLeggedFinalWinner(playOffFinalMatches),
-                3 => row.Team == GetReplayFinalWinner(playOffFinalMatches),
+                1 => rowDto.Team == GetOneLeggedFinalWinner(playOffFinalMatches.Single()),
+                2 => rowDto.Team == GetTwoLeggedFinalWinner(playOffFinalMatches),
+                3 => rowDto.Team == GetReplayFinalWinner(playOffFinalMatches),
                 _ => false,
             };
 
-            return leagueModel.StartYear == 1989 && leagueModel.Tier == 2 ? FixPlayOffWinnerFor1989(row) : result;
+            return leagueModel.StartYear == 1989 && leagueModel.Tier == 2 ? FixPlayOffWinnerFor1989(rowDto) : result;
         }
 
-        private static bool FixPlayOffWinnerFor1989(LeagueTableRow row)
+        private static bool FixPlayOffWinnerFor1989(LeagueTableRowDto rowDto)
         {
-            return row.Team switch
+            return rowDto.Team switch
             {
                 // Sunderland were promoted instead of Swindon Town despite Swindon winning the play-offs due to financial irregularities.
                 "Sunderland" => true,
@@ -117,26 +117,26 @@ namespace football.history.api.Calculators
             return GetOneLeggedFinalWinner(replayMatch);
         }
 
-        private static bool InPlayOffPlaces(LeagueTableRow row, LeagueModel leagueModel) =>
-            row.Position > leagueModel.PromotionPlaces
-            && row.Position <= leagueModel.PromotionPlaces + leagueModel.PlayOffPlaces;
+        private static bool InPlayOffPlaces(LeagueTableRowDto rowDto, LeagueModel leagueModel) =>
+            rowDto.Position > leagueModel.PromotionPlaces
+            && rowDto.Position <= leagueModel.PromotionPlaces + leagueModel.PlayOffPlaces;
 
-        private static bool InPromotionPlaces(LeagueTableRow row, LeagueModel leagueModel) =>
-            row.Position > 1 && row.Position <= leagueModel.PromotionPlaces;
+        private static bool InPromotionPlaces(LeagueTableRowDto rowDto, LeagueModel leagueModel) =>
+            rowDto.Position > 1 && rowDto.Position <= leagueModel.PromotionPlaces;
 
-        private static bool InRelegationZone(LeagueTableRow row, LeagueModel leagueModel) =>
-            row.Position > leagueModel.TotalPlaces - leagueModel.RelegationPlaces;
+        private static bool InRelegationZone(LeagueTableRowDto rowDto, LeagueModel leagueModel) =>
+            rowDto.Position > leagueModel.TotalPlaces - leagueModel.RelegationPlaces;
 
-        private static bool InReElectionPlaces(LeagueTableRow row, LeagueModel leagueModel) =>
-            row.Position > leagueModel.TotalPlaces - leagueModel.ReElectionPlaces;
+        private static bool InReElectionPlaces(LeagueTableRowDto rowDto, LeagueModel leagueModel) =>
+            rowDto.Position > leagueModel.TotalPlaces - leagueModel.ReElectionPlaces;
 
-        private static bool FailedReElection(LeagueTableRow row, LeagueModel leagueModel) =>
-            leagueModel.FailedReElectionPosition == row.Position;
+        private static bool FailedReElection(LeagueTableRowDto rowDto, LeagueModel leagueModel) =>
+            leagueModel.FailedReElectionPosition == rowDto.Position;
 
         private static bool
-            InRelegationPlayOffPlaces(LeagueTableRow row, LeagueModel leagueModel) =>
-            !InRelegationZone(row, leagueModel)
-            && row.Position
+            InRelegationPlayOffPlaces(LeagueTableRowDto rowDto, LeagueModel leagueModel) =>
+            !InRelegationZone(rowDto, leagueModel)
+            && rowDto.Position
             > leagueModel.TotalPlaces
             - (leagueModel.RelegationPlaces + leagueModel.RelegationPlayOffPlaces);
 

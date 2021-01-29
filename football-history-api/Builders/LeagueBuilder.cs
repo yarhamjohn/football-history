@@ -10,7 +10,7 @@ namespace football.history.api.Builders
 {
     public interface ILeagueBuilder
     {
-        League GetLeagueOnDate(int tier, int seasonStartYear, DateTime date);
+        LeagueDto GetLeagueOnDate(int tier, int seasonStartYear, DateTime date);
     }
 
     public class LeagueBuilder : ILeagueBuilder
@@ -29,12 +29,12 @@ namespace football.history.api.Builders
             _pointDeductionsRepository = pointDeductionsRepository;
         }
 
-        public League GetLeagueOnDate(int tier, int seasonStartYear, DateTime date)
+        public LeagueDto GetLeagueOnDate(int tier, int seasonStartYear, DateTime date)
         {
             var leagueModel = _leagueRepository.GetLeagueModel(seasonStartYear, tier);
             var leagueTable = GetLeagueTable(tier, seasonStartYear, date, leagueModel);
 
-            return new League
+            return new LeagueDto
             {
                 Name = leagueModel.Name,
                 Tier = leagueModel.Tier,
@@ -48,7 +48,7 @@ namespace football.history.api.Builders
             };
         }
 
-        private List<LeagueTableRow> GetLeagueTable(
+        private List<LeagueTableRowDto> GetLeagueTable(
             int tier,
             int seasonStartYear,
             DateTime date,
@@ -83,37 +83,5 @@ namespace football.history.api.Builders
             var leagueMatchesAfterDate = leagueMatches.Any(match => match.Date >= date);
             return !playOffMatchesAfterDate && !leagueMatchesAfterDate;
         }
-    }
-
-    public class League
-    {
-        public string Name { get; set; }
-        public int Tier { get; set; }
-        public int TotalPlaces { get; set; }
-        public int PromotionPlaces { get; set; }
-        public int PlayOffPlaces { get; set; }
-        public int RelegationPlaces { get; set; }
-        public int PointsForWin { get; set; }
-        public int StartYear { get; set; }
-        public List<LeagueTableRow> Table { get; set; }
-    }
-
-    public class LeagueTableRow
-    {
-        public int Position { get; set; }
-        public string Team { get; set; }
-        public int Played { get; set; }
-        public int Won { get; set; }
-        public int Drawn { get; set; }
-        public int Lost { get; set; }
-        public int GoalsFor { get; set; }
-        public int GoalsAgainst { get; set; }
-        public int GoalDifference { get; set; }
-        public double GoalAverage { get; set; }
-        public int Points { get; set; }
-        public double PointsPerGame { get; set; }
-        public int PointsDeducted { get; set; }
-        public string? PointsDeductionReason { get; set; }
-        public string? Status { get; set; }
     }
 }

@@ -152,13 +152,13 @@ namespace football.history.api.Builders
         private static int GetAbsolutePosition(
             IEnumerable<LeagueModel> leagueModels,
             TierModel tierModel,
-            LeagueTableRow teamRow)
+            LeagueTableRowDto teamRowDto)
         {
             return leagueModels
                     .Where(m => m.StartYear == tierModel.SeasonStartYear && m.Tier < tierModel.Tier)
                     .Select(m => m.TotalPlaces)
                     .Sum()
-                + teamRow.Position;
+                + teamRowDto.Position;
         }
 
         private static List<LeaguePosition> GetPositions(
