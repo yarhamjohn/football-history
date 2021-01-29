@@ -2,7 +2,7 @@ using System;
 
 namespace football.history.api.Calculators
 {
-    public static class SeasonDatesCalculator
+    public static class DateCalculator
     {
         public static DateTime GetSeasonEndDate(int seasonStartYear)
         {
@@ -12,12 +12,9 @@ namespace football.history.api.Calculators
              * with the Championship play-off final. Although the 2020-2021 league season did not commence until
              * September, some cup games were held from 29th August so the middle of August is set here.
              */
-            if (seasonStartYear == 2019)
-            {
-                return new DateTime(seasonStartYear + 1, 08, 20);
-            }
-
-            return new DateTime(seasonStartYear + 1, 06, 30);
+            return seasonStartYear == 2019
+                ? new DateTime(seasonStartYear + 1, 08, 20)
+                : new DateTime(seasonStartYear + 1, 06, 30);
         }
 
         public static int GetSeasonStartYear(DateTime date)

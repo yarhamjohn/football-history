@@ -21,7 +21,7 @@ namespace football.history.api.Controllers
         [HttpGet("[action]")]
         public League GetCompletedLeague(int seasonStartYear, int tier)
         {
-            var seasonEndDate = SeasonDatesCalculator.GetSeasonEndDate(seasonStartYear);
+            var seasonEndDate = DateCalculator.GetSeasonEndDate(seasonStartYear);
             return _leagueBuilder.GetLeagueOnDate(tier, seasonStartYear, seasonEndDate);
         }
 
@@ -29,7 +29,7 @@ namespace football.history.api.Controllers
         public League GetCompletedLeagueForTeam(int seasonStartYear, string team)
         {
             var tier = _tierRepository.GetTierForTeamInYear(seasonStartYear, team);
-            var seasonEndDate = SeasonDatesCalculator.GetSeasonEndDate(seasonStartYear);
+            var seasonEndDate = DateCalculator.GetSeasonEndDate(seasonStartYear);
             return tier == null
                 ? new League()
                 : _leagueBuilder.GetLeagueOnDate((int) tier, seasonStartYear, seasonEndDate);
@@ -38,7 +38,7 @@ namespace football.history.api.Controllers
         [HttpGet("[action]")]
         public League GetLeagueOnDate(int tier, DateTime date)
         {
-            var seasonStartYear = SeasonDatesCalculator.GetSeasonStartYear(date);
+            var seasonStartYear = DateCalculator.GetSeasonStartYear(date);
             return _leagueBuilder.GetLeagueOnDate(tier, seasonStartYear, date);
         }
     }
