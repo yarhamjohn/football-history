@@ -52,6 +52,7 @@ namespace football.history.api.Tests
             var actualLeagueTable = LeagueTableCalculator.GetFullLeagueTable(
                 _leagueMatches,
                 _playOffMatches,
+                new List<MatchModel>(),
                 leagueModel,
                 _pointsDeductions);
 

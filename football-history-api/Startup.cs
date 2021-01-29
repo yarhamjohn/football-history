@@ -1,4 +1,4 @@
-﻿using football.history.api.Builders;
+using football.history.api.Builders;
 using football.history.api.Domain;
 using football.history.api.Repositories.League;
 using football.history.api.Repositories.Match;
@@ -8,10 +8,10 @@ using football.history.api.Repositories.Team;
 using football.history.api.Repositories.Tier;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 
 namespace football.history.api
@@ -28,9 +28,6 @@ namespace football.history.api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc(option => option.EnableEndpointRouting = false)
-                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-
             services.AddSwaggerGen(
                 c =>
                     {
@@ -58,10 +55,11 @@ namespace football.history.api
 
             var connString = Configuration.GetConnectionString("FootballHistory");
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connString));
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -71,20 +69,17 @@ namespace football.history.api
                             builder.WithOrigins(
                                 Configuration.GetSection("WhitelistedUrls").Get<string[]>());
                         });
-                app.UseMiddleware<MiddlewareExtensions>();
                 app.UseDeveloperExceptionPage();
-            }
-            else
-            {
-                app.UseHsts();
             }
 
             app.UseSwagger();
             app.UseSwaggerUI(
-                c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Football History API v1"); });
+                c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Football History API v1"));
 
             app.UseHttpsRedirection();
-            app.UseMvc();
+            app.UseRouting();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }
