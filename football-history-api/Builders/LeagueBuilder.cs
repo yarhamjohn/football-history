@@ -1,10 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using football.history.api.Calculators;
 using football.history.api.Repositories.League;
-using football.history.api.Repositories.Match;
-using football.history.api.Repositories.PointDeductions;
 using football.history.api.Repositories.Tier;
 
 namespace football.history.api.Builders
@@ -19,18 +15,16 @@ namespace football.history.api.Builders
     public class LeagueBuilder : ILeagueBuilder
     {
         private readonly ILeagueRepository _leagueRepository;
-        private readonly IMatchRepository _matchRepository;
-        private readonly IPointsDeductionRepository _pointDeductionsRepository;
+        private readonly ILeagueTableBuilder _leagueTableBuilder;
         private readonly ITierRepository _tierRepository;
 
         public LeagueBuilder(
             ILeagueRepository leagueRepository,
-            IMatchRepository matchRepository,
-            IPointsDeductionRepository pointDeductionsRepository, ITierRepository tierRepository)
+            ILeagueTableBuilder leagueTableBuilder,
+            ITierRepository tierRepository)
         {
             _leagueRepository = leagueRepository;
-            _matchRepository = matchRepository;
-            _pointDeductionsRepository = pointDeductionsRepository;
+            _leagueTableBuilder = leagueTableBuilder;
             _tierRepository = tierRepository;
         }
 
@@ -62,7 +56,7 @@ namespace football.history.api.Builders
         private LeagueDto GetLeagueDto(int tier, int seasonStartYear, DateTime date)
         {
             var leagueModel = _leagueRepository.GetLeagueModel(seasonStartYear, tier);
-            var leagueTable = GetLeagueTable(tier, seasonStartYear, date, leagueModel);
+            var leagueTable = _leagueTableBuilder.Build(tier, seasonStartYear, leagueModel, date);
 
             return new LeagueDto
             {
@@ -76,42 +70,6 @@ namespace football.history.api.Builders
                 StartYear = leagueModel.StartYear,
                 Table = leagueTable
             };
-        }
-
-        private List<LeagueTableRowDto> GetLeagueTable(
-            int tier,
-            int seasonStartYear,
-            DateTime date,
-            LeagueModel leagueModel)
-        {
-            var pointsDeductions =
-                _pointDeductionsRepository.GetPointsDeductionModels(seasonStartYear, tier);
-            var playOffMatches = _matchRepository.GetPlayOffMatchModels(seasonStartYear, tier);
-            var relegationPlayOffMatches = _matchRepository.GetPlayOffMatchModels(seasonStartYear, tier + 1);
-            var leagueMatches = _matchRepository.GetLeagueMatchModels(seasonStartYear, tier);
-
-            return AllMatchesHaveBeenPlayed(date, playOffMatches, leagueMatches)
-                ? new LeagueTableBuilder().GetFullLeagueTable(
-                    leagueMatches,
-                    playOffMatches,
-                    relegationPlayOffMatches,
-                    leagueModel,
-                    pointsDeductions)
-                : new LeagueTableBuilder().GetPartialLeagueTable(
-                    leagueMatches,
-                    leagueModel,
-                    pointsDeductions,
-                    date);
-        }
-
-        private static bool AllMatchesHaveBeenPlayed(
-            DateTime date,
-            IEnumerable<MatchModel> playOffMatches,
-            IEnumerable<MatchModel> leagueMatches)
-        {
-            var playOffMatchesAfterDate = playOffMatches.Any(match => match.Date >= date);
-            var leagueMatchesAfterDate = leagueMatches.Any(match => match.Date >= date);
-            return !playOffMatchesAfterDate && !leagueMatchesAfterDate;
         }
     }
 }

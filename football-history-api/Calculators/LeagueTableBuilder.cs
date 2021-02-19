@@ -5,28 +5,94 @@ using football.history.api.Builders;
 using football.history.api.Repositories.League;
 using football.history.api.Repositories.Match;
 using football.history.api.Repositories.PointDeductions;
+using football.history.api.Repositories.Tier;
 
 namespace football.history.api.Calculators
 {
     public interface ILeagueTableBuilder
     {
-        List<LeagueTableRowDto> GetFullLeagueTable(
-            List<MatchModel> leagueMatches,
-            List<MatchModel> playOffMatches,
-            List<MatchModel> relegationPlayOffMatches,
+        List<LeagueTableRowDto> Build(
+            int tier,
+            int seasonStartYear,
             LeagueModel leagueModel,
-            List<PointsDeductionModel> pointsDeductions);
-
-        List<LeagueTableRowDto> GetPartialLeagueTable(
-            List<MatchModel> leagueMatches,
-            LeagueModel leagueModel,
-            List<PointsDeductionModel> pointsDeductions,
             DateTime date);
+
+        List<LeagueTableRowDto> Build(
+            int tier,
+            int seasonStartYear,
+            LeagueModel leagueModel);
     }
 
     public class LeagueTableBuilder : ILeagueTableBuilder
     {
-        public List<LeagueTableRowDto> GetFullLeagueTable(
+        private readonly IMatchRepository _matchRepository;
+        private readonly IPointsDeductionRepository _pointDeductionsRepository;
+
+        public LeagueTableBuilder(
+            IMatchRepository matchRepository,
+            IPointsDeductionRepository pointDeductionsRepository)
+        {
+            _matchRepository = matchRepository;
+            _pointDeductionsRepository = pointDeductionsRepository;
+
+        }
+
+        public List<LeagueTableRowDto> Build(
+            int tier,
+            int seasonStartYear,
+            LeagueModel leagueModel)
+        {
+            var pointsDeductions =
+                _pointDeductionsRepository.GetPointsDeductionModels(seasonStartYear, tier);
+            var playOffMatches = _matchRepository.GetPlayOffMatchModels(seasonStartYear, tier);
+            var relegationPlayOffMatches = _matchRepository.GetPlayOffMatchModels(seasonStartYear, tier + 1);
+            var leagueMatches = _matchRepository.GetLeagueMatchModels(seasonStartYear, tier);
+
+            return GetFullLeagueTable(
+                leagueMatches,
+                playOffMatches,
+                relegationPlayOffMatches,
+                leagueModel,
+                pointsDeductions);
+        }
+
+        public List<LeagueTableRowDto> Build(
+            int tier,
+            int seasonStartYear,
+            LeagueModel leagueModel,
+            DateTime date)
+        {
+            var pointsDeductions =
+                _pointDeductionsRepository.GetPointsDeductionModels(seasonStartYear, tier);
+            var playOffMatches = _matchRepository.GetPlayOffMatchModels(seasonStartYear, tier);
+            var relegationPlayOffMatches = _matchRepository.GetPlayOffMatchModels(seasonStartYear, tier + 1);
+            var leagueMatches = _matchRepository.GetLeagueMatchModels(seasonStartYear, tier);
+
+            return AllMatchesHaveBeenPlayed(date, playOffMatches, leagueMatches)
+                ? GetFullLeagueTable(
+                    leagueMatches,
+                    playOffMatches,
+                    relegationPlayOffMatches,
+                    leagueModel,
+                    pointsDeductions)
+                : GetPartialLeagueTable(
+                    leagueMatches,
+                    leagueModel,
+                    pointsDeductions,
+                    date);
+        }
+
+        private static bool AllMatchesHaveBeenPlayed(
+            DateTime date,
+            IEnumerable<MatchModel> playOffMatches,
+            IEnumerable<MatchModel> leagueMatches)
+        {
+            var playOffMatchesAfterDate = playOffMatches.Any(match => match.Date >= date);
+            var leagueMatchesAfterDate = leagueMatches.Any(match => match.Date >= date);
+            return !playOffMatchesAfterDate && !leagueMatchesAfterDate;
+        }
+
+        private List<LeagueTableRowDto> GetFullLeagueTable(
             List<MatchModel> leagueMatches,
             List<MatchModel> playOffMatches,
             List<MatchModel> relegationPlayOffMatches,
@@ -42,7 +108,7 @@ namespace football.history.api.Calculators
                 leagueModel);
         }
 
-        public List<LeagueTableRowDto> GetPartialLeagueTable(
+        private List<LeagueTableRowDto> GetPartialLeagueTable(
             List<MatchModel> leagueMatches,
             LeagueModel leagueModel,
             List<PointsDeductionModel> pointsDeductions,

@@ -45,11 +45,9 @@ namespace football.history.api.Builders
         public List<LeaguePosition> GetLeaguePositions(int seasonStartYear, int tier, string team)
         {
             var leagueMatches = _matchRepository.GetLeagueMatchModels(seasonStartYear, tier);
-            var pointsDeductions =
-                _pointDeductionsRepository.GetPointsDeductionModels(seasonStartYear, tier);
             var leagueModel = _leagueRepository.GetLeagueModel(seasonStartYear, tier);
 
-            return GetPositions(leagueMatches, leagueModel, pointsDeductions, team);
+            return GetPositions(leagueMatches, leagueModel, team, seasonStartYear, tier);
         }
 
         public List<HistoricalPosition> GetHistoricalPositions(
@@ -81,9 +79,6 @@ namespace football.history.api.Builders
                     t => GetPositions(
                         team,
                         t,
-                        leagueMatches,
-                        playOffMatches,
-                        pointsDeductions,
                         leagueModels))
                 .ToList();
         }
@@ -91,34 +86,12 @@ namespace football.history.api.Builders
         private HistoricalPosition GetPositions(
             string team,
             TierModel tierModel,
-            IEnumerable<MatchModel> leagueMatches,
-            IReadOnlyCollection<MatchModel> playOffMatches,
-            List<PointsDeductionModel> pointsDeductions,
             IReadOnlyCollection<LeagueModel> leagueModels)
         {
-            var leagueMatchesInSeason = GetMatchesInSeason(
-                leagueMatches.Where(m => m.Tier == tierModel.Tier),
-                tierModel);
-            var playOffMatchesInSeason = GetMatchesInSeason(
-                playOffMatches.Where(m => m.Tier == tierModel.Tier),
-                tierModel);
-            var relegationPlayOffMatchesInSeason = GetMatchesInSeason(
-                playOffMatches.Where(m => m.Tier == tierModel.Tier + 1),
-                tierModel);
-
-            var pointsDeductionsInSeason = pointsDeductions.Where(
-                    pd => pd.SeasonStartYear == tierModel.SeasonStartYear
-                        && pd.Tier == tierModel.Tier)
-                .ToList();
             var leagueModel = leagueModels.Single(
                 l => l.StartYear == tierModel.SeasonStartYear && l.Tier == tierModel.Tier);
 
-            var leagueTable = _leagueTableBuilder.GetFullLeagueTable(
-                leagueMatchesInSeason,
-                playOffMatchesInSeason,
-                relegationPlayOffMatchesInSeason,
-                leagueModel,
-                pointsDeductionsInSeason);
+            var leagueTable = _leagueTableBuilder.Build(tierModel.Tier, tierModel.SeasonStartYear, leagueModel);
             var teamRow = leagueTable.Single(r => r.Team == team);
 
             return new HistoricalPosition
@@ -167,8 +140,9 @@ namespace football.history.api.Builders
         private List<LeaguePosition> GetPositions(
             List<MatchModel> leagueMatches,
             LeagueModel leagueModel,
-            List<PointsDeductionModel> pointsDeductions,
-            string team)
+            string team,
+            int seasonStartYear,
+            int tier)
         {
             if (!leagueMatches.Any(m => m.HomeTeam == team || m.AwayTeam == team))
             {
@@ -182,11 +156,7 @@ namespace football.history.api.Builders
 
             for (var date = startDate; date <= endDate; date = date.AddDays(1))
             {
-                var leagueTable = _leagueTableBuilder.GetPartialLeagueTable(
-                    leagueMatches,
-                    leagueModel,
-                    pointsDeductions,
-                    date);
+                var leagueTable = _leagueTableBuilder.Build(tier, seasonStartYear, leagueModel, date);
                 leaguePositions.Add(
                     new LeaguePosition
                     {
