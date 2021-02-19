@@ -47,6 +47,7 @@ namespace football.history.api
             services.AddTransient<ILeagueBuilder, LeagueBuilder>();
             services.AddTransient<IPositionBuilder, PositionBuilder>();
             services.AddTransient<ILeagueTableBuilder, LeagueTableBuilder>();
+            services.AddTransient<IDateCalculator, DateCalculator>();
 
             services.AddTransient<ITeamRepository, TeamRepository>();
             services.AddTransient<ISeasonRepository, SeasonRepository>();

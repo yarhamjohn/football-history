@@ -17,20 +17,23 @@ namespace football.history.api.Builders
         private readonly ILeagueRepository _leagueRepository;
         private readonly ILeagueTableBuilder _leagueTableBuilder;
         private readonly ITierRepository _tierRepository;
+        private readonly IDateCalculator _dateCalculator;
 
         public LeagueBuilder(
             ILeagueRepository leagueRepository,
             ILeagueTableBuilder leagueTableBuilder,
-            ITierRepository tierRepository)
+            ITierRepository tierRepository,
+            IDateCalculator dateCalculator)
         {
             _leagueRepository = leagueRepository;
             _leagueTableBuilder = leagueTableBuilder;
             _tierRepository = tierRepository;
+            _dateCalculator = dateCalculator;
         }
 
         public LeagueDto GetCompletedLeague(int tier, int seasonStartYear)
         {
-            var seasonEndDate = DateCalculator.GetSeasonEndDate(seasonStartYear);
+            var seasonEndDate = _dateCalculator.GetSeasonEndDate(seasonStartYear);
             return GetLeagueDto(tier, seasonStartYear, seasonEndDate);
         }
 
@@ -43,13 +46,13 @@ namespace football.history.api.Builders
                 return new LeagueDto();
             }
 
-            var seasonEndDate = DateCalculator.GetSeasonEndDate(seasonStartYear);
+            var seasonEndDate = _dateCalculator.GetSeasonEndDate(seasonStartYear);
             return GetLeagueDto((int) tier, seasonStartYear, seasonEndDate);
         }
 
         public LeagueDto GetLeagueOnDate(int tier, DateTime date)
         {
-            var seasonStartYear = DateCalculator.GetSeasonStartYear(date);
+            var seasonStartYear = _dateCalculator.GetSeasonStartYear(date);
             return GetLeagueDto(tier, seasonStartYear, date);
         }
 

@@ -2,9 +2,15 @@ using System;
 
 namespace football.history.api.Calculators
 {
-    public static class DateCalculator
+    public interface IDateCalculator
     {
-        public static DateTime GetSeasonEndDate(int seasonStartYear)
+        DateTime GetSeasonEndDate(int seasonStartYear);
+
+        int GetSeasonStartYear(DateTime date);
+    }
+    public class DateCalculator : IDateCalculator
+    {
+        public DateTime GetSeasonEndDate(int seasonStartYear)
         {
             /*
              * Originally the season end date was set to be June 30th as this was roughly half-way between seasons.
@@ -17,7 +23,7 @@ namespace football.history.api.Calculators
                 : new DateTime(seasonStartYear + 1, 06, 30);
         }
 
-        public static int GetSeasonStartYear(DateTime date)
+        public int GetSeasonStartYear(DateTime date)
         {
             /*
              * Originally the season end date was set to be June 30th as this was roughly half-way between seasons.
