@@ -26,17 +26,20 @@ namespace football.history.api.Builders
         private readonly IMatchRepository _matchRepository;
         private readonly IPointsDeductionRepository _pointDeductionsRepository;
         private readonly ITierRepository _tierRepository;
+        private readonly ILeagueTableBuilder _leagueTableBuilder;
 
         public PositionBuilder(
             ILeagueRepository leagueRepository,
             IMatchRepository matchRepository,
             IPointsDeductionRepository pointDeductionsRepository,
-            ITierRepository tierRepository)
+            ITierRepository tierRepository,
+            ILeagueTableBuilder leagueTableBuilder)
         {
             _leagueRepository = leagueRepository;
             _matchRepository = matchRepository;
             _pointDeductionsRepository = pointDeductionsRepository;
             _tierRepository = tierRepository;
+            _leagueTableBuilder = leagueTableBuilder;
         }
 
         public List<LeaguePosition> GetLeaguePositions(int seasonStartYear, int tier, string team)
@@ -85,7 +88,7 @@ namespace football.history.api.Builders
                 .ToList();
         }
 
-        private static HistoricalPosition GetPositions(
+        private HistoricalPosition GetPositions(
             string team,
             TierModel tierModel,
             IEnumerable<MatchModel> leagueMatches,
@@ -110,7 +113,7 @@ namespace football.history.api.Builders
             var leagueModel = leagueModels.Single(
                 l => l.StartYear == tierModel.SeasonStartYear && l.Tier == tierModel.Tier);
 
-            var leagueTable = new LeagueTableBuilder().GetFullLeagueTable(
+            var leagueTable = _leagueTableBuilder.GetFullLeagueTable(
                 leagueMatchesInSeason,
                 playOffMatchesInSeason,
                 relegationPlayOffMatchesInSeason,
@@ -128,7 +131,7 @@ namespace football.history.api.Builders
             };
         }
 
-        private static List<MatchModel> GetMatchesInSeason(
+        private List<MatchModel> GetMatchesInSeason(
             IEnumerable<MatchModel> matches,
             TierModel tierModel)
         {
@@ -149,7 +152,7 @@ namespace football.history.api.Builders
             };
         }
 
-        private static int GetAbsolutePosition(
+        private int GetAbsolutePosition(
             IEnumerable<LeagueModel> leagueModels,
             TierModel tierModel,
             LeagueTableRowDto teamRowDto)
@@ -161,7 +164,7 @@ namespace football.history.api.Builders
                 + teamRowDto.Position;
         }
 
-        private static List<LeaguePosition> GetPositions(
+        private List<LeaguePosition> GetPositions(
             List<MatchModel> leagueMatches,
             LeagueModel leagueModel,
             List<PointsDeductionModel> pointsDeductions,
@@ -179,7 +182,7 @@ namespace football.history.api.Builders
 
             for (var date = startDate; date <= endDate; date = date.AddDays(1))
             {
-                var leagueTable = new LeagueTableBuilder().GetPartialLeagueTable(
+                var leagueTable = _leagueTableBuilder.GetPartialLeagueTable(
                     leagueMatches,
                     leagueModel,
                     pointsDeductions,

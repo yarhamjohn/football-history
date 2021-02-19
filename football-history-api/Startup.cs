@@ -1,4 +1,5 @@
 using football.history.api.Builders;
+using football.history.api.Calculators;
 using football.history.api.Domain;
 using football.history.api.Repositories.League;
 using football.history.api.Repositories.Match;
@@ -45,6 +46,7 @@ namespace football.history.api
             services.AddTransient<IMatchBuilder, MatchBuilder>();
             services.AddTransient<ILeagueBuilder, LeagueBuilder>();
             services.AddTransient<IPositionBuilder, PositionBuilder>();
+            services.AddTransient<ILeagueTableBuilder, LeagueTableBuilder>();
 
             services.AddTransient<ITeamRepository, TeamRepository>();
             services.AddTransient<ISeasonRepository, SeasonRepository>();

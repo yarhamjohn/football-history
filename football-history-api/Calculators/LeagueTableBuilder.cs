@@ -8,7 +8,23 @@ using football.history.api.Repositories.PointDeductions;
 
 namespace football.history.api.Calculators
 {
-    public class LeagueTableBuilder
+    public interface ILeagueTableBuilder
+    {
+        List<LeagueTableRowDto> GetFullLeagueTable(
+            List<MatchModel> leagueMatches,
+            List<MatchModel> playOffMatches,
+            List<MatchModel> relegationPlayOffMatches,
+            LeagueModel leagueModel,
+            List<PointsDeductionModel> pointsDeductions);
+
+        List<LeagueTableRowDto> GetPartialLeagueTable(
+            List<MatchModel> leagueMatches,
+            LeagueModel leagueModel,
+            List<PointsDeductionModel> pointsDeductions,
+            DateTime date);
+    }
+
+    public class LeagueTableBuilder : ILeagueTableBuilder
     {
         public List<LeagueTableRowDto> GetFullLeagueTable(
             List<MatchModel> leagueMatches,
