@@ -47,7 +47,7 @@ namespace football.history.api.Builders
             var leagueMatches = _matchRepository.GetLeagueMatchModels(seasonStartYear, tier);
             var leagueModel = _leagueRepository.GetLeagueModel(seasonStartYear, tier);
 
-            return GetPositions(leagueMatches, leagueModel, team, seasonStartYear, tier);
+            return GetPositions(leagueMatches, leagueModel, team);
         }
 
         public List<HistoricalPosition> GetHistoricalPositions(
@@ -140,9 +140,7 @@ namespace football.history.api.Builders
         private List<LeaguePosition> GetPositions(
             List<MatchModel> leagueMatches,
             LeagueModel leagueModel,
-            string team,
-            int seasonStartYear,
-            int tier)
+            string team)
         {
             if (!leagueMatches.Any(m => m.HomeTeam == team || m.AwayTeam == team))
             {
@@ -156,7 +154,7 @@ namespace football.history.api.Builders
 
             for (var date = startDate; date <= endDate; date = date.AddDays(1))
             {
-                var leagueTable = _leagueTableBuilder.Build(seasonStartYear, leagueModel, date);
+                var leagueTable = _leagueTableBuilder.Build(leagueModel, date);
                 leaguePositions.Add(
                     new LeaguePosition
                     {

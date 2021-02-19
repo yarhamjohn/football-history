@@ -5,14 +5,12 @@ using football.history.api.Builders;
 using football.history.api.Repositories.League;
 using football.history.api.Repositories.Match;
 using football.history.api.Repositories.PointDeductions;
-using football.history.api.Repositories.Tier;
 
 namespace football.history.api.Calculators
 {
     public interface ILeagueTableBuilder
     {
         List<LeagueTableRowDto> Build(
-            int seasonStartYear,
             LeagueModel leagueModel,
             DateTime date);
 
@@ -25,14 +23,16 @@ namespace football.history.api.Calculators
     {
         private readonly IMatchRepository _matchRepository;
         private readonly IPointsDeductionRepository _pointDeductionsRepository;
+        private readonly IDateCalculator _dateCalculator;
 
         public LeagueTableBuilder(
             IMatchRepository matchRepository,
-            IPointsDeductionRepository pointDeductionsRepository)
+            IPointsDeductionRepository pointDeductionsRepository,
+            IDateCalculator dateCalculator)
         {
             _matchRepository = matchRepository;
             _pointDeductionsRepository = pointDeductionsRepository;
-
+            _dateCalculator = dateCalculator;
         }
 
         public List<LeagueTableRowDto> Build(
@@ -54,10 +54,11 @@ namespace football.history.api.Calculators
         }
 
         public List<LeagueTableRowDto> Build(
-            int seasonStartYear,
             LeagueModel leagueModel,
             DateTime date)
         {
+            var seasonStartYear = _dateCalculator.GetSeasonStartYear(date);
+
             var pointsDeductions =
                 _pointDeductionsRepository.GetPointsDeductionModels(seasonStartYear, leagueModel.Tier);
             var playOffMatches = _matchRepository.GetPlayOffMatchModels(seasonStartYear, leagueModel.Tier);

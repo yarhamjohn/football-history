@@ -7,9 +7,10 @@ namespace football.history.api.Builders
 {
     public interface ILeagueBuilder
     {
-        LeagueDto Build(int seasonStartYear, int tier);
-        LeagueDto Build(int seasonStartYear, string team);
-        LeagueDto Build(DateTime date, int tier);
+        LeagueDto BuildForTier(int seasonStartYear, int tier);
+        LeagueDto BuildForTeam(int seasonStartYear, string team);
+        LeagueDto BuildForTier(DateTime date, int tier);
+        LeagueDto BuildForTeam(DateTime date, string team);
     }
 
     public class LeagueBuilder : ILeagueBuilder
@@ -31,14 +32,26 @@ namespace football.history.api.Builders
             _dateCalculator = dateCalculator;
         }
 
-        public LeagueDto Build(int seasonStartYear, int tier)
+        public LeagueDto BuildForTier(int seasonStartYear, int tier)
         {
             var seasonEndDate = _dateCalculator.GetSeasonEndDate(seasonStartYear);
-            return GetLeagueDto(tier, seasonStartYear, seasonEndDate);
+            return BuildForTier(seasonEndDate, tier);
         }
 
-        public LeagueDto Build(int seasonStartYear, string team)
+        public LeagueDto BuildForTeam(int seasonStartYear, string team)
         {
+            var seasonEndDate = _dateCalculator.GetSeasonEndDate(seasonStartYear);
+            return BuildForTeam(seasonEndDate, team);
+        }
+
+        public LeagueDto BuildForTier(DateTime date, int tier)
+        {
+            return GetLeagueDto(date, tier);
+        }
+
+        public LeagueDto BuildForTeam(DateTime date, string team)
+        {
+            var seasonStartYear = _dateCalculator.GetSeasonStartYear(date);
             var tier = _tierRepository.GetTierForTeamInYear(seasonStartYear, team);
             if (tier == null)
             {
@@ -46,21 +59,14 @@ namespace football.history.api.Builders
                 return new LeagueDto();
             }
 
-            var seasonEndDate = _dateCalculator.GetSeasonEndDate(seasonStartYear);
-            return GetLeagueDto((int) tier, seasonStartYear, seasonEndDate);
+            return GetLeagueDto(date, (int) tier);
         }
 
-        public LeagueDto Build(DateTime date, int tier)
+        private LeagueDto GetLeagueDto(DateTime date, int tier)
         {
-            var seasonStartYear = _dateCalculator.GetSeasonStartYear(date);
-            return GetLeagueDto(tier, seasonStartYear, date);
-        }
-
-        private LeagueDto GetLeagueDto(int tier, int seasonStartYear, DateTime date)
-        {
-            // TODO: handle not finding a matching league model etc
-            var leagueModel = _leagueRepository.GetLeagueModel(seasonStartYear, tier);
-            var leagueTable = _leagueTableBuilder.Build(seasonStartYear, leagueModel, date);
+            // TODO: handle not finding a matching league model
+            var leagueModel = _leagueRepository.GetLeagueModel(date, tier);
+            var leagueTable = _leagueTableBuilder.Build(leagueModel, date);
 
             return new LeagueDto
             {

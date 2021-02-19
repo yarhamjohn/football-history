@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using football.history.api.Calculators;
 using football.history.api.Domain;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -10,14 +12,22 @@ namespace football.history.api.Repositories.League
     public class LeagueRepository : ILeagueRepository
     {
         private readonly DatabaseContext _context;
+        private readonly IDateCalculator _dateCalculator;
 
-        public LeagueRepository(DatabaseContext context)
+        public LeagueRepository(DatabaseContext context, IDateCalculator dateCalculator)
         {
             _context = context;
+            _dateCalculator = dateCalculator;
         }
 
         public LeagueModel GetLeagueModel(int seasonStartYear, int tier) =>
             GetLeagueModels(new List<int> { seasonStartYear }, new List<int> { tier }).Single();
+
+        public LeagueModel GetLeagueModel(DateTime date, int tier)
+        {
+            var seasonStartYear = _dateCalculator.GetSeasonStartYear(date);
+            return GetLeagueModel(seasonStartYear, tier);
+        }
 
         public List<LeagueModel> GetLeagueModels(List<int> seasonStartYears, List<int> tiers)
         {
