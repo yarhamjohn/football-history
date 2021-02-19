@@ -91,7 +91,7 @@ namespace football.history.api.Builders
             var leagueModel = leagueModels.Single(
                 l => l.StartYear == tierModel.SeasonStartYear && l.Tier == tierModel.Tier);
 
-            var leagueTable = _leagueTableBuilder.Build(tierModel.Tier, tierModel.SeasonStartYear, leagueModel);
+            var leagueTable = _leagueTableBuilder.Build(tierModel.SeasonStartYear, leagueModel);
             var teamRow = leagueTable.Single(r => r.Team == team);
 
             return new HistoricalPosition
@@ -156,7 +156,7 @@ namespace football.history.api.Builders
 
             for (var date = startDate; date <= endDate; date = date.AddDays(1))
             {
-                var leagueTable = _leagueTableBuilder.Build(tier, seasonStartYear, leagueModel, date);
+                var leagueTable = _leagueTableBuilder.Build(seasonStartYear, leagueModel, date);
                 leaguePositions.Add(
                     new LeaguePosition
                     {

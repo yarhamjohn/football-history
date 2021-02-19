@@ -7,9 +7,9 @@ namespace football.history.api.Builders
 {
     public interface ILeagueBuilder
     {
-        LeagueDto GetCompletedLeague(int tier, int seasonStartYear);
-        LeagueDto GetCompletedLeagueForTeam(string team, int seasonStartYear);
-        LeagueDto GetLeagueOnDate(int tier, DateTime date);
+        LeagueDto Build(int seasonStartYear, int tier);
+        LeagueDto Build(int seasonStartYear, string team);
+        LeagueDto Build(DateTime date, int tier);
     }
 
     public class LeagueBuilder : ILeagueBuilder
@@ -31,13 +31,13 @@ namespace football.history.api.Builders
             _dateCalculator = dateCalculator;
         }
 
-        public LeagueDto GetCompletedLeague(int tier, int seasonStartYear)
+        public LeagueDto Build(int seasonStartYear, int tier)
         {
             var seasonEndDate = _dateCalculator.GetSeasonEndDate(seasonStartYear);
             return GetLeagueDto(tier, seasonStartYear, seasonEndDate);
         }
 
-        public LeagueDto GetCompletedLeagueForTeam(string team, int seasonStartYear)
+        public LeagueDto Build(int seasonStartYear, string team)
         {
             var tier = _tierRepository.GetTierForTeamInYear(seasonStartYear, team);
             if (tier == null)
@@ -50,7 +50,7 @@ namespace football.history.api.Builders
             return GetLeagueDto((int) tier, seasonStartYear, seasonEndDate);
         }
 
-        public LeagueDto GetLeagueOnDate(int tier, DateTime date)
+        public LeagueDto Build(DateTime date, int tier)
         {
             var seasonStartYear = _dateCalculator.GetSeasonStartYear(date);
             return GetLeagueDto(tier, seasonStartYear, date);
@@ -58,8 +58,9 @@ namespace football.history.api.Builders
 
         private LeagueDto GetLeagueDto(int tier, int seasonStartYear, DateTime date)
         {
+            // TODO: handle not finding a matching league model etc
             var leagueModel = _leagueRepository.GetLeagueModel(seasonStartYear, tier);
-            var leagueTable = _leagueTableBuilder.Build(tier, seasonStartYear, leagueModel, date);
+            var leagueTable = _leagueTableBuilder.Build(seasonStartYear, leagueModel, date);
 
             return new LeagueDto
             {

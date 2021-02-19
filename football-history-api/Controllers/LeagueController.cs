@@ -19,19 +19,19 @@ namespace football.history.api.Controllers
         [HttpGet("[action]")]
         public LeagueDto GetCompletedLeague(int seasonStartYear, int tier)
         {
-            return _leagueBuilder.GetCompletedLeague(tier, seasonStartYear);
+            return _leagueBuilder.Build(seasonStartYear, tier);
         }
 
         [HttpGet("[action]")]
         public LeagueDto GetCompletedLeagueForTeam(int seasonStartYear, string team)
         {
-            return _leagueBuilder.GetCompletedLeagueForTeam(team, seasonStartYear);
+            return _leagueBuilder.Build(seasonStartYear, team);
         }
 
         [HttpGet("[action]")]
         public LeagueDto GetLeagueOnDate(int tier, DateTime date)
         {
-            return _leagueBuilder.GetLeagueOnDate(tier, date);
+            return _leagueBuilder.Build(date, tier);
         }
     }
 }
