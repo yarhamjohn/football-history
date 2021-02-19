@@ -49,7 +49,7 @@ namespace football.history.api.Tests
                 StartYear = league.StartYear
             };
 
-            var actualLeagueTable = LeagueTableCalculator.GetFullLeagueTable(
+            var actualLeagueTable = new LeagueTableBuilder().GetFullLeagueTable(
                 _leagueMatches,
                 _playOffMatches,
                 new List<MatchModel>(),
@@ -76,7 +76,7 @@ namespace football.history.api.Tests
                 StartYear = league.StartYear
             };
 
-            var actualLeagueTable = LeagueTableCalculator.GetPartialLeagueTable(
+            var actualLeagueTable = new LeagueTableBuilder().GetPartialLeagueTable(
                 _leagueMatches,
                 leagueModel,
                 _pointsDeductions,

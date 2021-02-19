@@ -110,7 +110,7 @@ namespace football.history.api.Builders
             var leagueModel = leagueModels.Single(
                 l => l.StartYear == tierModel.SeasonStartYear && l.Tier == tierModel.Tier);
 
-            var leagueTable = LeagueTableCalculator.GetFullLeagueTable(
+            var leagueTable = new LeagueTableBuilder().GetFullLeagueTable(
                 leagueMatchesInSeason,
                 playOffMatchesInSeason,
                 relegationPlayOffMatchesInSeason,
@@ -179,7 +179,7 @@ namespace football.history.api.Builders
 
             for (var date = startDate; date <= endDate; date = date.AddDays(1))
             {
-                var leagueTable = LeagueTableCalculator.GetPartialLeagueTable(
+                var leagueTable = new LeagueTableBuilder().GetPartialLeagueTable(
                     leagueMatches,
                     leagueModel,
                     pointsDeductions,

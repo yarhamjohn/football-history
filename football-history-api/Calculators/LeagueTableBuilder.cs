@@ -8,9 +8,9 @@ using football.history.api.Repositories.PointDeductions;
 
 namespace football.history.api.Calculators
 {
-    public static class LeagueTableCalculator
+    public class LeagueTableBuilder
     {
-        public static List<LeagueTableRowDto> GetFullLeagueTable(
+        public List<LeagueTableRowDto> GetFullLeagueTable(
             List<MatchModel> leagueMatches,
             List<MatchModel> playOffMatches,
             List<MatchModel> relegationPlayOffMatches,
@@ -26,7 +26,7 @@ namespace football.history.api.Calculators
                 leagueModel);
         }
 
-        public static List<LeagueTableRowDto> GetPartialLeagueTable(
+        public List<LeagueTableRowDto> GetPartialLeagueTable(
             List<MatchModel> leagueMatches,
             LeagueModel leagueModel,
             List<PointsDeductionModel> pointsDeductions,
@@ -41,7 +41,7 @@ namespace football.history.api.Calculators
             return LeagueTableSorter.SortTable(expandedLeagueTable, leagueModel);
         }
 
-        private static List<string> GetTeamsInvolvedInMatches(List<MatchModel> leagueMatches)
+        private List<string> GetTeamsInvolvedInMatches(List<MatchModel> leagueMatches)
         {
             return leagueMatches.SelectMany(
                     m => new[]
@@ -53,7 +53,7 @@ namespace football.history.api.Calculators
                 .ToList();
         }
 
-        private static List<LeagueTableRowDto> AddStatuses(
+        private List<LeagueTableRowDto> AddStatuses(
             IEnumerable<LeagueTableRowDto> table,
             IReadOnlyCollection<MatchModel> playOffMatches,
             IReadOnlyCollection<MatchModel> relegationPlayOffMatches,
@@ -72,7 +72,7 @@ namespace football.history.api.Calculators
                 .ToList();
         }
 
-        private static List<LeagueTableRowDto> GetTable(
+        private List<LeagueTableRowDto> GetTable(
             List<MatchModel> matches,
             LeagueModel leagueModel,
             IReadOnlyCollection<PointsDeductionModel> pointDeductions)
@@ -83,7 +83,7 @@ namespace football.history.api.Calculators
                 .ToList();
         }
 
-        private static LeagueTableRowDto CreateRowForTeam(
+        private LeagueTableRowDto CreateRowForTeam(
             IEnumerable<MatchModel> matches,
             LeagueModel leagueModel,
             IEnumerable<PointsDeductionModel> pointDeductions,
@@ -118,24 +118,24 @@ namespace football.history.api.Calculators
             return leagueTableRow;
         }
 
-        private static double CalculatePointsPerGame(LeagueTableRowDto leagueTableRowDto) =>
+        private double CalculatePointsPerGame(LeagueTableRowDto leagueTableRowDto) =>
             leagueTableRowDto.Points / (double) leagueTableRowDto.Played;
 
-        private static int CalculateGoalsAgainst(
+        private int CalculateGoalsAgainst(
             IEnumerable<MatchModel> homeMatches,
             IEnumerable<MatchModel> awayMatches)
         {
             return homeMatches.Sum(m => m.AwayGoals) + awayMatches.Sum(m => m.HomeGoals);
         }
 
-        private static int CalculateGoalsFor(
+        private int CalculateGoalsFor(
             IEnumerable<MatchModel> homeMatches,
             IEnumerable<MatchModel> awayMatches)
         {
             return homeMatches.Sum(m => m.HomeGoals) + awayMatches.Sum(m => m.AwayGoals);
         }
 
-        private static int CalculatePoints(
+        private int CalculatePoints(
             LeagueModel leagueModel,
             string team,
             List<MatchModel> matches,
@@ -144,7 +144,7 @@ namespace football.history.api.Calculators
             + CountDraws(matches, team)
             - pointsDeducted;
 
-        private static List<LeagueTableRowDto> AddMissingTeams(
+        private List<LeagueTableRowDto> AddMissingTeams(
             List<LeagueTableRowDto> leagueTable,
             List<string> teams)
         {
@@ -155,41 +155,41 @@ namespace football.history.api.Calculators
             return leagueTable;
         }
 
-        private static int CountDraws(List<MatchModel> teamMatches, string team)
+        private int CountDraws(List<MatchModel> teamMatches, string team)
         {
             return teamMatches.Count(m => TeamDrewMatch(m, team));
         }
 
-        private static int CountDefeats(List<MatchModel> matches, string team)
+        private int CountDefeats(List<MatchModel> matches, string team)
         {
             return matches.Count(m => TeamLostMatch(m, team));
         }
 
-        private static int CountWins(List<MatchModel> matches, string team)
+        private int CountWins(List<MatchModel> matches, string team)
         {
             return matches.Count(m => TeamWonMatch(m, team));
         }
 
-        private static bool MatchInvolvesTeam(MatchModel match, string team) =>
+        private bool MatchInvolvesTeam(MatchModel match, string team) =>
             match.HomeTeam == team || match.AwayTeam == team;
 
-        private static bool TeamWonMatch(MatchModel match, string team) =>
+        private bool TeamWonMatch(MatchModel match, string team) =>
             match.HomeTeam == team && HomeTeamWon(match)
             || match.AwayTeam == team && AwayTeamWon(match);
 
-        private static bool TeamLostMatch(MatchModel match, string team) =>
+        private bool TeamLostMatch(MatchModel match, string team) =>
             match.HomeTeam == team && AwayTeamWon(match)
             || match.AwayTeam == team && HomeTeamWon(match);
 
-        private static bool TeamDrewMatch(MatchModel match, string team) =>
+        private bool TeamDrewMatch(MatchModel match, string team) =>
             !TeamWonMatch(match, team) && !TeamLostMatch(match, team);
 
-        private static bool HomeTeamWon(MatchModel match) =>
+        private bool HomeTeamWon(MatchModel match) =>
             match.HomeGoals > match.AwayGoals
             || match.HomeGoalsExtraTime > match.AwayGoalsExtraTime
             || match.HomePenaltiesScored > match.AwayPenaltiesScored;
 
-        private static bool AwayTeamWon(MatchModel match) =>
+        private bool AwayTeamWon(MatchModel match) =>
             match.HomeGoals < match.AwayGoals
             || match.HomeGoalsExtraTime < match.AwayGoalsExtraTime
             || match.HomePenaltiesScored < match.AwayPenaltiesScored;

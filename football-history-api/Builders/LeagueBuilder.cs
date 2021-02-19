@@ -91,13 +91,13 @@ namespace football.history.api.Builders
             var leagueMatches = _matchRepository.GetLeagueMatchModels(seasonStartYear, tier);
 
             return AllMatchesHaveBeenPlayed(date, playOffMatches, leagueMatches)
-                ? LeagueTableCalculator.GetFullLeagueTable(
+                ? new LeagueTableBuilder().GetFullLeagueTable(
                     leagueMatches,
                     playOffMatches,
                     relegationPlayOffMatches,
                     leagueModel,
                     pointsDeductions)
-                : LeagueTableCalculator.GetPartialLeagueTable(
+                : new LeagueTableBuilder().GetPartialLeagueTable(
                     leagueMatches,
                     leagueModel,
                     pointsDeductions,
