@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
 using football.history.api.Builders;
+using football.history.api.Exceptions;
 using football.history.api.Repositories.Tier;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace football.history.api.Controllers
@@ -25,7 +28,23 @@ namespace football.history.api.Controllers
             _teamBuilder.GetTeamsInLeague(seasonStartYear, tier);
 
         [HttpGet("[action]")]
-        public int GetTier(int seasonStartYear, string team) =>
-            _tierRepository.GetTierForTeamInYear(seasonStartYear, team);
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(int))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<int> GetTier(int seasonStartYear, string team)
+        {
+            try
+            {
+                return _tierRepository.GetTierForTeamInYear(seasonStartYear, team);
+            }
+            catch (TierNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
     }
 }

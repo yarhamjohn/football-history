@@ -23,7 +23,7 @@ namespace football.history.api.Repositories.Tier
             var conn = _context.Database.GetDbConnection();
 
             var cmd = GetDbCommand(conn, team, seasonStartYear);
-            var result = GetTier(cmd);
+            var result = GetTierOrThrow(cmd);
             conn.Close();
             return result;
         }
@@ -37,11 +37,6 @@ namespace football.history.api.Repositories.Tier
                 .Where(t => seasonStartYears.Contains(t.SeasonStartYear))
                 .ToList();
             conn.Close();
-
-            if (!result.Any())
-            {
-                throw new TierNotFoundException();
-            }
 
             return result;
         }
@@ -108,12 +103,12 @@ WHERE (hc.Name = @Team OR ac.Name = @Team) AND m.MatchDate BETWEEN DATEFROMPARTS
             return cmd;
         }
 
-        private static int GetTier(DbCommand cmd)
+        private static int GetTierOrThrow(DbCommand cmd)
         {
             var result = cmd.ExecuteScalar();
             if (result == null)
             {
-                throw new TierNotFoundException();
+                throw new TierNotFoundException($"No matching tier was found.");
             }
 
             return Convert.ToInt32(cmd.ExecuteScalar());

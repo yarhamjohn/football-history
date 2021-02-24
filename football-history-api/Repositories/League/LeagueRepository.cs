@@ -20,8 +20,14 @@ namespace football.history.api.Repositories.League
             _dateCalculator = dateCalculator;
         }
 
-        public LeagueModel GetLeagueModel(int seasonStartYear, int tier) =>
-            GetLeagueModels(new List<int> { seasonStartYear }, new List<int> { tier }).Single();
+        public LeagueModel GetLeagueModel(int seasonStartYear, int tier)
+        {
+            var leagueModels = GetLeagueModels(
+                new List<int> { seasonStartYear },
+                new List<int> { tier });
+
+            return leagueModels.Single();
+        }
 
         public LeagueModel GetLeagueModel(DateTime date, int tier)
         {

@@ -1,7 +1,9 @@
 using System;
 using football.history.api.Builders;
 using football.history.api.Calculators;
+using football.history.api.Exceptions;
 using football.history.api.Repositories.Tier;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace football.history.api.Controllers
@@ -23,9 +25,23 @@ namespace football.history.api.Controllers
         }
 
         [HttpGet("[action]")]
-        public LeagueDto GetCompletedLeagueForTeam(int seasonStartYear, string team)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LeagueDto))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<LeagueDto> GetCompletedLeagueForTeam(int seasonStartYear, string team)
         {
-            return _leagueBuilder.BuildForTeam(seasonStartYear, team);
+            try
+            {
+                return _leagueBuilder.BuildForTeam(seasonStartYear, team);
+            }
+            catch (TierNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
         }
 
         [HttpGet("[action]")]
@@ -35,9 +51,23 @@ namespace football.history.api.Controllers
         }
 
         [HttpGet("[action]")]
-        public LeagueDto GetLeagueOnDateForTeam(string team, DateTime date)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LeagueDto))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<LeagueDto> GetLeagueOnDateForTeam(string team, DateTime date)
         {
-            return _leagueBuilder.BuildForTeam(date, team);
+            try
+            {
+                return _leagueBuilder.BuildForTeam(date, team);
+            }
+            catch (TierNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
         }
     }
 }
