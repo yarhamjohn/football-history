@@ -14,11 +14,11 @@ namespace football.history.api.Tests
     {
         private readonly LeagueModel _leagueModel = new();
         private readonly DateTime _seasonEndDate = new(2000, 6, 30);
-        private const int _tier = 0;
+        private const int CalculatedTier = 0;
 
-        private ILeagueBuilder _leagueBuilder;
-        private Mock<ILeagueTableBuilder> _leagueTableBuilder;
-        private Mock<ILeagueRepository> _leagueRepository;
+        private ILeagueBuilder _leagueBuilder = null!;
+        private Mock<ILeagueTableBuilder> _leagueTableBuilder = null!;
+        private Mock<ILeagueRepository> _leagueRepository = null!;
 
         [SetUp]
         public void Setup()
@@ -35,7 +35,7 @@ namespace football.history.api.Tests
             var tierRepository = new Mock<ITierRepository>();
             tierRepository
                 .Setup(r => r.GetTierForTeamInYear(It.IsAny<int>(), It.IsAny<string>()))
-                .Returns(_tier);
+                .Returns(CalculatedTier);
 
             var dateCalculator = new Mock<IDateCalculator>();
             dateCalculator
@@ -50,7 +50,7 @@ namespace football.history.api.Tests
         }
 
         [Test]
-        public void Build_for_tier_should_use_season_end_date_given_start_year()
+        public void Build_for_tier_should_use_specified_tier_and_season_end_date_given_start_year()
         {
             const int seasonStartYear = 2000;
             const int tier = 1;
@@ -62,7 +62,7 @@ namespace football.history.api.Tests
         }
 
         [Test]
-        public void Build_for_tier_should_use_date_if_specified()
+        public void Build_for_tier_should_use_specified_tier_and_date_if_specified()
         {
             var date = new DateTime(2010, 1, 1);
             const int tier = 1;
@@ -81,7 +81,7 @@ namespace football.history.api.Tests
 
             _leagueBuilder.BuildForTeam(seasonStartYear, team);
 
-            _leagueRepository.Verify(mock => mock.GetLeagueModel(_seasonEndDate, 0), Times.Once());
+            _leagueRepository.Verify(mock => mock.GetLeagueModel(_seasonEndDate, CalculatedTier), Times.Once());
             _leagueTableBuilder.Verify(mock => mock.Build(_leagueModel, _seasonEndDate), Times.Once());
         }
 
@@ -93,7 +93,7 @@ namespace football.history.api.Tests
 
             _leagueBuilder.BuildForTeam(date, team);
 
-            _leagueRepository.Verify(mock => mock.GetLeagueModel(date, 0), Times.Once());
+            _leagueRepository.Verify(mock => mock.GetLeagueModel(date, CalculatedTier), Times.Once());
             _leagueTableBuilder.Verify(mock => mock.Build(_leagueModel, date), Times.Once());
         }
     }

@@ -26,6 +26,6 @@ namespace football.history.api.Controllers
 
         [HttpGet("[action]")]
         public int GetTier(int seasonStartYear, string team) =>
-            _tierRepository.GetTierForTeamInYear(seasonStartYear, team) ?? -1;
+            _tierRepository.GetTierForTeamInYear(seasonStartYear, team);
     }
 }

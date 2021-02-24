@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using football.history.api.Domain;
+using football.history.api.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,7 +18,7 @@ namespace football.history.api.Repositories.Tier
             _context = context;
         }
 
-        public int? GetTierForTeamInYear(int seasonStartYear, string team)
+        public int GetTierForTeamInYear(int seasonStartYear, string team)
         {
             var conn = _context.Database.GetDbConnection();
 
@@ -36,6 +37,12 @@ namespace football.history.api.Repositories.Tier
                 .Where(t => seasonStartYears.Contains(t.SeasonStartYear))
                 .ToList();
             conn.Close();
+
+            if (!result.Any())
+            {
+                throw new TierNotFoundException();
+            }
+
             return result;
         }
 
@@ -101,12 +108,12 @@ WHERE (hc.Name = @Team OR ac.Name = @Team) AND m.MatchDate BETWEEN DATEFROMPARTS
             return cmd;
         }
 
-        private static int? GetTier(DbCommand cmd)
+        private static int GetTier(DbCommand cmd)
         {
             var result = cmd.ExecuteScalar();
             if (result == null)
             {
-                return null;
+                throw new TierNotFoundException();
             }
 
             return Convert.ToInt32(cmd.ExecuteScalar());
@@ -116,17 +123,15 @@ WHERE (hc.Name = @Team OR ac.Name = @Team) AND m.MatchDate BETWEEN DATEFROMPARTS
         {
             var tiers = new List<TierModel>();
 
-            using (var reader = cmd.ExecuteReader())
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
             {
-                while (reader.Read())
-                {
-                    tiers.Add(
-                        new TierModel
-                        {
-                            SeasonStartYear = reader.GetInt32(0),
-                            Tier = reader.GetByte(1)
-                        });
-                }
+                tiers.Add(
+                    new TierModel
+                    {
+                        SeasonStartYear = reader.GetInt32(0),
+                        Tier = reader.GetByte(1)
+                    });
             }
 
             return tiers;

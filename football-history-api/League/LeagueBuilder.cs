@@ -53,13 +53,8 @@ namespace football.history.api.Builders
         {
             var seasonStartYear = _dateCalculator.GetSeasonStartYear(date);
             var tier = _tierRepository.GetTierForTeamInYear(seasonStartYear, team);
-            if (tier == null)
-            {
-                // No league data is available for the team specified
-                return new LeagueDto();
-            }
 
-            return GetLeagueDto(date, (int) tier);
+            return GetLeagueDto(date, tier);
         }
 
         private LeagueDto GetLeagueDto(DateTime date, int tier)
