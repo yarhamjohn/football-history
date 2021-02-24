@@ -1,8 +1,5 @@
 using System;
 using football.history.api.Builders;
-using football.history.api.Calculators;
-using football.history.api.Exceptions;
-using football.history.api.Repositories.Tier;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,24 +16,13 @@ namespace football.history.api.Controllers
         }
 
         [HttpGet("[action]")]
-        public LeagueDto GetCompletedLeagueForTier(int seasonStartYear, int tier)
-        {
-            return _leagueBuilder.BuildForTier(seasonStartYear, tier);
-        }
-
-        [HttpGet("[action]")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LeagueDto))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<LeagueDto> GetCompletedLeagueForTeam(int seasonStartYear, string team)
+        public ActionResult<LeagueDto> GetCompletedLeagueForTier(int seasonStartYear, int tier)
         {
             try
             {
-                return _leagueBuilder.BuildForTeam(seasonStartYear, team);
-            }
-            catch (TierNotFoundException ex)
-            {
-                return NotFound(ex.Message);
+                return Ok(_leagueBuilder.BuildForTier(seasonStartYear, tier));
             }
             catch (Exception ex)
             {
@@ -45,24 +31,43 @@ namespace football.history.api.Controllers
         }
 
         [HttpGet("[action]")]
-        public LeagueDto GetLeagueOnDateForTier(int tier, DateTime date)
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LeagueDto))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<LeagueDto> GetCompletedLeagueForTeam(int seasonStartYear, string team)
         {
-            return _leagueBuilder.BuildForTier(date, tier);
+            try
+            {
+                return Ok(_leagueBuilder.BuildForTeam(seasonStartYear, team));
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
         }
 
         [HttpGet("[action]")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LeagueDto))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<LeagueDto> GetLeagueOnDateForTier(int tier, DateTime date)
+        {
+            try
+            {
+                return Ok(_leagueBuilder.BuildForTier(date, tier));
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
+
+        [HttpGet("[action]")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LeagueDto))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<LeagueDto> GetLeagueOnDateForTeam(string team, DateTime date)
         {
             try
             {
-                return _leagueBuilder.BuildForTeam(date, team);
-            }
-            catch (TierNotFoundException ex)
-            {
-                return NotFound(ex.Message);
+                return Ok(_leagueBuilder.BuildForTeam(date, team));
             }
             catch (Exception ex)
             {

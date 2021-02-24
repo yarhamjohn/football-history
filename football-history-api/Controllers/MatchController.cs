@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using football.history.api.Builders;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace football.history.api.Controllers
@@ -15,22 +17,62 @@ namespace football.history.api.Controllers
         }
 
         [HttpGet("[action]")]
-        public List<Match> GetLeagueMatches(
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<Match>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<List<Match>> GetLeagueMatches(
             List<int> seasonStartYears,
             List<int> tiers,
-            List<string> teams) =>
-            _matchBuilder.GetLeagueMatches(seasonStartYears, tiers, teams);
+            List<string> teams)
+        {
+            try
+            {
+                return Ok(_matchBuilder.GetLeagueMatches(seasonStartYears, tiers, teams));
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
 
         [HttpGet("[action]")]
-        public List<Match> GetHeadToHeadLeagueMatches(
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<Match>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<List<Match>> GetHeadToHeadLeagueMatches(
             List<int> seasonStartYears,
             List<int> tiers,
             string teamOne,
-            string teamTwo) =>
-            _matchBuilder.GetHeadToHeadLeagueMatches(seasonStartYears, tiers, teamOne, teamTwo);
+            string teamTwo)
+        {
+            try
+            {
+                return Ok(
+                    _matchBuilder.GetHeadToHeadLeagueMatches(
+                        seasonStartYears,
+                        tiers,
+                        teamOne,
+                        teamTwo));
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
 
         [HttpGet("[action]")]
-        public List<KnockoutMatch> GetPlayOffMatches(List<int> seasonStartYears, List<int> tiers) =>
-            _matchBuilder.GetPlayOffMatches(seasonStartYears, tiers);
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<KnockoutMatch>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<List<KnockoutMatch>> GetPlayOffMatches(
+            List<int> seasonStartYears,
+            List<int> tiers)
+        {
+            try
+            {
+                return Ok(_matchBuilder.GetPlayOffMatches(seasonStartYears, tiers));
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
     }
 }

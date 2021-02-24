@@ -108,7 +108,8 @@ WHERE (hc.Name = @Team OR ac.Name = @Team) AND m.MatchDate BETWEEN DATEFROMPARTS
             var result = cmd.ExecuteScalar();
             if (result == null)
             {
-                throw new TierNotFoundException($"No matching tier was found.");
+                throw new TierNotFoundException(
+                    $"No tier could be found for team: {cmd.Parameters["@Team"].Value} and seasonStartYear: {cmd.Parameters["@SeasonStartYear"].Value}");
             }
 
             return Convert.ToInt32(cmd.ExecuteScalar());

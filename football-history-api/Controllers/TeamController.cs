@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using football.history.api.Builders;
-using football.history.api.Exceptions;
 using football.history.api.Repositories.Tier;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,25 +20,43 @@ namespace football.history.api.Controllers
         }
 
         [HttpGet("[action]")]
-        public List<Team> GetAllTeams() => _teamBuilder.GetAllTeams();
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<Team>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<List<Team>> GetAllTeams()
+        {
+            try
+            {
+                return Ok(_teamBuilder.GetAllTeams());
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
 
         [HttpGet("[action]")]
-        public List<Team> GetTeamsInLeague(int seasonStartYear, int tier) =>
-            _teamBuilder.GetTeamsInLeague(seasonStartYear, tier);
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<Team>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<List<Team>> GetTeamsInLeague(int seasonStartYear, int tier)
+        {
+            try
+            {
+                return Ok(_teamBuilder.GetTeamsInLeague(seasonStartYear, tier));
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
 
         [HttpGet("[action]")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(int))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public ActionResult<int> GetTier(int seasonStartYear, string team)
         {
             try
             {
-                return _tierRepository.GetTierForTeamInYear(seasonStartYear, team);
-            }
-            catch (TierNotFoundException ex)
-            {
-                return NotFound(ex.Message);
+                return Ok(_tierRepository.GetTierForTeamInYear(seasonStartYear, team));
             }
             catch (Exception ex)
             {

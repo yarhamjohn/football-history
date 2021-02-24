@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using football.history.api.Builders;
-using football.history.api.Exceptions;
 using football.history.api.Repositories.Tier;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,18 +21,15 @@ namespace football.history.api.Controllers
 
         [HttpGet("[action]")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LeaguePosition))]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<List<LeaguePosition>> GetLeaguePositions(int seasonStartYear, string team)
+        public ActionResult<List<LeaguePosition>> GetLeaguePositions(
+            int seasonStartYear,
+            string team)
         {
             try
             {
                 var tier = _tierRepository.GetTierForTeamInYear(seasonStartYear, team);
-                return _positionBuilder.GetLeaguePositions(seasonStartYear, tier, team);
-            }
-            catch (TierNotFoundException ex)
-            {
-                return NotFound(ex.Message);
+                return Ok(_positionBuilder.GetLeaguePositions(seasonStartYear, tier, team));
             }
             catch (Exception ex)
             {
@@ -42,16 +38,38 @@ namespace football.history.api.Controllers
         }
 
         [HttpGet("[action]")]
-        public List<HistoricalPosition> GetHistoricalPositions(
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(HistoricalPosition))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<List<HistoricalPosition>> GetHistoricalPositions(
             int startYear,
             int endYear,
-            string team) =>
-            _positionBuilder.GetHistoricalPositions(startYear, endYear, team);
+            string team)
+        {
+            try
+            {
+                return Ok(_positionBuilder.GetHistoricalPositions(startYear, endYear, team));
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
 
         [HttpGet("[action]")]
-        public List<HistoricalPosition> GetHistoricalPositionsForSeasons(
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(HistoricalPosition))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<List<HistoricalPosition>> GetHistoricalPositionsForSeasons(
             List<int> seasonStartYears,
-            string team) =>
-            _positionBuilder.GetHistoricalPositionsForSeasons(seasonStartYears, team);
+            string team)
+        {
+            try
+            {
+                return Ok(_positionBuilder.GetHistoricalPositionsForSeasons(seasonStartYears, team));
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+        }
     }
 }

@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using football.history.api.Builders;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace football.history.api.Controllers
@@ -16,10 +18,19 @@ namespace football.history.api.Controllers
         }
 
         [HttpGet("[action]")]
-        public List<Season> GetSeasons()
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(List<Season>))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<List<Season>> GetSeasons()
         {
-            // TODO: This is a hack to limit the returned data - should be removed/updated as more data is added
-            return _seasonBuilder.GetSeasons().Where(s => s.StartYear >= 1958).ToList();
+            try
+            {
+                // TODO: This is a hack to limit the returned data - should be removed/updated as more data is added
+                return Ok(_seasonBuilder.GetSeasons().Where(s => s.StartYear >= 1958).ToList());
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
         }
     }
 }

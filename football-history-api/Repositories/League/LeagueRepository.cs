@@ -4,6 +4,7 @@ using System.Data.Common;
 using System.Linq;
 using football.history.api.Calculators;
 using football.history.api.Domain;
+using football.history.api.Exceptions;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,6 +26,16 @@ namespace football.history.api.Repositories.League
             var leagueModels = GetLeagueModels(
                 new List<int> { seasonStartYear },
                 new List<int> { tier });
+
+            if (!leagueModels.Any())
+            {
+                throw new LeagueModelNotFoundException($"No league model was found for seasonStartYear: {seasonStartYear} and tier {tier}.");
+            }
+
+            if (leagueModels.Count > 1)
+            {
+                throw new MultipleLeagueModelsFoundException($"Multiple league models were found for seasonStartYear: {seasonStartYear} and tier {tier}.");
+            }
 
             return leagueModels.Single();
         }
