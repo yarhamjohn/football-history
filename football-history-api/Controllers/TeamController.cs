@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace football.history.api.Controllers
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class TeamController : Controller
     {
         private readonly ITeamBuilder _teamBuilder;
@@ -17,14 +18,20 @@ namespace football.history.api.Controllers
             _tierRepository = tierRepository;
         }
 
-        [HttpGet("[action]")]
+        [HttpGet]
+        [MapToApiVersion("1")]
+        [Route("GetAllTeams")]
         public List<Team> GetAllTeams() => _teamBuilder.GetAllTeams();
 
-        [HttpGet("[action]")]
+        [HttpGet]
+        [MapToApiVersion("1")]
+        [Route("GetTeamsInLeague")]
         public List<Team> GetTeamsInLeague(int seasonStartYear, int tier) =>
             _teamBuilder.GetTeamsInLeague(seasonStartYear, tier);
 
-        [HttpGet("[action]")]
+        [HttpGet]
+        [MapToApiVersion("1")]
+        [Route("GetTier")]
         public int GetTier(int seasonStartYear, string team) =>
             _tierRepository.GetTierForTeamInYear(seasonStartYear, team) ?? -1;
     }

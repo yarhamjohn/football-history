@@ -1,3 +1,5 @@
+using System.Linq;
+using System.Reflection;
 using football.history.api.Builders;
 using football.history.api.Domain;
 using football.history.api.Repositories.League;
@@ -8,11 +10,13 @@ using football.history.api.Repositories.Team;
 using football.history.api.Repositories.Tier;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace football.history.api
 {
@@ -22,24 +26,11 @@ namespace football.history.api
         {
             Configuration = configuration;
         }
-
+        
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSwaggerGen(
-                c =>
-                    {
-                        c.SwaggerDoc(
-                            "v1",
-                            new OpenApiInfo
-                            {
-                                Title = "Football History API",
-                                Version = "v1"
-                            });
-                    });
-
             services.AddTransient<ITeamBuilder, TeamBuilder>();
             services.AddTransient<ISeasonBuilder, SeasonBuilder>();
             services.AddTransient<IMatchBuilder, MatchBuilder>();
@@ -55,7 +46,48 @@ namespace football.history.api
 
             var connString = Configuration.GetConnectionString("FootballHistory");
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connString));
+            
             services.AddControllers();
+            services.AddApiVersioning(o =>
+            {
+                o.AssumeDefaultVersionWhenUnspecified = true; 
+                o.DefaultApiVersion = new ApiVersion(1, 0);
+            });
+            
+            services.AddSwaggerGen(
+                options =>
+                {
+                    options.SwaggerDoc(
+                        "v1",
+                        new OpenApiInfo
+                        {
+                            Title = "Football History API v1",
+                            Version = "v1"
+                        });
+            
+                options.OperationFilter<RemoveVersionFromParameter>();
+                options.DocumentFilter<ReplaceVersionWithExactValueInPath>();
+
+                options.DocInclusionPredicate((version, desc) => 
+                {
+                    if (!desc.TryGetMethodInfo(out MethodInfo methodInfo))
+                        return false;
+
+                    var versions = methodInfo.DeclaringType!
+                        .GetCustomAttributes(true)
+                        .OfType<ApiVersionAttribute>()
+                        .SelectMany(attr => attr.Versions);
+
+                    var maps = methodInfo
+                        .GetCustomAttributes(true)
+                        .OfType<MapToApiVersionAttribute>()
+                        .SelectMany(attr => attr.Versions)
+                        .ToArray();
+
+                    return versions.Any(v => $"v{v.ToString()}" == version)
+                           && (!maps.Any() || maps.Any(v => $"v{v.ToString()}" == version));
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,16 +97,19 @@ namespace football.history.api
             {
                 app.UseCors(
                     builder =>
-                        {
-                            builder.WithOrigins(
-                                Configuration.GetSection("WhitelistedUrls").Get<string[]>());
-                        });
+                    {
+                        builder.WithOrigins(
+                            Configuration.GetSection("WhitelistedUrls").Get<string[]>());
+                    });
                 app.UseDeveloperExceptionPage();
             }
 
             app.UseSwagger();
             app.UseSwaggerUI(
-                c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Football History API v1"));
+                options =>
+                {
+                    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                });
 
             app.UseHttpsRedirection();
             app.UseRouting();

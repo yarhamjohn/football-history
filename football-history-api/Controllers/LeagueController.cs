@@ -1,12 +1,11 @@
 using System;
 using football.history.api.Builders;
-using football.history.api.Calculators;
-using football.history.api.Repositories.Tier;
 using Microsoft.AspNetCore.Mvc;
 
 namespace football.history.api.Controllers
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class LeagueController : Controller
     {
         private readonly ILeagueBuilder _leagueBuilder;
@@ -16,19 +15,25 @@ namespace football.history.api.Controllers
             _leagueBuilder = leagueBuilder;
         }
 
-        [HttpGet("[action]")]
+        [HttpGet]
+        [MapToApiVersion("1")]
+        [Route("GetCompletedLeague")]
         public LeagueDto GetCompletedLeague(int seasonStartYear, int tier)
         {
             return _leagueBuilder.GetCompletedLeague(tier, seasonStartYear);
         }
 
-        [HttpGet("[action]")]
+        [HttpGet]
+        [MapToApiVersion("1")]
+        [Route("GetCompletedLeagueForTeam")]
         public LeagueDto GetCompletedLeagueForTeam(int seasonStartYear, string team)
         {
             return _leagueBuilder.GetCompletedLeagueForTeam(team, seasonStartYear);
         }
 
-        [HttpGet("[action]")]
+        [HttpGet]
+        [MapToApiVersion("1")]
+        [Route("GetLeagueOnDate")]
         public LeagueDto GetLeagueOnDate(int tier, DateTime date)
         {
             return _leagueBuilder.GetLeagueOnDate(tier, date);

@@ -71,8 +71,8 @@ const useLeague = (seasonStartYear: number, club?: string, tier?: number) => {
         dispatch({ type: "LOAD_LEAGUE" });
 
         let url = club
-            ? `${api}/api/League/GetCompletedLeagueForTeam?seasonStartYear=${seasonStartYear}&team=${club}`
-            : `${api}/api/League/GetCompletedLeague?seasonStartYear=${seasonStartYear}&tier=${tier}`;
+            ? `${api}/api/v1/League/GetCompletedLeagueForTeam?seasonStartYear=${seasonStartYear}&team=${club}`
+            : `${api}/api/v1/League/GetCompletedLeague?seasonStartYear=${seasonStartYear}&tier=${tier}`;
 
         fetch(url)
             .then((response) => response.json())

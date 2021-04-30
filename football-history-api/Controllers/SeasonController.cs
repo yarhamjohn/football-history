@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace football.history.api.Controllers
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class SeasonController : Controller
     {
         private readonly ISeasonBuilder _seasonBuilder;
@@ -15,7 +16,9 @@ namespace football.history.api.Controllers
             _seasonBuilder = seasonBuilder;
         }
 
-        [HttpGet("[action]")]
+        [HttpGet]
+        [MapToApiVersion("1")]
+        [Route("GetSeasons")]
         public List<Season> GetSeasons()
         {
             // TODO: This is a hack to limit the returned data - should be removed/updated as more data is added

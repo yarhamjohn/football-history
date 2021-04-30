@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace football.history.api.Controllers
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class MatchController : Controller
     {
         private readonly IMatchBuilder _matchBuilder;
@@ -14,14 +15,18 @@ namespace football.history.api.Controllers
             _matchBuilder = matchBuilder;
         }
 
-        [HttpGet("[action]")]
+        [HttpGet]
+        [MapToApiVersion("1")]
+        [Route("GetLeagueMatches")]
         public List<Match> GetLeagueMatches(
             List<int> seasonStartYears,
             List<int> tiers,
             List<string> teams) =>
             _matchBuilder.GetLeagueMatches(seasonStartYears, tiers, teams);
 
-        [HttpGet("[action]")]
+        [HttpGet]
+        [MapToApiVersion("1")]
+        [Route("GetHeadToHeadLeagueMatches")]
         public List<Match> GetHeadToHeadLeagueMatches(
             List<int> seasonStartYears,
             List<int> tiers,
@@ -29,7 +34,9 @@ namespace football.history.api.Controllers
             string teamTwo) =>
             _matchBuilder.GetHeadToHeadLeagueMatches(seasonStartYears, tiers, teamOne, teamTwo);
 
-        [HttpGet("[action]")]
+        [HttpGet]
+        [MapToApiVersion("1")]
+        [Route("GetPlayOffMatches")]
         public List<KnockoutMatch> GetPlayOffMatches(List<int> seasonStartYears, List<int> tiers) =>
             _matchBuilder.GetPlayOffMatches(seasonStartYears, tiers);
     }

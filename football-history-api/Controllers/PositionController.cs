@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace football.history.api.Controllers
 {
-    [Route("api/[controller]")]
+    [ApiVersion("1")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class PositionController : Controller
     {
         private readonly IPositionBuilder _positionBuilder;
@@ -17,7 +18,9 @@ namespace football.history.api.Controllers
             _tierRepository = tierRepository;
         }
 
-        [HttpGet("[action]")]
+        [HttpGet]
+        [MapToApiVersion("1")]
+        [Route("GetLeaguePositions")]
         public List<LeaguePosition> GetLeaguePositions(int seasonStartYear, string team)
         {
             var tier = _tierRepository.GetTierForTeamInYear(seasonStartYear, team);
@@ -26,14 +29,18 @@ namespace football.history.api.Controllers
                 : _positionBuilder.GetLeaguePositions(seasonStartYear, (int) tier, team);
         }
 
-        [HttpGet("[action]")]
+        [HttpGet]
+        [MapToApiVersion("1")]
+        [Route("GetHistoricalPositions")]
         public List<HistoricalPosition> GetHistoricalPositions(
             int startYear,
             int endYear,
             string team) =>
             _positionBuilder.GetHistoricalPositions(startYear, endYear, team);
 
-        [HttpGet("[action]")]
+        [HttpGet]
+        [MapToApiVersion("1")]
+        [Route("GetHistoricalPositionsForSeasons")]
         public List<HistoricalPosition> GetHistoricalPositionsForSeasons(
             List<int> seasonStartYears,
             string team) =>
