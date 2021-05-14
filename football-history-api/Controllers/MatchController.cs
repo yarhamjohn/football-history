@@ -1,43 +1,108 @@
+using System;
 using System.Collections.Generic;
-using football.history.api.Builders;
+using System.Linq;
+using football.history.api.Builders.Match;
+using football.history.api.Exceptions;
+using football.history.api.Repositories.Match;
 using Microsoft.AspNetCore.Mvc;
 
 namespace football.history.api.Controllers
 {
-    [ApiVersion("1")]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiVersion("2")]
+    [Route("api/v{version:apiVersion}/matches")]
     public class MatchController : Controller
     {
-        private readonly IMatchBuilder _matchBuilder;
+        private readonly IMatchRepository _repository;
 
-        public MatchController(IMatchBuilder matchBuilder)
+        public MatchController(IMatchRepository matchRepository)
         {
-            _matchBuilder = matchBuilder;
+            _repository = matchRepository;
         }
 
         [HttpGet]
-        [MapToApiVersion("1")]
-        [Route("GetLeagueMatches")]
-        public List<Match> GetLeagueMatches(
-            List<int> seasonStartYears,
-            List<int> tiers,
-            List<string> teams) =>
-            _matchBuilder.GetLeagueMatches(seasonStartYears, tiers, teams);
+        public ApiResponse<List<MatchDto>?> GetMatches(
+            long? competitionId,
+            long? seasonId,
+            long? teamId,
+            string? type,
+            DateTime? matchDate)
+        {
+            try
+            {
+                var matches = _repository
+                    .GetMatches(competitionId, seasonId, teamId, type, matchDate)
+                    .Select(BuildMatchDto)
+                    .ToList();
+                return new(matches);
+            }
+            catch (FootballHistoryException ex)
+            {
+                return new(
+                    Result: null,
+                    Error: new(ex.Message, ex.Code));
+            }
+            catch (Exception ex)
+            {
+                return new(
+                    Result: null,
+                    Error: new($"Something went wrong. {ex.Message}"));
+            }
+        }
 
-        [HttpGet]
-        [MapToApiVersion("1")]
-        [Route("GetHeadToHeadLeagueMatches")]
-        public List<Match> GetHeadToHeadLeagueMatches(
-            List<int> seasonStartYears,
-            List<int> tiers,
-            string teamOne,
-            string teamTwo) =>
-            _matchBuilder.GetHeadToHeadLeagueMatches(seasonStartYears, tiers, teamOne, teamTwo);
+        [HttpGet("{id:long}")]
+        public ApiResponse<MatchDto?> GetMatch(long id)
+        {
+            try
+            {
+                var match = _repository.GetMatch(id);
+                return new(BuildMatchDto(match));
+            }
+            catch (FootballHistoryException ex)
+            {
+                return new(
+                    Result: null,
+                    Error: new(ex.Message, ex.Code));
+            }
+            catch (Exception ex)
+            {
+                return new(
+                    Result: null,
+                    Error: new($"Something went wrong. {ex.Message}"));
+            }
+        }
 
-        [HttpGet]
-        [MapToApiVersion("1")]
-        [Route("GetPlayOffMatches")]
-        public List<KnockoutMatch> GetPlayOffMatches(List<int> seasonStartYears, List<int> tiers) =>
-            _matchBuilder.GetPlayOffMatches(seasonStartYears, tiers);
+        private static MatchDto BuildMatchDto(MatchModel match) =>
+            new(match.Id,
+                match.MatchDate,
+                Competition: new(
+                    match.CompetitionId,
+                    match.CompetitionName,
+                    match.CompetitionStartYear,
+                    match.CompetitionEndYear,
+                    match.CompetitionLevel),
+                Rules: new(
+                    match.RulesType,
+                    match.RulesStage,
+                    match.RulesExtraTime,
+                    match.RulesPenalties,
+                    match.RulesNumLegs,
+                    match.RulesAwayGoals,
+                    match.RulesReplays),
+                HomeTeam: new(
+                    match.HomeTeamId,
+                    match.HomeTeamName,
+                    match.HomeTeamAbbreviation,
+                    match.HomeGoals,
+                    match.HomeGoalsExtraTime,
+                    match.HomePenaltiesTaken,
+                    match.HomePenaltiesScored),
+                AwayTeam: new(
+                    match.AwayTeamId,
+                    match.AwayTeamName,
+                    match.AwayTeamAbbreviation,
+                    match.AwayGoals,
+                    match.AwayGoalsExtraTime,
+                    match.AwayPenaltiesTaken,
+                    match.AwayPenaltiesScored));
     }
 }

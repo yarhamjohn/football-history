@@ -1,347 +1,119 @@
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
-using football.history.api.Domain;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
+using football.history.api.Exceptions;
 
 namespace football.history.api.Repositories.Match
 {
+    public interface IMatchRepository
+    {
+        public List<MatchModel> GetMatches(
+            long? competitionId = null,
+            long? seasonId = null,
+            long? teamId = null,
+            string? type = null,
+            DateTime? matchDate = null);
+        public MatchModel GetMatch(long matchId);
+        public List<MatchModel> GetLeagueMatches(long competitionId);
+        public List<MatchModel> GetPlayOffMatches(long competitionId);
+    }
+
     public class MatchRepository : IMatchRepository
     {
-        private readonly DatabaseContext _context;
+        private readonly IDatabaseConnection _connection;
+        private readonly IMatchCommandBuilder _queryBuilder;
 
-        public MatchRepository(DatabaseContext context)
+        public MatchRepository(IDatabaseConnection connection, IMatchCommandBuilder queryBuilder)
         {
-            _context = context;
+            _connection   = connection;
+            _queryBuilder = queryBuilder;
         }
 
-        public List<MatchModel> GetLeagueMatchModels(int seasonStartYear, int tier) =>
-            GetLeagueMatchModels(
-                new List<int> { seasonStartYear },
-                new List<int> { tier },
-                new List<string>());
-
-        public List<MatchModel> GetLeagueMatchModels(List<int> seasonStartYears, List<int> tiers) =>
-            GetLeagueMatchModels(seasonStartYears, tiers, new List<string>());
-
-        public List<MatchModel> GetLeagueMatchModels(
-            List<int> seasonStartYears,
-            List<int> tiers,
-            List<string> teams)
+        public List<MatchModel> GetMatches(
+            long? competitionId = null,
+            long? seasonId = null,
+            long? teamId = null,
+            string? type = null,
+            DateTime? matchDate = null)
         {
-            var conn = _context.Database.GetDbConnection();
-            var cmd = GetLeagueMatchDbCommand(conn, seasonStartYears, tiers, teams);
-            var result = GetLeagueMatches(cmd);
-            conn.Close();
-            return result;
+            _connection.Open();
+            var cmd = _queryBuilder.Build(
+                _connection, competitionId, seasonId, teamId, type, matchDate);
+            var matches = GetMatchModels(cmd);
+            _connection.Close();
+            
+            return matches;
         }
 
-        public List<MatchModel> GetPlayOffMatchModels(int seasonStartYear, int tier) =>
-            GetPlayOffMatchModels(new List<int> { seasonStartYear }, new List<int> { tier });
-
-        public List<MatchModel> GetPlayOffMatchModels(List<int> seasonStartYears, List<int> tiers)
+        public MatchModel GetMatch(long matchId)
         {
-            var conn = _context.Database.GetDbConnection();
-            var cmd = GetPlayOffMatchDbCommand(conn, seasonStartYears, tiers);
-            var result = GetPlayOffMatches(cmd);
-            conn.Close();
-            return result;
+            _connection.Open();
+            var cmd = _queryBuilder.Build(_connection, matchId);
+            var matches = GetMatchModels(cmd);
+            _connection.Close();
+
+            return matches.Count switch
+            {
+                1 => matches.Single(),
+                0 => throw new DataNotFoundException($"No match matched the specified id ({matchId})."),
+                _ => throw new DataInvalidException($"{matches.Count} matches matched the specified id ({matchId}).")
+            };
         }
 
-        public List<MatchModel> GetLeagueHeadToHeadMatchModels(
-            List<int> seasonStartYears,
-            List<int> tiers,
-            string teamOne,
-            string teamTwo)
+        public List<MatchModel> GetLeagueMatches(long competitionId)
         {
-            var conn = _context.Database.GetDbConnection();
-            var cmd = GetLeagueMatchDbCommand(
-                conn,
-                seasonStartYears,
-                tiers,
-                new List<string>
-                {
-                    teamOne,
-                    teamTwo
-                });
-            var result = GetLeagueMatches(cmd)
-                .Where(
-                    m => m.HomeTeam == teamOne && m.AwayTeam == teamTwo
-                        || m.HomeTeam == teamTwo && m.AwayTeam == teamOne)
-                .ToList();
-
-            conn.Close();
-            return result;
+            return GetMatches(competitionId, seasonId: null, teamId: null, "League");
         }
 
-        private List<MatchModel> GetLeagueMatches(DbCommand cmd)
+        public List<MatchModel> GetPlayOffMatches(long competitionId)
         {
-            var result = new List<MatchModel>();
+            return GetMatches(competitionId, seasonId: null, teamId: null, "PlayOff");
+        }
+
+        private static List<MatchModel> GetMatchModels(DbCommand cmd)
+        {
+            var matches = new List<MatchModel>();
+            
             using var reader = cmd.ExecuteReader();
             while (reader.Read())
             {
-                result.Add(
-                    new MatchModel
-                    {
-                        Tier = reader.GetByte(0),
-                        Division = reader.GetString(1),
-                        Date = reader.GetDateTime(2),
-                        HomeTeam = reader.GetString(3),
-                        HomeTeamAbbreviation = reader.GetString(4),
-                        AwayTeam = reader.GetString(5),
-                        AwayTeamAbbreviation = reader.GetString(6),
-                        HomeGoals = reader.GetByte(7),
-                        AwayGoals = reader.GetByte(8)
-                    });
+                matches.Add(GetMatchModel(reader));
             }
 
-            return result;
+            return matches;
         }
 
-        private List<MatchModel> GetPlayOffMatches(DbCommand cmd)
-        {
-            var result = new List<MatchModel>();
-            using var reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                result.Add(
-                    new MatchModel
-                    {
-                        Tier = reader.GetByte(0),
-                        Division = reader.GetString(1),
-                        Date = reader.GetDateTime(2),
-                        Round = reader.GetString(3),
-                        HomeTeam = reader.GetString(4),
-                        HomeTeamAbbreviation = reader.GetString(5),
-                        AwayTeam = reader.GetString(6),
-                        AwayTeamAbbreviation = reader.GetString(7),
-                        HomeGoals = reader.GetByte(8),
-                        AwayGoals = reader.GetByte(9),
-                        ExtraTime = reader.GetBoolean(10),
-                        HomeGoalsExtraTime = reader.GetByte(11),
-                        AwayGoalsExtraTime = reader.GetByte(12),
-                        PenaltyShootout = reader.GetBoolean(13),
-                        HomePenaltiesTaken = reader.GetByte(14),
-                        HomePenaltiesScored = reader.GetByte(15),
-                        AwayPenaltiesTaken = reader.GetByte(16),
-                        AwayPenaltiesScored = reader.GetByte(17)
-                    });
-            }
-
-            return result;
-        }
-
-        private static DbCommand GetLeagueMatchDbCommand(
-            DbConnection conn,
-            List<int> seasonStartYears,
-            List<int> tiers,
-            List<string> teams)
-        {
-            conn.Open();
-            var cmd = conn.CreateCommand();
-
-            var whereClause = BuildWhereClause(seasonStartYears, tiers, teams);
-            var sql = $@"
-SELECT d.Tier
-      ,d.Name
-      ,m.MatchDate
-      ,hc.Name
-      ,hc.Abbreviation
-      ,ac.Name
-      ,ac.Abbreviation
-      ,m.HomeGoals
-      ,m.AwayGoals
-FROM [dbo].[LeagueMatches] AS m
-INNER JOIN [dbo].[Divisions] AS d
-  ON m.DivisionId = d.Id
-INNER JOIN [dbo].[Clubs] AS hc
-  ON m.HomeClubId = hc.Id
-INNER JOIN [dbo].[Clubs] AS ac
-  ON m.AwayClubId = ac.Id
-{whereClause}
-";
-
-            cmd.CommandText = sql;
-
-            for (var i = 0; i < tiers.Count; i++)
-            {
-                cmd.Parameters.Add(
-                    new SqlParameter
-                    {
-                        ParameterName = $"@Tier{i}",
-                        Value = tiers[i]
-                    });
-            }
-
-            for (var i = 0; i < teams.Count; i++)
-            {
-                cmd.Parameters.Add(
-                    new SqlParameter
-                    {
-                        ParameterName = $"@Team{i}",
-                        Value = teams[i]
-                    });
-            }
-
-            for (var i = 0; i < seasonStartYears.Count; i++)
-            {
-                cmd.Parameters.Add(
-                    new SqlParameter
-                    {
-                        ParameterName = $"@SeasonStartYear{i}",
-                        Value = seasonStartYears[i]
-                    });
-                cmd.Parameters.Add(
-                    new SqlParameter
-                    {
-                        ParameterName = $"@SeasonEndYear{i}",
-                        Value = seasonStartYears[i] + 1
-                    });
-            }
-
-            return cmd;
-        }
-
-        private static DbCommand GetPlayOffMatchDbCommand(
-            DbConnection conn,
-            List<int> seasonStartYears,
-            List<int> tiers)
-        {
-            conn.Open();
-            var cmd = conn.CreateCommand();
-
-            var whereClause = BuildWhereClause(seasonStartYears, tiers, new List<string>());
-            var sql = $@"
-SELECT d.Tier
-      ,d.Name
-      ,m.MatchDate
-      ,m.Round
-      ,hc.Name
-      ,hc.Abbreviation
-      ,ac.Name
-      ,ac.Abbreviation
-      ,m.HomeGoals
-      ,m.AwayGoals
-      ,m.ExtraTime
-      ,m.HomeGoalsET
-      ,m.AwayGoalsET
-      ,m.PenaltyShootout
-      ,m.HomePenaltiesTaken
-      ,m.HomePenaltiesScored
-      ,m.AwayPenaltiesTaken
-      ,m.AwayPenaltiesScored
-FROM [dbo].[PlayOffMatches] AS m
-INNER JOIN [dbo].[Divisions] AS d
-  ON m.DivisionId = d.Id
-INNER JOIN [dbo].[Clubs] AS hc
-  ON m.HomeClubId = hc.Id
-INNER JOIN [dbo].[Clubs] AS ac
-  ON m.AwayClubId = ac.Id
-{whereClause}
-";
-
-            cmd.CommandText = sql;
-
-            for (var i = 0; i < tiers.Count; i++)
-            {
-                cmd.Parameters.Add(
-                    new SqlParameter
-                    {
-                        ParameterName = $"@Tier{i}",
-                        Value = tiers[i]
-                    });
-            }
-
-            for (var i = 0; i < seasonStartYears.Count; i++)
-            {
-                cmd.Parameters.Add(
-                    new SqlParameter
-                    {
-                        ParameterName = $"@SeasonStartYear{i}",
-                        Value = seasonStartYears[i]
-                    });
-                cmd.Parameters.Add(
-                    new SqlParameter
-                    {
-                        ParameterName = $"@SeasonEndYear{i}",
-                        Value = seasonStartYears[i] + 1
-                    });
-            }
-
-            return cmd;
-        }
-
-        private static string BuildWhereClause(
-            List<int> seasonStartYears,
-            List<int> tiers,
-            List<string> teams)
-        {
-            var clauses = new List<string>();
-            var tierClauses = new List<string>();
-            for (var i = 0; i < tiers.Count; i++)
-            {
-                tierClauses.Add($"d.Tier = @Tier{i}");
-            }
-
-            if (tierClauses.Count > 1)
-            {
-                clauses.Add("(" + string.Join(" OR ", tierClauses) + ")");
-            }
-
-            if (tierClauses.Count == 1)
-            {
-                clauses.Add(tierClauses.Single());
-            }
-
-            var teamClauses = new List<string>();
-            for (var i = 0; i < teams.Count; i++)
-            {
-                teamClauses.Add($"(hc.Name = @Team{i} OR ac.Name = @Team{i})");
-            }
-
-            if (teamClauses.Count > 1)
-            {
-                clauses.Add("(" + string.Join(" OR ", teamClauses) + ")");
-            }
-
-            if (teamClauses.Count == 1)
-            {
-                clauses.Add(teamClauses.Single());
-            }
-
-            var seasonClauses = new List<string>();
-            for (var i = 0; i < seasonStartYears.Count; i++)
-            {
-                switch (seasonStartYears[i])
-                {
-                    case 2019:
-                        seasonClauses.Add(
-                            $"m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear{i}, 7, 1) AND DATEFROMPARTS(@SeasonEndYear{i}, 8, 20)");
-                        break;
-                    case 2020:
-                        seasonClauses.Add(
-                            $"m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear{i}, 8, 21) AND DATEFROMPARTS(@SeasonEndYear{i}, 6, 30)");
-                        break;
-                    default:
-                        seasonClauses.Add(
-                            $"m.MatchDate BETWEEN DATEFROMPARTS(@SeasonStartYear{i}, 7, 1) AND DATEFROMPARTS(@SeasonEndYear{i}, 6, 30)");
-                        break;
-                }
-            }
-
-            if (seasonClauses.Count > 1)
-            {
-                clauses.Add("(" + string.Join(" OR ", seasonClauses) + ")");
-            }
-
-            if (seasonClauses.Count == 1)
-            {
-                clauses.Add(seasonClauses.Single());
-            }
-
-            return clauses.Count > 0 ? $"WHERE {string.Join(" AND ", clauses)}" : "";
-        }
+        private static MatchModel GetMatchModel(DbDataReader reader)
+        => new(
+                Id: reader.GetInt64(0),
+                MatchDate: reader.GetDateTime(1),
+                CompetitionId: reader.GetInt64(2),
+                CompetitionName: reader.GetString(3),
+                CompetitionStartYear: reader.GetInt16(4),
+                CompetitionEndYear: reader.GetInt16(5),
+                CompetitionTier: reader.GetByte(6),
+                CompetitionRegion: reader.IsDBNull(7) ? null : reader.GetString(7),
+                RulesType: reader.GetString(8),
+                RulesStage: reader.IsDBNull(9) ? null : reader.GetString(9),
+                RulesExtraTime: reader.GetBoolean(10),
+                RulesPenalties: reader.GetBoolean(11),
+                RulesNumLegs: reader.IsDBNull(12) ? null : reader.GetByte(12),
+                RulesAwayGoals: reader.GetBoolean(13),
+                RulesReplays: reader.GetBoolean(14),
+                HomeTeamId: reader.GetInt64(15),
+                HomeTeamName: reader.GetString(16),
+                HomeTeamAbbreviation: reader.GetString(17),
+                AwayTeamId: reader.GetInt64(18),
+                AwayTeamName: reader.GetString(19),
+                AwayTeamAbbreviation: reader.GetString(20),
+                HomeGoals: reader.GetByte(21),
+                AwayGoals: reader.GetByte(22),
+                HomeGoalsExtraTime: reader.GetByte(23),
+                AwayGoalsExtraTime: reader.GetByte(24),
+                HomePenaltiesTaken: reader.GetByte(25),
+                HomePenaltiesScored: reader.GetByte(26),
+                AwayPenaltiesTaken: reader.GetByte(27),
+                AwayPenaltiesScored: reader.GetByte(28));
     }
 }

@@ -1,8 +1,4 @@
 namespace football.history.api.Repositories.Team
 {
-    public class TeamModel
-    {
-        public string Abbreviation;
-        public string Name;
-    }
+    public record TeamModel (long Id, string Name, string Abbreviation, string? Notes);
 }
