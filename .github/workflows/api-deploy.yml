@@ -1,7 +1,8 @@
 name: Deploy API
 
 on: 
-  push: [ main ]
+  release:
+    types: [ created ]
 
 env:
   AZURE_WEBAPP_NAME: football-history-api   
