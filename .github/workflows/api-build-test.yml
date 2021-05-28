@@ -33,3 +33,9 @@ jobs:
 
     - name: Publish
       run: dotnet publish --configuration Release --no-restore
+
+    - name: Upload FootballHistoryAPI Build Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: FootballHistoryAPI
+        path: /home/runner/work/football-history/football-history/football-history-api/bin/Release/net5.0/publish/
