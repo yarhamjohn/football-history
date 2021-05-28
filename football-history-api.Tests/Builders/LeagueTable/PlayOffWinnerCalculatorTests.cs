@@ -107,7 +107,7 @@ namespace football.history.api.Tests.Builders.LeagueTable
 
             ex.Message.Should()
                 .Be(
-                    $"Both matches have the same date ({new DateTime(2000, 1, 1).ToString(CultureInfo.InvariantCulture)})");
+                    $"Both matches have the same date ({new DateTime(2000, 1, 1)})");
         }
 
         [Test]
