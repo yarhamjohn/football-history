@@ -9,19 +9,27 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
+
     - name: Restore dependencies
       run: dotnet restore
+
     - name: Build
       run: dotnet build --configuration Release --no-restore
+
     - name: Test
       run: dotnet test --configuration Release --no-restore --no-build --verbosity normal --logger trx --results-directory "TestResults"
+
     - name: Upload test results
       uses: actions/upload-artifact@v2
       with:
         name: test-results
         path: TestResults
       if: ${{ always() }}
+
+    - name: Publish
+      run: dotnet publish --configuration Release --no-restore
