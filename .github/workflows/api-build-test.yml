@@ -7,6 +7,10 @@ jobs:
 
     runs-on: windows-latest
 
+    defaults:
+      run:
+        working-directory: ./football-history-api
+
     steps:
     - uses: actions/checkout@v2
 
@@ -38,4 +42,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: FootballHistoryAPI
-        path: D:/a/football-history/football-history/football-history-api/bin/Release/net5.0/publish/
+        path: ./football-history/football-history/football-history-api/bin/Release/net5.0/publish/
