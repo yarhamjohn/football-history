@@ -9,8 +9,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-      with:
-        path: football-history-api
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
@@ -24,13 +22,13 @@ jobs:
       run: dotnet build --configuration Release --no-restore
 
     - name: Test
-      run: dotnet test --configuration Release --no-restore --no-build --verbosity normal --logger trx --results-directory "TestResults"
+      run: dotnet test --configuration Release --no-restore --no-build --verbosity normal --logger trx --results-directory "APITestResults"
 
     - name: Upload test results
       uses: actions/upload-artifact@v2
       with:
-        name: test-results
-        path: TestResults
+        name: api-test-results
+        path: APITestResults
       if: ${{ always() }}
 
     - name: Publish
@@ -40,4 +38,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: FootballHistoryAPI
-        path: /home/runner/work/football-history/football-history/football-history-api/bin/Release/net5.0/publish/
+        path: $GITHUB_WORKSPACE/football-history/football-history/football-history-api/bin/Release/net5.0/publish/
