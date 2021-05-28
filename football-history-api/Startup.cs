@@ -2,12 +2,12 @@ using System.Linq;
 using System.Reflection;
 using football.history.api.Builders;
 using football.history.api.Domain;
-using football.history.api.Repositories.League;
+using football.history.api.Repositories;
+using football.history.api.Repositories.Competition;
 using football.history.api.Repositories.Match;
-using football.history.api.Repositories.PointDeductions;
+using football.history.api.Repositories.PointDeduction;
 using football.history.api.Repositories.Season;
 using football.history.api.Repositories.Team;
-using football.history.api.Repositories.Tier;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -26,34 +26,43 @@ namespace football.history.api
         {
             Configuration = configuration;
         }
-        
+
         public IConfiguration Configuration { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<ITeamBuilder, TeamBuilder>();
-            services.AddTransient<ISeasonBuilder, SeasonBuilder>();
-            services.AddTransient<IMatchBuilder, MatchBuilder>();
-            services.AddTransient<ILeagueBuilder, LeagueBuilder>();
-            services.AddTransient<IPositionBuilder, PositionBuilder>();
+            services.AddTransient<ILeagueTableBuilder, LeagueTableBuilder>();
+            services.AddTransient<ILeagueTableBuilder, LeagueTableBuilder>();
+            services.AddTransient<IRowComparerFactory, RowComparerFactory>();
+            services.AddTransient<IStatusCalculator, StatusCalculator>();
+            services.AddTransient<IPlayOffWinnerChecker, PlayOffWinnerChecker>();
+            services.AddTransient<IPlayOffWinnerCalculator, PlayOffWinnerCalculator>();
+            services.AddTransient<IRowBuilder, RowBuilder>();
+            services.AddTransient<IHistoricalPositionBuilder, HistoricalPositionBuilder>();
+            services.AddTransient<ILeaguePositionBuilder, LeaguePositionBuilder>();
+            services.AddTransient<ITeamCommandBuilder, TeamCommandBuilder>();
+            services.AddTransient<ISeasonCommandBuilder, SeasonCommandBuilder>();
+            services.AddTransient<IMatchCommandBuilder, MatchCommandBuilder>();
+            services.AddTransient<ICompetitionCommandBuilder, CompetitionCommandBuilder>();
+            services.AddTransient<IPointDeductionCommandBuilder, PointDeductionCommandBuilder>();
 
+            services.AddTransient<IDatabaseConnection, DatabaseConnection>();
             services.AddTransient<ITeamRepository, TeamRepository>();
             services.AddTransient<ISeasonRepository, SeasonRepository>();
-            services.AddTransient<ILeagueRepository, LeagueRepository>();
+            services.AddTransient<ICompetitionRepository, CompetitionRepository>();
             services.AddTransient<IMatchRepository, MatchRepository>();
-            services.AddTransient<IPointsDeductionRepository, PointsDeductionRepository>();
-            services.AddTransient<ITierRepository, TierRepository>();
+            services.AddTransient<IPointDeductionRepository, PointDeductionRepository>();
 
             var connString = Configuration.GetConnectionString("FootballHistory");
             services.AddDbContext<DatabaseContext>(options => options.UseSqlServer(connString));
-            
+
             services.AddControllers();
             services.AddApiVersioning(o =>
             {
-                o.AssumeDefaultVersionWhenUnspecified = true; 
+                o.AssumeDefaultVersionWhenUnspecified = true;
                 o.DefaultApiVersion = new ApiVersion(1, 0);
             });
-            
+
             services.AddSwaggerGen(
                 options =>
                 {
@@ -64,30 +73,38 @@ namespace football.history.api
                             Title = "Football History API v1",
                             Version = "v1"
                         });
-            
-                options.OperationFilter<RemoveVersionFromParameter>();
-                options.DocumentFilter<ReplaceVersionWithExactValueInPath>();
 
-                options.DocInclusionPredicate((version, desc) => 
-                {
-                    if (!desc.TryGetMethodInfo(out MethodInfo methodInfo))
-                        return false;
+                    options.SwaggerDoc(
+                        "v2",
+                        new OpenApiInfo
+                        {
+                            Title = "Football History API v2",
+                            Version = "v2"
+                        });
 
-                    var versions = methodInfo.DeclaringType!
-                        .GetCustomAttributes(true)
-                        .OfType<ApiVersionAttribute>()
-                        .SelectMany(attr => attr.Versions);
+                    options.OperationFilter<RemoveVersionFromParameter>();
+                    options.DocumentFilter<ReplaceVersionWithExactValueInPath>();
 
-                    var maps = methodInfo
-                        .GetCustomAttributes(true)
-                        .OfType<MapToApiVersionAttribute>()
-                        .SelectMany(attr => attr.Versions)
-                        .ToArray();
+                    options.DocInclusionPredicate((version, desc) =>
+                    {
+                        if (!desc.TryGetMethodInfo(out MethodInfo methodInfo))
+                            return false;
 
-                    return versions.Any(v => $"v{v.ToString()}" == version)
-                           && (!maps.Any() || maps.Any(v => $"v{v.ToString()}" == version));
+                        var versions = methodInfo.DeclaringType!
+                            .GetCustomAttributes(true)
+                            .OfType<ApiVersionAttribute>()
+                            .SelectMany(attr => attr.Versions);
+
+                        var maps = methodInfo
+                            .GetCustomAttributes(true)
+                            .OfType<MapToApiVersionAttribute>()
+                            .SelectMany(attr => attr.Versions)
+                            .ToArray();
+
+                        return versions.Any(v => $"v{v.ToString()}" == version)
+                               && (!maps.Any() || maps.Any(v => $"v{v.ToString()}" == version));
+                    });
                 });
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -109,6 +126,7 @@ namespace football.history.api
                 options =>
                 {
                     options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                    options.SwaggerEndpoint("/swagger/v2/swagger.json", "v2");
                 });
 
             app.UseHttpsRedirection();

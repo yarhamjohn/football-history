@@ -1,38 +1,72 @@
+using System;
 using System.Collections.Generic;
-using football.history.api.Builders;
-using football.history.api.Repositories.Tier;
+using System.Linq;
+using football.history.api.Builders.Team;
+using football.history.api.Exceptions;
+using football.history.api.Repositories.Team;
 using Microsoft.AspNetCore.Mvc;
 
 namespace football.history.api.Controllers
 {
-    [ApiVersion("1")]
-    [Route("api/v{version:apiVersion}/[controller]")]
+    [ApiVersion("2")]
+    [Route("api/v{version:apiVersion}/teams")]
     public class TeamController : Controller
     {
-        private readonly ITeamBuilder _teamBuilder;
-        private readonly ITierRepository _tierRepository;
+        private readonly ITeamRepository _repository;
 
-        public TeamController(ITeamBuilder teamBuilder, ITierRepository tierRepository)
+        public TeamController(ITeamRepository repository)
         {
-            _teamBuilder = teamBuilder;
-            _tierRepository = tierRepository;
+            _repository = repository;
         }
 
         [HttpGet]
-        [MapToApiVersion("1")]
-        [Route("GetAllTeams")]
-        public List<Team> GetAllTeams() => _teamBuilder.GetAllTeams();
+        public ApiResponse<List<TeamDto>?> GetAllTeams()
+        {
+            try
+            {
+                var teams = _repository.GetAllTeams()
+                    .Select(BuildTeamDto)
+                    .ToList();
 
-        [HttpGet]
-        [MapToApiVersion("1")]
-        [Route("GetTeamsInLeague")]
-        public List<Team> GetTeamsInLeague(int seasonStartYear, int tier) =>
-            _teamBuilder.GetTeamsInLeague(seasonStartYear, tier);
+                return new(teams);
+            }
+            catch (FootballHistoryException ex)
+            {
+                return new(
+                    Result: null,
+                    Error: new(ex.Message, ex.Code));
+            }
+            catch (Exception ex)
+            {
+                return new(
+                    Result: null,
+                    Error: new($"Something went wrong. {ex.Message}"));
+            }
+        }
 
-        [HttpGet]
-        [MapToApiVersion("1")]
-        [Route("GetTier")]
-        public int GetTier(int seasonStartYear, string team) =>
-            _tierRepository.GetTierForTeamInYear(seasonStartYear, team) ?? -1;
+        [HttpGet("{id:long}")]
+        public ApiResponse<TeamDto?> GetTeam(long id)
+        {
+            try
+            {
+                var team = _repository.GetTeam(id);
+                return new(BuildTeamDto(team));
+            }
+            catch (FootballHistoryException ex)
+            {
+                return new(
+                    Result: null,
+                    Error: new(ex.Message, ex.Code));
+            }
+            catch (Exception ex)
+            {
+                return new(
+                    Result: null,
+                    Error: new($"Something went wrong. {ex.Message}"));
+            }
+        }
+
+        private static TeamDto BuildTeamDto(TeamModel team) =>
+            new(team.Id, team.Name, team.Abbreviation, team.Notes);
     }
 }

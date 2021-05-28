@@ -2,25 +2,37 @@ using System;
 
 namespace football.history.api.Repositories.Match
 {
-    public class MatchModel
+    public record MatchModel (
+        long Id,
+        DateTime MatchDate,
+        long CompetitionId,
+        string CompetitionName,
+        int CompetitionStartYear,
+        int CompetitionEndYear,
+        int CompetitionTier,
+        string? CompetitionRegion,
+        string RulesType,
+        string? RulesStage,
+        bool RulesExtraTime,
+        bool RulesPenalties,
+        int? RulesNumLegs,
+        bool RulesAwayGoals,
+        bool RulesReplays,
+        long HomeTeamId,
+        string HomeTeamName,
+        string HomeTeamAbbreviation,
+        long AwayTeamId,
+        string AwayTeamName,
+        string AwayTeamAbbreviation,
+        int HomeGoals,
+        int AwayGoals,
+        int HomeGoalsExtraTime,
+        int AwayGoalsExtraTime,
+        int HomePenaltiesTaken,
+        int HomePenaltiesScored,
+        int AwayPenaltiesTaken,
+        int AwayPenaltiesScored)
     {
-        public int Tier { get; set; }
-        public string Division { get; set; }
-        public DateTime Date { get; set; }
-        public string HomeTeam { get; set; }
-        public string HomeTeamAbbreviation { get; set; }
-        public string AwayTeam { get; set; }
-        public string AwayTeamAbbreviation { get; set; }
-        public int HomeGoals { get; set; }
-        public int AwayGoals { get; set; }
-        public string Round { get; set; }
-        public bool ExtraTime { get; set; }
-        public int? HomeGoalsExtraTime { get; set; }
-        public int? AwayGoalsExtraTime { get; set; }
-        public bool PenaltyShootout { get; set; }
-        public int? HomePenaltiesTaken { get; set; }
-        public int? HomePenaltiesScored { get; set; }
-        public int? AwayPenaltiesTaken { get; set; }
-        public int? AwayPenaltiesScored { get; set; }
-    }
+        public readonly string CompetitionLevel = $@"{CompetitionTier}{CompetitionRegion}";
+    };
 }
