@@ -9,6 +9,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      with:
+        path: football-history-api
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
