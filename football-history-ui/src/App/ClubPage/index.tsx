@@ -8,36 +8,40 @@ import { SeasonFilter } from "../components/Filters/SeasonFilter";
 import { Matches } from "./Matches";
 import { HistoricalPositions } from "../components/HistoricalPositions";
 import { League } from "../components/League";
+import { useAppSelector } from "../../hook";
 
 const ClubPage: FunctionComponent<{
-  seasons: Season[];
   activeSubPage: AppSubPage;
   setActiveSubPage: (subPage: AppSubPage) => void;
-}> = ({ seasons, activeSubPage, setActiveSubPage }) => {
+}> = ({ activeSubPage, setActiveSubPage }) => {
+  const seasonState = useAppSelector((state) => state.season);
+
   const clubs = useFetchClubs();
   const [selectedClub, setSelectedClub] = useState<Team | undefined>(undefined);
   const [selectedSeason, setSelectedSeason] = useState<Season | undefined>(undefined);
 
   useEffect(() => {
-    const season = seasons.reduce(function (prev, current) {
+    const season = seasonState.seasons.reduce(function (prev, current) {
       return prev.startYear > current.startYear ? prev : current;
     });
 
     setSelectedSeason(season);
-  }, [seasons]);
+  }, [seasonState]);
 
-  if (clubs.status !== "LOAD_SUCCESSFUL" || seasons.length === 0) {
+  if (clubs.status !== "LOAD_SUCCESSFUL" || seasonState.seasons.length === 0) {
     return null;
   }
 
   let body;
   if (activeSubPage === "Positions") {
-    body = selectedClub && <HistoricalPositions teamId={selectedClub.id} seasons={seasons} />;
+    body = selectedClub && (
+      <HistoricalPositions teamId={selectedClub.id} seasons={seasonState.seasons} />
+    );
   } else if (activeSubPage === "Table") {
     body = selectedClub && (
       <>
         <SeasonFilter
-          seasons={seasons}
+          seasons={seasonState.seasons}
           selectedSeason={selectedSeason}
           selectSeason={(startYear) => setSelectedSeason(startYear)}
         />
@@ -48,7 +52,7 @@ const ClubPage: FunctionComponent<{
     body = selectedClub && (
       <>
         <SeasonFilter
-          seasons={seasons}
+          seasons={seasonState.seasons}
           selectedSeason={selectedSeason}
           selectSeason={(startYear) => setSelectedSeason(startYear)}
         />

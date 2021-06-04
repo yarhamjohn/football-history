@@ -7,31 +7,32 @@ import { SeasonFilter } from "../components/Filters/SeasonFilter";
 import { Matches } from "./Matches";
 import { Competition } from "../shared/useFetchCompetitions";
 import { League } from "../components/League";
+import { useAppSelector } from "../../hook";
 
 const LeaguePage: FunctionComponent<{
-  seasons: Season[];
   activeSubPage: AppSubPage;
   setActiveSubPage: (subPage: AppSubPage) => void;
-}> = ({ seasons, activeSubPage, setActiveSubPage }) => {
-  const [selectedCompetition, setSelectedCompetition] = useState<Competition | undefined>(
-    undefined
-  );
+}> = ({ activeSubPage, setActiveSubPage }) => {
+  const seasonState = useAppSelector((state) => state.season);
+
+  const [selectedCompetition, setSelectedCompetition] =
+    useState<Competition | undefined>(undefined);
   const [selectedSeason, setSelectedSeason] = useState<Season | undefined>(undefined);
 
   useEffect(() => {
-    const season = seasons.reduce(function (prev, current) {
+    const season = seasonState.seasons.reduce(function (prev, current) {
       return prev.startYear > current.startYear ? prev : current;
     });
 
     setSelectedSeason(season);
-  }, [seasons]);
+  }, [seasonState]);
 
   let body;
   if (activeSubPage === "Table") {
     body = selectedCompetition && (
       <>
         <SeasonFilter
-          seasons={seasons}
+          seasons={seasonState.seasons}
           selectedSeason={selectedSeason}
           selectSeason={(startYear) => setSelectedSeason(startYear)}
         />
@@ -49,7 +50,7 @@ const LeaguePage: FunctionComponent<{
     body = selectedCompetition && (
       <div style={{ display: "grid", gridGap: "1rem" }}>
         <SeasonFilter
-          seasons={seasons}
+          seasons={seasonState.seasons}
           selectedSeason={selectedSeason}
           selectSeason={(startYear) => setSelectedSeason(startYear)}
         />

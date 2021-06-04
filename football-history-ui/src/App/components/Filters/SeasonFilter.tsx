@@ -9,6 +9,7 @@ const SeasonFilter: FunctionComponent<{
 }> = ({ seasons, selectedSeason, selectSeason }) => {
   function createDropdown(): DropdownItemProps[] {
     return seasons
+      .slice()
       .sort((a, b) => b.startYear - a.startYear)
       .map((s) => {
         return {

@@ -4,21 +4,28 @@ import { HomePage } from "./HomePage";
 import { AppHeader } from "./components/AppHeader";
 import { ClubPage } from "./ClubPage";
 import { Icon } from "semantic-ui-react";
-import { useFetchSeasons } from "./shared/useFetchSeasons";
 import { SideBar } from "./components/SideBar";
 import { LeaguePage } from "./LeaguePage";
+import { useAppSelector, useAppDispatch } from "../hook";
+import { fetchSeasons } from "../seasonsSlice";
 
 export type AppPage = "Home" | "Club" | "League";
 export type AppSubPage = "None" | "Table" | "Results" | "Positions";
 
 const App: FunctionComponent = () => {
-  const seasons = useFetchSeasons();
+  const dispatch = useAppDispatch();
+  const seasonState = useAppSelector((state) => state.season);
+
   const [activePage, setActivePage] = useState<AppPage>("Home");
   const [activeSubPage, setActiveSubPage] = useState<AppSubPage>("None");
 
   useEffect(() => {
     setActiveSubPage("None");
   }, [activePage]);
+
+  useEffect(() => {
+    dispatch(fetchSeasons());
+  }, [dispatch, fetchSeasons]);
 
   return (
     <div
@@ -53,19 +60,11 @@ const App: FunctionComponent = () => {
         {activePage === "Home" ? (
           <HomePage />
         ) : (
-          seasons.status === "LOAD_SUCCESSFUL" &&
+          seasonState.status === "LOADED" &&
           (activePage === "Club" ? (
-            <ClubPage
-              seasons={seasons.data}
-              activeSubPage={activeSubPage}
-              setActiveSubPage={setActiveSubPage}
-            />
+            <ClubPage activeSubPage={activeSubPage} setActiveSubPage={setActiveSubPage} />
           ) : (
-            <LeaguePage
-              seasons={seasons.data}
-              activeSubPage={activeSubPage}
-              setActiveSubPage={setActiveSubPage}
-            />
+            <LeaguePage activeSubPage={activeSubPage} setActiveSubPage={setActiveSubPage} />
           ))
         )}
       </div>
