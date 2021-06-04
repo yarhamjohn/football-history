@@ -1,10 +1,9 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent, useEffect } from "react";
 import { Divider } from "semantic-ui-react";
 import { CompetitionFilter } from "../components/Filters/CompetitionFilter";
 import { AppSubPage } from "../App";
 import { SeasonFilter } from "../components/Filters/SeasonFilter";
 import { Matches } from "./Matches";
-import { Competition } from "../shared/useFetchCompetitions";
 import { League } from "../components/League";
 import { useAppDispatch, useAppSelector } from "../../hook";
 import { selectSeason } from "../../seasonsSlice";
@@ -15,9 +14,7 @@ const LeaguePage: FunctionComponent<{
 }> = ({ activeSubPage, setActiveSubPage }) => {
   const dispatch = useAppDispatch();
   const seasonState = useAppSelector((state) => state.season);
-
-  const [selectedCompetition, setSelectedCompetition] =
-    useState<Competition | undefined>(undefined);
+  const competitionState = useAppSelector((state) => state.competition);
 
   useEffect(() => {
     const season = seasonState.seasons.reduce(function (prev, current) {
@@ -25,44 +22,37 @@ const LeaguePage: FunctionComponent<{
     });
 
     dispatch(selectSeason(season));
-  }, [seasonState.seasons, dispatch, selectSeason]);
+  }, [seasonState.seasons, dispatch]);
 
   let body;
   if (activeSubPage === "Table") {
-    body = selectedCompetition && (
+    body = competitionState.selectedCompetition && (
       <>
         <SeasonFilter />
         {seasonState.selectedSeason && (
           <League
             props={{
               season: seasonState.selectedSeason,
-              competition: selectedCompetition,
+              competition: competitionState.selectedCompetition,
             }}
           />
         )}
       </>
     );
   } else if (activeSubPage === "Results") {
-    body = selectedCompetition && (
+    body = competitionState.selectedCompetition && (
       <div style={{ display: "grid", gridGap: "1rem" }}>
         <SeasonFilter />
-        {seasonState.selectedSeason ? <Matches competitionId={selectedCompetition.id} /> : null}
+        {seasonState.selectedSeason ? (
+          <Matches competitionId={competitionState.selectedCompetition.id} />
+        ) : null}
       </div>
     );
   }
 
   return (
     <>
-      {seasonState.selectedSeason && (
-        <CompetitionFilter
-          selectedSeason={seasonState.selectedSeason}
-          selectedCompetition={selectedCompetition}
-          selectCompetition={(name) => {
-            setActiveSubPage(name ? "Table" : "None");
-            setSelectedCompetition(name);
-          }}
-        />
-      )}
+      {seasonState.selectedSeason && <CompetitionFilter setActiveSubPage={setActiveSubPage} />}
       <Divider />
       {body}
     </>

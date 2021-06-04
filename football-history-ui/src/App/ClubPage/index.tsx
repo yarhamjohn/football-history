@@ -26,7 +26,7 @@ const ClubPage: FunctionComponent<{
     });
 
     dispatch(selectSeason(season));
-  }, [seasonState.seasons, dispatch, selectSeason]);
+  }, [seasonState.seasons, dispatch]);
 
   if (clubs.status !== "LOAD_SUCCESSFUL" || seasonState.seasons.length === 0) {
     return null;

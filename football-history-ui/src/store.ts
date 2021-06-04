@@ -1,9 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import seasonReducer from "./seasonsSlice";
+import competitionReducer from "./competitionsSlice";
 
 const store = configureStore({
   reducer: {
     season: seasonReducer,
+    competition: competitionReducer,
   },
 });
 

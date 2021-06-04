@@ -20,7 +20,7 @@ export const fetchSeasons = createAsyncThunk("seasons/fetchSeasons", async () =>
   return (await response.json()).result as Season[];
 });
 
-export const seasonSlice = createSlice({
+export const seasonsSlice = createSlice({
   name: "seasons",
   initialState,
   reducers: {
@@ -46,6 +46,6 @@ export const seasonSlice = createSlice({
   },
 });
 
-export const { selectSeason, clearSelectedSeason } = seasonSlice.actions;
+export const { selectSeason, clearSelectedSeason } = seasonsSlice.actions;
 
-export default seasonSlice.reducer;
+export default seasonsSlice.reducer;

@@ -25,7 +25,7 @@ const App: FunctionComponent = () => {
 
   useEffect(() => {
     dispatch(fetchSeasons());
-  }, [dispatch, fetchSeasons]);
+  }, [dispatch]);
 
   return (
     <div

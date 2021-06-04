@@ -1,25 +1,32 @@
-import React, { FunctionComponent } from "react";
+import React, { FunctionComponent, useEffect } from "react";
 import { Dropdown, DropdownItemProps } from "semantic-ui-react";
-import { Competition, useFetchCompetitions } from "../../shared/useFetchCompetitions";
-import { Season } from "../../shared/useFetchSeasons";
+import { useAppDispatch, useAppSelector } from "../../../hook";
+import { fetchCompetitionsBySeasonId, selectCompetition } from "../../../competitionsSlice";
+import { AppSubPage } from "../../App";
 
-const CompetitionFilter: FunctionComponent<{
-  selectedSeason: Season;
-  selectedCompetition: Competition | undefined;
-  selectCompetition: (competition: Competition | undefined) => void;
-}> = ({ selectedSeason, selectedCompetition, selectCompetition }) => {
-  const competitions = useFetchCompetitions(selectedSeason.id);
+const CompetitionFilter: FunctionComponent<{ setActiveSubPage: (subPage: AppSubPage) => void }> = ({
+  setActiveSubPage,
+}) => {
+  const dispatch = useAppDispatch();
+  const seasonState = useAppSelector((state) => state.season);
+  const competitionState = useAppSelector((state) => state.competition);
 
-  if (competitions.status !== "LOAD_SUCCESSFUL") {
+  useEffect(() => {
+    if (seasonState.selectedSeason !== undefined) {
+      dispatch(fetchCompetitionsBySeasonId(seasonState.selectedSeason.id));
+    }
+  }, [seasonState.selectedSeason, dispatch]);
+
+  if (competitionState.status !== "LOADED") {
     return null;
   }
 
   function createDropdown(): DropdownItemProps[] {
-    if (competitions.status !== "LOAD_SUCCESSFUL") {
+    if (competitionState.status !== "LOADED") {
       return [];
     }
 
-    return competitions.data.map((c) => {
+    return competitionState.competitions.map((c) => {
       return {
         key: c.id,
         text: `${c.name} (${c.level})`,
@@ -29,12 +36,13 @@ const CompetitionFilter: FunctionComponent<{
   }
 
   function chooseCompetition(id: number | undefined) {
-    if (competitions.status !== "LOAD_SUCCESSFUL") {
+    if (competitionState.status !== "LOADED") {
       return [];
     }
 
-    const competition = competitions.data.filter((x) => x.id === id)[0];
-    selectCompetition(competition);
+    const competition = competitionState.competitions.filter((x) => x.id === id)[0];
+    dispatch(selectCompetition(competition));
+    setActiveSubPage("Table");
   }
 
   return (
@@ -45,10 +53,10 @@ const CompetitionFilter: FunctionComponent<{
         alignItems: "center",
       }}
     >
-      {selectedCompetition === undefined ? (
+      {competitionState.selectedCompetition === undefined ? (
         <p style={{ margin: "0 50px 0 0" }}>Select a competition from the dropdown.</p>
       ) : (
-        <h1 style={{ margin: 0 }}>{selectedCompetition.name}</h1>
+        <h1 style={{ margin: 0 }}>{competitionState.selectedCompetition.name}</h1>
       )}
       <Dropdown
         placeholder="Select Division"
