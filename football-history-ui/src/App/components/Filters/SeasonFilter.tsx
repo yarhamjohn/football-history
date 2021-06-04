@@ -1,14 +1,15 @@
 import { Dropdown, DropdownItemProps, Icon } from "semantic-ui-react";
 import React, { FunctionComponent } from "react";
 import { Season } from "../../shared/useFetchSeasons";
+import { useAppDispatch, useAppSelector } from "../../../hook";
+import { selectSeason } from "../../../seasonsSlice";
 
-const SeasonFilter: FunctionComponent<{
-  seasons: Season[];
-  selectedSeason: Season | undefined;
-  selectSeason: (season: Season | undefined) => void;
-}> = ({ seasons, selectedSeason, selectSeason }) => {
+const SeasonFilter: FunctionComponent = () => {
+  const dispatch = useAppDispatch();
+  const seasonState = useAppSelector((state) => state.season);
+
   function createDropdown(): DropdownItemProps[] {
-    return seasons
+    return seasonState.seasons
       .slice()
       .sort((a, b) => b.startYear - a.startYear)
       .map((s) => {
@@ -21,17 +22,17 @@ const SeasonFilter: FunctionComponent<{
   }
 
   const changeSeason = (nextSeason: Season) => {
-    if (seasons.some((s) => s.startYear === nextSeason.startYear)) {
-      selectSeason(nextSeason);
+    if (seasonState.seasons.some((s) => s.startYear === nextSeason.startYear)) {
+      dispatch(selectSeason(nextSeason));
     } else {
       return;
     }
   };
 
   const forwardOneSeason = () => {
-    if (selectedSeason !== undefined) {
-      const nextStartYear = selectedSeason.startYear + 1;
-      const nextSeason = seasons.filter((x) => x.startYear === nextStartYear);
+    if (seasonState.selectedSeason !== undefined) {
+      const nextStartYear = seasonState.selectedSeason.startYear + 1;
+      const nextSeason = seasonState.seasons.filter((x) => x.startYear === nextStartYear);
 
       if (nextSeason.length === 1) {
         changeSeason(nextSeason[0]);
@@ -40,9 +41,9 @@ const SeasonFilter: FunctionComponent<{
   };
 
   const backOneSeason = () => {
-    if (selectedSeason !== undefined) {
-      const previousStartYear = selectedSeason.startYear - 1;
-      const previousSeason = seasons.filter((x) => x.startYear === previousStartYear);
+    if (seasonState.selectedSeason !== undefined) {
+      const previousStartYear = seasonState.selectedSeason.startYear - 1;
+      const previousSeason = seasonState.seasons.filter((x) => x.startYear === previousStartYear);
 
       if (previousSeason.length === 1) {
         changeSeason(previousSeason[0]);
@@ -51,8 +52,8 @@ const SeasonFilter: FunctionComponent<{
   };
 
   function chooseSeason(startYear: number | undefined) {
-    const season = seasons.filter((x) => x.startYear === startYear)[0];
-    selectSeason(season);
+    const season = seasonState.seasons.filter((x) => x.startYear === startYear)[0];
+    dispatch(selectSeason(season));
   }
 
   return (
@@ -71,7 +72,7 @@ const SeasonFilter: FunctionComponent<{
         onChange={(_, data) =>
           chooseSeason(isNaN(Number(data.value)) ? undefined : Number(data.value))
         }
-        value={selectedSeason?.startYear}
+        value={seasonState.selectedSeason?.startYear}
         style={{ gridArea: "filter" }}
       />
       <Icon

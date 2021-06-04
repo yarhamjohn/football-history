@@ -2,31 +2,31 @@ import React, { FunctionComponent, useEffect, useState } from "react";
 import { Divider } from "semantic-ui-react";
 import { Team, useFetchClubs } from "../shared/useFetchClubs";
 import { ClubFilter } from "../components/Filters/ClubFilter";
-import { Season } from "../shared/useFetchSeasons";
 import { AppSubPage } from "../App";
 import { SeasonFilter } from "../components/Filters/SeasonFilter";
 import { Matches } from "./Matches";
 import { HistoricalPositions } from "../components/HistoricalPositions";
 import { League } from "../components/League";
-import { useAppSelector } from "../../hook";
+import { useAppDispatch, useAppSelector } from "../../hook";
+import { selectSeason } from "../../seasonsSlice";
 
 const ClubPage: FunctionComponent<{
   activeSubPage: AppSubPage;
   setActiveSubPage: (subPage: AppSubPage) => void;
 }> = ({ activeSubPage, setActiveSubPage }) => {
+  const dispatch = useAppDispatch();
   const seasonState = useAppSelector((state) => state.season);
 
   const clubs = useFetchClubs();
   const [selectedClub, setSelectedClub] = useState<Team | undefined>(undefined);
-  const [selectedSeason, setSelectedSeason] = useState<Season | undefined>(undefined);
 
   useEffect(() => {
     const season = seasonState.seasons.reduce(function (prev, current) {
       return prev.startYear > current.startYear ? prev : current;
     });
 
-    setSelectedSeason(season);
-  }, [seasonState]);
+    dispatch(selectSeason(season));
+  }, [seasonState.seasons, dispatch, selectSeason]);
 
   if (clubs.status !== "LOAD_SUCCESSFUL" || seasonState.seasons.length === 0) {
     return null;
@@ -40,23 +40,19 @@ const ClubPage: FunctionComponent<{
   } else if (activeSubPage === "Table") {
     body = selectedClub && (
       <>
-        <SeasonFilter
-          seasons={seasonState.seasons}
-          selectedSeason={selectedSeason}
-          selectSeason={(startYear) => setSelectedSeason(startYear)}
-        />
-        {selectedSeason && <League props={{ season: selectedSeason, team: selectedClub }} />}
+        <SeasonFilter />
+        {seasonState.selectedSeason && (
+          <League props={{ season: seasonState.selectedSeason, team: selectedClub }} />
+        )}
       </>
     );
   } else if (activeSubPage === "Results") {
     body = selectedClub && (
       <>
-        <SeasonFilter
-          seasons={seasonState.seasons}
-          selectedSeason={selectedSeason}
-          selectSeason={(startYear) => setSelectedSeason(startYear)}
-        />
-        {selectedSeason && <Matches selectedSeason={selectedSeason} selectedClub={selectedClub} />}
+        <SeasonFilter />
+        {seasonState.selectedSeason && (
+          <Matches selectedSeason={seasonState.selectedSeason} selectedClub={selectedClub} />
+        )}
       </>
     );
   }

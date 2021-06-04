@@ -4,12 +4,14 @@ import { Season } from "./App/shared/useFetchSeasons";
 type SeasonState = {
   status: "UNLOADED" | "LOADING" | "LOADED" | "LOAD_FAILED";
   seasons: Season[];
+  selectedSeason: Season | undefined;
   error: string | undefined;
 };
 
 const initialState: SeasonState = {
   status: "UNLOADED",
   seasons: [],
+  selectedSeason: undefined,
   error: undefined,
 };
 
@@ -21,7 +23,14 @@ export const fetchSeasons = createAsyncThunk("seasons/fetchSeasons", async () =>
 export const seasonSlice = createSlice({
   name: "seasons",
   initialState,
-  reducers: {},
+  reducers: {
+    selectSeason: (state, action) => {
+      state.selectedSeason = action.payload;
+    },
+    clearSelectedSeason: (state) => {
+      state.selectedSeason = undefined;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchSeasons.pending, (state, _) => {
       state.status = "LOADING";
@@ -36,5 +45,7 @@ export const seasonSlice = createSlice({
     });
   },
 });
+
+export const { selectSeason, clearSelectedSeason } = seasonSlice.actions;
 
 export default seasonSlice.reducer;
