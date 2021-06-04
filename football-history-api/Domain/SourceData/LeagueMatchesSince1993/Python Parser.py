@@ -2,8 +2,8 @@ import csv
 import glob
 
 def parser():
-    files = glob.glob('C:\\Data\\*.csv')
-    target = open('C:\\Data\\result.csv', 'w')
+    files = glob.glob('*.csv')
+    target = open('result.csv', 'w')
     
     for file in files:
         with open(file) as csvfile:
@@ -82,6 +82,8 @@ def CleanseTeams(team):
         return "Grimsby Town"
     elif team == "Halifax":
         return "Halifax Town"
+    elif team == "Harrogate":
+        return "Harrogate Town"
     elif team == "Hartlepool":
         return "Hartlepool United"
     elif team == "Hereford":
@@ -192,18 +194,18 @@ def CleanseCompetition(division, date):
     
     if division == 'E0':
         div = 'Premier League'
-    elif division == 'E1' and year < 2004 or (year == 2004 and month <= 6):
+    elif division == 'E1' and (year < 2004 or (year == 2004 and month <= 6)):
+        div = 'First Division'
+    elif division == 'E1' and (year > 2004 or (year == 2004 and month >= 7)):
         div = 'Championship'
-    elif division == 'E1' and year > 2004 or (year == 2004 and month >= 7):
-        div = 'Division 1'
-    elif division == 'E2' and year < 2004 or (year == 2004 and month <= 6):
+    elif division == 'E2' and (year < 2004 or (year == 2004 and month <= 6)):
+        div = 'second Division'
+    elif division == 'E2' and (year > 2004 or (year == 2004 and month >= 7)):
         div = 'League 1'
-    elif division == 'E2' and year > 2004 or (year == 2004 and month >= 7):
-        div = 'Division 2'
-    elif division == 'E3' and year < 2004 or (year == 2004 and month <= 6):
+    elif division == 'E3' and (year < 2004 or (year == 2004 and month <= 6)):
+        div = 'Third Division'
+    elif division == 'E3' and (year > 2004 or (year == 2004 and month >= 7)):
         div = 'League 2'
-    elif division == 'E3' and year > 2004 or (year == 2004 and month >= 7):
-        div = 'Division 3'
 
     return div
     
