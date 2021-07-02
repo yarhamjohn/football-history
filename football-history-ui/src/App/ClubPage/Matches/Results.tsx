@@ -1,9 +1,9 @@
 import React, { FunctionComponent } from "react";
 import { Match } from "../../shared/useFetchLeagueMatches";
 import { Card, Divider, Message } from "semantic-ui-react";
-import { Team } from "../../shared/useFetchClubs";
 import { MatchResult } from "./Result";
 import { useClubMatchResults } from "./useClubMatchResults";
+import { Team } from "../../shared/teamsSlice";
 
 const MatchResults: FunctionComponent<{
   matches: Match[];

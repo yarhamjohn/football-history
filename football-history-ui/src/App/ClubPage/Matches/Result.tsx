@@ -1,8 +1,8 @@
 import React, { FunctionComponent } from "react";
 import { Match } from "../../shared/useFetchLeagueMatches";
 import { Card } from "semantic-ui-react";
-import { Team } from "../../shared/useFetchClubs";
 import { useClubMatchResult } from "./useClubMatchResult";
+import { Team } from "../../shared/teamsSlice";
 
 const MatchResult: FunctionComponent<{
   match: Match;

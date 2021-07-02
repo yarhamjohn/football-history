@@ -3,9 +3,9 @@ import { Row } from "../../../shared/useFetchLeague";
 import { Icon, Table } from "semantic-ui-react";
 import { LeagueTableDrillDown } from "../DrillDown/DrillDown";
 import { LeagueTableRowCell } from "./Cell";
-import { Team } from "../../../shared/useFetchClubs";
-import { CompetitionRules } from "../../../shared/useFetchCompetitions";
 import { useLeagueTableRow } from "./useLeagueTableRow";
+import { Team } from "../../../shared/teamsSlice";
+import { CompetitionRules } from "../../../shared/useFetchCompetitions";
 
 const LeagueTableRow: FunctionComponent<{
   row: Row;

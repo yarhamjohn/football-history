@@ -2,7 +2,7 @@ import React, { FunctionComponent } from "react";
 import { Table } from "semantic-ui-react";
 import { League } from "../../../shared/useFetchLeague";
 import { LeagueTableRow } from "./Row";
-import { Team } from "../../../shared/useFetchClubs";
+import { Team } from "../../../shared/teamsSlice";
 
 const LeagueTable: FunctionComponent<{
   league: League;

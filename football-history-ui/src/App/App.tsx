@@ -4,9 +4,8 @@ import { HomePage } from "./HomePage";
 import { AppHeader } from "./components/AppHeader";
 import { ClubPage } from "./ClubPage";
 import { Icon } from "semantic-ui-react";
-import { SideBar } from "./components/SideBar";
 import { LeaguePage } from "./LeaguePage";
-import { useAppSelector, useAppDispatch } from "../reduxHooks";
+import { useAppDispatch } from "../reduxHooks";
 import { fetchSeasons } from "./shared/seasonsSlice";
 
 export type AppPage = "Home" | "Club" | "League";
@@ -14,14 +13,8 @@ export type AppSubPage = "None" | "Table" | "Results" | "Positions";
 
 const App: FunctionComponent = () => {
   const dispatch = useAppDispatch();
-  const seasonState = useAppSelector((state) => state.season);
 
   const [activePage, setActivePage] = useState<AppPage>("Home");
-  const [activeSubPage, setActiveSubPage] = useState<AppSubPage>("None");
-
-  useEffect(() => {
-    setActiveSubPage("None");
-  }, [activePage]);
 
   useEffect(() => {
     dispatch(fetchSeasons());
@@ -49,23 +42,14 @@ const App: FunctionComponent = () => {
         setActivePage={(page) => setActivePage(page)}
         style={{ gridArea: "header" }}
       />
-      <div style={{ gridArea: "leftGutter", marginTop: "100px" }}>
-        <SideBar
-          activePage={activePage}
-          activeSubPage={activeSubPage}
-          setActiveSubPage={setActiveSubPage}
-        />
-      </div>
+
       <div style={{ gridArea: "main" }}>
         {activePage === "Home" ? (
           <HomePage />
+        ) : activePage === "Club" ? (
+          <ClubPage />
         ) : (
-          seasonState.status === "LOADED" &&
-          (activePage === "Club" ? (
-            <ClubPage activeSubPage={activeSubPage} setActiveSubPage={setActiveSubPage} />
-          ) : (
-            <LeaguePage activeSubPage={activeSubPage} setActiveSubPage={setActiveSubPage} />
-          ))
+          <LeaguePage />
         )}
       </div>
       <div

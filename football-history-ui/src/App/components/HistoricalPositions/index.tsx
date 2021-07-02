@@ -25,7 +25,7 @@ const HistoricalPositions: FunctionComponent<{
   const { state } = useFetchHistoricalPositions(teamId, seasons, selectedRange);
 
   return (
-    <div>
+    <div style={{ marginBottom: "5rem" }}>
       <YearSlider
         sliderRange={[getFirstSeasonStartYear(), getLastSeasonStartYear()]}
         selectedRange={selectedRange}

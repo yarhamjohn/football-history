@@ -1,5 +1,5 @@
 import { Match } from "../../shared/useFetchLeagueMatches";
-import { Team } from "../../shared/useFetchClubs";
+import { Team } from "../../shared/teamsSlice";
 
 type MatchResult = "W" | "L" | "D";
 

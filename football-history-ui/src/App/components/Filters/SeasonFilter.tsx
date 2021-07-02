@@ -56,7 +56,7 @@ const SeasonFilter: FunctionComponent = () => {
   }
 
   return (
-    <div style={{ display: "flex", alignItems: "center", color: "#00B5AD", marginBottom: "2rem" }}>
+    <div style={{ display: "flex", alignItems: "center", color: "#00B5AD" }}>
       <Icon
         name="caret left"
         size="huge"

@@ -2,11 +2,8 @@ import React, { FunctionComponent, useEffect } from "react";
 import { Dropdown, DropdownItemProps } from "semantic-ui-react";
 import { useAppDispatch, useAppSelector } from "../../../reduxHooks";
 import { fetchCompetitionsBySeasonId, selectCompetition } from "../../shared/competitionsSlice";
-import { AppSubPage } from "../../App";
 
-const CompetitionFilter: FunctionComponent<{ setActiveSubPage: (subPage: AppSubPage) => void }> = ({
-  setActiveSubPage,
-}) => {
+const CompetitionFilter: FunctionComponent = () => {
   const dispatch = useAppDispatch();
   const seasonState = useAppSelector((state) => state.season);
   const competitionState = useAppSelector((state) => state.competition);
@@ -42,7 +39,6 @@ const CompetitionFilter: FunctionComponent<{ setActiveSubPage: (subPage: AppSubP
 
     const competition = competitionState.competitions.filter((x) => x.id === id)[0];
     dispatch(selectCompetition(competition));
-    setActiveSubPage("Table");
   }
 
   return (

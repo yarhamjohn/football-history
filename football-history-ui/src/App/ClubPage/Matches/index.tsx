@@ -1,11 +1,11 @@
 import React, { FunctionComponent, useState } from "react";
 import { useFetchLeagueMatches } from "../../shared/useFetchLeagueMatches";
 import { Divider, Loader } from "semantic-ui-react";
-import { Team } from "../../shared/useFetchClubs";
 import { ErrorMessage } from "../../components/ErrorMessage";
 import { MatchResults } from "./Results";
 import { MatchFilter, MatchFilterState } from "./Filter";
 import { Season } from "../../shared/seasonsSlice";
+import { Team } from "../../shared/teamsSlice";
 
 const Matches: FunctionComponent<{ selectedSeason: Season; selectedClub: Team }> = ({
   selectedSeason,

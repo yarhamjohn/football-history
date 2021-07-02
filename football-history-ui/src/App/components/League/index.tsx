@@ -2,11 +2,11 @@ import React, { FunctionComponent } from "react";
 import { Loader } from "semantic-ui-react";
 import { PointDeductionSummary } from "./PointDeductionSummary";
 import { useFetchLeague } from "../../shared/useFetchLeague";
-import { Team } from "../../shared/useFetchClubs";
 import { Competition } from "../../shared/useFetchCompetitions";
 import { ErrorMessage } from "../ErrorMessage";
 import { LeagueTable } from "./Table/Table";
 import { Season } from "../../shared/seasonsSlice";
+import { Team } from "../../shared/teamsSlice";
 
 type FetchLeagueProps =
   | {
