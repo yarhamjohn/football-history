@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useEffect } from "react";
 import { Dropdown, DropdownItemProps } from "semantic-ui-react";
-import { useAppDispatch, useAppSelector } from "../../../hook";
-import { fetchCompetitionsBySeasonId, selectCompetition } from "../../../competitionsSlice";
+import { useAppDispatch, useAppSelector } from "../../../reduxHooks";
+import { fetchCompetitionsBySeasonId, selectCompetition } from "../../shared/competitionsSlice";
 import { AppSubPage } from "../../App";
 
 const CompetitionFilter: FunctionComponent<{ setActiveSubPage: (subPage: AppSubPage) => void }> = ({

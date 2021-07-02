@@ -5,7 +5,7 @@ import { Team } from "../../shared/useFetchClubs";
 import { ErrorMessage } from "../../components/ErrorMessage";
 import { MatchResults } from "./Results";
 import { MatchFilter, MatchFilterState } from "./Filter";
-import { Season } from "../../../seasonsSlice";
+import { Season } from "../../shared/seasonsSlice";
 
 const Matches: FunctionComponent<{ selectedSeason: Season; selectedClub: Team }> = ({
   selectedSeason,

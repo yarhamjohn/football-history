@@ -7,7 +7,7 @@ import { SeasonFilter } from "../components/Filters/SeasonFilter";
 import { Matches } from "./Matches";
 import { HistoricalPositions } from "../components/HistoricalPositions";
 import { League } from "../components/League";
-import { useAppSelector } from "../../hook";
+import { useAppSelector } from "../../reduxHooks";
 
 const ClubPage: FunctionComponent<{
   activeSubPage: AppSubPage;

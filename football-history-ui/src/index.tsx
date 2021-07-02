@@ -5,11 +5,11 @@ import App from "./App/App";
 import * as serviceWorker from "./serviceWorker";
 import { ApiProvider } from "./App/shared/useApi";
 import { Provider } from "react-redux";
-import store from "./store";
+import reduxStore from "./reduxStore";
 
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={store}>
+    <Provider store={reduxStore}>
       <ApiProvider>
         <App />
       </ApiProvider>

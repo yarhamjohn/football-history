@@ -5,7 +5,7 @@ import { AppSubPage } from "../App";
 import { SeasonFilter } from "../components/Filters/SeasonFilter";
 import { Matches } from "./Matches";
 import { League } from "../components/League";
-import { useAppSelector } from "../../hook";
+import { useAppSelector } from "../../reduxHooks";
 
 const LeaguePage: FunctionComponent<{
   activeSubPage: AppSubPage;

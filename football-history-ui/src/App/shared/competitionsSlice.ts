@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Competition } from "./App/shared/useFetchCompetitions";
+import { Competition } from "./useFetchCompetitions";
 
 type CompetitionState = {
   status: "UNLOADED" | "LOADING" | "LOADED" | "LOAD_FAILED";

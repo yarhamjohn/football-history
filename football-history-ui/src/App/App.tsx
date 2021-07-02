@@ -6,8 +6,8 @@ import { ClubPage } from "./ClubPage";
 import { Icon } from "semantic-ui-react";
 import { SideBar } from "./components/SideBar";
 import { LeaguePage } from "./LeaguePage";
-import { useAppSelector, useAppDispatch } from "../hook";
-import { fetchSeasons } from "../seasonsSlice";
+import { useAppSelector, useAppDispatch } from "../reduxHooks";
+import { fetchSeasons } from "./shared/seasonsSlice";
 
 export type AppPage = "Home" | "Club" | "League";
 export type AppSubPage = "None" | "Table" | "Results" | "Positions";

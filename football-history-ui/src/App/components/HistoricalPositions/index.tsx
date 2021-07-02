@@ -3,7 +3,7 @@ import { useFetchHistoricalPositions } from "../../shared/useFetchHistoricalPosi
 import { YearSlider } from "../Filters/YearSlider";
 import { ErrorMessage } from "../ErrorMessage";
 import { HistoricalPositionsGraph } from "./Graph";
-import { Season } from "../../../seasonsSlice";
+import { Season } from "../../shared/seasonsSlice";
 
 export type HistoricalPositionRange = {
   startYear: number;

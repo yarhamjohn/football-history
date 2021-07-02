@@ -6,7 +6,7 @@ import { Team } from "../../shared/useFetchClubs";
 import { Competition } from "../../shared/useFetchCompetitions";
 import { ErrorMessage } from "../ErrorMessage";
 import { LeagueTable } from "./Table/Table";
-import { Season } from "../../../seasonsSlice";
+import { Season } from "../../shared/seasonsSlice";
 
 type FetchLeagueProps =
   | {
