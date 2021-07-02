@@ -6,7 +6,8 @@ import { Competition } from "../../shared/useFetchCompetitions";
 import { ErrorMessage } from "../ErrorMessage";
 import { LeagueTable } from "./Table/Table";
 import { Season } from "../../shared/seasonsSlice";
-import { Team } from "../../shared/teamsSlice";
+import { getTeam, Team } from "../../shared/teamsSlice";
+import { useAppSelector } from "../../../reduxHooks";
 
 type FetchLeagueProps =
   | {
@@ -19,6 +20,8 @@ type FetchLeagueProps =
     };
 
 const League: FunctionComponent<{ props: FetchLeagueProps }> = ({ props }) => {
+  const teamState = useAppSelector((state) => state.team);
+
   const league = useFetchLeague(
     "team" in props
       ? { seasonId: props.season.id, teamId: props.team.id }
@@ -41,7 +44,7 @@ const League: FunctionComponent<{ props: FetchLeagueProps }> = ({ props }) => {
     <div>
       <LeagueTable
         league={league.data}
-        selectedClub={"team" in props ? props.team : undefined}
+        selectedClub={"team" in props ? getTeam(teamState, props.team.id) : undefined}
         seasonStartYear={props.season.startYear}
       />
       <PointDeductionSummary leagueTable={league.data.table} />

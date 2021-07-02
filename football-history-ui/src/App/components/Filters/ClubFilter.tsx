@@ -22,8 +22,10 @@ const ClubFilter: FunctionComponent = () => {
   }
 
   function chooseTeam(id: number | undefined) {
-    const team = teamState.teams.filter((x) => x.id === id)[0];
-    dispatch(selectTeam(team));
+    if (id === undefined) {
+      return;
+    }
+    dispatch(selectTeam(id));
   }
 
   return (
@@ -34,16 +36,16 @@ const ClubFilter: FunctionComponent = () => {
         alignItems: "center",
       }}
     >
-      {teamState.selectedTeam === undefined ? (
+      {teamState.selectedTeamId === undefined ? (
         <p style={{ margin: "0 50px 0 0" }}>
           Select a club from the dropdown. The list contains all clubs to have featured in the
           Football League or Premier League since 1992.
         </p>
       ) : (
-        <h1 style={{ margin: 0 }}>{teamState.selectedTeam.name}</h1>
+        <h1 style={{ margin: 0 }}>{teamState.selectedTeamId}</h1>
       )}
       <Dropdown
-        placeholder={teamState.selectedTeam?.name ?? "Select Club"}
+        placeholder={"Select Club"}
         clearable
         search
         selection

@@ -1,4 +1,5 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState } from "../../reduxStore";
 
 export type Team = {
   id: number;
@@ -10,14 +11,14 @@ export type Team = {
 type TeamState = {
   status: "UNLOADED" | "LOADING" | "LOADED" | "LOAD_FAILED";
   teams: Team[];
-  selectedTeam: Team | undefined;
+  selectedTeamId: number | undefined;
   error: string | undefined;
 };
 
 const initialState: TeamState = {
   status: "UNLOADED",
   teams: [],
-  selectedTeam: undefined,
+  selectedTeamId: undefined,
   error: undefined,
 };
 
@@ -30,11 +31,11 @@ export const teamsSlice = createSlice({
   name: "teams",
   initialState,
   reducers: {
-    selectTeam: (state, action) => {
-      state.selectedTeam = action.payload;
+    selectTeam: (state, action: PayloadAction<number>) => {
+      state.selectedTeamId = action.payload;
     },
     clearSelectedTeam: (state) => {
-      state.selectedTeam = undefined;
+      state.selectedTeamId = undefined;
     },
   },
   extraReducers: (builder) => {
@@ -51,6 +52,8 @@ export const teamsSlice = createSlice({
     });
   },
 });
+
+export const getTeam = (state: TeamState, id: number) => state.teams.filter((x) => x.id === id)[0];
 
 export const { selectTeam, clearSelectedTeam } = teamsSlice.actions;
 

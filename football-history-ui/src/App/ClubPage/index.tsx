@@ -6,6 +6,7 @@ import { Matches } from "./Matches";
 import { HistoricalPositions } from "../components/HistoricalPositions";
 import { League } from "../components/League";
 import { useAppSelector } from "../../reduxHooks";
+import { Team } from "../shared/teamsSlice";
 
 const ClubPage: FunctionComponent = () => {
   const seasonState = useAppSelector((state) => state.season);
@@ -15,10 +16,10 @@ const ClubPage: FunctionComponent = () => {
     <>
       <ClubFilter />
       <Divider />
-      {teamState.selectedTeam === undefined ? null : (
+      {teamState.selectedTeamId === undefined ? null : (
         <>
           <h2>League positions by season</h2>
-          <HistoricalPositions teamId={teamState.selectedTeam.id} seasons={seasonState.seasons} />
+          <HistoricalPositions teamId={teamState.selectedTeamId} seasons={seasonState.seasons} />
           {seasonState.selectedSeason && (
             <>
               <Divider />
@@ -28,14 +29,9 @@ const ClubPage: FunctionComponent = () => {
                 <h2>League table for season:</h2>
                 <SeasonFilter />
               </div>
-              <League
-                props={{ season: seasonState.selectedSeason, team: teamState.selectedTeam }}
-              />
+              <League props={{ season: seasonState.selectedSeason, team: {} as Team }} />
               <h2>League matches</h2>
-              <Matches
-                selectedSeason={seasonState.selectedSeason}
-                selectedClub={teamState.selectedTeam}
-              />
+              <Matches selectedSeason={seasonState.selectedSeason} selectedClub={{} as Team} />
             </>
           )}
         </>

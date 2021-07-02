@@ -4,8 +4,9 @@ import { Icon, Table } from "semantic-ui-react";
 import { LeagueTableDrillDown } from "../DrillDown/DrillDown";
 import { LeagueTableRowCell } from "./Cell";
 import { useLeagueTableRow } from "./useLeagueTableRow";
-import { Team } from "../../../shared/teamsSlice";
+import { selectTeam, Team } from "../../../shared/teamsSlice";
 import { CompetitionRules } from "../../../shared/useFetchCompetitions";
+import { useAppDispatch } from "../../../../reduxHooks";
 
 const LeagueTableRow: FunctionComponent<{
   row: Row;
@@ -15,12 +16,18 @@ const LeagueTableRow: FunctionComponent<{
   rules: CompetitionRules;
   competitionId: number;
 }> = ({ row, selectedClub, seasonStartYear, numRows, rules, competitionId }) => {
+  const dispatch = useAppDispatch();
   const { bold, color } = useLeagueTableRow(row, selectedClub);
   const [showDrillDown, setShowDrillDown] = useState<boolean>(false);
 
   useEffect(() => {
     setShowDrillDown(false);
   }, [selectedClub, seasonStartYear]);
+
+  const switchToTeam = (teamId: number) => {
+    dispatch(selectTeam(teamId));
+    // TODO: switch tab
+  };
 
   return (
     <>
@@ -37,7 +44,7 @@ const LeagueTableRow: FunctionComponent<{
           {row.position}
         </LeagueTableRowCell>
         <LeagueTableRowCell bold={bold} color={color}>
-          {row.team}
+          <a onClick={() => switchToTeam(row.teamId)}>{row.team}</a>
         </LeagueTableRowCell>
         <LeagueTableRowCell bold={bold} color={color}>
           {row.played}
