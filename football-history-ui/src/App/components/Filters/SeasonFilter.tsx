@@ -1,8 +1,7 @@
 import { Dropdown, DropdownItemProps, Icon } from "semantic-ui-react";
 import React, { FunctionComponent } from "react";
-import { Season } from "../../shared/useFetchSeasons";
 import { useAppDispatch, useAppSelector } from "../../../hook";
-import { selectSeason } from "../../../seasonsSlice";
+import { Season, selectSeason } from "../../../seasonsSlice";
 
 const SeasonFilter: FunctionComponent = () => {
   const dispatch = useAppDispatch();

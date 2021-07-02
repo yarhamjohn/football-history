@@ -1,5 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { Season } from "./App/shared/useFetchSeasons";
+
+export type Season = {
+  id: number;
+  startYear: number;
+  endYear: number;
+};
 
 type SeasonState = {
   status: "UNLOADED" | "LOADING" | "LOADED" | "LOAD_FAILED";
@@ -38,6 +43,9 @@ export const seasonsSlice = createSlice({
     builder.addCase(fetchSeasons.fulfilled, (state, action) => {
       state.status = "LOADED";
       state.seasons = action.payload;
+      state.selectedSeason = state.seasons.reduce(function (prev, current) {
+        return prev.startYear > current.startYear ? prev : current;
+      });
     });
     builder.addCase(fetchSeasons.rejected, (state, action) => {
       state.status = "LOAD_FAILED";

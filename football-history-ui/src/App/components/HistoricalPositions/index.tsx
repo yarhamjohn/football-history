@@ -1,9 +1,9 @@
 import React, { FunctionComponent, useState } from "react";
 import { useFetchHistoricalPositions } from "../../shared/useFetchHistoricalPositions";
-import { Season } from "../../shared/useFetchSeasons";
 import { YearSlider } from "../Filters/YearSlider";
 import { ErrorMessage } from "../ErrorMessage";
 import { HistoricalPositionsGraph } from "./Graph";
+import { Season } from "../../../seasonsSlice";
 
 export type HistoricalPositionRange = {
   startYear: number;

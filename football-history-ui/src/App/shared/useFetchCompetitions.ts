@@ -1,6 +1,6 @@
 import { useApi } from "./useApi";
 import { useFetch } from "./useFetch";
-import { Season } from "./useFetchSeasons";
+import { Season } from "../../seasonsSlice";
 
 export type CompetitionRules = {
   pointsForWin: number;

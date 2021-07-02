@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useEffect, useState } from "react";
+import React, { FunctionComponent, useState } from "react";
 import { Divider } from "semantic-ui-react";
 import { Team, useFetchClubs } from "../shared/useFetchClubs";
 import { ClubFilter } from "../components/Filters/ClubFilter";
@@ -7,26 +7,16 @@ import { SeasonFilter } from "../components/Filters/SeasonFilter";
 import { Matches } from "./Matches";
 import { HistoricalPositions } from "../components/HistoricalPositions";
 import { League } from "../components/League";
-import { useAppDispatch, useAppSelector } from "../../hook";
-import { selectSeason } from "../../seasonsSlice";
+import { useAppSelector } from "../../hook";
 
 const ClubPage: FunctionComponent<{
   activeSubPage: AppSubPage;
   setActiveSubPage: (subPage: AppSubPage) => void;
 }> = ({ activeSubPage, setActiveSubPage }) => {
-  const dispatch = useAppDispatch();
   const seasonState = useAppSelector((state) => state.season);
 
   const clubs = useFetchClubs();
   const [selectedClub, setSelectedClub] = useState<Team | undefined>(undefined);
-
-  useEffect(() => {
-    const season = seasonState.seasons.reduce(function (prev, current) {
-      return prev.startYear > current.startYear ? prev : current;
-    });
-
-    dispatch(selectSeason(season));
-  }, [seasonState.seasons, dispatch]);
 
   if (clubs.status !== "LOAD_SUCCESSFUL" || seasonState.seasons.length === 0) {
     return null;

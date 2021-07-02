@@ -31,7 +31,7 @@ const useFetch = (url: string) => {
       })
       .catch((error) => {
         if (!abortController.signal.aborted) {
-          setResult({ status: "LOAD_FAILED", error: error });
+          setResult({ status: "LOAD_FAILED", error: error.message });
         }
       });
 
