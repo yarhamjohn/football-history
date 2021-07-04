@@ -2,13 +2,13 @@ import React, { FunctionComponent, useEffect, useState } from "react";
 import "./App.css";
 import { HomePage } from "./HomePage";
 import { AppHeader } from "./components/AppHeader";
-import { ClubPage } from "./ClubPage";
+import { TeamPage } from "./TeamPage";
 import { Icon } from "semantic-ui-react";
 import { LeaguePage } from "./LeaguePage";
 import { useAppDispatch } from "../reduxHooks";
 import { fetchSeasons } from "./shared/seasonsSlice";
 
-export type AppPage = "Home" | "Club" | "League";
+export type AppPage = "Home" | "Team" | "League";
 export type AppSubPage = "None" | "Table" | "Results" | "Positions";
 
 const App: FunctionComponent = () => {
@@ -46,8 +46,8 @@ const App: FunctionComponent = () => {
       <div style={{ gridArea: "main" }}>
         {activePage === "Home" ? (
           <HomePage />
-        ) : activePage === "Club" ? (
-          <ClubPage />
+        ) : activePage === "Team" ? (
+          <TeamPage />
         ) : (
           <LeaguePage />
         )}

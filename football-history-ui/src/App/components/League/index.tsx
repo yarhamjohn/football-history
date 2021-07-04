@@ -44,7 +44,7 @@ const League: FunctionComponent<{ props: FetchLeagueProps }> = ({ props }) => {
     <div>
       <LeagueTable
         league={league.data}
-        selectedClub={"team" in props ? getTeam(teamState, props.team.id) : undefined}
+        selectedTeam={"team" in props ? props.team : undefined}
         seasonStartYear={props.season.startYear}
       />
       <PointDeductionSummary leagueTable={league.data.table} />

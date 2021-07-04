@@ -11,7 +11,7 @@ const SideBar: FunctionComponent<{
     return null;
   }
 
-  if (activePage === "Club") {
+  if (activePage === "Team") {
     return (
       <Menu compact icon="labeled" vertical pointing>
         <Menu.Item

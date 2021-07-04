@@ -20,7 +20,7 @@ const LeagueTableDrillDown: FunctionComponent<{
         <Card fluid>
           <Card.Content>
             {leagueMatches.status === "LOAD_SUCCESSFUL" && (
-              <LeagueTableDrillDownForm matches={leagueMatches.data} clubId={teamId} />
+              <LeagueTableDrillDownForm matches={leagueMatches.data} teamId={teamId} />
             )}
             <div style={{ height: "200px", position: "relative" }}>
               {leaguePositions.status === "UNLOADED" ? null : leaguePositions.status ===

@@ -7,13 +7,13 @@ import { MatchFilter, MatchFilterState } from "./Filter";
 import { Season } from "../../shared/seasonsSlice";
 import { Team } from "../../shared/teamsSlice";
 
-const Matches: FunctionComponent<{ selectedSeason: Season; selectedClub: Team }> = ({
+const Matches: FunctionComponent<{ selectedSeason: Season; selectedTeam: Team }> = ({
   selectedSeason,
-  selectedClub,
+  selectedTeam,
 }) => {
   const result = useFetchLeagueMatches({
     seasonId: selectedSeason.id,
-    teamId: selectedClub.id,
+    teamId: selectedTeam.id,
   });
 
   const [matchFilterState, setMatchFilterState] = useState<MatchFilterState>({
@@ -35,8 +35,8 @@ const Matches: FunctionComponent<{ selectedSeason: Season; selectedClub: Team }>
 
   const matches = result.data.filter(
     (m) =>
-      (matchFilterState.home && m.homeTeam.id === selectedClub.id) ||
-      (matchFilterState.away && m.awayTeam.id === selectedClub.id)
+      (matchFilterState.home && m.homeTeam.id === selectedTeam.id) ||
+      (matchFilterState.away && m.awayTeam.id === selectedTeam.id)
   );
 
   return (
@@ -46,7 +46,7 @@ const Matches: FunctionComponent<{ selectedSeason: Season; selectedClub: Team }>
         setMatchFilterState={(home, away) => setMatchFilterState({ home, away })}
       />
       <Divider />
-      <MatchResults matches={matches} selectedClub={selectedClub} />
+      <MatchResults matches={matches} selectedTeam={selectedTeam} />
     </div>
   );
 };

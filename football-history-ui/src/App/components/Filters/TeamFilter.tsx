@@ -3,7 +3,7 @@ import { Dropdown, DropdownItemProps } from "semantic-ui-react";
 import { useAppDispatch, useAppSelector } from "../../../reduxHooks";
 import { fetchTeams, selectTeam } from "../../shared/teamsSlice";
 
-const ClubFilter: FunctionComponent = () => {
+const TeamFilter: FunctionComponent = () => {
   const dispatch = useAppDispatch();
   const teamState = useAppSelector((state) => state.team);
 
@@ -38,14 +38,14 @@ const ClubFilter: FunctionComponent = () => {
     >
       {teamState.selectedTeamId === undefined ? (
         <p style={{ margin: "0 50px 0 0" }}>
-          Select a club from the dropdown. The list contains all clubs to have featured in the
+          Select a team from the dropdown. The list contains all clubs to have featured in the
           Football League or Premier League since 1992.
         </p>
       ) : (
         <h1 style={{ margin: 0 }}>{teamState.selectedTeamId}</h1>
       )}
       <Dropdown
-        placeholder={"Select Club"}
+        placeholder={"Select Team"}
         clearable
         search
         selection
@@ -59,4 +59,4 @@ const ClubFilter: FunctionComponent = () => {
   );
 };
 
-export { ClubFilter };
+export { TeamFilter };

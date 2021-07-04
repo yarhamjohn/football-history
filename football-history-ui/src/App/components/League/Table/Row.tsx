@@ -10,19 +10,19 @@ import { useAppDispatch } from "../../../../reduxHooks";
 
 const LeagueTableRow: FunctionComponent<{
   row: Row;
-  selectedClub: Team | undefined;
+  selectedTeam: Team | undefined;
   seasonStartYear: number;
   numRows: number;
   rules: CompetitionRules;
   competitionId: number;
-}> = ({ row, selectedClub, seasonStartYear, numRows, rules, competitionId }) => {
+}> = ({ row, selectedTeam, seasonStartYear, numRows, rules, competitionId }) => {
   const dispatch = useAppDispatch();
-  const { bold, color } = useLeagueTableRow(row, selectedClub);
+  const { bold, color } = useLeagueTableRow(row, selectedTeam);
   const [showDrillDown, setShowDrillDown] = useState<boolean>(false);
 
   useEffect(() => {
     setShowDrillDown(false);
-  }, [selectedClub, seasonStartYear]);
+  }, [selectedTeam, seasonStartYear]);
 
   const switchToTeam = (teamId: number) => {
     dispatch(selectTeam(teamId));

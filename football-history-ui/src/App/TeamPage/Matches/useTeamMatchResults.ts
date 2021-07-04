@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { Match } from "../../shared/useFetchLeagueMatches";
 
-const useClubMatchResults = (matches: Match[]) => {
+const useTeamMatchResults = (matches: Match[]) => {
   const dictionary = _.groupBy(matches, (m) => new Date(m.matchDate).getMonth());
   const matchesGroupedByMonth = _.map(dictionary, (v, _) => v).sort(
     (a, b) =>
@@ -12,4 +12,4 @@ const useClubMatchResults = (matches: Match[]) => {
   return { matchesGroupedByMonth };
 };
 
-export { useClubMatchResults };
+export { useTeamMatchResults };

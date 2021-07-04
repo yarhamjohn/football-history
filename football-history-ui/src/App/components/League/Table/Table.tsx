@@ -6,14 +6,14 @@ import { Team } from "../../../shared/teamsSlice";
 
 const LeagueTable: FunctionComponent<{
   league: League;
-  selectedClub: Team | undefined;
+  selectedTeam: Team | undefined;
   seasonStartYear: number;
-}> = ({ league, selectedClub, seasonStartYear }) => {
+}> = ({ league, selectedTeam, seasonStartYear }) => {
   const rows = league.table.map((r) => (
     <LeagueTableRow
       key={r.position}
       row={r}
-      selectedClub={selectedClub}
+      selectedTeam={selectedTeam}
       seasonStartYear={seasonStartYear}
       numRows={league.table.length}
       rules={league.competition.rules}

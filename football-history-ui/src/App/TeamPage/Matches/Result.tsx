@@ -1,14 +1,14 @@
 import React, { FunctionComponent } from "react";
 import { Match } from "../../shared/useFetchLeagueMatches";
 import { Card } from "semantic-ui-react";
-import { useClubMatchResult } from "./useClubMatchResult";
+import { useTeamMatchResult } from "./useTeamMatchResult";
 import { Team } from "../../shared/teamsSlice";
 
 const MatchResult: FunctionComponent<{
   match: Match;
-  selectedClub: Team;
-}> = ({ match, selectedClub }) => {
-  const result = useClubMatchResult(match, selectedClub);
+  selectedTeam: Team;
+}> = ({ match, selectedTeam }) => {
+  const result = useTeamMatchResult(match, selectedTeam);
 
   return (
     <Card

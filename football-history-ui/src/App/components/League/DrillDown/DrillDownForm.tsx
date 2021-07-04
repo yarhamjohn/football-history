@@ -4,9 +4,9 @@ import { useDrillDownForm } from "./useDrillDownForm";
 
 const LeagueTableDrillDownForm: FunctionComponent<{
   matches: Match[];
-  clubId: number;
-}> = ({ matches, clubId }) => {
-  const form = useDrillDownForm(matches, clubId);
+  teamId: number;
+}> = ({ matches, teamId }) => {
+  const form = useDrillDownForm(matches, teamId);
 
   return (
     <div style={{ display: "flex", justifyContent: "space-evenly" }}>

@@ -8,7 +8,7 @@ const HomePage: FunctionComponent = () => {
         This application currently provides league tables and match results for each of the top 4
         divisions in the English Football League since the 1989-90 season. Further data will be
         added covering the Football League all the way back to 1888 when it was founded, as well as
-        pages dedicated to club and league histories.
+        pages dedicated to team and league histories.
       </p>
 
       <h3>League structure</h3>
@@ -88,12 +88,12 @@ const HomePage: FunctionComponent = () => {
       </ul>
       <ul>
         <li>
-          From 1888-89 to 1985-86, a system of election/re-election was used to determine if clubs
+          From 1888-89 to 1985-86, a system of election/re-election was used to determine if teams
           finishing bottom of the lowest division should be replaced in the League with non-League
-          clubs.
+          teams.
         </li>
         <li>
-          Clubs in the bottom division of the League were required to reapply if they finished in
+          Teams in the bottom division of the League were required to reapply if they finished in
           the:
           <ul>
             <li>bottom 4 (1888-89 to 1892-93)</li>

@@ -3,11 +3,11 @@ import { Team } from "../../shared/teamsSlice";
 
 type MatchResult = "W" | "L" | "D";
 
-const useClubMatchResult = (match: Match, selectedClub: Team): MatchResult => {
+const useTeamMatchResult = (match: Match, selectedTeam: Team): MatchResult => {
   const teamGoals = (match: Match) =>
-    match.homeTeam.id === selectedClub.id ? match.homeTeam.goals : match.awayTeam.goals;
+    match.homeTeam.id === selectedTeam.id ? match.homeTeam.goals : match.awayTeam.goals;
   const oppositionGoals = (match: Match) =>
-    match.awayTeam.id === selectedClub.id ? match.homeTeam.goals : match.awayTeam.goals;
+    match.awayTeam.id === selectedTeam.id ? match.homeTeam.goals : match.awayTeam.goals;
 
   const teamWon = teamGoals(match) > oppositionGoals(match);
   const teamLost = teamGoals(match) < oppositionGoals(match);
@@ -15,4 +15,4 @@ const useClubMatchResult = (match: Match, selectedClub: Team): MatchResult => {
   return teamWon ? "W" : teamLost ? "L" : "D";
 };
 
-export { useClubMatchResult };
+export { useTeamMatchResult };

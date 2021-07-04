@@ -1,6 +1,6 @@
 import React, { FunctionComponent } from "react";
 import { Divider } from "semantic-ui-react";
-import { ClubFilter } from "../components/Filters/ClubFilter";
+import { TeamFilter } from "../components/Filters/TeamFilter";
 import { SeasonFilter } from "../components/Filters/SeasonFilter";
 import { Matches } from "./Matches";
 import { HistoricalPositions } from "../components/HistoricalPositions";
@@ -8,13 +8,13 @@ import { League } from "../components/League";
 import { useAppSelector } from "../../reduxHooks";
 import { Team } from "../shared/teamsSlice";
 
-const ClubPage: FunctionComponent = () => {
+const TeamPage: FunctionComponent = () => {
   const seasonState = useAppSelector((state) => state.season);
   const teamState = useAppSelector((state) => state.team);
 
   return (
     <>
-      <ClubFilter />
+      <TeamFilter />
       <Divider />
       {teamState.selectedTeamId === undefined ? null : (
         <>
@@ -31,7 +31,10 @@ const ClubPage: FunctionComponent = () => {
               </div>
               <League props={{ season: seasonState.selectedSeason, team: {} as Team }} />
               <h2>League matches</h2>
-              <Matches selectedSeason={seasonState.selectedSeason} selectedClub={{} as Team} />
+              <Matches
+                selectedSeason={seasonState.selectedSeason}
+                selectedTeam={teamState.selectedTeam}
+              />
             </>
           )}
         </>
@@ -40,4 +43,4 @@ const ClubPage: FunctionComponent = () => {
   );
 };
 
-export { ClubPage };
+export { TeamPage };
