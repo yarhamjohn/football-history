@@ -21,7 +21,7 @@ const TeamPage: FunctionComponent = () => {
       ) : (
         <>
           <h2>League positions by season</h2>
-          <HistoricalPositions teamId={teamState.selectedTeam.id} seasons={seasonState.seasons} />
+          <HistoricalPositions teamId={teamState.selectedTeam.id} />
           {seasonState.selectedSeason && (
             <>
               <Divider />

@@ -3,26 +3,25 @@ import { useFetchHistoricalPositions } from "../../shared/useFetchHistoricalPosi
 import { YearSlider } from "../Filters/YearSlider";
 import { ErrorMessage } from "../ErrorMessage";
 import { HistoricalPositionsGraph } from "./Graph";
-import { Season } from "../../shared/seasonsSlice";
+import { useAppSelector } from "../../../reduxHooks";
 
 export type HistoricalPositionRange = {
   startYear: number;
   endYear: number;
 };
 
-const HistoricalPositions: FunctionComponent<{
-  teamId: number;
-  seasons: Season[];
-}> = ({ teamId, seasons }) => {
-  const getFirstSeasonStartYear = () => Math.min(...seasons.map((s) => s.startYear));
-  const getLastSeasonStartYear = () => Math.max(...seasons.map((s) => s.startYear));
+const HistoricalPositions: FunctionComponent<{ teamId: number }> = ({ teamId }) => {
+  const seasonState = useAppSelector((state) => state.season);
+
+  const getFirstSeasonStartYear = () => Math.min(...seasonState.seasons.map((s) => s.startYear));
+  const getLastSeasonStartYear = () => Math.max(...seasonState.seasons.map((s) => s.startYear));
 
   const [selectedRange, setSelectedRange] = useState<HistoricalPositionRange>({
     startYear: getLastSeasonStartYear() - 25, // To speed initial load, only the last 25 seasons are fetched to begin with);
     endYear: getLastSeasonStartYear(),
   });
 
-  const { state } = useFetchHistoricalPositions(teamId, seasons, selectedRange);
+  const { state } = useFetchHistoricalPositions(teamId, seasonState.seasons, selectedRange);
 
   return (
     <div style={{ marginBottom: "5rem" }}>
