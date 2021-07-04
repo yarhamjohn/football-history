@@ -1,5 +1,4 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "../../reduxStore";
+import { createAsyncThunk, createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export type Team = {
   id: number;
@@ -11,14 +10,14 @@ export type Team = {
 type TeamState = {
   status: "UNLOADED" | "LOADING" | "LOADED" | "LOAD_FAILED";
   teams: Team[];
-  selectedTeamId: number | undefined;
+  selectedTeam: Team | undefined;
   error: string | undefined;
 };
 
 const initialState: TeamState = {
   status: "UNLOADED",
   teams: [],
-  selectedTeamId: undefined,
+  selectedTeam: undefined,
   error: undefined,
 };
 
@@ -31,11 +30,11 @@ export const teamsSlice = createSlice({
   name: "teams",
   initialState,
   reducers: {
-    selectTeam: (state, action: PayloadAction<number>) => {
-      state.selectedTeamId = action.payload;
+    setSelectedTeam: (state, action: PayloadAction<Team>) => {
+      state.selectedTeam = action.payload;
     },
     clearSelectedTeam: (state) => {
-      state.selectedTeamId = undefined;
+      state.selectedTeam = undefined;
     },
   },
   extraReducers: (builder) => {
@@ -53,8 +52,13 @@ export const teamsSlice = createSlice({
   },
 });
 
-export const getTeam = (state: TeamState, id: number) => state.teams.filter((x) => x.id === id)[0];
+const selectTeams = (state: TeamState) => state.teams;
+const selectTeamId = (state: TeamState, id: number) => id;
+export const selectTeamById = createSelector(
+  [selectTeams, selectTeamId],
+  (teams, id) => teams.filter((x) => x.id === id)[0]
+);
 
-export const { selectTeam, clearSelectedTeam } = teamsSlice.actions;
+export const { setSelectedTeam, clearSelectedTeam } = teamsSlice.actions;
 
 export default teamsSlice.reducer;

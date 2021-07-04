@@ -1,5 +1,5 @@
 import React, { FunctionComponent } from "react";
-import { Divider } from "semantic-ui-react";
+import { Divider, Message } from "semantic-ui-react";
 import { TeamFilter } from "../components/Filters/TeamFilter";
 import { SeasonFilter } from "../components/Filters/SeasonFilter";
 import { Matches } from "./Matches";
@@ -16,10 +16,12 @@ const TeamPage: FunctionComponent = () => {
     <>
       <TeamFilter />
       <Divider />
-      {teamState.selectedTeamId === undefined ? null : (
+      {teamState.selectedTeam === undefined ? (
+        <Message info>Please select a team from the dropdown filter box.</Message>
+      ) : (
         <>
           <h2>League positions by season</h2>
-          <HistoricalPositions teamId={teamState.selectedTeamId} seasons={seasonState.seasons} />
+          <HistoricalPositions teamId={teamState.selectedTeam.id} seasons={seasonState.seasons} />
           {seasonState.selectedSeason && (
             <>
               <Divider />

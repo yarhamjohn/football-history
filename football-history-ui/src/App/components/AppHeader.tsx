@@ -17,7 +17,7 @@ const AppHeader: FunctionComponent<{
         Home
       </Menu.Item>
       <Menu.Item name="Team" active={activePage === "Team"} onClick={() => setActivePage("Team")}>
-        Club
+        Team
       </Menu.Item>
       <Menu.Item
         name="League"
