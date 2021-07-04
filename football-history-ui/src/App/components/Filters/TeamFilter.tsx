@@ -33,13 +33,13 @@ const TeamFilter: FunctionComponent = () => {
         alignItems: "center",
       }}
     >
-      {teamState.selectedTeamId === undefined ? (
+      {teamState.selectedTeam === undefined ? (
         <p style={{ margin: "0 50px 0 0" }}>
           Select a team from the dropdown. The list contains all clubs to have featured in the
           Football League or Premier League since 1992.
         </p>
       ) : (
-        <h1 style={{ margin: 0 }}>{teamState.selectedTeamId}</h1>
+        <h1 style={{ margin: 0 }}>{teamState.selectedTeam.name}</h1>
       )}
       <Dropdown
         placeholder={"Select Team"}

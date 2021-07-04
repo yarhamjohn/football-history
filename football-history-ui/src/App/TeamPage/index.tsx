@@ -31,7 +31,9 @@ const TeamPage: FunctionComponent = () => {
                 <h2>League table for season:</h2>
                 <SeasonFilter />
               </div>
-              <League props={{ season: seasonState.selectedSeason, team: {} as Team }} />
+              <League
+                props={{ season: seasonState.selectedSeason, team: teamState.selectedTeam }}
+              />
               <h2>League matches</h2>
               <Matches
                 selectedSeason={seasonState.selectedSeason}

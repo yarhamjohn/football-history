@@ -13,18 +13,14 @@ const PlayOffs: FunctionComponent<{
   }
 
   const semiFinals = matches.filter((m) => m.rules.stage === "Semi-Final");
-  console.log(semiFinals);
   const teams = semiFinals.map((m) => m.homeTeam.name);
-  console.log(teams);
   const semiFinalOne = semiFinals.filter(
     (m) => m.homeTeam.name === teams[0] || m.awayTeam.name === teams[0]
   );
   const semiFinalTwo = semiFinals.filter(
     (m) => m.homeTeam.name !== teams[0] && m.awayTeam.name !== teams[0]
   );
-  console.log(semiFinalOne);
-  console.log(semiFinalTwo);
-  let finalMatches = matches.filter((m) => m.rules.stage === "Final");
+  const finalMatches = matches.filter((m) => m.rules.stage === "Final");
   return (
     <div
       style={{

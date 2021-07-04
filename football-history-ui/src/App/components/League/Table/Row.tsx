@@ -4,9 +4,9 @@ import { Icon, Table } from "semantic-ui-react";
 import { LeagueTableDrillDown } from "../DrillDown/DrillDown";
 import { LeagueTableRowCell } from "./Cell";
 import { useLeagueTableRow } from "./useLeagueTableRow";
-import { selectTeam, Team } from "../../../shared/teamsSlice";
+import { selectTeamById, setSelectedTeam, Team } from "../../../shared/teamsSlice";
 import { CompetitionRules } from "../../../shared/useFetchCompetitions";
-import { useAppDispatch } from "../../../../reduxHooks";
+import { useAppDispatch, useAppSelector } from "../../../../reduxHooks";
 
 const LeagueTableRow: FunctionComponent<{
   row: Row;
@@ -17,6 +17,8 @@ const LeagueTableRow: FunctionComponent<{
   competitionId: number;
 }> = ({ row, selectedTeam, seasonStartYear, numRows, rules, competitionId }) => {
   const dispatch = useAppDispatch();
+  const teamState = useAppSelector((state) => state.team);
+
   const { bold, color } = useLeagueTableRow(row, selectedTeam);
   const [showDrillDown, setShowDrillDown] = useState<boolean>(false);
 
@@ -25,7 +27,8 @@ const LeagueTableRow: FunctionComponent<{
   }, [selectedTeam, seasonStartYear]);
 
   const switchToTeam = (teamId: number) => {
-    dispatch(selectTeam(teamId));
+    const team = selectTeamById(teamState, teamId);
+    dispatch(setSelectedTeam(team));
     // TODO: switch tab
   };
 
