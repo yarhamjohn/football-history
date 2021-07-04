@@ -7,9 +7,9 @@ import { Icon } from "semantic-ui-react";
 import { LeaguePage } from "./LeaguePage";
 import { useAppDispatch } from "../reduxHooks";
 import { fetchSeasons } from "./shared/seasonsSlice";
+import { fetchTeams } from "./shared/teamsSlice";
 
 export type AppPage = "Home" | "Team" | "League";
-export type AppSubPage = "None" | "Table" | "Results" | "Positions";
 
 const App: FunctionComponent = () => {
   const dispatch = useAppDispatch();
@@ -18,6 +18,7 @@ const App: FunctionComponent = () => {
 
   useEffect(() => {
     dispatch(fetchSeasons());
+    dispatch(fetchTeams());
   }, [dispatch]);
 
   return (

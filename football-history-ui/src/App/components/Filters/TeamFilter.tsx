@@ -7,10 +7,6 @@ const TeamFilter: FunctionComponent = () => {
   const dispatch = useAppDispatch();
   const teamState = useAppSelector((state) => state.team);
 
-  useEffect(() => {
-    dispatch(fetchTeams());
-  }, [dispatch]);
-
   function createDropdown(): DropdownItemProps[] {
     return teamState.teams.map((c) => {
       return {
